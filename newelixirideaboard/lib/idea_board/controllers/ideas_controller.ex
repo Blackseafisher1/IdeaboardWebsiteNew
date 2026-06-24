@@ -23,10 +23,10 @@ defmodule IdeaBoard.IdeasController do
 
     html = if Map.get(conn.params, "_page", "1") == "1" do
       assigns = Map.merge(result, %{categories: categories, filters: filters, user: user})
-      if htmx?(conn), do: IdeaBoard.Renderer.render_partial("ideas/_content", assigns, conn),
+      if htmx?(conn), do: IdeaBoard.Renderer.render_partial_string("ideas/_content", assigns, conn),
         else: IdeaBoard.Renderer.render_page("ideas/ideas", assigns, conn)
     else
-      IdeaBoard.Renderer.render_partial("ideas/_list", result, conn)
+      IdeaBoard.Renderer.render_partial_string("ideas/_list", result, conn)
     end
 
     send_resp(conn, 200, html)
@@ -39,7 +39,7 @@ defmodule IdeaBoard.IdeasController do
     html = if Map.get(conn.params, "format") == "json" do
       Jason.encode!(%{ideas: result.ideas, has_next: result.has_next, page: result.page})
     else
-      IdeaBoard.Renderer.render_partial("ideas/_list", result, conn)
+      IdeaBoard.Renderer.render_partial_string("ideas/_list", result, conn)
     end
     send_resp(conn, 200, html)
   end
@@ -49,7 +49,7 @@ defmodule IdeaBoard.IdeasController do
     query = Map.get(conn.params, "q", "")
     page = (Map.get(conn.params, "page", "1") |> String.to_integer())
     result = IdeaBoard.IdeasSearchService.search(user, query, page)
-    html = IdeaBoard.Renderer.render_partial("ideas/_list", result, conn)
+    html = IdeaBoard.Renderer.render_partial_string("ideas/_list", result, conn)
     assign(conn, :rendered_html, html)
   end
 
@@ -69,7 +69,7 @@ defmodule IdeaBoard.IdeasController do
       if idea_id && idea_id > 0 do
         {:ok, %{rows: [idea | _]}} = IdeaBoard.IdeasService.fetch(idea_id)
         IdeaBoard.PubSub.broadcast("ideas", {:idea_created, idea})
-        html = IdeaBoard.Renderer.render_partial("ideas/_idea_card", %{idea: idea, user: user}, conn)
+        html = IdeaBoard.Renderer.render_partial_string("ideas/_idea_card", %{idea: idea, user: user}, conn)
         send_resp(conn, 200, html)
       else
         send_json(conn, 500, %{error: "DB not available"})
@@ -91,7 +91,7 @@ defmodule IdeaBoard.IdeasController do
     case IdeaBoard.IdeasService.update(user, idea_id, data) do
       {:ok, idea} ->
         IdeaBoard.PubSub.broadcast("ideas", {:idea_updated, idea})
-        html = IdeaBoard.Renderer.render_partial("ideas/_idea_card", %{idea: idea, user: user}, conn)
+        html = IdeaBoard.Renderer.render_partial_string("ideas/_idea_card", %{idea: idea, user: user}, conn)
         send_resp(conn, 200, html)
 
       {:error, reason} -> send_json(conn, 400, %{error: reason})
@@ -119,7 +119,7 @@ defmodule IdeaBoard.IdeasController do
     case IdeaBoard.ReactionsService.toggle(user, idea_id, reaction_type) do
       {:ok, stats} ->
         IdeaBoard.PubSub.broadcast("idea:#{idea_id}", {:reaction_updated, idea_id, stats})
-        html = IdeaBoard.Renderer.render_partial("ideas/_idea_stats", %{stats: stats}, conn)
+        html = IdeaBoard.Renderer.render_partial_string("ideas/_idea_stats", %{stats: stats}, conn)
         send_resp(conn, 200, html)
 
       _ -> send_resp(conn, 200, "")
@@ -129,7 +129,7 @@ defmodule IdeaBoard.IdeasController do
   defp handle_stats(conn) do
     idea_id = Map.get(conn.params, "idea_id")
     stats = IdeaBoard.IdeasStatsService.get_stats(idea_id)
-    html = IdeaBoard.Renderer.render_partial("ideas/_idea_stats", %{stats: stats}, conn)
+    html = IdeaBoard.Renderer.render_partial_string("ideas/_idea_stats", %{stats: stats}, conn)
     send_resp(conn, 200, html)
   end
 

@@ -15,7 +15,7 @@ defmodule IdeaBoard.ReactionsController do
     case IdeaBoard.ReactionsService.toggle(user, idea_id, reaction_type) do
       {:ok, stats} ->
         IdeaBoard.PubSub.broadcast("idea:#{idea_id}", {:reaction_updated, idea_id, stats})
-        html = IdeaBoard.Renderer.render_partial("ideas/_idea_stats", %{stats: stats}, conn)
+        html = IdeaBoard.Renderer.render_partial_string("ideas/_idea_stats", %{stats: stats}, conn)
         assign(conn, :rendered_html, html)
 
       _ -> assign(conn, :rendered_html, "")

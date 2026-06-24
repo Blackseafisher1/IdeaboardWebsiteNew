@@ -1,30 +1,60 @@
-<div class="account-page">
-  <h1>Account</h1>
+<link rel="stylesheet" href="/css/account.css">
 
-  <%= if user = assigns[:user] do %>
-    <p><strong>Benutzername:</strong> <%= user.username %></p>
-    <p><strong>Rolle:</strong> <%= user.role_name %></p>
-    <p><strong>E-Mail:</strong> <%= user.email %></p>
+<main class="account-wrap">
+  <section class="account-card">
+    <%= if user = assigns[:user] do %>
+      <%= if user.role_name == "Admin" do %>
+        <span>
+          <a class="btn accent" href="/admin" style="float: right;">Zur Admin Seite</a>
+        </span>
+      <% end %>
+      <h2>Mein Account</h2>
 
-    <hr>
+      <div class="account-info">
+        <p><strong>Benutzername</strong></p>
+        <p class="account-value"><%= user.username %></p>
+      </div>
 
-    <h2>Benutzername ändern</h2>
-    <%= if assigns[:error] do %>
-      <div class="error-msg"><%= assigns[:error] %></div>
+      <div class="account-info">
+        <p><strong>Rolle</strong></p>
+        <p class="account-value"><%= user.role_name %></p>
+      </div>
+
+      <div class="account-info">
+        <p><strong>E-Mail</strong></p>
+        <p class="account-value"><%= user.email %></p>
+      </div>
+
+      <div class="account-info" hx-get="/users/points" hx-trigger="load" hx-target="#points-value" hx-swap="innerHTML">
+        <p><strong>Punkte</strong></p>
+        <p class="account-value account-points-shell" id="points-value" aria-live="polite">Wird geladen...</p>
+      </div>
+
+      <%= if assigns[:error] do %>
+        <div class="validation-error"><%= assigns[:error] %></div>
+      <% end %>
+      <%= if assigns[:pw_error] do %>
+        <div class="validation-error"><%= assigns[:pw_error] %></div>
+      <% end %>
+
+      <form class="account-form" action="/users/account" method="POST">
+        <label for="newUsername">Neuer Benutzername</label>
+        <input id="newUsername" name="username" type="text" placeholder="Neuer Benutzername" required>
+        <button type="submit" class="btn">Speichern</button>
+      </form>
+
+      <form class="account-form" action="/users/password" method="POST">
+        <label for="currentPassword">Aktuelles Passwort</label>
+        <input id="currentPassword" name="current_password" type="password" placeholder="Aktuelles Passwort" required>
+        <label for="newPassword">Neues Passwort</label>
+        <input id="newPassword" name="new_password" type="password" placeholder="Neues Passwort" required>
+        <button type="submit" class="btn warning">Passwort ändern</button>
+      </form>
+
+      <div class="account-actions">
+        <a class="btn outline" href="/">Zur Startseite</a>
+        <a class="btn logout" href="/auth/logout">Abmelden</a>
+      </div>
     <% end %>
-    <form action="/users/account" method="POST">
-      <input type="text" name="username" value="<%= user.username %>" required>
-      <button type="submit">Speichern</button>
-    </form>
-
-    <h2>Passwort ändern</h2>
-    <%= if assigns[:pw_error] do %>
-      <div class="error-msg"><%= assigns[:pw_error] %></div>
-    <% end %>
-    <form action="/users/password" method="POST">
-      <input type="password" name="current_password" placeholder="Aktuelles Passwort" required>
-      <input type="password" name="new_password" placeholder="Neues Passwort" required>
-      <button type="submit">Passwort ändern</button>
-    </form>
-  <% end %>
-</div>
+  </section>
+</main>

@@ -26,7 +26,7 @@ defmodule IdeaBoard.DmsController do
       "list" ->
         conv = IdeaBoard.DmMessagingService.get_or_create_conversation(user, conn.params)
         messages = if conv, do: IdeaBoard.DmMessagingService.latest_messages(conv.conversation_id, 50), else: []
-        html = IdeaBoard.Renderer.render_partial("dms/_chat", %{conversation: conv, messages: messages, user: user}, conn)
+        html = IdeaBoard.Renderer.render_partial_string("dms/_chat", %{conversation: conv, messages: messages, user: user}, conn)
         assign(conn, :rendered_html, html)
       "send" ->
         text = Map.get(conn.params, "text", "")
@@ -34,7 +34,7 @@ defmodule IdeaBoard.DmsController do
         case IdeaBoard.DmMessagingService.send_message(conv_id, user.user_id, text) do
           {:ok, msg} ->
             IdeaBoard.PubSub.broadcast("dm:#{conv_id}", {:new_message, msg})
-            html = IdeaBoard.Renderer.render_partial("dms/_message", %{message: msg, user: user}, conn)
+            html = IdeaBoard.Renderer.render_partial_string("dms/_message", %{message: msg, user: user}, conn)
             assign(conn, :rendered_html, html)
           _ -> assign(conn, :rendered_html, "")
         end
@@ -42,7 +42,7 @@ defmodule IdeaBoard.DmsController do
         conv_id = Map.get(conn.params, "conversation_id")
         before_id = Map.get(conn.params, "before_id")
         messages = IdeaBoard.DmMessagingService.messages_before(conv_id, before_id, 20)
-        html = IdeaBoard.Renderer.render_partial("dms/_messages", %{messages: messages, user: user}, conn)
+        html = IdeaBoard.Renderer.render_partial_string("dms/_messages", %{messages: messages, user: user}, conn)
         assign(conn, :rendered_html, html)
       _ -> assign(conn, :rendered_html, "")
     end
