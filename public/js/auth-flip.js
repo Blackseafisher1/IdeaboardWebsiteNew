@@ -18,7 +18,7 @@ function flipCard() {
 // Global verfügbar machen für inline `onclick`-Attribute
 window.flipCard = flipCard;
 
-// Robust click handling: support clicks on child elements and keyboard activation
+// Robustes Klick-Handling: unterstützt Klicks auf Kind-Elemente und Tastaturaktivierung
 /**
  * Klick-Handler für Auth-Toggle-Elemente.
  * @param {MouseEvent} e - Klick-Event.

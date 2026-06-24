@@ -80,8 +80,7 @@
     const isEnabled = saved === '1';
     applyState(isEnabled);
 
-    // Watch for checkbox changes
-    
+    // Auf Änderungen der Checkbox lauschen
     const mainToggle = getToggle();
     if (mainToggle) {
       /**
@@ -96,7 +95,7 @@
       });
     }
 
-    // Attach listeners to all toggle elements (labels or buttons)
+    // Listener an alle Toggle-Elemente (Labels oder Buttons) hängen
     /**
      * Initialisiert die Toggle-Buttons nach DOMContentLoaded: stellt UI-Zustand her und hängt Listener an.
      * @returns {void}

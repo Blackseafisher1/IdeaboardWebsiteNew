@@ -42,7 +42,7 @@ async function getPool() {
   return pool;
 }
 
-// Internal normalization helper (keep internal only)
+// Interner Normalisierungs-Helfer (nur intern verwenden)
 function normalizeQueryResult(result) {
   const convert = (val) => {
     if (typeof val === 'bigint') return Number(val);
