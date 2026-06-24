@@ -52,19 +52,21 @@ defmodule IdeaBoard.IdeasService do
 
   def create(user, data, _file \\ nil) do
     try do
-      {:ok, result} = IdeaBoard.Repo.query(
-        "INSERT INTO ideas (user_id, category_id, title, description, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())",
-        [user.user_id, data[:category_id] || data["category_id"], data[:title] || data["title"], data[:description] || data["description"]]
-      )
-      idea_id = result.last_insert_id
+      case IdeaBoard.Repo.query(
+             "INSERT INTO ideas (user_id, category_id, title, description, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())",
+             [user.user_id, data[:category_id] || data["category_id"], data[:title] || data["title"], data[:description] || data["description"]]
+           ) do
+        {:ok, result} ->
+          idea_id = result.last_insert_id
+          tags = data[:tags] || data["tags"] || ""
+          if tags != "" do
+            tag_list = String.split(tags, ",") |> Enum.map(&String.trim/1) |> Enum.reject(&(&1 == ""))
+            IdeaBoard.IdeasTagsService.add_tags(idea_id, tag_list)
+          end
+          {:ok, %{idea_id: idea_id}}
 
-      tags = data[:tags] || data["tags"] || ""
-      if tags != "" do
-        tag_list = String.split(tags, ",") |> Enum.map(&String.trim/1) |> Enum.reject(&(&1 == ""))
-        IdeaBoard.IdeasTagsService.add_tags(idea_id, tag_list)
+        _ -> {:ok, %{idea_id: 0}}
       end
-
-      {:ok, %{idea_id: idea_id}}
     rescue
       _e in [DBConnection.ConnectionError, ArgumentError, MyXQL.Error] -> {:ok, %{idea_id: 0}}
     end

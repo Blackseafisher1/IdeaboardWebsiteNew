@@ -1,11 +1,13 @@
 defmodule IdeaBoard.IdeasCommentsService do
   def list(idea_id) do
     try do
-      {:ok, comments} = IdeaBoard.Repo.query_maps(
-        "SELECT c.*, u.username AS author_username FROM idea_comments c JOIN users u ON u.user_id = c.user_id WHERE c.idea_id = ? ORDER BY c.created_at ASC",
-        [idea_id]
-      )
-      comments || []
+      case IdeaBoard.Repo.query_maps(
+             "SELECT c.*, u.username AS author_username FROM idea_comments c JOIN users u ON u.user_id = c.user_id WHERE c.idea_id = ? ORDER BY c.created_at ASC",
+             [idea_id]
+           ) do
+        {:ok, comments} -> comments || []
+        _ -> []
+      end
     rescue
       _e in [DBConnection.ConnectionError, ArgumentError, MyXQL.Error] -> []
     end
@@ -18,11 +20,13 @@ defmodule IdeaBoard.IdeasCommentsService do
         [idea_id, String.trim(text)]
       )
 
-      {:ok, comment} = IdeaBoard.Repo.query_map(
-        "SELECT c.*, u.username AS author_username FROM idea_comments c JOIN users u ON u.user_id = c.user_id WHERE c.idea_id = ? ORDER BY c.created_at DESC LIMIT 1",
-        [idea_id]
-      )
-      {:ok, comment}
+      case IdeaBoard.Repo.query_map(
+             "SELECT c.*, u.username AS author_username FROM idea_comments c JOIN users u ON u.user_id = c.user_id WHERE c.idea_id = ? ORDER BY c.created_at DESC LIMIT 1",
+             [idea_id]
+           ) do
+        {:ok, comment} when not is_nil(comment) -> {:ok, comment}
+        _ -> {:ok, nil}
+      end
     rescue
       _e in [DBConnection.ConnectionError, ArgumentError, MyXQL.Error] -> {:ok, nil}
     end
@@ -32,7 +36,7 @@ defmodule IdeaBoard.IdeasCommentsService do
   def delete(user, comment_id) do
     try do
       case IdeaBoard.Repo.query_map("SELECT * FROM idea_comments WHERE comment_id = ?", [comment_id]) do
-        {:ok, %{"user_id" => uid}} ->
+        {:ok, %{user_id: uid}} ->
           if uid == user.user_id || IdeaBoard.RoleHelpers.is_admin?(user) do
             IdeaBoard.Repo.query("DELETE FROM idea_comments WHERE comment_id = ?", [comment_id])
             :ok
