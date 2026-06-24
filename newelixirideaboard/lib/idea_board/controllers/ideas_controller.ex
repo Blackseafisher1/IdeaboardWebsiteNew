@@ -21,8 +21,9 @@ defmodule IdeaBoard.IdeasController do
       page: (Map.get(conn.params, "page", "1") |> String.to_integer())
     }
 
+    categories = IdeaBoard.CategoriesService.all()
     result = IdeaBoard.IdeasService.list(user, filters)
-    html = IdeaBoard.Renderer.render("ideas/ideas.html.heex", result, conn)
+    html = IdeaBoard.Renderer.render("ideas/ideas", Map.merge(result, %{categories: categories, filters: filters}), conn)
     send_resp(conn, 200, html)
   end
 
@@ -31,7 +32,7 @@ defmodule IdeaBoard.IdeasController do
     query = Map.get(conn.params, "q", "")
     page = (Map.get(conn.params, "page", "1") |> String.to_integer())
     result = IdeaBoard.IdeasSearchService.search(user, query, page)
-    html = IdeaBoard.Renderer.render("ideas/_list.html.heex", result, conn)
+    html = IdeaBoard.Renderer.render_raw("ideas/_list", result, conn)
     assign(conn, :rendered_html, html)
   end
 
@@ -43,12 +44,11 @@ defmodule IdeaBoard.IdeasController do
       category_id: Map.get(conn.params, "category_id"),
       tags: Map.get(conn.params, "tags", "")
     }
-    file = conn.params["file"]
 
-    {:ok, %{idea_id: idea_id}} = IdeaBoard.IdeasService.create(user, data, file)
+    {:ok, %{idea_id: idea_id}} = IdeaBoard.IdeasService.create(user, data)
     {:ok, %{rows: [idea | _]}} = IdeaBoard.IdeasService.fetch(idea_id)
     IdeaBoard.PubSub.broadcast("ideas", {:idea_created, idea})
-    html = IdeaBoard.Renderer.render("ideas/_idea_card.html.heex", %{idea: idea, user: user}, conn)
+    html = IdeaBoard.Renderer.render_raw("ideas/_idea_card", %{idea: idea, user: user}, conn)
     assign(conn, :rendered_html, html)
   end
 
@@ -66,7 +66,7 @@ defmodule IdeaBoard.IdeasController do
     case IdeaBoard.IdeasService.update(user, idea_id, data) do
       {:ok, idea} ->
         IdeaBoard.PubSub.broadcast("ideas", {:idea_updated, idea})
-        html = IdeaBoard.Renderer.render("ideas/_idea_card.html.heex", %{idea: idea, user: user}, conn)
+        html = IdeaBoard.Renderer.render_raw("ideas/_idea_card", %{idea: idea, user: user}, conn)
         assign(conn, :rendered_html, html)
 
       {:error, reason} ->

@@ -23,14 +23,14 @@ defmodule IdeaBoard.PageController do
   end
 
   defp render_page(conn, template, assigns) do
-    html = IdeaBoard.Renderer.render("page/#{template}.html.heex", assigns, conn)
+    html = IdeaBoard.Renderer.render(template, assigns, conn)
     send_resp(conn, 200, html)
   end
 
   defp render_static(conn) do
     page = conn.request_path |> String.trim("/")
     title = page |> String.capitalize()
-    html = IdeaBoard.Renderer.render("legal/#{page}.html.heex", [title: title], conn)
+    html = IdeaBoard.Renderer.render("legal/#{page}", [title: title], conn)
     send_resp(conn, 200, html)
   end
 

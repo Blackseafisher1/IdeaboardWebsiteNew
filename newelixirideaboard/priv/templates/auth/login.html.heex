@@ -1,19 +1,30 @@
-<h1>Login / Registrierung</h1>
+<div class="auth-page">
+  <div class="auth-container">
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="showAuthForm('login')">Login</button>
+      <button class="auth-tab" onclick="showAuthForm('register')">Registrieren</button>
+    </div>
 
-<form action="/users/auth" method="POST">
-  <h2>Login</h2>
-  <%= if @error do %>
-    <div class="error"><%= @error %></div>
-  <% end %>
-  <input type="email" name="email" placeholder="E-Mail" required>
-  <input type="password" name="password" placeholder="Passwort" required>
-  <button type="submit">Einloggen</button>
-</form>
+    <form id="login-form" class="auth-form" action="/users/auth" method="POST">
+      <h2>Login</h2>
+      <%= if assigns[:error] && assigns[:form] == "login" do %>
+        <div class="error-msg"><%= assigns[:error] %></div>
+      <% end %>
+      <input type="email" name="email" placeholder="E-Mail" required>
+      <input type="password" name="password" placeholder="Passwort" required>
+      <button type="submit">Einloggen</button>
+    </form>
 
-<form action="/users/register" method="POST">
-  <h2>Registrieren</h2>
-  <input type="text" name="username" placeholder="Benutzername" required>
-  <input type="email" name="email" placeholder="E-Mail" required>
-  <input type="password" name="password" placeholder="Passwort" required>
-  <button type="submit">Registrieren</button>
-</form>
+    <form id="register-form" class="auth-form hidden" action="/users/register" method="POST">
+      <h2>Registrieren</h2>
+      <%= if assigns[:error] && assigns[:form] == "register" do %>
+        <div class="error-msg"><%= assigns[:error] %></div>
+      <% end %>
+      <input type="text" name="username" placeholder="Benutzername" required>
+      <input type="email" name="email" placeholder="E-Mail" required>
+      <input type="password" name="password" placeholder="Passwort" required>
+      <button type="submit">Registrieren</button>
+    </form>
+  </div>
+</div>
+<script src="/js/auth-flip.js" defer></script>

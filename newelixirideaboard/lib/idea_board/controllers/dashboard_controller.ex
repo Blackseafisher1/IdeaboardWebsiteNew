@@ -10,7 +10,7 @@ defmodule IdeaBoard.DashboardController do
   defp handle_index(conn) do
     user = get_session(conn, :user)
     stats = IdeaBoard.DashboardService.get_stats(user)
-    html = IdeaBoard.Renderer.render("dashboard/index.html.heex", stats, conn)
+    html = IdeaBoard.Renderer.render("dashboard/index", stats, conn)
     send_resp(conn, 200, html)
   end
 end
