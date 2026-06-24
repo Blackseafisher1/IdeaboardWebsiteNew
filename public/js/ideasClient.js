@@ -117,9 +117,9 @@ function setupCardHandlers() {
     }
   });
 
-  // Re-introduce dblclick expansion, but implement character-based
-  // truncation so descriptions show only the first N chars by default
-  // and toggle to the full content on dblclick.
+  // Doppelklick-Erweiterung wieder einführen, aber zeichenbasierte
+  // Kürzung, sodass Beschreibungen standardmäßig nur die ersten N Zeichen zeigen
+  // und per Doppelklick auf den vollständigen Inhalt umschalten.
   const TRUNCATE_CHARS = 140;
 
   function _getContentEl(desc) {
@@ -151,11 +151,11 @@ function setupCardHandlers() {
     desc.setAttribute('aria-expanded', 'true');
   }
 
-  // Collapse all descriptions by default (show only first N chars)
+  // Alle Beschreibungen standardmäßig einklappen (nur erste N Zeichen)
   document.querySelectorAll('.idea-desc').forEach(d => collapseDesc(d));
 
   document.addEventListener('dblclick', function (e) {
-    // If user dblclicked within the actions area or expand button, ignore
+    // Wenn der Benutzer im Aktionsbereich oder Erweitern-Button doppelgeklickt hat, ignorieren
     if (e.target.closest('.expand-card') || e.target.closest('.idea-actions')) return;
     const desc = e.target.closest('.idea-desc') || (e.target.closest('.idea-desc-text') && e.target.closest('.idea-desc-text').closest('.idea-desc'));
     if (!desc) return;
@@ -172,7 +172,7 @@ let isSubmittingIdea = false;
  * @returns {void}
  */
 function bindCreateAndDeleteHandlers() {
-  // Intercept create idea form to submit via fetch and insert card
+  // Create-Idea-Formular abfangen, per Fetch absenden und Karte einfügen
   const createForm = document.getElementById('createIdeaForm');
   if (createForm) {
     createForm.addEventListener('submit', async function (e) {
@@ -188,7 +188,7 @@ function bindCreateAndDeleteHandlers() {
       const fd = new FormData(createForm);
 
       try {
-        // Immediately close the create modal and disable the submit button to avoid UI delay
+        // Modal sofort schließen und Submit-Button deaktivieren, um UI-Verzögerung zu vermeiden
         const modal = document.getElementById('createIdeaModal');
         try { if (modal && typeof modal.close === 'function') modal.close(); } catch(_) {}
         
@@ -198,7 +198,7 @@ function bindCreateAndDeleteHandlers() {
           submitBtn.innerText = 'Erstelle...';
         }
 
-        // Mark local creation so liveUpdates suppresses the incoming SSE new_idea
+        // Lokale Erstellung markieren, damit liveUpdates das eingehende SSE new_idea unterdrückt
         window.isLocalIdeaCreation = true;
         
         const resp = await fetch(createForm.action, {
@@ -221,7 +221,7 @@ function bindCreateAndDeleteHandlers() {
 
         const html = await resp.text();
 
-        // Build DOM from returned HTML so we can extract the card
+        // DOM aus zurückgegebenem HTML erstellen, um die Karte zu extrahieren
         const ideasGrid = document.querySelector('.ideas-grid');
         if (ideasGrid) {
           const temp = document.createElement('div');
@@ -230,19 +230,15 @@ function bindCreateAndDeleteHandlers() {
           const newId = incoming ? (incoming.dataset.id || incoming.getAttribute('data-id')) : null;
 
           if (incoming && newId) {
-            // Success: Reset the form so it's clean for next time
+            // Erfolg: Formular zurücksetzen für das nächste Mal
             createForm.reset();
             
-            // Check if card was already inserted by SSE
+            // Prüfen, ob die Karte bereits per SSE eingefügt wurde
             const existing = document.querySelector(`.idea-card[data-id="${newId}"]`);
             if (existing) {
               console.log('Local Create: Card already present (via SSE), skipping insert.');
             } else {
-              // Remove any empty-state placeholder ("Keine Ergebnisse gefunden")
-/**
- * Entfernt leere Ergebnisplatzhalter ("Keine Ergebnisse gefunden") vor dem Einfügen einer neuen Karte.
- * @returns {void}
- */
+              // Leeren-Zustand-Platzhalter entfernen ("Keine Ergebnisse gefunden")
               document.querySelectorAll('.ideas-empty-state').forEach(n => n.remove());
 
               try { incoming.style.visibility = 'hidden'; } catch (e) {}
@@ -251,11 +247,7 @@ function bindCreateAndDeleteHandlers() {
               if (firstCard) ideasGrid.insertBefore(incoming, firstCard);
               else ideasGrid.appendChild(incoming);
 
-              // let browser compute styles, then reveal
-/**
- * Sichtbarkeits-Timeout: zeigt die neu eingefügte Karte nach einer kurzen Verzögerung und verarbeitet ggf. HTMX innerhalb der Karte.
- * @returns {void}
- */
+              // Browser Styles berechnen lassen, dann einblenden
               setTimeout(() => {
                 try { incoming.style.visibility = 'visible'; } catch (e) {}
                 try { if (window.htmx) htmx.process(incoming); } catch (e) {}
@@ -263,11 +255,7 @@ function bindCreateAndDeleteHandlers() {
             }
           } else {
             // Fallback: Serverseitiges HTML direkt einfügen
-            // Remove any empty-state placeholder ("Keine Ergebnisse gefunden")
-/**
- * Fallback-Einfügen: Entfernt leere Platzhalter und fügt serverseitig generiertes HTML ein.
- * @returns {void}
- */
+            // Leeren-Zustand-Platzhalter entfernen
             document.querySelectorAll('.ideas-empty-state').forEach(n => n.remove());
             ideasGrid.insertAdjacentHTML('afterbegin', html);
             const newCard = ideasGrid.querySelector('.idea-card');
@@ -294,7 +282,7 @@ function bindCreateAndDeleteHandlers() {
                 delete submitBtn.dataset._orig;
               }
             };
-            // 2500ms pause is intentional to allow server round-trip on slow connections
+            // 2500ms Pause, um Server-Roundtrip bei langsamen Verbindungen zu ermöglichen
             setTimeout(restore, 2500);
           }
         } catch (_) {}
@@ -309,7 +297,7 @@ function bindCreateAndDeleteHandlers() {
     });
   }
 
-  // Intercept delete forms for ideas (modal delete or inline delete)
+  // Lösch-Formulare für Ideen abfangen (Modal-Löschung oder inline)
   document.body.addEventListener('submit', async function (e) {
     const form = e.target.closest('form');
     if (!form) return;
@@ -317,7 +305,7 @@ function bindCreateAndDeleteHandlers() {
     if (!m) return;
     e.preventDefault();
     const ideaId = m[1];
-    // If the form defines an onsubmit handler (inline confirm), invoke it
+    // Wenn das Formular einen onsubmit-Handler definiert (inline confirm), ausführen
     if (typeof form.onsubmit === 'function') {
       try {
         const ok = form.onsubmit();
@@ -335,13 +323,13 @@ function bindCreateAndDeleteHandlers() {
         console.error('Delete failed', resp.status);
         return;
       }
-      // If JSON indicates deletion, remove card
+      // Wenn JSON eine Löschung anzeigt, Karte entfernen
       let removed = false;
       try {
         const j = await resp.json();
         if (j && j.deleted) removed = true;
       } catch (_) {
-        // if not JSON, assume success
+        // Falls kein JSON, Erfolg annehmen
         removed = true;
       }
       if (removed) {
@@ -374,7 +362,7 @@ function expandCard(card, ideaId) {
   card.querySelector('.expand-card').setAttribute('aria-expanded', 'true');
   window.currentlyExpandedCardId = ideaId;
 
-  // Set the hash for bookmarking
+  // Hash für Lesezeichen setzen
   history.replaceState(null, null, `#idea-${ideaId}`);
 
   // Avoid forced scroll jumps: only adjust scroll if the card is not fully visible
@@ -431,7 +419,7 @@ function initCommentReactionPopovers() {
     document.querySelectorAll('.emoji-popover.open').forEach(p => {
       p.classList.remove('open');
 
-      // move back from body to original parent (if we portaled it)
+      // Vom Body zurück zum ursprünglichen Elternelement verschieben (falls portiert)
       const parentSelector = p.getAttribute(PORTAL_ATTR);
       if (parentSelector) {
         const originalParent = document.querySelector(parentSelector);
@@ -439,7 +427,7 @@ function initCommentReactionPopovers() {
         p.removeAttribute(PORTAL_ATTR);
       }
 
-      // reset inline positioning
+      // Inline-Positionierung zurücksetzen
       p.style.position = '';
       p.style.top = '';
       p.style.left = '';
@@ -474,7 +462,7 @@ function initCommentReactionPopovers() {
     // Transformierte Vorfahren verändern das Verhalten von position:fixed. [web:267]
     const originalParent = popover.parentElement;
     if (originalParent) {
-      // store a stable selector to restore later
+      // Stabile Selektor-Referenz für spätere Wiederherstellung speichern
       if (!originalParent.id) originalParent.id = `emoji-popover-host-${commentId}`;
       popover.setAttribute(PORTAL_ATTR, `#${originalParent.id}`);
       document.body.appendChild(popover);
@@ -488,8 +476,8 @@ popover.classList.add('open');
     popover.classList.add('open');
     btn.setAttribute('aria-expanded', 'true');
 
-    // Position relative to viewport
-    // getBoundingClientRect() provides viewport-relative coordinates. [web:171]
+    // Position relativ zum Viewport
+    // getBoundingClientRect() liefert viewport-relative Koordinaten. [web:171]
     try {
       const btnRect = btn.getBoundingClientRect();
       const popRect = popover.getBoundingClientRect();
@@ -498,7 +486,7 @@ popover.classList.add('open');
       let top = Math.round(btnRect.top);
       let left = Math.round(btnRect.left - popRect.width - GAP);
 
-      // clamp within viewport
+      // Innerhalb des Viewports begrenzen
       left = Math.max(8, left);
       top = Math.max(8, top);
       if (top + popRect.height > window.innerHeight - 8) {
@@ -548,12 +536,12 @@ function checkDeepLink() {
 
 
   
-  // 1. Check if the idea is already present on page 1
+  // 1. Prüfen, ob die Idee bereits auf Seite 1 vorhanden ist
   const existingCard = document.querySelector(`.idea-card[data-id="${targetId}"]`);
   
   if (existingCard) {
    
-    // Only expand if not already expanded
+    // Nur erweitern, wenn nicht bereits expandiert
     if (!existingCard.classList.contains('expanded')) {
    
       expandCard(existingCard, targetId);
@@ -561,8 +549,7 @@ function checkDeepLink() {
     return;
   }
 
-  // 2. Idea not on page 1 → load the single card
- 
+  // 2. Idee nicht auf Seite 1 → Einzelkarte laden
   loadSingleIdeaCard(targetId);
 }
 
@@ -576,7 +563,7 @@ async function loadSingleIdeaCard(targetId) {
   try {
  
     
-    // Server endpoint for single card
+    // Server-Endpunkt für Einzelkarte
     const response = await fetch(`/ideas/${targetId}/card`);
     
     if (!response.ok) {
@@ -586,11 +573,11 @@ async function loadSingleIdeaCard(targetId) {
     
     const html = await response.text();
     
-    // Parse the response
+    // Antwort parsen
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     
-    // Find the idea card in the response
+    // Die Ideen-Karte in der Antwort finden
     const newCardHtml = doc.querySelector('.ideas-grid')?.innerHTML || 
                        html.match(/<article class="idea-card[\s\S]*?<\/article>/)?.[0] ||
                        '';
@@ -602,15 +589,15 @@ async function loadSingleIdeaCard(targetId) {
     
   
     
-    // Insert the card at the very top of the grid
+    // Karte ganz oben ins Grid einfügen
     const ideasGrid = document.querySelector('.ideas-grid');
     if (ideasGrid) {
       const temp2 = document.createElement('div');
       temp2.innerHTML = newCardHtml.trim();
       const parsedCard = temp2.querySelector('.idea-card');
 
-      // Attempt clone-based insertion so computed styles, pseudo-states and
-      // HTMX bindings initialize the same way as live-updated cards.
+      // Klon-basierte Einfügung versuchen, damit berechnete Styles, Pseudozustände und
+      // HTMX-Bindungen wie bei Live-Updates initialisiert werden.
       const template = document.querySelector('.idea-card');
       if (template && parsedCard) {
         const clone = template.cloneNode(true);
@@ -618,7 +605,7 @@ async function loadSingleIdeaCard(targetId) {
         clone.setAttribute('data-id', String(targetId));
         try { clone.innerHTML = parsedCard.innerHTML; } catch (e) {}
 
-        // Insert hidden, then reveal so CSS/pseudo-states take effect
+        // Versteckt einfügen, dann einblenden, damit CSS/Pseudozustände greifen
         try { clone.style.visibility = 'hidden'; } catch (e) {}
         
         const firstCard = ideasGrid.querySelector('.idea-card');
@@ -627,7 +614,7 @@ async function loadSingleIdeaCard(targetId) {
 
         try { if (window.htmx) htmx.process(clone); } catch (e) {}
 
-        // Reveal with a small entrance animation
+        // Mit kleiner Einblend-Animation anzeigen
 
         setTimeout(() => {
           try { clone.style.visibility = 'visible'; } catch (e) {}
@@ -663,7 +650,7 @@ async function loadSingleIdeaCard(targetId) {
         } catch (e) {}
       }
 
-      // Wait for the DOM update, then expand and load comments
+      // Auf DOM-Update warten, dann erweitern und Kommentare laden
 
       setTimeout(() => {
         const card = document.querySelector(`.idea-card[data-id="${targetId}"]`);
@@ -703,17 +690,16 @@ function ensureSingleCard(ideaId) {
   const cards = Array.from(document.querySelectorAll(`.idea-card[data-id="${ideaId}"]`));
   if (cards.length <= 1) return;
 
-  // Keep the one that is already 'revealed' (visible) or just the first one
+  // Diejenige behalten, die bereits 'revealed' (sichtbar) ist, oder einfach die erste
 
   cards.slice(1).forEach(c => c.remove());
 }
 
-// Übernehme aufgelöste/abgeleitete Styles von einer existierenden `.idea-card` und wende sie an
-// them as inline styles on `card`. This ensures newly-inserted cards
-// carry the same transition/transform/border/etc. values immediately
-// without waiting for stylesheet application, avoiding instant state
-// jumps on hover or other transitions.
-// removed computed-style initializer; cloning approach used instead
+// Übernehme aufgelöste/abgeleitete Styles von einer existierenden `.idea-card` und wende sie
+// als Inline-Styles auf `card` an. Dadurch erhalten neu eingefügte Karten sofort
+// dieselben Transition/Transform/Border-Werte, ohne auf die Style-Anwendung des Stylesheets
+// warten zu müssen, was Zustandssprünge bei Hover oder anderen Transitionen vermeidet.
+// Entfernt: computed-style-initializer; stattdessen wird der Klon-Ansatz verwendet.
 
   // Global modal functions
   /**
@@ -753,11 +739,11 @@ function ensureSingleCard(ideaId) {
     modal.style.display = 'none';
     document.getElementById('idea-edit-modal-content').innerHTML = '';
     
-    // Restore body scroll
+    // Body-Scroll wiederherstellen
     document.body.style.overflow = '';
   };
 
-  // Close modal on ESC key
+  // Modal bei ESC-Taste schließen
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       const modal = document.getElementById('idea-edit-modal');
@@ -767,7 +753,7 @@ function ensureSingleCard(ideaId) {
     }
   });
 
-  // Close modal when clicking outside
+  // Modal bei Klick außerhalb schließen
   document.getElementById('idea-edit-modal').addEventListener('click', function(e) {
     if (e.target === this) {
       closeIdeaEditModal();
@@ -785,23 +771,23 @@ function ensureSingleCard(ideaId) {
     }
   });
 
-  // When HTMX swaps the ideas content (search / filter), reset the load-more button
+  // Wenn HTMX den Ideen-Inhalt austauscht (Suche/Filter), Load-More-Button zurücksetzen
   document.body.addEventListener('htmx:afterSwap', function(event) {
     try {
       const target = event.detail?.target;
       if (!target) return;
 
-      // If the swap affected #ideas-content (outerHTML swap), reset the button
+      // Wenn der Swap #ideas-content betroffen hat (outerHTML), Button zurücksetzen
       if (target.id === 'ideas-content' || target.closest && target.closest('#ideas-content')) {
         const btn = document.getElementById('load-more-chunk');
         if (!btn) return;
 
-        // Reset to first-following page
+        // Auf die erste Folgeseite zurücksetzen
         btn.setAttribute('data-page', '2');
         btn.disabled = false;
         btn.innerText = 'Mehr laden';
 
-        // If there are no idea cards at all, disable and show appropriate text
+        // Wenn es gar keine Ideen-Karten gibt, deaktivieren und passenden Text anzeigen
         const grid = document.querySelector('.ideas-grid');
         const any = grid && grid.querySelector('.idea-card');
         if (!any) {
@@ -810,7 +796,7 @@ function ensureSingleCard(ideaId) {
         }
       }
     } catch (e) {
-      console.error('Error resetting load-more button after HTMX swap:', e);
+      console.error('Fehler beim Zurücksetzen des Load-More-Buttons nach HTMX-Swap:', e);
     }
   });
 
@@ -856,7 +842,7 @@ function expandCardFromHash() {
   const card = document.getElementById(`idea-${ideaId}`);
   if (!card) return;
 
-  // Expand the card UI using existing classes/behavior
+  // Karten-UI mit vorhandenen Klassen/Verhalten erweitern
   card.classList.add('expanded');
   const expanded = card.querySelector('.idea-expanded');
   if (expanded) expanded.classList.remove('hidden');
@@ -864,21 +850,21 @@ function expandCardFromHash() {
   const btn = card.querySelector('.expand-card');
   if (btn) btn.setAttribute('aria-expanded', 'true');
 
-  // Load comments
+  // Kommentare laden
   ensureCommentsLoaded(ideaId);
 }
 
 document.addEventListener('DOMContentLoaded', expandCardFromHash);
 window.addEventListener('hashchange', expandCardFromHash);
 
-// HTMX history cache error handler: log and disable hx-push-url on the filter
-// form to avoid repeated history snapshot failures after dynamic OOB swaps.
+// HTMX History-Cache-Fehlerbehandlung: loggen und hx-push-url am Filter-Formular deaktivieren,
+// um wiederholte History-Snapshot-Fehler nach dynamischen OOB-Swaps zu vermeiden.
 document.addEventListener('htmx:historyCacheError', function (evt) {
   try {
     console.warn('htmx historyCacheError:', evt && evt.detail ? evt.detail : evt);
     const filterForm = document.getElementById('filterForm');
     if (filterForm && filterForm.hasAttribute('hx-push-url')) {
-      // Disable push-url to avoid future history snapshot attempts that may fail
+      // push-url deaktivieren, um zukünftige History-Snapshot-Versuche zu vermeiden
       filterForm.removeAttribute('hx-push-url');
       console.info('Disabled hx-push-url on #filterForm to avoid history cache errors.');
     }
@@ -909,7 +895,7 @@ async function loadMoreChunk(btn) {
     
     console.log('[DEBUG] Loading page', page, 'from', baseUrl);
     
-    // Collect filter form data
+    // Filter-Formular-Daten sammeln
     const filterForm = document.getElementById('filterForm');
     const params = new URLSearchParams();
     if (filterForm) {
@@ -935,11 +921,11 @@ async function loadMoreChunk(btn) {
     
     if (!data || typeof data.html !== 'string') throw new Error('Invalid JSON response');
 
-    // Insert HTML
+    // HTML einfügen
     const grid = document.querySelector('.ideas-grid');
     let insertedCount = 0;
     if (grid) {
-      // Remove empty state if it exists
+      // Leeren-Zustand entfernen, falls vorhanden
       const empty = grid.querySelector('.ideas-empty-state');
       if (empty) empty.remove();
 
@@ -977,12 +963,12 @@ async function loadMoreChunk(btn) {
     // es gibt weitere Seiten und erhöhen lokal die `data-page`.
     const ASSUMED_CHUNK_SIZE = 50; // entspricht serverseitigem Default
     if (!data.nextPage && insertedCount >= ASSUMED_CHUNK_SIZE) {
-      // assume there are more pages
+      // Es gibt vermutlich weitere Seiten
       data.nextPage = page + 1;
       console.warn('[DEBUG] Server returned no nextPage but inserted full chunk — assuming more pages');
     }
 
-      // Update button - NIE AUSBLENDEN, nur deaktivieren wenn keine weitere Seite
+      // Button aktualisieren - NIE AUSBLENDEN, nur deaktivieren wenn keine weitere Seite
       if (data.nextPage) {
         btn.setAttribute('data-page', data.nextPage);
         btn.disabled = false;
@@ -1016,7 +1002,7 @@ async function loadMoreChunk(btn) {
     function start(e) {
       if (timer) clearTimeout(timer);
       
-      // Visual feedback
+      // Visuelles Feedback
       el.classList.add('tag-press');
       
       const touch = (e.touches && e.touches[0]) || e;
@@ -1034,14 +1020,14 @@ async function loadMoreChunk(btn) {
         }
         
         if (window.htmx) {
-          // Use HTMX to delete and update modal content
+          // HTMX zum Löschen und Aktualisieren des Modal-Inhalts verwenden
           htmx.ajax('POST', `/ideas/${ideaId}/tags/delete-single`, {
             values: { tagName: tagName },
             target: '#idea-edit-modal-content',
             swap: 'innerHTML'
           });
           
-          // Also refresh the background card
+          // Auch die Hintergrundkarte aktualisieren
           htmx.ajax('GET', `/ideas/${ideaId}/card`, {
             target: `#idea-${ideaId}`,
             swap: 'outerHTML'
@@ -1081,7 +1067,7 @@ async function loadMoreChunk(btn) {
 
     tags.forEach(t => {
       if (!t.dataset.tag) t.dataset.tag = t.textContent.replace(/^#/, '').trim();
-      // Only attach if not already attached (simple check)
+      // Nur anhängen, wenn nicht bereits geschehen (einfache Prüfung)
       if (!t.dataset.longPressBound) {
         t.dataset.longPressBound = 'true';
         t.style.cursor = 'pointer';
@@ -1091,12 +1077,11 @@ async function loadMoreChunk(btn) {
     });
   }
 
-  // Run on load and after any HTMX swap
+  // Beim Laden und nach jedem HTMX-Swap ausführen
   document.addEventListener('DOMContentLoaded', initModalTags);
   document.addEventListener('htmx:afterSwap', initModalTags);
   
-  // Also run when the modal is opened manually via fetch
-  
+  // Auch ausführen, wenn das Modal manuell per Fetch geöffnet wird
   const observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       if (mutation.type === 'childList' && mutation.target.id === 'idea-edit-modal-content') {
@@ -1114,12 +1099,12 @@ async function loadMoreChunk(btn) {
 })();
 
 
-// Deprecated: global toggle removed — related client-side logic discarded.
+// Veraltet: globaler Toggle entfernt — zugehörige Client-Logik verworfen.
 
 
-// Export: helper for SSE / dynamic inserts
-// This function briefly prepares newly-inserted cards and then makes them visible
-// so that CSS transitions reliably take effect.
+// Export: Helfer für SSE / dynamische Einfügungen
+// Diese Funktion bereitet neu eingefügte Karten kurz vor und macht sie dann sichtbar,
+// damit CSS-Transitionen zuverlässig greifen.
 
 /**
  * Bereitet neu eingefügte Karten für CSS-Transitionen vor.
@@ -1127,22 +1112,20 @@ async function loadMoreChunk(btn) {
  * @returns {void}
  */
 window.copyIdeaCardComputedStyles = function (card) {
-  // Accepts only real DOM elements.
+  // Akzeptiert nur echte DOM-Elemente.
   if (!card || card.nodeType !== 1) return;
 
   try {
-    // Use the existing CSS hooks `.fresh-card` / `.fresh-card.visible`.
-    // The `.fresh-card` class hides the element briefly and enables `will-change`
-   
+    // Vorhandene CSS-Hooks `.fresh-card` / `.fresh-card.visible` verwenden.
+    // Die Klasse `.fresh-card` blendet das Element kurz aus und aktiviert `will-change`.
     card.classList.add('fresh-card');
 
-    // Trigger a reflow so styles are applied.
+    // Reflow auslösen, damit Styles angewendet werden
     void card.offsetWidth;
 
-  
     card.classList.add('visible');
 
-    // Remove temporary classes after completion.
+    // Temporäre Klassen nach Abschluss entfernen
 
     setTimeout(() => {
       try {
