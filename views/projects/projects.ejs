@@ -85,7 +85,7 @@
       <div id="projectsList"
         hx-get="/projects/fragment"
         hx-include="#projectFilterForm"
-        hx-trigger="every 11s"
+        hx-trigger="load, every 11s"
         hx-swap="innerHTML">
     <div class="loading-state skeleton-grid" aria-hidden="true">
       <!-- Skeleton placeholders to reserve layout space and avoid CLS on first load -->
