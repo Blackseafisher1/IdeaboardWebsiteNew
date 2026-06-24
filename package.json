@@ -33,16 +33,20 @@
     "express": "5.2.1",
     "express-rate-limit": "^8.3.1",
     "express-session": "1.18.2",
-    "fuse.js": "7.1.0",
+
     "ioredis": "5.9.2",
     "mariadb": "3.4.5",
     "multer": "^2.1.1",
-    "pm2": "^6.0.14",
-    "uuid": "13.0.0"
+    "pm2": "^5.3.1",
+    "uuid": "^13.0.2"
   },
   "devDependencies": {
-    "esbuild": "^0.27.3",
+    "esbuild": "^0.28.1",
     "jsdoc": "4.0.5",
     "nodemon": "3.1.14"
+  },
+  "allowScripts": {
+    "argon2@0.44.0": true,
+    "esbuild@0.28.1": true
   }
 }
