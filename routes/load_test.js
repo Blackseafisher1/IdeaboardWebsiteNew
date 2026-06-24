@@ -38,7 +38,7 @@ function firstQueryValue(v, fallback = '') {
  * @function normalizeSort
  */
 function normalizeSort(sortKey) {
-  // minimal whitelist - mirror of main app, but reduced
+  // Minimale Whitelist – Spiegel der Haupt-App, aber reduziert
   const SORT_WHITELIST = {
     latest: 'i.created_at DESC, i.idea_id DESC',
     oldest: 'i.created_at ASC, i.idea_id ASC',

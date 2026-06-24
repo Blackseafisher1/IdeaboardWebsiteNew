@@ -124,8 +124,8 @@ router.get('/', asyncHandler(async (req, res) => {
     }
     if (req.isHtmx && page === 1) {
       // For HTMX partial swaps we must NOT include the external load-more button
-      // in the response body, otherwise repeated swaps will append another
-      // button to the page. Tell the partial not to render the button.
+      // im Antwortbody, sonst hängen wiederholte Swaps einen weiteren
+      // Button an die Seite. Partial mitteilen, den Button nicht zu rendern.
       templateData.renderLoadMoreButton = false;
       return res.render('ideas/_content', templateData);
     }
