@@ -28,6 +28,12 @@
   </div>
 <% } else if (!projects || projects.length === 0) { %>
   <div class="empty-state">
-    <p>Keine Projekte gefunden.</p>
+    <p>
+      <% if (currentSearch && currentSearch.trim()) { %>
+        Keine Projekte gefunden f&uuml;r &bdquo;<strong><%= currentSearch %></strong>&rdquo;.
+      <% } else { %>
+        Keine Projekte gefunden.
+      <% } %>
+    </p>
   </div>
 <% } %>

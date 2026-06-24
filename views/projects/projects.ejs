@@ -110,7 +110,7 @@
         hx-get="/projects/fragment"
         data-page="<%= currentPage || 1 %>"
         data-poll-interval="11000"
-        hx-include="#projectSearchInput, #currentStatus"
+        hx-include="#projectSearchInput, #currentStatus, #isUserOnlyInput"
         hx-trigger="load, every 11s"
         hx-swap="innerHTML">
     <div class="loading-state skeleton-grid" aria-hidden="true">

@@ -1,7 +1,13 @@
 <div id="ideas-content">
   <section class="ideas-grid" aria-live="polite">
     <% if (!ideas || ideas.length === 0) { %>
-      <p class="muted ideas-empty-state">Keine Ergebnisse gefunden.</p>
+      <p class="muted ideas-empty-state">
+        <% if (q && q.trim()) { %>
+          Keine Ergebnisse gefunden f&uuml;r &bdquo;<strong><%= q %></strong>&rdquo;.
+        <% } else { %>
+          Keine Ergebnisse gefunden.
+        <% } %>
+      </p>
     <% } else { %>
       <!-- Include der Liste (Page 1) -->
       <%- include('_list') %>

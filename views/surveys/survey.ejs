@@ -40,8 +40,13 @@
     <div class="filter-container hero-overlap-next">
       <div class="filter-controls">
         <div class="search-wrapper">
-          <form id="searchForm" class="search-form">
+          <form id="searchForm" class="search-form"
+            hx-get="/surveys/fragment"
+            hx-target="#surveysList"
+            hx-swap="innerHTML"
+            hx-trigger="submit">
             <input type="hidden" name="type" id="currentType" value="<%= currentType || 'all' %>">
+            <input type="hidden" name="page" id="currentPage" value="1">
             <div style="display: flex; gap: 8px;">
                    <input type="text" 
                      name="search" 
@@ -49,11 +54,7 @@
                      class="input"
                      placeholder="Suche nach Titel, Beschreibung oder Ersteller..."
                      value="<%= search || '' %>"
-                     hx-get="/surveys/fragment"
-                    hx-trigger="keyup changed delay:1000ms"
-                     hx-target="#surveysList"
-                     hx-include="#currentType"
-                     hx-vals='{"page":1}'
+                     oninput="document.getElementById('currentPage').value='1'; htmx.trigger('#searchForm', 'submit')"
                      >
               
               <button type="button" 
@@ -67,28 +68,16 @@
         </div>
               <div class="filter-buttons">
           <button type="button" class="filter-btn <%= currentType === 'all' ? 'active' : '' %>" data-type="all"
-            hx-get="/surveys/fragment"
-            hx-target="#surveysList"
-            hx-include="#surveySearchInput"
-            hx-vals='{"type":"all","page":1}'>Alle Umfragen</button>
+            onclick="document.getElementById('currentType').value='all'; document.getElementById('currentPage').value='1'; htmx.trigger('#searchForm', 'submit')">Alle Umfragen</button>
   
           <button type="button" class="filter-btn <%= currentType === 'public' ? 'active' : '' %>" data-type="public"
-            hx-get="/surveys/fragment"
-            hx-target="#surveysList"
-            hx-include="#surveySearchInput"
-            hx-vals='{"type":"public","page":1}'>Öffentlich</button>
+            onclick="document.getElementById('currentType').value='public'; document.getElementById('currentPage').value='1'; htmx.trigger('#searchForm', 'submit')">Öffentlich</button>
   
           <button type="button" class="filter-btn <%= currentType === 'private' ? 'active' : '' %>" data-type="private"
-            hx-get="/surveys/fragment"
-            hx-target="#surveysList"
-            hx-include="#surveySearchInput"
-            hx-vals='{"type":"private","page":1}'>Privat</button>
+            onclick="document.getElementById('currentType').value='private'; document.getElementById('currentPage').value='1'; htmx.trigger('#searchForm', 'submit')">Privat</button>
   
           <button type="button" class="filter-btn <%= currentType === 'my' ? 'active' : '' %>" data-type="my"
-            hx-get="/surveys/fragment"
-            hx-target="#surveysList"
-            hx-include="#surveySearchInput"
-            hx-vals='{"type":"my","page":1}'>Meine Umfragen</button>
+            onclick="document.getElementById('currentType').value='my'; document.getElementById('currentPage').value='1'; htmx.trigger('#searchForm', 'submit')">Meine Umfragen</button>
               </div>
       </div>
     </div>
@@ -97,11 +86,11 @@
   <!-- Surveys Grid -->
   <section class="surveys-grid" aria-live="polite">
             <div id="surveysList"
-              hx-get="/surveys/fragment?type=<%= currentType || 'all' %>&search=<%= encodeURIComponent(search || '') %>&page=<%= currentPage || 1 %>"
-              data-page="<%= currentPage || 1 %>"
-              data-fragment-url="/surveys/fragment?type=<%= currentType || 'all' %>&search=<%= encodeURIComponent(search || '') %>&page=<%= currentPage || 1 %>"
-               hx-trigger="load, every 15s"
-              hx-swap="innerHTML">
+              hx-get="/surveys/fragment"
+              hx-include="#searchForm"
+              hx-trigger="load, every 15s"
+              hx-swap="innerHTML"
+              hx-indicator="#surveysList">
       <div class="loading-state skeleton-grid" aria-hidden="true">
         <% for (let i = 0; i < 4; i++) { %>
           <article class="survey-card skeleton">
