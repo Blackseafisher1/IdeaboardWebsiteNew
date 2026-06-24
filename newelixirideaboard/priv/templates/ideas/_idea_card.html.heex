@@ -40,7 +40,7 @@
       hx-target="#comments-section-<%= @idea.idea_id %>"
       hx-swap="outerHTML">Kommentare</button>
     <div id="stats-<%= @idea.idea_id %>" hx-get="/ideas/<%= @idea.idea_id %>/stats" hx-trigger="load" hx-target="#idea-stats-<%= @idea.idea_id %>" hx-swap="outerHTML">
-      <%= IdeaBoard.Renderer.render_partial_string("ideas/_idea_stats", %{stats: %{like_count: 0, dislike_count: 0, comment_count: 0, idea_id: @idea.idea_id}}) %>
+      <%= IdeaBoard.Renderer.render_partial("ideas/_idea_stats", %{stats: %{like_count: 0, dislike_count: 0, comment_count: 0, idea_id: @idea.idea_id}}) %>
     </div>
   </footer>
 
