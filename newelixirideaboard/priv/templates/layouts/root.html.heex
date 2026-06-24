@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-theme="<%= if assigns[:user] do %>light<% else %>light<% end %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= assigns[:title] || "Ideenboard" %></title>
+  <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <script>try{var t=localStorage.getItem('theme');if(!t){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;document.documentElement.style.backgroundColor=t==='dark'?'#1e1e1e':'#f2f4f7'}catch(e){}</script>
   <script src="/js/dist/early-theme-blur.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" defer></script>
 </head>
 <body data-user-id="<%= if user = assigns[:user] do %><%= Map.get(user, :user_id) %><% end %>">
   <input type="checkbox" id="site-blur-toggle" class="site-blur-toggle" hidden aria-hidden="true">
@@ -68,8 +73,9 @@
   </main>
 
   <script src="/js/dist/blur-toggle.min.js" defer></script>
+  <script src="/js/index.js" defer></script>
   <%= if user do %>
-    <script src="/js/dist/ideasClient.min.js" defer></script>
+    <script src="/js/ideasClient.js" defer></script>
   <% end %>
 </body>
 </html>

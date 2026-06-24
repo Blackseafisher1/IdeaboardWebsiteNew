@@ -1,0 +1,6 @@
+<div class="idea-stats">
+  <button class="btn-like" hx-post="/ideas/<%= @stats.idea_id %>/like" hx-target="#stats-<%= @stats.idea_id %>" hx-swap="outerHTML">
+    👍 <%= @stats.like_count || 0 %>
+  </button>
+  <span>💬 <%= @stats.comment_count || 0 %></span>
+</div>

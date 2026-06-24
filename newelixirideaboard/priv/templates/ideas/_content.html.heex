@@ -1,0 +1,14 @@
+<div id="ideas-content" aria-live="polite">
+  <%= if @ideas == [] do %>
+    <div class="empty-state"><p>Keine Ideen gefunden.</p></div>
+  <% else %>
+    <div class="ideas-grid">
+      <%= for idea <- @ideas do %>
+        <%= IdeaBoard.Renderer.render_partial("ideas/_idea_card", %{idea: idea, user: @user}) %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+<%= if @has_next do %>
+  <button class="btn load-more" data-page="<%= @page + 1 %>" data-url="/ideas/chunk" onclick="loadMoreChunk(this)">Mehr laden</button>
+<% end %>

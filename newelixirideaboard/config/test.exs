@@ -7,7 +7,7 @@ config :newelixirideaboard,
   db_port: 3306,
   db_user: "ideaboard",
   db_password: "3629",
-  db_database: "ideaboard_test",
+  db_database: "ideaboard",
   session_salt: "test_salt_abcdefgh",
   session_secret: "test_secret_abcdefghijklmnopqrstuvwxyz1234",
   secret_key_base: "test_secret_key_base_64_chars_minimum_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

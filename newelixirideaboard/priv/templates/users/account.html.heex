@@ -1,0 +1,30 @@
+<div class="account-page">
+  <h1>Account</h1>
+
+  <%= if user = assigns[:user] do %>
+    <p><strong>Benutzername:</strong> <%= user.username %></p>
+    <p><strong>Rolle:</strong> <%= user.role_name %></p>
+    <p><strong>E-Mail:</strong> <%= user.email %></p>
+
+    <hr>
+
+    <h2>Benutzername ändern</h2>
+    <%= if assigns[:error] do %>
+      <div class="error-msg"><%= assigns[:error] %></div>
+    <% end %>
+    <form action="/users/account" method="POST">
+      <input type="text" name="username" value="<%= user.username %>" required>
+      <button type="submit">Speichern</button>
+    </form>
+
+    <h2>Passwort ändern</h2>
+    <%= if assigns[:pw_error] do %>
+      <div class="error-msg"><%= assigns[:pw_error] %></div>
+    <% end %>
+    <form action="/users/password" method="POST">
+      <input type="password" name="current_password" placeholder="Aktuelles Passwort" required>
+      <input type="password" name="new_password" placeholder="Neues Passwort" required>
+      <button type="submit">Passwort ändern</button>
+    </form>
+  <% end %>
+</div>

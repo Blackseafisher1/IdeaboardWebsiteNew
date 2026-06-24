@@ -15,6 +15,37 @@ defmodule IdeaBoard.Repo do
     result
   end
 
+  def query_maps(sql, params \\ []) do
+    case query(sql, params) do
+      {:ok, %{columns: cols, rows: rows}} ->
+        maps = Enum.map(rows || [], fn row ->
+          cols
+          |> Enum.zip(row)
+          |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
+        end)
+        {:ok, maps}
+
+      {:error, reason} ->
+        {:error, reason}
+
+      other ->
+        {:error, "unexpected query_maps result: #{inspect(other)}"}
+    end
+  rescue
+    e -> {:error, Exception.message(e)}
+  end
+
+  def query_map(sql, params \\ []) do
+    case query_maps(sql, params) do
+      {:ok, [map | _]} -> {:ok, map}
+      {:ok, []} -> {:ok, nil}
+      {:error, reason} -> {:error, reason}
+      other -> {:error, "unexpected query_map result: #{inspect(other)}"}
+    end
+  rescue
+    e -> {:error, Exception.message(e)}
+  end
+
   def child_spec(_opts) do
     host = Application.get_env(:newelixirideaboard, :db_host, "127.0.0.1")
     port = Application.get_env(:newelixirideaboard, :db_port, 3306)
@@ -33,7 +64,9 @@ defmodule IdeaBoard.Repo do
       port: port,
       username: user,
       password: password,
-      database: database
+      database: database,
+      queue_target: 500,
+      queue_interval: 100
     )
   end
 

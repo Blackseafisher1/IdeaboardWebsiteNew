@@ -1,28 +1,60 @@
-<h1>Ideen</h1>
+<link rel="stylesheet" href="/css/ideas.css">
 
-<div id="ideas-page" hx-ext="ws" ws-connect="/ws">
-  <form phx-change="filter">
+<div class="ideas-page">
+  <div class="ideas-hero">
+    <h1>Ideen</h1>
+    <button class="btn primary" onclick="document.getElementById('create-modal').showModal()">Neue Idee</button>
+  </div>
+
+  <form class="ideas-filters" hx-get="/ideas" hx-target="#ideas-content" hx-trigger="change, keyup delay:500ms" hx-push-url="true">
     <input type="text" name="q" placeholder="Suche..." value="<%= @filters.q %>">
     <select name="category_id">
       <option value="">Alle Kategorien</option>
       <%= for cat <- @categories do %>
-        <option value="<%= cat.category_id %>"><%= cat.name %></option>
+        <option value="<%= cat.category_id %>" <%= if @filters.category_id == cat.category_id, do: "selected" %>><%= cat.name %></option>
       <% end %>
     </select>
     <select name="sort">
-      <option value="latest">Neueste</option>
-      <option value="oldest">Älteste</option>
-      <option value="likes">Meiste Likes</option>
+      <option value="latest" <%= if @filters.sort == "latest", do: "selected" %>>Neueste</option>
+      <option value="oldest" <%= if @filters.sort == "oldest", do: "selected" %>>Älteste</option>
+      <option value="likes" <%= if @filters.sort == "likes", do: "selected" %>>Meiste Likes</option>
     </select>
   </form>
 
-  <div id="ideas-list">
-    <%= for idea <- @ideas do %>
-      <div class="idea-card">
-        <h3><%= idea.title %></h3>
-        <p><%= idea.description %></p>
-        <span><%= idea.author_username %></span>
+  <div id="ideas-content" aria-live="polite">
+    <%= if @ideas == [] do %>
+      <div class="empty-state"><p>Keine Ideen gefunden.</p></div>
+    <% else %>
+      <div class="ideas-grid">
+        <%= for idea <- @ideas do %>
+          <%= IdeaBoard.Renderer.render_partial("ideas/_idea_card", %{idea: idea, user: @user}) %>
+        <% end %>
       </div>
     <% end %>
   </div>
+
+  <%= if @has_next do %>
+    <button class="btn load-more" data-page="<%= @page + 1 %>" data-url="/ideas/chunk" onclick="loadMoreChunk(this)">Mehr laden</button>
+  <% end %>
 </div>
+
+<dialog id="create-modal">
+  <form action="/ideas" method="POST" hx-post="/ideas" hx-target="#ideas-content" hx-swap="afterbegin">
+    <h2>Neue Idee</h2>
+    <input type="text" name="title" placeholder="Titel" required>
+    <textarea name="description" placeholder="Beschreibung"></textarea>
+    <select name="category_id">
+      <option value="">Kategorie wählen</option>
+      <%= for cat <- @categories do %>
+        <option value="<%= cat.category_id %>"><%= cat.name %></option>
+      <% end %>
+    </select>
+    <input type="text" name="tags" placeholder="Tags (kommagetrennt)">
+    <button type="submit" class="btn primary">Erstellen</button>
+    <button type="button" onclick="this.closest('dialog').close()">Abbrechen</button>
+  </form>
+</dialog>
+
+<div id="idea-edit-modal"></div>
+
+<script src="/js/ideasClient.js" defer></script>

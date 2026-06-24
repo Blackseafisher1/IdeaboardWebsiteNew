@@ -1,0 +1,10 @@
+<li class="comment-item">
+  <div class="comment-meta">
+    <strong><%= @comment.author_username %></strong>
+    <span><%= @comment.created_at %></span>
+  </div>
+  <p><%= @comment.text %></p>
+  <%= if @user && @user.user_id == @comment.user_id do %>
+    <button class="btn-delete" hx-post="/ideas/<%= @comment.idea_id %>/comment/<%= @comment.comment_id %>/delete">Löschen</button>
+  <% end %>
+</li>

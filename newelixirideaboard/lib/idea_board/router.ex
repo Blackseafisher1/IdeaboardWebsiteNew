@@ -48,8 +48,44 @@ defmodule IdeaBoard.Router do
     IdeaBoard.PageController.call(conn, :static_page)
   end
 
+  get "/users/account" do
+    IdeaBoard.UserController.call(conn, :index)
+  end
+
+  post "/users/account" do
+    IdeaBoard.UserController.call(conn, :update_profile)
+  end
+
+  post "/users/password" do
+    IdeaBoard.UserController.call(conn, :change_password)
+  end
+
   get "/ideas" do
     IdeaBoard.IdeasController.call(conn, :index)
+  end
+
+  post "/ideas" do
+    IdeaBoard.IdeasController.call(conn, :create)
+  end
+
+  post "/ideas/:idea_id/edit" do
+    IdeaBoard.IdeasController.call(conn, :edit)
+  end
+
+  post "/ideas/:idea_id/delete" do
+    IdeaBoard.IdeasController.call(conn, :delete)
+  end
+
+  post "/ideas/:idea_id/like" do
+    IdeaBoard.IdeasController.call(conn, :like)
+  end
+
+  get "/ideas/:idea_id/stats" do
+    IdeaBoard.IdeasController.call(conn, :stats)
+  end
+
+  get "/ideas/chunk" do
+    IdeaBoard.IdeasController.call(conn, :chunk)
   end
 
   get "/ideas/files/:file_id/download" do

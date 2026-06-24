@@ -24,6 +24,8 @@ defmodule IdeaBoardTest do
     conn = :get |> conn("/users/auth") |> IdeaBoard.Endpoint.call(@opts)
     assert conn.status == 200
     assert conn.resp_body =~ "Login"
+    assert conn.resp_body =~ "Registrieren"
+    assert conn.resp_body =~ "auth-card"
   end
 
   test "login missing fields" do
@@ -65,5 +67,41 @@ defmodule IdeaBoardTest do
   test "admin 403" do
     conn = :get |> conn("/admin") |> IdeaBoard.Endpoint.call(@opts)
     assert conn.status == 403
+  end
+
+  test "ideas page renders when not logged in" do
+    conn = :get |> conn("/ideas") |> IdeaBoard.Endpoint.call(@opts)
+    assert conn.status == 200
+    assert conn.resp_body =~ "Ideen"
+  end
+
+  test "account page redirects when not logged in" do
+    conn = :get |> conn("/users/account") |> IdeaBoard.Endpoint.call(@opts)
+    assert conn.status == 302
+  end
+
+  test "projects page renders when not logged in" do
+    conn = :get |> conn("/projects") |> IdeaBoard.Endpoint.call(@opts)
+    assert conn.status == 200
+  end
+
+  test "surveys page renders when not logged in" do
+    conn = :get |> conn("/surveys") |> IdeaBoard.Endpoint.call(@opts)
+    assert conn.status == 200
+  end
+
+  test "dashboard page redirects when not logged in" do
+    conn = :get |> conn("/dashboard") |> IdeaBoard.Endpoint.call(@opts)
+    assert conn.status == 302
+  end
+
+  test "dms page redirects when not logged in" do
+    conn = :get |> conn("/dms") |> IdeaBoard.Endpoint.call(@opts)
+    assert conn.status == 302
+  end
+
+  test "groups page redirects when not logged in" do
+    conn = :get |> conn("/groups") |> IdeaBoard.Endpoint.call(@opts)
+    assert conn.status == 302
   end
 end

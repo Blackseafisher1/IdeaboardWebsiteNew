@@ -1,7 +1,11 @@
 defmodule IdeaBoard.AdminService do
   def get_dashboard(_user) do
-    {:ok, u} = IdeaBoard.Repo.query("SELECT user_id, username, email, role_id, created_at FROM users ORDER BY created_at DESC")
-    {:ok, i} = IdeaBoard.Repo.query("SELECT idea_id, title, user_id, status, created_at FROM ideas ORDER BY created_at DESC")
-    %{users: u.rows || [], ideas: i.rows || []}
+    try do
+      {:ok, users} = IdeaBoard.Repo.query_maps("SELECT user_id, username, email, role_id, created_at FROM users ORDER BY created_at DESC")
+      {:ok, ideas} = IdeaBoard.Repo.query_maps("SELECT idea_id, title, user_id, status, created_at FROM ideas ORDER BY created_at DESC")
+      %{users: users || [], ideas: ideas || []}
+    rescue
+      _e in [DBConnection.ConnectionError, ArgumentError, MyXQL.Error] -> %{users: [], ideas: []}
+    end
   end
 end
