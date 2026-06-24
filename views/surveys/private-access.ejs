@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title %></title>
+  
+  <link rel="stylesheet" href="/css/surveys.css">
+
+  <% if (authz.isAdmin(user) && surveyId) { %>
+    <script>
+      // ersetzt die aktuelle Seite in der History
+      window.location.replace('/surveys/<%= surveyId %>');
+    </script>
+  <% } %>
+  <%- include('../partials/head') %>
+</head>
+
+<body>
+<%- include('../partials/header') %>
+
+<% if (authz.isAdmin(user) && surveyId) { %>
+  <main class="private-access-page">
+    <div class="access-container">
+      <h1>Private Umfrage</h1>
+      <p>Admin-Zugriff erkannt – Weiterleitung…</p>
+      <noscript>
+        <p>JavaScript ist deaktiviert. Öffne direkt:</p>
+        <a href="/surveys/<%= surveyId %>">Zur Umfrage</a>
+      </noscript>
+    </div>
+  </main>
+<% } else { %>
+
+  <main class="private-access-page">
+    <div class="access-container">
+      <h1>Private Umfrage</h1>
+
+      <p>Diese Umfrage ist privat. Bitte geben Sie den Zugangscode ein.</p>
+
+      <form action="/surveys/private" method="POST" class="private-access-form">
+        <% if (surveyId) { %>
+          <input type="hidden" name="surveyId" value="<%= surveyId %>">
+        <% } %>
+
+        <div class="form-group">
+          <label for="code" class="form-label">Zugangscode</label>
+          <input type="text" id="code" name="code" class="input" required
+                 placeholder="8-stelliger Code" minlength="8" maxlength="8"
+                 style="width: 200px; text-align: center; letter-spacing: 2px; font-size: 18px;">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Umfrage öffnen</button>
+          <a href="/surveys" class="btn btn-secondary">Zurück zu Umfragen</a>
+        </div>
+      </form>
+
+      <div class="access-help" style="margin-top: 20px; font-size: 14px; color: #666;">
+        <p><strong>Tipp:</strong> Der Zugangscode wurde vom Ersteller der Umfrage vergeben.</p>
+      </div>
+    </div>
+  </main>
+
+<% } %>
+
+<%- include('../partials/footer') %>
+
+<style>
+.private-access-page {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.access-container {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.private-access-form {
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border-radius: 4px;
+  text-decoration: none;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-primary {
+  background: #2196F3;
+  color: white;
+}
+
+.btn-secondary {
+  background: #757575;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #1976D2;
+}
+
+.btn-secondary:hover {
+  background: #616161;
+}
+</style>
+</body>
+</html>

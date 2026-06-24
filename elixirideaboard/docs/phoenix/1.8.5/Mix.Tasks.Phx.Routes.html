@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix v1.8.5">
+
+
+    <title>mix phx.routes — Phoenix v1.8.5</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-209F6654.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.8.5
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-task" id="main" data-type="tasks">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="true">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Latest</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="https://hexdocs.pm/?packages=plug%3Alatest%2Cphoenix%3Alatest%2Cphoenix_html%3Alatest%2Cphoenix_live_view%3Alatest%2Cphoenix_pubsub%3Alatest%2Cphoenix_template%3Alatest&q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Latest</span>
+                <span class="help">Search latest versions of Plug, Phoenix, Phoenix.{HTML, LiveView, PubSub, Template}</span>
+              </button>
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="false">
+                <span class="name">Current version</span>
+                <span class="help">Search only this project</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">mix phx.<wbr>routes</span> 
+      <small class="app-vsn" translate="no">(Phoenix v1.8.5)</small>
+
+    </h1>
+
+
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/mix/tasks/phx.routes.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Prints all routes for the default or a given router.
+Can also locate the controller function behind a specified url.</p><pre><code class="makeup shell" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.routes [ROUTER] [--info URL]
+</span></code></pre><p>The default router is inflected from the application
+name unless a configuration named <code class="inline">:namespace</code>
+is set inside your application configuration. For example,
+the configuration:</p><pre><code class="makeup elixir" translate="no"><span class="n">config</span><span class="w"> </span><span class="ss">:my_app</span><span class="p">,</span><span class="w">
+  </span><span class="ss">namespace</span><span class="p">:</span><span class="w"> </span><span class="nc">My.App</span></code></pre><p>will exhibit the routes for <code class="inline">My.App.Router</code> when this
+task is invoked without arguments.</p><p>Umbrella projects do not have a default router and
+therefore always expect a router to be given. An
+alias can be added to mix.exs to automate this:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defp</span><span class="w"> </span><span class="nf">aliases</span><span class="w"> </span><span class="k" data-group-id="5712208269-1">do</span><span class="w">
+  </span><span class="p" data-group-id="5712208269-2">[</span><span class="w">
+    </span><span class="ss">&quot;phx.routes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;phx.routes MyAppWeb.Router&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="c1"># aliases...</span><span class="w">
+  </span><span class="p" data-group-id="5712208269-2">]</span></code></pre><h2 id="module-options" class="section-heading"><a href="#module-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h2><ul><li><code class="inline">--info</code> - locate the controller function definition called by the given url</li><li><code class="inline">--method</code> - what HTTP method to use with the given url, only works when used with <code class="inline">--info</code> and defaults to <code class="inline">get</code></li></ul><h2 id="module-examples" class="section-heading"><a href="#module-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><p>Print all routes for the default router:</p><pre><code class="makeup shell" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.routes
+</span></code></pre><p>Print all routes for the given router:</p><pre><code class="makeup shell" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.routes MyApp.AnotherRouter
+</span></code></pre><p>Print information about the controller function called by a specified url:</p><pre><code class="makeup shell" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.routes --info http://0.0.0.0:4000/home
+</span><span class="">  Module: RouteInfoTestWeb.PageController
+</span><span class="">  Function: :index
+</span><span class="">  /home/my_app/controllers/page_controller.ex:4
+</span></code></pre><p>Print information about the controller function called by a specified url and HTTP method:</p><pre><code class="makeup shell" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.routes --info http://0.0.0.0:4000/users --method post
+</span><span class="">  Module: RouteInfoTestWeb.UserController
+</span><span class="">  Function: :create
+</span><span class="">  /home/my_app/controllers/user_controller.ex:24
+</span></code></pre>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h2>
+<div class="summary-functions summary">
+  <h3>
+    <a href="#functions">Functions</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#get_url_info/2" data-no-tooltip="" translate="no">get_url_info(url, arg)</a>
+
+      </div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="functions" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h2>
+
+    <div class="functions-list">
+<section class="detail" id="get_url_info/2">
+
+  <div class="detail-header">
+    <a href="#get_url_info/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_url_info(url, arg)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/mix/tasks/phx.routes.ex#L92" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix/1.8.5">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix/1.8.5">Hex Preview</a>
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+
+              <a href="Phoenix.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,166 @@
+<div class="idea-modal-content" id="idea-edit-modal-content">
+  <% const ideaStatus = String(idea.status || '').toLowerCase(); %>
+  <% const canConvertIdea = authz.isAdmin(user) || (idea.isOwner && authz.isProjectLead(user) && ideaStatus === 'akzeptiert'); %>
+  <input type="hidden" name="idea_id" value="<%= idea.idea_id %>">
+  <% if (idea.isOwner || authz.isAdmin(user)) { %>
+  <h3>Idee bearbeiten</h3>
+  
+
+
+  <!-- Edit Form -->
+  <form class="edit-form-modal" 
+        hx-post="/ideas/<%= idea.idea_id %>/edit" 
+        hx-target="#idea-<%= idea.idea_id %>" 
+        hx-swap="outerHTML">
+    
+    <label class="form-label" for="modal-title-<%= idea.idea_id %>">Titel</label>
+    <input id="modal-title-<%= idea.idea_id %>" type="text" name="title" class="input" 
+           value="<%= idea.title %>" placeholder="Kurzer, prägnanter Titel" required maxlength="50">
+    
+    <label class="form-label" for="modal-desc-<%= idea.idea_id %>">Beschreibung</label>
+    <textarea id="modal-desc-<%= idea.idea_id %>" name="description" rows="4" class="input" 
+              placeholder="Beschreibe die Idee, Problem, Lösung" required><%= idea.description %></textarea>
+    
+    <label class="form-label" for="modal-cat-<%= idea.idea_id %>">Kategorie</label>
+    <select id="modal-cat-<%= idea.idea_id %>" name="category_id" class="input" required>
+      <% (categories || []).forEach(catOpt => { %>
+        <option value="<%= catOpt.category_id %>" <%= String(idea.category_id) === String(catOpt.category_id) ? 'selected' : '' %>>
+          <%= catOpt.name %>
+        </option>
+      <% }) %>
+    </select>
+    
+    <div class="form-actions">
+      <button class="btn" type="submit">Änderungen speichern</button>
+    </div>
+  </form>
+
+  <hr>
+  
+  <!-- Tags Form -->
+  <h4>Tags</h4>
+  <form class="tags-form-modal" 
+        hx-post="/ideas/<%= idea.idea_id %>/tags?render=modal" 
+        hx-target="#idea-edit-modal-content" 
+        hx-swap="innerHTML">
+    <div>
+      <p>
+        Aktuelle Tags (Halten zum Löschen): 
+        <% (idea.tags || []).forEach(tag => { %>
+          <span class="tag" style="cursor: pointer; user-select: none;"
+                hx-post="/ideas/<%= idea.idea_id %>/tags/delete-single"
+                hx-vals='{"tagName": "<%= tag %>"}'
+                hx-target="#idea-edit-modal-content"
+                hx-swap="innerHTML"
+                hx-trigger="mousedown delay:500ms, touchstart delay:500ms">#<%= tag %></span>
+        <% }) %>
+      </p>
+      <input type="text" name="tags" class="input" placeholder="Neue Tags (durch Komma trennen)">
+    </div>
+    <div class="form-actions">
+     
+      <button class="btn" type="submit">Tags speichern</button>
+    </div>
+  </form>
+  
+  <hr>
+  
+  <!-- File Upload -->
+  <h4>Dateien</h4>
+  
+  <% if ((idea.files || []).length) { %>
+    <div>
+      <p>Vorhandene Dateien:</p>
+      <% idea.files.forEach(f => { %>
+        <div class="file-item">
+          <a class="file-link" href="/ideas/files/<%= f.file_id %>/download" target="_blank" rel="noopener">
+            📎 <%= f.original_name || f.file_path %>
+          </a>
+          <form class="inline-delete-file-form" 
+                hx-post="/ideas/files/<%= f.file_id %>/delete?render=modal" 
+                hx-target="#idea-edit-modal-content" 
+                hx-swap="innerHTML" 
+                hx-on::after-request="if(event.detail.successful) { htmx.ajax('GET', '/ideas/<%= idea.idea_id %>/card', {target: '#idea-<%= idea.idea_id %>', swap: 'outerHTML'}); }"
+                style="display:inline;margin-left:8px;">
+            <button type="submit" class="btn small outline" title="Datei löschen" aria-label="Datei löschen">✕</button>
+          </form>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p>Keine Dateien vorhanden.</p>
+  <% } %>
+  
+  <form class="file-upload-form-modal" 
+      hx-post="/ideas/<%= idea.idea_id %>/files" 
+      hx-target="#idea-edit-modal-content" 
+      hx-swap="innerHTML"
+        hx-preserve-scroll="true"
+        enctype="multipart/form-data">
+    
+    <input type="file" name="file" accept="*/*" required>
+    
+    <div class="form-actions">
+      <button class="btn" type="submit" style="margin-top: 6px;">Datei hochladen</button>
+    </div>
+  </form>
+  
+  <hr>
+<% } %>
+
+  <% if (authz.isAdmin(user)) { %>
+    <hr>
+    <h4>Status ändern</h4>
+    <% if (ideaStatus === 'umgesetzt') { %>
+      <form class="status-form-modal">
+        <label class="form-label" for="modal-status-<%= idea.idea_id %>">Status</label>
+        <select id="modal-status-<%= idea.idea_id %>" class="input" disabled>
+          <option value="umgesetzt" selected>Umgesetzt (gesperrt)</option>
+        </select>
+      </form>
+    <% } else { %>
+      <form class="status-form-modal">
+        <label class="form-label" for="modal-status-<%= idea.idea_id %>">Status</label>
+        <select id="modal-status-<%= idea.idea_id %>" name="status" class="input" required
+                hx-post="/ideas/<%= idea.idea_id %>/status"
+                hx-trigger="change"
+                hx-swap="none"
+                hx-on::after-request="if(event.detail.successful) { htmx.ajax('GET', '/ideas/<%= idea.idea_id %>/card', {target: '#idea-<%= idea.idea_id %>', swap: 'outerHTML'}); }">
+          <option value="neu" <%= ideaStatus === 'neu' ? 'selected' : '' %>>Neu</option>
+          <option value="in prüfung" <%= ideaStatus === 'in prüfung' ? 'selected' : '' %>>In Prüfung</option>
+          <option value="akzeptiert" <%= ideaStatus === 'akzeptiert' ? 'selected' : '' %>>Akzeptiert</option>
+          <option value="abgelehnt" <%= ideaStatus === 'abgelehnt' ? 'selected' : '' %>>Abgelehnt</option>
+        </select>
+      </form>
+    <% } %>
+
+  <% } %>
+
+  <% if (canConvertIdea) { %>
+    <div class="form-actions" style="margin-top: 10px;">
+      <a class="btn accent" target="_self"
+         href="/projects?convertIdeaId=<%= idea.idea_id %>&prefillTitle=<%= encodeURIComponent(idea.title || '') %>&prefillDesc=<%= encodeURIComponent(idea.description || '') %>&authorId=<%= idea.user_id %>&authorName=<%= encodeURIComponent(idea.author_username || idea.author || '') %>">
+        In Projekt umwandeln
+      </a>
+    </div>
+  <% } %>
+
+  <!-- Delete Form -->
+  <h4 class="danger">Gefahrenzone</h4>
+  <form action="/ideas/<%= idea.idea_id %>/delete" method="POST">
+    <input type="hidden" name="_csrf" value="<%= (typeof csrfToken !== 'undefined' ? csrfToken : '') %>">
+    <div class="form-actions">
+      <button type="submit" class="btn danger">
+        Idee löschen
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Add HTMX processing for modal forms
+  document.addEventListener('htmx:afterSwap', function(evt) {
+    // We no longer automatically close the modal on success (POST).
+    // The user can close it manually or by deleting the idea.
+  });
+</script>

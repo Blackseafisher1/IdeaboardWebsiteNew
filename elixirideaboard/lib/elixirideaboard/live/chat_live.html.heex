@@ -1,0 +1,24 @@
+<div class="chat-page">
+  <%= if @page == :inbox do %>
+    <.live_component module={Elixirideaboard.ChatLive.InboxComponent} id="inbox" conversations={@conversations} />
+  <% else %>
+    <div class="chat-container">
+      <div class="chat-header">
+        <%= if @page == :direct do %>
+          <h2>Chat mit <%= @other_user.username %></h2>
+        <% else %>
+          <h2><%= @group.name %></h2>
+          <span class="online-count"><%= length(@online) %> online</span>
+        <% end %>
+      </div>
+
+      <.live_component module={Elixirideaboard.ChatLive.MessageListComponent}
+        id="message-list"
+        messages={@messages}
+        current_user_id={@user.id}
+      />
+
+      <.live_component module={Elixirideaboard.ChatLive.MessageInputComponent} id="message-input" />
+    </div>
+  <% end %>
+</div>

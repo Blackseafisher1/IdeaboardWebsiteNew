@@ -1,0 +1,48 @@
+{
+  "name": "ideaboardwebsite",
+  "version": "1.1.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "predevStart": "node scripts/genSecret.js --write",
+    "devStart": "node scripts/genSecret.js --write && bun migrate && nodemon server.js",
+    "bunStart": "node scripts/genSecret.js --write && bun migrate && bun --watch server.js ",
+    "prestart": "node scripts/genSecret.js --write",
+    "migrate": "node --max-old-space-size=8192 migrate.js",
+    "seed": "node -r dotenv/config seed-test-data.js",
+    "dev": "npm run migrate && nodemon --exec \"node --max-old-space-size=16384 server.js\"",
+    "dev:bun": "bun migrate",
+    "s:on": "node scripts/toggle_event_scheduler.js on",
+    "s:off": "node scripts/toggle_event_scheduler.js off",
+    "s:toggle": "node scripts/toggle_event_scheduler.js toggle",
+    "genSecret": "node scripts/genSecret.js",
+    "smoke-test": "node scripts/smoke_test.js",
+    "minify:js": "node scripts/minify-js.js",
+    "doc:gen": "jsdoc -c jsdoc.config.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@faker-js/faker": "10.2.0",
+    "argon2": "0.44.0",
+    "body-parser": "2.2.2",
+    "dotenv": "16.0.0",
+    "ejs": "3.1.10",
+    "express": "5.2.1",
+    "express-rate-limit": "^8.3.1",
+    "express-session": "1.18.2",
+    "fuse.js": "7.1.0",
+    "ioredis": "5.9.2",
+    "mariadb": "3.4.5",
+    "multer": "^2.1.1",
+    "pm2": "^6.0.14",
+    "uuid": "13.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.3",
+    "jsdoc": "4.0.5",
+    "nodemon": "3.1.14"
+  }
+}

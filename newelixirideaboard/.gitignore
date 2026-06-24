@@ -1,0 +1,8 @@
+.env
+.env/
+data/
+_build/
+deps/
+erl_crash.dump
+*.ez
+logs/

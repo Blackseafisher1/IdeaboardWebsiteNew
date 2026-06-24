@@ -1,0 +1,34 @@
+     <h2>Top Ideen</h2><i class="subtitle subTopIdeas" >der letzten 7 Tagen</i>
+<div class="top-ideas-grid">
+<% topIdeas.forEach((idea, index) => { %>
+  <article class="top-idea-card">
+    <div class="idea-rank">#<%= index + 1 %></div>
+    <h3 class="idea-title"><%= idea.title %></h3>
+    <p class="idea-desc"><%= idea.description.length > 100 ? idea.description.substring(0, 100) + '...' : idea.description %></p>
+    
+    <% if (idea.category_name) { %>
+      <div class="idea-category">🏷️ <%= idea.category_name %></div>
+    <% } %>
+    
+    <% if (idea.tags && idea.tags.length > 0) { %>
+      <div class="idea-tags">
+        <% idea.tags.slice(0, 3).forEach(tag => { %>
+          <span class="tag"><%= tag %></span>
+        <% }) %>
+      </div>
+    <% } %>
+    
+    <div class="idea-stats">
+      <span class="stat-item">❤️ <%= idea.likes_count || 0 %></span>
+      <span class="stat-item">👎 <%= idea.dislikes_count || 0 %></span>
+      <span class="stat-item">💬 <%= idea.comments_count || 0 %></span>
+    </div>
+    
+    <div class="idea-author">von <%= idea.author %></div>
+    
+    <a href="/ideas?page=1&q=<%= encodeURIComponent(idea.title) %>&category_id=&sort=all_latest&search_scope=&global=on&tags=#idea-<%= idea.idea_id %>" class="btn outline">
+     Zur Idee
+    </a>
+  </article>
+<% }) %>
+</div>

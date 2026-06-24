@@ -1,0 +1,147 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageTitle %></title>
+  
+  <link rel="stylesheet" href="/css/adminPage.css">
+  <%- include('../partials/head') %>
+</head>
+
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="admin-page">
+    <header class="admin-page__header">
+      <h1 class="admin-page__title">Benutzer und Rollen</h1>
+      <p class="admin-page__subtitle">Verwalte Rollen, ändere Berechtigungen oder lösche Accounts.</p>
+      <p><a href="/adminPage/logs">Audit Log anzeigen</a></p>
+    </header>
+
+    <section class="manual-points-section">
+      <h2>Manuelle Punkte vergeben</h2>
+      <form method="POST" action="/adminPage/manual-points" class="manual-points-form" id="manual-points-form">
+        <label for="user-search">Benutzer suchen:</label>
+        <input type="hidden" name="user_id" id="user-id-input" required>
+        <input
+          type="text"
+          id="user-search"
+          class="manual-points-search"
+          list="manual-points-users"
+          placeholder="Name oder E-Mail eingeben"
+          autocomplete="off"
+          required>
+        <datalist id="manual-points-users">
+          <% users.forEach(function(user) { %>
+            <option value="<%= user.username %> &lt;<%= user.email %>&gt;" data-user-id="<%= user.user_id %>"></option>
+          <% }); %>
+        </datalist>
+        
+        <label for="points-input">Punkte (±50 max):</label>
+        <input type="number" name="points" id="points-input" min="-50" max="50" required>
+        
+        <label for="reason-input">Grund:</label>
+        <input type="text" name="reason" id="reason-input" maxlength="100" required>
+        
+        <button type="submit" class="action-button primary-button">Punkte vergeben</button>
+      </form>
+    </section>
+
+    <!-- Wrapper enables scroll fallback on medium screens (and keyboard focus if needed). -->
+    <div class="admin-table-wrap" tabindex="0" aria-label="Benutzertabelle (horizontal scrollbar bei Bedarf)">
+      <table class="admin-table">
+        <caption class="sr-only">Liste der Benutzer und Rollen</caption>
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Benutzername</th>
+            <th scope="col">E-Mail</th>
+            <th scope="col">Rolle</th>
+            <th scope="col">Aktionen</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% users.forEach(function(user) { %>
+            <%- include('_userRow', { user: user, availableRoles: availableRoles }) %>
+          <% }); %>
+
+          <% if (users.length === 0) { %>
+            <tr>
+              <td colspan="5" class="no-users">Keine Benutzer gefunden.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      function syncManualPointsUser() {
+        var userSearch = document.getElementById('user-search');
+        var userIdInput = document.getElementById('user-id-input');
+        var usersList = document.getElementById('manual-points-users');
+
+        if (!userSearch || !userIdInput || !usersList) return;
+
+        var matchedOption = Array.prototype.find.call(usersList.options, function (option) {
+          return option.value === userSearch.value;
+        });
+
+        userIdInput.value = matchedOption ? String(matchedOption.dataset.userId || '') : '';
+      }
+
+      function findRoleSelect(triggerElt) {
+        if (!triggerElt) return null;
+        if (triggerElt.matches && triggerElt.matches('select[name="new_role_id"]')) return triggerElt;
+        if (triggerElt.closest) return triggerElt.closest('form')?.querySelector('select[name="new_role_id"]') || null;
+        return null;
+      }
+
+      var manualPointsForm = document.getElementById('manual-points-form');
+      var userSearch = document.getElementById('user-search');
+
+      if (userSearch) {
+        userSearch.addEventListener('input', syncManualPointsUser);
+        userSearch.addEventListener('change', syncManualPointsUser);
+      }
+
+      if (manualPointsForm) {
+        manualPointsForm.addEventListener('submit', function (event) {
+          syncManualPointsUser();
+          var userIdInput = document.getElementById('user-id-input');
+          if (!userIdInput || !userIdInput.value) {
+            event.preventDefault();
+            window.alert('Bitte waehle einen Benutzer aus der Vorschlagsliste aus.');
+          }
+        });
+      }
+
+      document.body.addEventListener('htmx:responseError', function (event) {
+        var xhr = event.detail && event.detail.xhr;
+        var select = findRoleSelect(event.detail && event.detail.elt);
+        if (!xhr || !select) return;
+
+        var currentRoleId = String(select.dataset.currentRoleId || '');
+        if (currentRoleId) {
+          select.value = currentRoleId;
+        }
+
+        if (xhr.status === 409) {
+          var mitarbeiterOption = select.querySelector('option[value="3"]');
+          if (mitarbeiterOption) {
+            mitarbeiterOption.disabled = true;
+          }
+
+          window.alert('Rollenwechsel nicht moeglich: Die Person bleibt Projektleiter, weil sie noch Ansprechpartner in mindestens einem Projekt ist. Die Option Mitarbeiter wurde deshalb deaktiviert.');
+          return;
+        }
+
+        if (xhr.responseText) {
+          window.alert(xhr.responseText);
+        }
+      });
+    })();
+  </script>
+
+  <%- include('../partials/footer') %>
+</body>

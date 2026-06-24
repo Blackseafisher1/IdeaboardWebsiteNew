@@ -1,0 +1,8 @@
+<h2>Zugangscode erforderlich</h2>
+<form action="/gate" method="POST">
+  <%= if @error do %>
+    <div class="error"><%= @error %></div>
+  <% end %>
+  <input type="password" name="password" placeholder="Passwort" required>
+  <button type="submit">Bestätigen</button>
+</form>

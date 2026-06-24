@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.34.2">
+    <meta name="project" content="gettext v0.26.2">
+
+
+    <title>Changelog — gettext v0.26.2</title>
+    <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
+
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-7A123789.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-YIPIRHGU.js"></script>
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="Gettext.html" class="sidebar-projectName" translate="no">
+gettext
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v0.26.2
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+        <li>
+          <button id="tasks-list-tab-button" role="tab" data-type="tasks" aria-controls="tasks-tab-panel" aria-selected="false" tabindex="-1">
+            <span translate="no">Mix</span> Tasks
+          </button>
+        </li>
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+    <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden>
+      <ul id="tasks-full-list" class="full-list"></ul>
+    </div>
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of gettext</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <h1>
+
+      <a href="https://github.com/elixir-gettext/gettext/blob/v0.26.2/CHANGELOG.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+
+    <span>Changelog</span>
+  </h1>
+
+<h2 id="v0-26-2" class="section-heading">
+  <a href="#v0-26-2" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.26.2</span>
+</h2>
+<ul><li>Introduces warning if plural messages are defined with the same singular
+message and conflicting plural messages.</li><li>Improves performance by striping not required metadata when compiling the
+Gettext backend.</li></ul><h2 id="v0-26-1" class="section-heading">
+  <a href="#v0-26-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.26.1</span>
+</h2>
+<ul><li>Address backwards incompatible changes in previous release</li></ul><h2 id="v0-26-0" class="section-heading">
+  <a href="#v0-26-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.26.0</span>
+</h2>
+<p>This release changes the way you use Gettext. We're not crazy: it does so because doing so makes it a lot faster to compile projects that use Gettext.
+The changes <em>you</em> have to make to your code are minimal, and the old behavior is deprecated so that you will be guided on how to update.</p><p>The reason for this change is that it removes compile-time dependencies from modules that used to <code class="inline">import</code> a Gettext backend. In applications such as Phoenix applications, where every view and controller <code class="inline">import</code>s the Gettext backend, this change means a lot less compilation when you make translation changes!</p><p>Here's the new API. Now, instead of defining a Gettext backend (<code class="inline">use Gettext</code>) and then <code class="inline">import</code>ing that to use its macros, you need to:</p><ol><li>Define a Gettext backend with <code class="inline">use Gettext.Backend</code></li><li>Import and use its macros with <code class="inline">use Gettext, backend: MyApp.Gettext</code>.</li></ol><h3 id="before-and-after" class="section-heading">
+  <a href="#before-and-after" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Before and After</span>
+</h3>
+<p>Before this release, code using Gettext used to look something like this:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Gettext</span><span class="w"> </span><span class="k" data-group-id="3440667396-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Gettext</span><span class="p">,</span><span class="w"> </span><span class="ss">otp_app</span><span class="p">:</span><span class="w"> </span><span class="ss">:my_app</span><span class="w">
+</span><span class="k" data-group-id="3440667396-1">end</span><span class="w">
+
+</span><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyAppWeb.Controller</span><span class="w"> </span><span class="k" data-group-id="3440667396-2">do</span><span class="w">
+  </span><span class="kn">import</span><span class="w"> </span><span class="nc">MyApp.Gettext</span><span class="w">
+</span><span class="k" data-group-id="3440667396-2">end</span></code></pre><p>This creates a compile-time dependency for every module that <code class="inline">import</code>s the Gettext backend.</p><p>With this release, the above turns into:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Gettext</span><span class="w"> </span><span class="k" data-group-id="8865906171-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Gettext.Backend</span><span class="p">,</span><span class="w"> </span><span class="ss">otp_app</span><span class="p">:</span><span class="w"> </span><span class="ss">:my_app</span><span class="w">
+</span><span class="k" data-group-id="8865906171-1">end</span><span class="w">
+
+</span><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyAppWeb.Controller</span><span class="w"> </span><span class="k" data-group-id="8865906171-2">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Gettext</span><span class="p">,</span><span class="w"> </span><span class="ss">backend</span><span class="p">:</span><span class="w"> </span><span class="nc">MyApp.Gettext</span><span class="w">
+</span><span class="k" data-group-id="8865906171-2">end</span></code></pre><p>We are also updating <a href="https://github.com/phoenixframework/phoenix">Phoenix</a> generators to use the new API.</p><p>If you update Gettext and still use <code class="inline">use Gettext, otp_app: :my_app</code> to define a backend, Gettext will emit a warning now.</p><h3 id="migration-with-igniter" class="section-heading">
+  <a href="#migration-with-igniter" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Migration with Igniter</span>
+</h3>
+<p>If your project is using <a href="https://hex.pm/packages/igniter"><code class="inline">igniter</code></a>, you can run
+<a href="https://hexdocs.pm/igniter/Mix.Tasks.Igniter.UpdateGettext.html"><code class="inline">mix igniter.update_gettext</code></a>
+to automatically migrate to the new API.</p><h3 id="detailed-changelog" class="section-heading">
+  <a href="#detailed-changelog" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Detailed Changelog</span>
+</h3>
+<p>This is a detailed list of the new things introduced in this release:</p><ul><li>Add <a href="Gettext.Macros.html"><code class="inline">Gettext.Macros</code></a>, which contains all the macros you know and love (<code class="inline">*gettext</code>). It also contains <code class="inline">*gettext_with_backend</code> variants to explicitly pass a backend at compile time and keep extraction working.</li><li>Document <code class="inline">lgettext/5</code> and <code class="inline">lngettext/7</code> callbacks in <a href="Gettext.Backend.html"><code class="inline">Gettext.Backend</code></a>. These get generated in every Gettext backend.</li><li>Add the <code class="inline">Gettext.domain/0</code> type.</li></ul><h2 id="v0-25-0" class="section-heading">
+  <a href="#v0-25-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.25.0</span>
+</h2>
+<ul><li>Run merging for <a href="Mix.Tasks.Gettext.Extract.html"><code class="inline">mix gettext.extract</code></a>'s POT files even if they are unchanged.</li><li>Allow Expo 1.0+.</li></ul><h2 id="v0-24-0" class="section-heading">
+  <a href="#v0-24-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.24.0</span>
+</h2>
+<ul><li><p>Handle singular and plural messages with the same <code class="inline">msgid</code> as the same
+message.</p><p>This change produces a <a href="https://hexdocs.pm/expo/1.1.0/Expo.PO.DuplicateMessagesError.html"><code class="inline">Expo.PO.DuplicateMessagesError</code></a> if you already have
+messages with the same singular <code class="inline">msgid</code>. This can be solved by calling the
+<code class="inline">expo.msguniq</code> mix task on your <code class="inline">.po</code> file:</p><pre><code class="makeup bash" translate="no"><span class="">mix expo.msguniq \
+</span><span class="">  priv/gettext/LOCALE/LC_MESSAGES/DOMAIN.po \
+</span><span class="">  --output-file priv/gettext/LOCALE/LC_MESSAGES/DOMAIN.po
+</span></code></pre></li></ul><h2 id="v0-23-1" class="section-heading">
+  <a href="#v0-23-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.23.1</span>
+</h2>
+<ul><li>Use the Hex version of the excoveralls dependency.</li></ul><h2 id="v0-23-0" class="section-heading">
+  <a href="#v0-23-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.23.0</span>
+</h2>
+<ul><li>Add the <code class="inline">:custom_flags_to_keep</code> Gettext option.</li></ul><h2 id="v0-22-3" class="section-heading">
+  <a href="#v0-22-3" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.22.3</span>
+</h2>
+<ul><li>Fix a bug with extracting translations in Elixir 1.15.0+.</li></ul><h2 id="v0-22-2" class="section-heading">
+  <a href="#v0-22-2" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.22.2</span>
+</h2>
+<ul><li>Use <a href="https://hexdocs.pm/elixir/Code.html#ensure_compiled/1"><code class="inline">Code.ensure_compiled/1</code></a> instead of <a href="https://hexdocs.pm/elixir/Code.html#ensure_loaded/1"><code class="inline">Code.ensure_loaded/1</code></a> for Elixir &lt; 1.12 compatibility.</li><li>Ensure all modules are properly loaded for <a href="Mix.Tasks.Gettext.Merge.html"><code class="inline">mix gettext.merge</code></a>.</li><li>Fix a &quot;protected&quot; check when extracting translations.</li></ul><h2 id="v0-22-1" class="section-heading">
+  <a href="#v0-22-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.22.1</span>
+</h2>
+<ul><li>Put correct <code class="inline">Plural-Forms</code> header on <code class="inline">gettext.merge</code> for the first time.</li><li>Fix extractor crash in case of conflicting backends.</li><li>Fix to use the correct plural forms for multiple languages.</li><li>Update expo to <code class="inline">~&gt; 0.4.0</code> to fix issues with empty <code class="inline">msgstr</code>.</li></ul><h2 id="v0-22-0" class="section-heading">
+  <a href="#v0-22-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.22.0</span>
+</h2>
+<ul><li>Deprecate (with a warning) the <code class="inline">--plural-forms</code> CLI option and the <code class="inline">:plural_forms</code> option in favor of <code class="inline">--plural-forms-header</code> and <code class="inline">:plural_forms_header</code>.</li><li>Supply the <code class="inline">Plural-Forms</code> header to <a href="Gettext.Plural.html"><code class="inline">Gettext.Plural</code></a> callbacks.</li><li>Bump Expo requirement to <code class="inline">~&gt; 0.3.0</code>.</li><li>Add the types:<ul><li><code class="inline">Gettext.Interpolation.bindings/0</code></li><li><code class="inline">Gettext.Error.t/0</code></li><li><code class="inline">Gettext.Plural.locale/0</code></li><li><code class="inline">Gettext.Plural.pluralization_context/0</code></li><li><code class="inline">Gettext.Plural.plural_info/0</code></li></ul></li><li>Add the optional callbacks <code class="inline">Gettext.Plural.init/1</code> and <a href="Gettext.Plural.html#plural_forms_header/1"><code class="inline">Gettext.Plural.plural_forms_header/1</code></a>.</li></ul><h3 id="bug-fixes" class="section-heading">
+  <a href="#bug-fixes" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>Fix <code class="inline">--check-up-to-date</code> with <code class="inline">msgid</code>s split in different ways.</li><li>Don't write the same file more than once in references when using <code class="inline">write_reference_line_numbers: false</code>.</li></ul><h2 id="v0-21-0" class="section-heading">
+  <a href="#v0-21-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.21.0</span>
+</h2>
+<h3 id="new-features-and-improvements" class="section-heading">
+  <a href="#new-features-and-improvements" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">New features and improvements</span>
+</h3>
+<ul><li><p>Bump Elixir requirement to 1.11+.</p></li><li><p>Extract parsing and dumping of PO/POT files to the
+<a href="https://github.com/elixir-gettext/expo">expo</a> library, and start depending
+on that.</p></li><li><p>Support marking messages as obsolete with the new <code class="inline">:on_obsolete</code> Gettext
+configuration option.</p></li><li><p>Add the <code class="inline">:write_reference_line_numbers</code> Gettext configuration option.</p></li><li><p>Save the previous messages when there's a fuzzy match, with the new
+<code class="inline">:store_previous_message_on_fuzzy_match</code> Gettext configuration option.</p></li><li><p>Change <code class="inline">:sort_by_msgid</code> to accept <code class="inline">false</code>, <code class="inline">:case_sensitive</code>, or
+<code class="inline">:case_insensitive</code> and deprecate the <code class="inline">true</code> value.</p></li></ul><h3 id="bug-fixes-1" class="section-heading">
+  <a href="#bug-fixes-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>Sort messages independent of line splits when dumping PO files.</li></ul><h2 id="v0-20-0" class="section-heading">
+  <a href="#v0-20-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.20.0</span>
+</h2>
+<ul><li>Allow <code class="inline">gettext_comment</code> to be invoked multiple times</li><li>Dump flags after references in PO files</li><li>Deprecate <code class="inline">compile.gettext</code> in favor of <code class="inline">__mix_recompile__?</code></li></ul><h3 id="backwards-incompatible-changes" class="section-heading">
+  <a href="#backwards-incompatible-changes" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Backwards incompatible changes</span>
+</h3>
+<ul><li><p><code class="inline">handle_missing_translation(locale, domain, msgid, bindings)</code> callback
+signature was changed to <code class="inline">handle_missing_translation(locale, domain, msgctxt, msgid, bindings)</code> (it receives a new argument called <code class="inline">msgctxt</code>)</p></li><li><p><code class="inline">handle_missing_plural_translation(locale, domain, msgid, msgid_plural, n, bindings)</code> callback signature was changed to
+<code class="inline">handle_missing_plural_translation(locale, domain, msgctxt, msgid, msgid_plural, n, bindings)</code> (it receives a new argument called <code class="inline">msgctxt</code>)</p></li></ul><h2 id="v0-19-1" class="section-heading">
+  <a href="#v0-19-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.19.1</span>
+</h2>
+<ul><li>Fix warnings on Elixir v1.14+</li><li>Rename <code class="inline">ex-autogen</code> to <code class="inline">elixir-autogen</code> and make sure <code class="inline">elixir-autogen</code> is
+added to existing messages</li></ul><h2 id="v0-19-0" class="section-heading">
+  <a href="#v0-19-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.19.0</span>
+</h2>
+<ul><li>Remove the <code class="inline">:one_module_per_locale</code> option in favor of  <code class="inline">:split_module_by</code>
+and <code class="inline">:split_module_compilation</code></li><li>Make <a href="Gettext.html#dngettext/6"><code class="inline">Gettext.dngettext/6</code></a> bindings argument optional (effectively
+introducing <a href="Gettext.html#dngettext/5"><code class="inline">Gettext.dngettext/5</code></a>)</li><li>Preserve the <code class="inline">fuzzy</code> message flag when merging</li><li>Add the <code class="inline">--check-unextracted</code> flag to <a href="Mix.Tasks.Gettext.Extract.html"><code class="inline">mix gettext.extract</code></a>, which is useful
+in CI and similar</li><li>Place each message reference on its own line in extracted PO files</li><li>Make the interpolation module customizable via the <code class="inline">:interpolation</code>
+configuration option</li><li>Use a different flag to detect autogenerated messages (<code class="inline">ex-autogen</code>)</li><li>Update <code class="inline">gettext.extract</code> to correctly extract on recompilation for Elixir
+1.13+</li></ul><h2 id="v0-18-2" class="section-heading">
+  <a href="#v0-18-2" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.18.2</span>
+</h2>
+<ul><li>Allow plural forms to be set for the <code class="inline">:gettext</code> application</li><li>Use <a href="https://hexdocs.pm/elixir/Application.html#compile_env/3"><code class="inline">Application.compile_env/3</code></a> if available</li></ul><h2 id="v0-18-1" class="section-heading">
+  <a href="#v0-18-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.18.1</span>
+</h2>
+<ul><li>Allow default domain to be configurable</li><li>Improve parallelism when compiling modules</li></ul><h2 id="v0-18-0" class="section-heading">
+  <a href="#v0-18-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.18.0</span>
+</h2>
+<ul><li>Allow sorting strings by <code class="inline">msgid</code></li><li>Add <code class="inline">:allowed_locales</code> to restrict the locales bundled in the backend</li></ul><h2 id="v0-17-4" class="section-heading">
+  <a href="#v0-17-4" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.17.4</span>
+</h2>
+<ul><li>Do not change the return types of <code class="inline">*_noop</code> macros (regression in v0.17.2 and
+v0.17.3)</li><li>Fix dialyzer warnings</li></ul><h2 id="v0-17-3" class="section-heading">
+  <a href="#v0-17-3" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.17.3</span>
+</h2>
+<ul><li>Add <code class="inline">lgettext/4</code> back which was removed in v0.17.2 - note <code class="inline">lgettext/4</code> is
+private API and may be removed in future once again</li></ul><h2 id="v0-17-2" class="section-heading">
+  <a href="#v0-17-2" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.17.2</span>
+</h2>
+<ul><li>Support <code class="inline">pgettext</code></li><li>Consider extracted comments when merging templates during extraction</li></ul><h2 id="v0-17-1" class="section-heading">
+  <a href="#v0-17-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.17.1</span>
+</h2>
+<ul><li>Store the <code class="inline">msgctxt</code> value in message and dump it when dumping
+messages</li><li>Fix a bug when dumping references</li><li>Improve code generation</li><li>Preserve whitespace in message flags</li></ul><h2 id="v0-17-0" class="section-heading">
+  <a href="#v0-17-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.17.0</span>
+</h2>
+<ul><li>Require Elixir 1.6 and later</li><li>Add stats reporting when merging PO files</li></ul><h2 id="v0-16-1" class="section-heading">
+  <a href="#v0-16-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.16.1</span>
+</h2>
+<ul><li>Optimize default locale lookup</li></ul><h2 id="v0-16-0" class="section-heading">
+  <a href="#v0-16-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.16.0</span>
+</h2>
+<ul><li>Fix bugs related to expanding arguments to Gettext macros</li><li>Fix a bug where you couldn't have filenames with colons in them in reference comments</li><li>Add <code class="inline">handle_missing_translation/4</code> and <code class="inline">handle_missing_plural_translation/6</code> callbacks to Gettext backends</li><li>Fix a bug in <a href="Mix.Tasks.Gettext.Extract.html"><code class="inline">mix gettext.extract</code></a>, which was ignoring the <code class="inline">--merge</code> option</li></ul><h2 id="v0-15-0" class="section-heading">
+  <a href="#v0-15-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.15.0</span>
+</h2>
+<ul><li>Generate correct plural forms when dumping new messages in PO files</li><li>Fix a bug where we were losing translator comments for fuzzy-merged
+messages</li><li>Don't make an exact match when merging prevent later fuzzy matches</li><li>Allow multiple messages to fuzzy-match against the same message when
+merging</li><li>Bump the Elixir requirement to v1.4 and on</li></ul><h2 id="v0-14-1" class="section-heading">
+  <a href="#v0-14-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.14.1</span>
+</h2>
+<ul><li>Copy flags from existing messages when merging messages</li></ul><h2 id="v0-14-0" class="section-heading">
+  <a href="#v0-14-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.14.0</span>
+</h2>
+<ul><li>Introduce a global locale (per-process) for all Gettext backends</li><li>Warn when compiling and raise at runtime for missing plural forms</li><li>Separate flags with commas when dumping and parsing .pot files</li><li>Add support for extracted comments via <code class="inline">gettext_comment/1</code></li><li>Require Elixir v1.3 and fix warnings</li><li>Improve compilation time of Gettext backends in roughly 20%</li><li>Add <code class="inline">:one_module_per_locale</code> for parallel compilation of backends (requires
+Elixir v1.6)</li><li>Use the <code class="inline">elixir-format</code> flag to mark autogenerated messages</li></ul><h2 id="v0-13-1" class="section-heading">
+  <a href="#v0-13-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.13.1</span>
+</h2>
+<ul><li>Fix a bug with Dialyzer specs for the <code class="inline">Gettext.Backend.ngettext_noop/2</code> callback</li><li>Parse <code class="inline">msgctxt</code> entries in PO and POT files so that they don't cause syntax
+errors, but ignore them in the parsed result</li></ul><h2 id="v0-13-0" class="section-heading">
+  <a href="#v0-13-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.13.0</span>
+</h2>
+<ul><li>Add the <code class="inline">gettext_noop/1</code>, <code class="inline">dgettext_noop/2</code>, <code class="inline">ngettext_noop/3</code>, and
+<code class="inline">dngettext_noop/4</code> macros to Gettext backends. These macros can be used to
+mark messages for extractions without translating the given string</li></ul><h2 id="v0-12-2" class="section-heading">
+  <a href="#v0-12-2" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.12.2</span>
+</h2>
+<ul><li>Fix a bug where we failed miserably with a &quot;no process&quot; error when
+extracting messages without having the <code class="inline">:gettext</code> compiler run</li><li>Slightly revisit the indentation of subsequent literal strings in dumped
+PO(T) files; before, they were dumped one per line, indented one level more
+than the parent message, while now they're indented at the same level as
+the parent message</li></ul><h2 id="v0-12-1" class="section-heading">
+  <a href="#v0-12-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.12.1</span>
+</h2>
+<ul><li>Ensure the Gettext application is started before running Mix tasks</li></ul><h2 id="v0-12-0" class="section-heading">
+  <a href="#v0-12-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.12.0</span>
+</h2>
+<ul><li>Drop support for Elixir 1.1 and require ~&gt; 1.2</li><li>Add <code class="inline">:compiler_po_wildcard</code> to explicitly choose the po files that are
+tracked by the compiler</li><li>Allow the developer to configure what happens when there are missing
+bindings in the message. The default has been changed to log and return
+the incomplete string instead of raising</li><li>Move the configuration for the <code class="inline">:gettext</code> application to compile-time config
+in <code class="inline">project/0</code> in <code class="inline">mix.exs</code> (under the <code class="inline">:gettext</code> key, with configuration
+options <code class="inline">:excluded_refs_from_purging</code>, <code class="inline">:compiler_po_wildcard</code> and
+<code class="inline">:fuzzy_threshold</code>)</li><li>Show the file name in syntax errors when running <a href="Mix.Tasks.Gettext.Extract.html"><code class="inline">mix gettext.extract</code></a> and
+<a href="Mix.Tasks.Gettext.Merge.html"><code class="inline">mix gettext.merge</code></a></li><li>Don't print tokens as Erlang terms in syntax error when running <a href="Mix.Tasks.Gettext.Extract.html"><code class="inline">mix gettext.extract</code></a> and <a href="Mix.Tasks.Gettext.Merge.html"><code class="inline">mix gettext.merge</code></a></li><li>Allow duplicate interpolation keys</li><li>Raise when the domain is not a binary at compile-time</li><li>Fix many dialyzer warnings</li><li>No longer traverse directories given to <code class="inline">gettext.merge</code> recursively (from
+now on <code class="inline">gettext.merge</code> expect specific locale directories)</li><li>Re enable the &quot;compile&quot; task in <a href="Mix.Tasks.Gettext.Extract.html"><code class="inline">mix gettext.extract</code></a></li><li>Ensure messages are tracked to the proper child app when using umbrella
+apps</li></ul><h2 id="v0-11-0" class="section-heading">
+  <a href="#v0-11-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.11.0</span>
+</h2>
+<ul><li>Polish so many docs!</li><li>Make an error in <a href="Gettext.html#put_locale/2"><code class="inline">Gettext.put_locale/2</code></a> clearer</li><li>Pluralize <code class="inline">x_Y</code> locales as <code class="inline">x</code>, but fail with
+<a href="Gettext.Plural.UnknownLocaleError.html"><code class="inline">Gettext.Plural.UnknownLocaleError</code></a> for any other unknown locale</li><li>Add a <a href="Gettext.Backend.html"><code class="inline">Gettext.Backend</code></a> behaviour (automatically implemented if a module
+calls <code class="inline">use Gettext</code>)</li><li>Allow whitelisting of references via the <code class="inline">:excluded_refs_from_purging</code> option
+in the <code class="inline">:gettext</code> application config</li></ul><h2 id="v0-10-0" class="section-heading">
+  <a href="#v0-10-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.10.0</span>
+</h2>
+<ul><li>Emit warnings when the domain passed to one of the <code class="inline">*gettext</code> macros has
+slashes in it (as we don't support domains in subdirectories).</li><li>Discard dangling comments when parsing/dumping PO(T) files (dangling
+comments are comments that are not followed by a transaction they can be
+attached to).</li><li>Updated informative comments for newly generated PO/POT files.</li></ul><h2 id="v0-9-0" class="section-heading">
+  <a href="#v0-9-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.9.0</span>
+</h2>
+<ul><li>Strip <code class="inline">##</code> comments from POT files when they're being merged into PO files;
+these comments are comments meant to be generated by tools or directed at
+developers (so they have no use for translators in PO files).</li><li>Add informative comments at the top of newly generated PO/POT files.</li><li>Add <a href="Gettext.html#known_locales/1"><code class="inline">Gettext.known_locales/1</code></a></li><li>Fix a bug with PO parsing when the PO file starts with a
+<a href="https://en.wikipedia.org/wiki/Byte_order_mark">BOM</a> character (which broke
+the parser, now a warning is issued).</li></ul><h2 id="v0-8-0" class="section-heading">
+  <a href="#v0-8-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.8.0</span>
+</h2>
+<ul><li>Fix a bug with the <code class="inline">*gettext</code> macros, which raised an error when given
+compile-time strings in the form of <code class="inline">~s</code>/<code class="inline">~S</code> sigils.</li><li>Create missing locale directories (for example, <code class="inline">en/LC_MESSAGES</code>) when
+running the <code class="inline">gettext.merge</code> Mix task.</li><li>Fallback to default messages (that is, the <code class="inline">msgid</code>) when the <code class="inline">msgstr</code>
+(or one or more <code class="inline">msgstr</code> strings for plural messages) is empty.</li></ul><h2 id="v0-7-0" class="section-heading">
+  <a href="#v0-7-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.7.0</span>
+</h2>
+<ul><li>When dumping PO files, dump as many references as possible on one line,
+wrapping at the 80th column</li><li>Parse multiple references in the same reference comment</li><li>Remove <code class="inline">Gettext.locale/0-1</code> and <a href="Gettext.html#with_locale/2"><code class="inline">Gettext.with_locale/2</code></a> in favour of
+<a href="Gettext.html#get_locale/1"><code class="inline">Gettext.get_locale/1</code></a>, <a href="Gettext.html#put_locale/2"><code class="inline">Gettext.put_locale/2</code></a>, and <a href="Gettext.html#with_locale/3"><code class="inline">Gettext.with_locale/3</code></a>
+which now work by setting/getting the locale on a per-backend basis (instead
+of a global one)</li><li>Remove the <code class="inline">:default_locale</code> config option for the <code class="inline">:gettext</code> application in
+favour of configuring the <code class="inline">:default_locale</code> for backends tied to their
+<code class="inline">:otp_app</code> (for example, <code class="inline">config :my_app, MyApp.Gettext, default_locale: &quot;pt_BR&quot;</code>)</li></ul><h2 id="v0-6-1" class="section-heading">
+  <a href="#v0-6-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.6.1</span>
+</h2>
+<ul><li>Fix a bug with the <a href="Mix.Tasks.Gettext.Merge.html"><code class="inline">mix gettext.merge</code></a> task that was failing in Elixir
+v1.1.1 because <code class="inline">0.5 in 0..1</code> returns <code class="inline">false</code> with it</li></ul><h2 id="v0-6-0" class="section-heading">
+  <a href="#v0-6-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.6.0</span>
+</h2>
+<ul><li>Add a <code class="inline">:flags</code> field to the <code class="inline">Gettext.PO.Translation</code> and
+<code class="inline">Gettext.PO.PluralTranslation</code> structs</li><li>Add support for fuzzy matching messages in <code class="inline">gettext.merge</code> and
+<code class="inline">gettext.extract --merge</code></li><li>Add the <code class="inline">:fuzzy_threshold</code> configuration option for the <code class="inline">:gettext</code>
+application</li></ul><h2 id="v0-5-0" class="section-heading">
+  <a href="#v0-5-0" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v0.5.0</span>
+</h2>
+<ul><li>Initial release</li></ul>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="api-reference.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+API Reference
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/gettext/0.26.2" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/gettext/0.26.2">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/gettext/0.26.2/show/CHANGELOG.md">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="gettext.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.2) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

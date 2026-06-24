@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix v1.8.5">
+
+
+    <title>Asset Management — Phoenix v1.8.5</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-209F6654.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.8.5
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="true">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Latest</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="https://hexdocs.pm/?packages=plug%3Alatest%2Cphoenix%3Alatest%2Cphoenix_html%3Alatest%2Cphoenix_live_view%3Alatest%2Cphoenix_pubsub%3Alatest%2Cphoenix_template%3Alatest&q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Latest</span>
+                <span class="help">Search latest versions of Plug, Phoenix, Phoenix.{HTML, LiveView, PubSub, Template}</span>
+              </button>
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="false">
+                <span class="name">Current version</span>
+                <span class="help">Search only this project</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Asset Management</h1>
+
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/guides/asset_management.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p>Beside producing HTML, most web applications have various assets (JavaScript, CSS, images, fonts and so on).</p><p>From Phoenix v1.7, new applications use <a href="https://esbuild.github.io/">esbuild</a> to prepare assets via the <a href="https://github.com/phoenixframework/esbuild">Elixir esbuild wrapper</a>, and <a href="https://tailwindcss.com">tailwindcss</a> via the <a href="https://github.com/phoenixframework/tailwind">Elixir tailwindcss wrapper</a> for CSS. The direct integration with <code class="inline">esbuild</code> and <code class="inline">tailwind</code> means that newly generated applications do not have dependencies on Node.js or an external build system (e.g. Webpack).</p><p>Your JavaScript is typically placed at &quot;assets/js/app.js&quot; and <code class="inline">esbuild</code> will extract it to &quot;priv/static/assets/js/app.js&quot;. In development, this is done automatically via the <code class="inline">esbuild</code> watcher. In production, this is done by running <code class="inline">mix assets.deploy</code>.</p><p><code class="inline">esbuild</code> can also handle your CSS files, but by default <code class="inline">tailwind</code> handles all CSS building.</p><p>Finally, all other assets, that usually don't have to be preprocessed, go directly to &quot;priv/static&quot;.</p><h2 id="third-party-js-packages" class="section-heading"><a href="#third-party-js-packages" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Third-party JS packages</span></h2><p>If you want to import JavaScript dependencies, you have at least three options to add them to your application:</p><ol><li><p>Vendor those dependencies inside your project and import them in your &quot;assets/js/app.js&quot; using a relative path:</p><pre><code class="makeup javascript" translate="no"><span class="k">import</span><span class="w"> </span><span class="nv">topbar</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="p">&quot;</span><span class="s2">../vendor/topbar</span><span class="p">&quot;</span></code></pre></li><li><p>Call <code class="inline">npm install topbar --prefix assets</code>, which will create <code class="inline">package.json</code> and <code class="inline">package-lock.json</code> inside your assets directory, and <code class="inline">esbuild</code> will be able to automatically pick them up:</p><pre><code class="makeup javascript" translate="no"><span class="k">import</span><span class="w"> </span><span class="nv">topbar</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="p">&quot;</span><span class="s2">topbar</span><span class="p">&quot;</span></code></pre><p>To ensure that <code class="inline">npm install</code> is being run when checking out your project, or when building a release, add a <code class="inline">&quot;cmd --cd assets npm ci&quot;</code> step in <code class="inline">mix.exs</code> to the <code class="inline">assets.deploy</code> and  <code class="inline">assets.build</code> steps:</p></li></ol><pre><code class="makeup elixir" translate="no"><span class="w">      </span><span class="ss">&quot;assets.build&quot;</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1934740552-1">[</span><span class="s">&quot;cmd --cd assets npm ci&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tailwind your_app&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;esbuild your_app&quot;</span><span class="p" data-group-id="1934740552-1">]</span><span class="p">,</span><span class="w">
+      </span><span class="ss">&quot;assets.deploy&quot;</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1934740552-2">[</span><span class="w">
+        </span><span class="s">&quot;cmd --cd assets npm ci&quot;</span><span class="p">,</span><span class="w">
+        </span><span class="s">&quot;tailwind your_app --minify&quot;</span><span class="p">,</span><span class="w">
+        </span><span class="s">&quot;esbuild your_app --minify&quot;</span><span class="p">,</span><span class="w">
+        </span><span class="s">&quot;phx.digest&quot;</span><span class="w">
+      </span><span class="p" data-group-id="1934740552-2">]</span></code></pre><ol start="3"><li><p>Use Mix to track the dependency from a source repository:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># mix.exs</span><span class="w">
+</span><span class="p" data-group-id="4571018111-1">{</span><span class="ss">:topbar</span><span class="p">,</span><span class="w"> </span><span class="ss">github</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;buunguyen/topbar&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">app</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p">,</span><span class="w"> </span><span class="ss">compile</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="4571018111-1">}</span></code></pre><p>Run <a href="https://hexdocs.pm/mix/Mix.Tasks.Deps.Get.html"><code class="inline">mix deps.get</code></a> to fetch the dependency and then import it:</p><pre><code class="makeup javascript" translate="no"><span class="k">import</span><span class="w"> </span><span class="nv">topbar</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="p">&quot;</span><span class="s2">topbar</span><span class="p">&quot;</span></code></pre><p>New applications use this third approach to import icons, such as Heroicons,
+to avoid vendoring a copy of all icons and to avoid additional system
+dependencies such as <code class="inline">npm</code>, while you can still track explicit versions
+thanks to Mix. It is important to note that git dependencies cannot be used
+by Hex packages, so if you intend to publish your project to Hex, consider
+alternatives approaches.</p></li></ol><p>Note that if you use third party JS package managers, you might need to adjust your
+deployment steps to properly include the packages. If you're using
+<code class="inline">mix phx.gen.release --docker</code>, have a look at the
+<a href="Mix.Tasks.Phx.Gen.Release.html#module-docker">documentation</a> for further details.</p><h2 id="images-fonts-and-external-files" class="section-heading"><a href="#images-fonts-and-external-files" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Images, fonts, and external files</span></h2><p>If you reference an external file in your CSS or JavaScript files, <code class="inline">esbuild</code> will attempt to validate and manage them, unless told otherwise.</p><p>For example, imagine you want to reference <code class="inline">priv/static/images/bg.png</code>, served at <code class="inline">/images/bg.png</code>, from your CSS file:</p><pre><code class="makeup css" translate="no"><span class="nt">body</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">  </span><span class="nb">background-image</span><span class="p">:</span><span class="w"> </span><span class="nf">url</span><span class="p">(</span><span class="s">/</span><span class="s">i</span><span class="s">m</span><span class="s">a</span><span class="s">g</span><span class="s">e</span><span class="s">s</span><span class="s">/</span><span class="s">b</span><span class="s">g</span><span class="s">.</span><span class="s">p</span><span class="s">n</span><span class="s">g</span><span class="p">)</span><span class="p">;</span><span class="w">
+</span><span class="p">}</span></code></pre><p>The above may fail with the following message:</p><pre><code class="text">error: Could not resolve &quot;/images/bg.png&quot; (mark it as external to exclude it from the bundle)</code></pre><p>Given the images are already managed by Phoenix, you need to mark all resources from <code class="inline">/images</code> (and also <code class="inline">/fonts</code>) as external, as the error message says. This is what Phoenix does by default for new apps since v1.6.1+. In your <code class="inline">config/config.exs</code>, you will find:</p><pre><code class="makeup elixir" translate="no"><span class="ss">args</span><span class="p">:</span><span class="w"> </span><span class="sx">~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/*)</span><span class="p">,</span></code></pre><p>If you need to reference other directories, you need to update the arguments above accordingly. Note running <a href="Mix.Tasks.Phx.Digest.html"><code class="inline">mix phx.digest</code></a> will create digested files for all of the assets in <code class="inline">priv/static</code>, so your images and fonts are still cache-busted.</p><h3 id="ensuring-fonts-and-images-from-third-party-libraries-are-loaded" class="section-heading"><a href="#ensuring-fonts-and-images-from-third-party-libraries-are-loaded" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Ensuring fonts and images from third-party libraries are loaded</span></h3><p>If you import a Node package that depends on additional fonts or images, you might find them to fail to load. This is because they are referenced in the JS or CSS but by default Esbuild will not touch or process referenced files. You can add arguments to esbuild in <code class="inline">config/config.exs</code> to ensure that the referenced resources are copied to the output folder. The following example would copy all referenced font files to the output folder and prefix the paths with <code class="inline">/assets/</code>:</p><pre><code class="makeup elixir" translate="no"><span class="ss">args</span><span class="p">:</span><span class="w"> </span><span class="sx">~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --public-path=/assets/ --loader:.woff=copy  --loader:.ttf=copy --loader:.eot=copy --loader:.woff2=copy)</span><span class="p">,</span></code></pre><p>For more information, see <a href="https://esbuild.github.io/content-types/#copy">the esbuild documentation</a>.</p><h2 id="esbuild-plugins" class="section-heading"><a href="#esbuild-plugins" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Esbuild plugins</span></h2><p>Phoenix's default configuration of <code class="inline">esbuild</code> (via the Elixir wrapper) does not allow you to use <a href="https://esbuild.github.io/plugins/">esbuild plugins</a>. If you want to use an esbuild plugin, for example to compile SASS files to CSS, you can replace the default build system with a custom build script.</p><p>The following is an example of a custom build using esbuild via Node.js. First of all, you'll need to install Node.js in development and make it available for your production build step.</p><p>Then you'll need to add <code class="inline">esbuild</code> to your Node.js packages and the Phoenix packages. Inside the <code class="inline">assets</code> directory, run:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">npm install esbuild --save-dev
+</span><span class="gp unselectable">$ </span><span class="">npm install ../deps/phoenix ../deps/phoenix_html ../deps/phoenix_live_view --save
+</span></code></pre><p>or, for Yarn:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">yarn add --dev esbuild
+</span><span class="gp unselectable">$ </span><span class="">yarn add ../deps/phoenix ../deps/phoenix_html ../deps/phoenix_live_view
+</span></code></pre><p>Next, add a custom JavaScript build script. We'll call the example <code class="inline">assets/build.js</code>:</p><pre><code class="makeup javascript" translate="no"><span class="kt">const</span><span class="w"> </span><span class="nv">esbuild</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">require</span><span class="p">(</span><span class="p">&quot;</span><span class="s2">esbuild</span><span class="p">&quot;</span><span class="p">)</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="kt">const</span><span class="w"> </span><span class="nv">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">process</span><span class="p">.</span><span class="no">argv</span><span class="p">.</span><span class="nf">slice</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="p">;</span><span class="w">
+</span><span class="kt">const</span><span class="w"> </span><span class="nv">watch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">args</span><span class="p">.</span><span class="nf">includes</span><span class="p">(</span><span class="p">&#39;</span><span class="s1">--watch</span><span class="p">&#39;</span><span class="p">)</span><span class="p">;</span><span class="w">
+</span><span class="kt">const</span><span class="w"> </span><span class="nv">deploy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">args</span><span class="p">.</span><span class="nf">includes</span><span class="p">(</span><span class="p">&#39;</span><span class="s1">--deploy</span><span class="p">&#39;</span><span class="p">)</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="kt">const</span><span class="w"> </span><span class="nv">loader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">  </span><span class="c1">//</span><span class="c1"> Add loaders for images/fonts/etc, e.g. { &#39;.svg&#39;: &#39;file&#39; }
+</span><span class="p">}</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="kt">const</span><span class="w"> </span><span class="nv">plugins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w">
+</span><span class="w">  </span><span class="c1">//</span><span class="c1"> Add and configure plugins here
+</span><span class="p">]</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="c1">//</span><span class="c1"> Define esbuild options
+</span><span class="kt">let</span><span class="w"> </span><span class="nv">opts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">  </span><span class="n">entryPoints</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="p">&quot;</span><span class="s2">js/app.js</span><span class="p">&quot;</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="n">bundle</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="n">logLevel</span><span class="p">:</span><span class="w"> </span><span class="p">&quot;</span><span class="s2">info</span><span class="p">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="n">target</span><span class="p">:</span><span class="w"> </span><span class="p">&quot;</span><span class="s2">es2022</span><span class="p">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="n">outdir</span><span class="p">:</span><span class="w"> </span><span class="p">&quot;</span><span class="s2">../priv/static/assets</span><span class="p">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="n">external</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="p">&quot;</span><span class="s2">*.css</span><span class="p">&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">&quot;</span><span class="s2">fonts/*</span><span class="p">&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">&quot;</span><span class="s2">images/*</span><span class="p">&quot;</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="n">nodePaths</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="p">&quot;</span><span class="s2">../deps</span><span class="p">&quot;</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="n">loader</span><span class="p">:</span><span class="w"> </span><span class="nv">loader</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="n">plugins</span><span class="p">:</span><span class="w"> </span><span class="nv">plugins</span><span class="p">,</span><span class="w">
+</span><span class="p">}</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nv">deploy</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">  </span><span class="nv">opts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">    </span><span class="o">...</span><span class="nv">opts</span><span class="p">,</span><span class="w">
+</span><span class="w">    </span><span class="n">minify</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="p">}</span><span class="p">;</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="w">
+</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nv">watch</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">  </span><span class="nv">opts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">    </span><span class="o">...</span><span class="nv">opts</span><span class="p">,</span><span class="w">
+</span><span class="w">    </span><span class="n">sourcemap</span><span class="p">:</span><span class="w"> </span><span class="p">&quot;</span><span class="s2">inline</span><span class="p">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="p">}</span><span class="p">;</span><span class="w">
+</span><span class="w">  </span><span class="nv">esbuild</span><span class="w">
+</span><span class="w">    </span><span class="p">.</span><span class="nf">context</span><span class="p">(</span><span class="nv">opts</span><span class="p">)</span><span class="w">
+</span><span class="w">    </span><span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="p">(</span><span class="nv">ctx</span><span class="p">)</span><span class="w"> </span><span class="kt">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">      </span><span class="nv">ctx</span><span class="p">.</span><span class="nf">watch</span><span class="p">(</span><span class="p">)</span><span class="p">;</span><span class="w">
+</span><span class="w">    </span><span class="p">}</span><span class="p">)</span><span class="w">
+</span><span class="w">    </span><span class="p">.</span><span class="nf">catch</span><span class="p">(</span><span class="p">(</span><span class="nv">_error</span><span class="p">)</span><span class="w"> </span><span class="kt">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">      </span><span class="no">process</span><span class="p">.</span><span class="nf">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="p">;</span><span class="w">
+</span><span class="w">    </span><span class="p">}</span><span class="p">)</span><span class="p">;</span><span class="w">
+</span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">  </span><span class="nv">esbuild</span><span class="p">.</span><span class="nf">build</span><span class="p">(</span><span class="nv">opts</span><span class="p">)</span><span class="p">;</span><span class="w">
+</span><span class="p">}</span></code></pre><p>This script covers following use cases:</p><ul><li><code class="inline">node build.js</code>: builds for development &amp; testing (useful on CI)</li><li><code class="inline">node build.js --watch</code>: like above, but watches for changes continuously</li><li><code class="inline">node build.js --deploy</code>: builds minified assets for production</li></ul><p>Modify <code class="inline">config/dev.exs</code> so that the script runs whenever you change files, replacing the existing <code class="inline">:esbuild</code> configuration under <code class="inline">watchers</code>:</p><pre><code class="makeup elixir" translate="no"><span class="n">config</span><span class="w"> </span><span class="ss">:hello</span><span class="p">,</span><span class="w"> </span><span class="nc">HelloWeb.Endpoint</span><span class="p">,</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+  </span><span class="ss">watchers</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8310107289-1">[</span><span class="w">
+    </span><span class="ss">node</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8310107289-2">[</span><span class="s">&quot;build.js&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;--watch&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">cd</span><span class="p">:</span><span class="w"> </span><span class="nc">Path</span><span class="o">.</span><span class="n">expand</span><span class="p" data-group-id="8310107289-3">(</span><span class="s">&quot;../assets&quot;</span><span class="p">,</span><span class="w"> </span><span class="bp">__DIR__</span><span class="p" data-group-id="8310107289-3">)</span><span class="p" data-group-id="8310107289-2">]</span><span class="w">
+  </span><span class="p" data-group-id="8310107289-1">]</span><span class="p">,</span><span class="w">
+  </span><span class="n">...</span></code></pre><p>Modify the <code class="inline">aliases</code> task in <code class="inline">mix.exs</code> to install <code class="inline">npm</code> packages during <code class="inline">mix setup</code> and use the new <code class="inline">esbuild</code> on <code class="inline">mix assets.deploy</code>:</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="kd">defp</span><span class="w"> </span><span class="nf">aliases</span><span class="w"> </span><span class="k" data-group-id="1131188707-1">do</span><span class="w">
+    </span><span class="p" data-group-id="1131188707-2">[</span><span class="w">
+      </span><span class="ss">setup</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1131188707-3">[</span><span class="s">&quot;deps.get&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ecto.setup&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cmd --cd assets npm install&quot;</span><span class="p" data-group-id="1131188707-3">]</span><span class="p">,</span><span class="w">
+      </span><span class="n">...</span><span class="p">,</span><span class="w">
+      </span><span class="ss">&quot;assets.deploy&quot;</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1131188707-4">[</span><span class="s">&quot;cmd --cd assets node build.js --deploy&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;phx.digest&quot;</span><span class="p" data-group-id="1131188707-4">]</span><span class="w">
+    </span><span class="p" data-group-id="1131188707-2">]</span><span class="w">
+  </span><span class="k" data-group-id="1131188707-1">end</span></code></pre><p>Finally, remove the <code class="inline">esbuild</code> configuration from <code class="inline">config/config.exs</code> and remove the dependency from the <code class="inline">deps</code> function in your <code class="inline">mix.exs</code>, and you are done!</p><h2 id="alternative-js-build-tools" class="section-heading"><a href="#alternative-js-build-tools" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Alternative JS build tools</span></h2><p>If you are writing an API or you want to use another asset build tool, you may want to remove the <code class="inline">esbuild</code> Hex package (see steps below). Then you must follow the additional steps required by the third-party tool.</p><h3 id="remove-esbuild" class="section-heading"><a href="#remove-esbuild" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Remove esbuild</span></h3><ol><li>Remove the <code class="inline">esbuild</code> configuration in <code class="inline">config/config.exs</code> and <code class="inline">config/dev.exs</code>,</li><li>Remove the <code class="inline">assets.deploy</code> task defined in <code class="inline">mix.exs</code>,</li><li>Remove the <code class="inline">esbuild</code> dependency from <code class="inline">mix.exs</code>,</li><li>Unlock the <code class="inline">esbuild</code> dependency:</li></ol><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">mix deps.unlock esbuild
+</span></code></pre><h2 id="alternative-css-frameworks" class="section-heading"><a href="#alternative-css-frameworks" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Alternative CSS frameworks</span></h2><p>By default, Phoenix generates CSS with the <code class="inline">tailwind</code> library and its default plugins.</p><p>If you want to use external <code class="inline">tailwind</code> plugins or another CSS framework, you should replace the <code class="inline">tailwind</code> Hex package (see steps below). Then you can use an <code class="inline">esbuild</code> plugin (as outlined above) or even bring a separate framework altogether.</p><h3 id="remove-tailwind" class="section-heading"><a href="#remove-tailwind" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Remove tailwind</span></h3><ol><li>Remove the <code class="inline">tailwind</code> configuration in <code class="inline">config/config.exs</code> and <code class="inline">config/dev.exs</code>,</li><li>Remove the <code class="inline">assets.deploy</code> task defined in <code class="inline">mix.exs</code>,</li><li>Remove the <code class="inline">tailwind</code> dependency from <code class="inline">mix.exs</code>,</li><li>Unlock the <code class="inline">tailwind</code> dependency:</li></ol><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">mix deps.unlock tailwind
+</span></code></pre><p>You may optionally remove and delete the <code class="inline">heroicons</code> dependency as well.</p><h2 id="alternative-icon-libraries" class="section-heading"><a href="#alternative-icon-libraries" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Alternative icon libraries</span></h2><p>Phoenix ships with the <a href="https://heroicons.com/">Heroicons</a> library for icons support.
+This is done by embedding icons as CSS classes, which guarantees only the icons actually
+used by your application are sent to the client, thanks to Tailwind.</p><p>If you prefer to use an alternative icon set, it should be possible to adapt the
+code that embeds Heroicons to use another library. Let's see exactly how to do that
+using <a href="https://remixicon.com/">Remix Icon</a> as an example:</p><p>First replace the <code class="inline">heroicon</code> repository in your <code class="inline">mix.exs</code> by <code class="inline">remixicons</code>:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="3936607726-1">{</span><span class="ss">:remixicons</span><span class="p">,</span><span class="w">
+  </span><span class="ss">github</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Remix-Design/RemixIcon&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">sparse</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;icons&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">tag</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;v4.6.0&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">app</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p">,</span><span class="w">
+  </span><span class="ss">compile</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p">,</span><span class="w">
+  </span><span class="ss">depth</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="3936607726-1">}</span><span class="p">,</span></code></pre><p>Then replace <code class="inline">assets/vendor/heroicons.js</code>, which traverses the heroicons dependency, by <code class="inline">assets/vendor/remixicons.js</code>, which traverses remix icons instead:</p><pre><code class="js">const plugin = require(&quot;tailwindcss/plugin&quot;)
+const fs = require(&quot;fs&quot;)
+const path = require(&quot;path&quot;)
+
+module.exports = plugin(function({matchComponents, theme}) {
+  let baseDir = path.join(__dirname, &quot;../../deps/remixicons/icons&quot;);
+  let values = {};
+  let icons = fs
+    .readdirSync(baseDir, { withFileTypes: true })
+    .filter((dirent) =&gt; dirent.isDirectory())
+    .map((dirent) =&gt; dirent.name);
+
+  icons.forEach((dir) =&gt; {
+    fs.readdirSync(path.join(baseDir, dir)).map((file) =&gt; {
+      let name = path.basename(file, &quot;.svg&quot;);
+      values[name] = { name, fullPath: path.join(baseDir, dir, file) };
+    });
+  });
+
+  matchComponents(
+    {
+      ri: ({ name, fullPath }) =&gt; {
+        let content = fs
+          .readFileSync(fullPath)
+          .toString()
+          .replace(/\r?\n|\r/g, &quot;&quot;);
+
+        return {
+          [`--ri-${name}`]: `url('data:image/svg+xml;utf8,${content}')`,
+          &quot;-webkit-mask&quot;: `var(--ri-${name})`,
+          mask: `var(--ri-${name})`,
+          &quot;background-color&quot;: &quot;currentColor&quot;,
+          &quot;vertical-align&quot;: &quot;middle&quot;,
+          display: &quot;inline-block&quot;,
+          width: theme(&quot;spacing.10&quot;),
+          height: theme(&quot;spacing.10&quot;),
+        };
+      },
+    },
+    { values },
+  );
+})</code></pre><p>And then change <code class="inline">assets/css/app.css</code> to import your new plugin instead.</p><p>Finally, update the <code class="inline">icon</code> function in <code class="inline">lib/my_app_web/components/core_components.ex</code>
+to match on <code class="inline">ri-</code> prefixes instead:</p><pre><code class="makeup elixir" translate="no"><span class="na">@doc</span><span class="w"> </span><span class="s">&quot;&quot;&quot;
+Renders a [Remix Icon](https://remixicon.com).
+
+You can customize the size and colors of the icons by
+setting width, height, and background color classes.
+
+## Examples
+
+    &lt;.icon name=&quot;ri-github-fill&quot; /&gt;
+    &lt;.icon name=&quot;ri-github&quot; class=&quot;ml-1 w-3 h-3 animate-spin&quot; /&gt;
+&quot;&quot;&quot;</span><span class="w">
+</span><span class="n">attr</span><span class="w"> </span><span class="ss">:name</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">required</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+</span><span class="n">attr</span><span class="w"> </span><span class="ss">:class</span><span class="p">,</span><span class="w"> </span><span class="ss">:any</span><span class="p">,</span><span class="w"> </span><span class="ss">default</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;size-5&quot;</span><span class="w">
+
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">icon</span><span class="p" data-group-id="4398762263-1">(</span><span class="p" data-group-id="4398762263-2">%{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ri-&quot;</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="bp">_</span><span class="p" data-group-id="4398762263-2">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assigns</span><span class="p" data-group-id="4398762263-1">)</span><span class="w"> </span><span class="k" data-group-id="4398762263-3">do</span><span class="w">
+  </span><span class="sx">~H&quot;&quot;&quot;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">i</span><span class="w"> </span><span class="na">class</span><span class="p">=</span><span class="p" data-group-id="0062591140-1">{</span><span class="p" data-group-id="4398762263-4">[</span><span class="na">@name</span><span class="p">,</span><span class="w"> </span><span class="na">@class</span><span class="p" data-group-id="4398762263-4">]</span><span class="p" data-group-id="0062591140-1">}</span><span class="w"> </span><span class="na">aria-hidden</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">true</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="p">&lt;/</span><span class="nt">i</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="sx">&quot;&quot;&quot;</span><span class="w">
+</span><span class="k" data-group-id="4398762263-3">end</span></code></pre><p>Now replace the Heroicons in your application by Remix ones and you are good to go!</p><p>The approach above may also work with other libraries, it is a matter of adapting
+the Tailwind plugin to traverse these libraries and generate the proper classes.
+Some iconsets may also be available as regular Hex packages too.</p>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="live_view.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+LiveView
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="telemetry.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Telemetry
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix/1.8.5">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix/1.8.5">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/phoenix/1.8.5/show/guides/asset_management.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+
+              <a href="Phoenix.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

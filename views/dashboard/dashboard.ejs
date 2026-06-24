@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title %></title>
+  
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <%- include('../partials/head') %>
+  
+</head>
+
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="dashboard-page">
+    <!-- Header -->
+    <section class="dashboard-header">
+      <h1>Dashboard & Statistiken</h1>
+      <p class="subtitle">Übersicht über die wichtigsten Kennzahlen und Trends</p>
+    </section>
+
+    <!-- Key Metrics LAZY -->
+    <section class="metrics-grid" 
+         id="metricsWidget"
+         hx-get="/dashboard/widgets/metrics"
+         hx-trigger="load"
+         hx-target="#metricsWidget"
+         hx-swap="innerHTML">
+      <div class="loading-skeleton">
+        <div class="metric-card skeleton"><div class="metric-icon">💡</div></div>
+        <div class="metric-card skeleton"><div class="metric-icon">👥</div></div>
+        <div class="metric-card skeleton"><div class="metric-icon">📊</div></div>
+        <div class="metric-card skeleton"><div class="metric-icon">📈</div></div>
+      </div>
+    </section>
+
+    <!-- Top Ideen LAZY -->
+    <section class="dashboard-section" id="topIdeasWidget"
+         hx-get="/dashboard/widgets/top-ideas"
+         hx-trigger="load delay:200ms"
+         hx-target="#topIdeasWidget"
+         hx-swap="innerHTML">
+      <div class="loading-skeleton">
+         <h2>Top Ideen</h2><i>der letzten 7 Tagen</i>
+        <div class="top-ideas-grid">
+          <div class="top-idea-card skeleton"></div>
+          <div class="top-idea-card skeleton"></div>
+          <div class="top-idea-card skeleton"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Grid LAZY (Fixed Skeleton) -->
+    <section class="charts-grid" id="chartsWidget"
+         hx-get="/dashboard/widgets/charts"
+         hx-trigger="load delay:500ms"
+         hx-target="#chartsWidget"
+         hx-swap="innerHTML">
+      <!-- Direct skeleton children match loaded 3+1 grid structure [file:2] -->
+      <div class="chart-card skeleton"></div>
+      <div class="chart-card skeleton"></div>
+      <div class="chart-card skeleton"></div>
+      <div class="chart-card full-width skeleton"></div>
+    </section>
+  </main>
+    <!-- Note: Monthly & Top-Users are rendered inside charts-grid to avoid duplicates -->
+
+  <%- include('../partials/footer') %>
+
+  <script>
+    // Deine bestehende Chart-Animation bleibt identisch
+    document.addEventListener('DOMContentLoaded', () => {
+      // HTMX Events für Animation nach Lazy-Load
+      document.body.addEventListener('htmx:afterSwap', (e) => {
+        if (e.detail.target.classList.contains('metrics-grid') ||
+            e.detail.target.classList.contains('charts-grid')) {
+          animateCharts();
+        }
+      });
+
+      function animateCharts() {
+        document.querySelectorAll('.bar-fill, .progress-fill').forEach(bar => {
+          const width = bar.style.width;
+          bar.style.width = '0';
+          setTimeout(() => bar.style.width = width, 300);
+        });
+        document.querySelectorAll('.line-chart-bar .bar').forEach(bar => {
+          const height = bar.style.height;
+          bar.style.height = '0';
+          setTimeout(() => bar.style.height = height, 500);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

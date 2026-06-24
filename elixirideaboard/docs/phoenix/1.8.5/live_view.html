@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix v1.8.5">
+
+
+    <title>LiveView — Phoenix v1.8.5</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-209F6654.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.8.5
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="true">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Latest</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="https://hexdocs.pm/?packages=plug%3Alatest%2Cphoenix%3Alatest%2Cphoenix_html%3Alatest%2Cphoenix_live_view%3Alatest%2Cphoenix_pubsub%3Alatest%2Cphoenix_template%3Alatest&q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Latest</span>
+                <span class="help">Search latest versions of Plug, Phoenix, Phoenix.{HTML, LiveView, PubSub, Template}</span>
+              </button>
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="false">
+                <span class="name">Current version</span>
+                <span class="help">Search only this project</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>LiveView</h1>
+
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/guides/live_view.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<blockquote><p><strong>Requirement</strong>: This guide expects that you have gone through the <a href="installation.html">introductory guides</a> and got a Phoenix application <a href="up_and_running.html">up and running</a>.</p></blockquote><blockquote><p><strong>Requirement</strong>: This guide expects that you have gone through the <a href="request_lifecycle.html">request life-cycle guide</a>.</p></blockquote><p>We've already seen how the typical request lifecycle in Phoenix works: a request is matched in the router, a controller handles the request and turns to a view to return a response in the correct format. But what if we want to build interactive pages? In a typical server rendered application, changing the content of the page either needs a form submission rendering the new page, or moving application logic to the client (JavaScript frameworks like jQuery, React, Vue, etc.) and building an API interface for the client to talk to.</p><p>Phoenix LiveView offers a different approach, keeping all the state on the server while providing rich, real-time user experiences with server-rendered HTML. It's an alternative to client-side JavaScript frameworks that allows you to build dynamic, interactive applications with minimal JavaScript code on the client.</p><h2 id="what-is-a-liveview" class="section-heading"><a href="#what-is-a-liveview" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">What is a LiveView?</span></h2><p>LiveViews are processes that receive events, update their state, and render updates to a page as diffs.</p><p>The LiveView programming model is declarative: instead of saying &quot;once event X happens, change Y on the page&quot;, events in LiveView are regular messages which may cause changes to the state. Once the state changes, the LiveView will re-render the relevant parts of its HTML template and push it to the browser, which updates the page in the most efficient manner.</p><p>LiveView state is nothing more than functional and immutable Elixir data structures. The events are either internal application messages (usually emitted by <a href="https://hexdocs.pm/phoenix_pubsub/2.1.3/Phoenix.PubSub.html"><code class="inline">Phoenix.PubSub</code></a>) or sent by the client/browser.</p><p>Every LiveView is first rendered statically as part of a regular HTTP request, which provides quick times for &quot;First Meaningful Paint&quot;, in addition to helping search and indexing engines. A persistent connection is then established between the client and server to exchange events and changes to the page. This allows LiveView applications to react faster to user events as there is less work to be done and less data to be sent compared to stateless requests that have to authenticate, decode, load, and encode data on every request. You can think of LiveView as &quot;diffs over the wire&quot;.</p><h2 id="liveview-vs-controller-view" class="section-heading"><a href="#liveview-vs-controller-view" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">LiveView vs Controller + View</span></h2><p>While Phoenix controllers and LiveViews serve similar purposes in handling user interactions, they operate very differently:</p><h3 id="controller-view" class="section-heading"><a href="#controller-view" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Controller + View</span></h3><ul><li>Controllers handle each HTTP request-response pair as separate transactions</li><li>Each page load or form submission requires a full request/response cycle</li><li>Controllers are stateless, with data stored externally (database, session)</li><li>Views are separate modules that render templates with the data from controllers</li><li>Page updates and dynamic interactions require either full page reloads or custom client-side JavaScript code</li></ul><h3 id="liveview-approach" class="section-heading"><a href="#liveview-approach" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">LiveView approach</span></h3><ul><li>Initial page load uses the regular request lifecycle, but then establishes a bidirectional connection using <a href="channels.html">Phoenix Channels</a></li><li>A LiveView process maintains state throughout user interaction</li><li>State changes automatically trigger re-renders of only the changed parts of the page</li><li>Events flow through the persistent connection instead of separate HTTP requests</li><li>Minimal JavaScript is required for interactive features</li></ul><p>LiveViews combine the concerns of controllers and views into a more unified model.</p><h2 id="basic-example" class="section-heading"><a href="#basic-example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Basic example</span></h2><p>LiveView is included by default in new Phoenix applications. Let's see a simple example:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyAppWeb.ThermostatLive</span><span class="w"> </span><span class="k" data-group-id="3380068138-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">MyAppWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:live_view</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">render</span><span class="p" data-group-id="3380068138-2">(</span><span class="n">assigns</span><span class="p" data-group-id="3380068138-2">)</span><span class="w"> </span><span class="k" data-group-id="3380068138-3">do</span><span class="w">
+    </span><span class="sx">~H&quot;&quot;&quot;</span><span class="w">
+</span><span class="n">    Current temperature: </span><span class="p" data-group-id="0112616766-1">{</span><span class="na">@temperature</span><span class="p" data-group-id="0112616766-1">}</span><span class="n">°F
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nt">button</span><span class="w"> </span><span class="na">phx-click</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">inc_temperature</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="n">+</span><span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="sx">&quot;&quot;&quot;</span><span class="w">
+  </span><span class="k" data-group-id="3380068138-3">end</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">mount</span><span class="p" data-group-id="3380068138-4">(</span><span class="c">_params</span><span class="p">,</span><span class="w"> </span><span class="c">_session</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="3380068138-4">)</span><span class="w"> </span><span class="k" data-group-id="3380068138-5">do</span><span class="w">
+    </span><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">70</span><span class="w"> </span><span class="c1"># Let&#39;s assume a fixed temperature for now</span><span class="w">
+    </span><span class="p" data-group-id="3380068138-6">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">assign</span><span class="p" data-group-id="3380068138-7">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="ss">:temperature</span><span class="p">,</span><span class="w"> </span><span class="n">temperature</span><span class="p" data-group-id="3380068138-7">)</span><span class="p" data-group-id="3380068138-6">}</span><span class="w">
+  </span><span class="k" data-group-id="3380068138-5">end</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_event</span><span class="p" data-group-id="3380068138-8">(</span><span class="s">&quot;inc_temperature&quot;</span><span class="p">,</span><span class="w"> </span><span class="c">_params</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="3380068138-8">)</span><span class="w"> </span><span class="k" data-group-id="3380068138-9">do</span><span class="w">
+    </span><span class="p" data-group-id="3380068138-10">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="n">update</span><span class="p" data-group-id="3380068138-11">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="ss">:temperature</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p" data-group-id="3380068138-12">(</span><span class="ni">&amp;1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="3380068138-12">)</span><span class="p" data-group-id="3380068138-11">)</span><span class="p" data-group-id="3380068138-10">}</span><span class="w">
+  </span><span class="k" data-group-id="3380068138-9">end</span><span class="w">
+</span><span class="k" data-group-id="3380068138-1">end</span></code></pre><p>This LiveView demonstrates the core lifecycle:</p><ol><li>The <code class="inline">mount/3</code> callback initializes state when the LiveView starts</li><li>The <code class="inline">render/1</code> function defines what is displayed using <a href="components.html">HEEx templates</a></li><li>The <code class="inline">handle_event/3</code> callback responds to events from the client</li></ol><p>To wire this up in your router:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyAppWeb.Router</span><span class="w"> </span><span class="k" data-group-id="1084672423-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">MyAppWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:router</span><span class="w">
+
+  </span><span class="n">pipeline</span><span class="w"> </span><span class="ss">:browser</span><span class="w"> </span><span class="k" data-group-id="1084672423-2">do</span><span class="w">
+    </span><span class="n">...</span><span class="w">
+  </span><span class="k" data-group-id="1084672423-2">end</span><span class="w">
+
+  </span><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">MyAppWeb</span><span class="w"> </span><span class="k" data-group-id="1084672423-3">do</span><span class="w">
+    </span><span class="n">pipe_through</span><span class="w"> </span><span class="ss">:browser</span><span class="w">
+    </span><span class="n">...</span><span class="w">
+
+    </span><span class="n">live</span><span class="w"> </span><span class="s">&quot;/thermostat&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">ThermostatLive</span><span class="w">
+  </span><span class="k" data-group-id="1084672423-3">end</span><span class="w">
+</span><span class="k" data-group-id="1084672423-1">end</span></code></pre><p>Once the LiveView is rendered, a regular HTML response is sent. In your
+app.js file, you should find the following:</p><pre><code class="makeup javascript" translate="no"><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nv">Socket</span><span class="p">}</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="p">&quot;</span><span class="s2">phoenix</span><span class="p">&quot;</span><span class="w">
+</span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nv">LiveSocket</span><span class="p">}</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="p">&quot;</span><span class="s2">phoenix_live_view</span><span class="p">&quot;</span><span class="w">
+</span><span class="w">
+</span><span class="kt">let</span><span class="w"> </span><span class="nv">csrfToken</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="p">&quot;</span><span class="s2">meta[name=&#39;csrf-token&#39;]</span><span class="p">&quot;</span><span class="p">)</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="p">&quot;</span><span class="s2">content</span><span class="p">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="kt">let</span><span class="w"> </span><span class="nv">liveSocket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nv">LiveSocket</span><span class="p">(</span><span class="p">&quot;</span><span class="s2">/live</span><span class="p">&quot;</span><span class="p">,</span><span class="w"> </span><span class="no">Socket</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">params</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_csrf_token</span><span class="p">:</span><span class="w"> </span><span class="nv">csrfToken</span><span class="p">}</span><span class="p">}</span><span class="p">)</span><span class="w">
+</span><span class="nv">liveSocket</span><span class="p">.</span><span class="nf">connect</span><span class="p">(</span><span class="p">)</span></code></pre><p>Now the JavaScript client will connect over WebSockets and <code class="inline">mount/3</code> will be invoked
+inside a spawned LiveView process.</p><h2 id="key-concepts" class="section-heading"><a href="#key-concepts" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Key concepts</span></h2><h3 id="socket-and-state" class="section-heading"><a href="#socket-and-state" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Socket and state</span></h3><p>The LiveView socket is the fundamental data structure that holds all state in a LiveView. It's an immutable structure containing &quot;assigns&quot; - the data available to your templates. While controllers have <code class="inline">conn</code>, LiveViews have <code class="inline">socket</code>.</p><p>Changes to the socket (via <code class="inline">assign/3</code> or <code class="inline">update/3</code>) trigger re-renders. All state is maintained on the server, with only the diffs sent to the client, minimizing network traffic.</p><h3 id="liveview-lifecycle" class="section-heading"><a href="#liveview-lifecycle" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">LiveView lifecycle</span></h3><p>LiveViews have several important lifecycle stages:</p><ul><li><a href="https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html#c:mount/3"><code class="inline">mount</code></a> - initializes the LiveView with parameters, session data, and socket</li><li><a href="https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html#c:handle_params/3"><code class="inline">handle_params</code></a> - responds to URL changes and updates LiveView state accordingly</li><li><a href="https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html#c:handle_event/3"><code class="inline">handle_event</code></a> - responds to user interactions coming from the client</li><li><a href="https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html#c:handle_info/2"><code class="inline">handle_info</code></a> - responds to regular process messages</li></ul><h3 id="dom-bindings" class="section-heading"><a href="#dom-bindings" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">DOM Bindings</span></h3><p>LiveView provides DOM bindings for convenient client-server interaction:</p><pre><code class="makeup html" translate="no"><span class="p">&lt;</span><span class="nt">button</span><span class="w"> </span><span class="na">phx-click</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">inc_temperature</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="n">+</span><span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span><span class="w">
+</span><span class="p">&lt;</span><span class="nt">form</span><span class="w"> </span><span class="na">phx-submit</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">save</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="n">...</span><span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span><span class="w">
+</span><span class="p">&lt;</span><span class="nt">input</span><span class="w"> </span><span class="na">phx-blur</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">validate</span><span class="p">&quot;</span><span class="p">&gt;</span></code></pre><p>These bindings automatically send events to the server when the specified browser events occur, which are then handled in <code class="inline">handle_event/3</code>.</p><h2 id="getting-started" class="section-heading"><a href="#getting-started" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Getting Started</span></h2><p>Phoenix includes code generators for LiveView. Try:</p><pre><code class="makeup shell" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.gen.live Blog Post posts title:string body:text
+</span></code></pre><p>This generates a complete LiveView CRUD implementation, similar to <a href="Mix.Tasks.Phx.Gen.Html.html"><code class="inline">mix phx.gen.html</code></a>.</p><p>To learn more about LiveView, please refer to the <a href="https://hexdocs.pm/phoenix_live_view">Phoenix LiveView documentation</a>.</p>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="json_and_apis.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+JSON and APIs
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="asset_management.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Asset Management
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix/1.8.5">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix/1.8.5">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/phoenix/1.8.5/show/guides/live_view.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+
+              <a href="Phoenix.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

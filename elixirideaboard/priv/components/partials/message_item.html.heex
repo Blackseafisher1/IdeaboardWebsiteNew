@@ -1,0 +1,5 @@
+<div class={"message #{if @msg.sender_id == @current_user_id, do: 'mine', else: 'theirs'}"} id={"msg-#{@msg.message_id}"}>
+  <div class="message-sender"><%= @msg.sender_username %></div>
+  <div class="message-content"><%= @msg.content %></div>
+  <div class="message-time"><%= @msg.created_at %></div>
+</div>

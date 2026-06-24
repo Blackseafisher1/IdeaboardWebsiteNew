@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix v1.8.5">
+
+
+    <title>Phoenix.Socket — Phoenix v1.8.5</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-209F6654.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.8.5
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-behaviour" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="true">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Latest</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="https://hexdocs.pm/?packages=plug%3Alatest%2Cphoenix%3Alatest%2Cphoenix_html%3Alatest%2Cphoenix_live_view%3Alatest%2Cphoenix_pubsub%3Alatest%2Cphoenix_template%3Alatest&q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Latest</span>
+                <span class="help">Search latest versions of Plug, Phoenix, Phoenix.{HTML, LiveView, PubSub, Template}</span>
+              </button>
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="false">
+                <span class="name">Current version</span>
+                <span class="help">Search only this project</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Phoenix.<wbr>Socket</span> <small>behaviour</small>
+      <small class="app-vsn" translate="no">(Phoenix v1.8.5)</small>
+
+    </h1>
+
+
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/socket.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>A socket implementation that multiplexes messages over channels.</p><p><a href="Phoenix.Socket.html"><code class="inline">Phoenix.Socket</code></a> is used as a module for establishing a connection
+between client and server. Once the connection is established,
+the initial state is stored in the <a href="Phoenix.Socket.html"><code class="inline">Phoenix.Socket</code></a> struct.</p><p>The same socket can be used to receive events from different transports.
+Phoenix supports <code class="inline">websocket</code> and <code class="inline">longpoll</code> options when invoking
+<a href="Phoenix.Endpoint.html#socket/3"><code class="inline">Phoenix.Endpoint.socket/3</code></a> in your endpoint. <code class="inline">websocket</code> is set by default
+and <code class="inline">longpoll</code> can also be configured explicitly.</p><pre><code class="makeup elixir" translate="no"><span class="n">socket</span><span class="w"> </span><span class="s">&quot;/socket&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">MyAppWeb.Socket</span><span class="p">,</span><span class="w"> </span><span class="ss">websocket</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w"> </span><span class="ss">longpoll</span><span class="p">:</span><span class="w"> </span><span class="no">false</span></code></pre><p>The command above means incoming socket connections can be made via
+a WebSocket connection. Incoming and outgoing events are routed to
+channels by topic:</p><pre><code class="makeup elixir" translate="no"><span class="n">channel</span><span class="w"> </span><span class="s">&quot;room:lobby&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">MyAppWeb.LobbyChannel</span></code></pre><p>See <a href="Phoenix.Channel.html"><code class="inline">Phoenix.Channel</code></a> for more information on channels.</p><h2 id="module-socket-behaviour" class="section-heading"><a href="#module-socket-behaviour" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Socket Behaviour</span></h2><p>Socket handlers are mounted in Endpoints and must define two callbacks:</p><ul><li><p><code class="inline">connect/3</code> - receives the socket params, connection info if any, and
+authenticates the connection. Must return a <a href="Phoenix.Socket.html"><code class="inline">Phoenix.Socket</code></a> struct,
+often with custom assigns</p></li><li><p><code class="inline">id/1</code> - receives the socket returned by <code class="inline">connect/3</code> and returns the
+id of this connection as a string. The <code class="inline">id</code> is used to identify socket
+connections, often to a particular user, allowing us to force disconnections.
+For sockets requiring no authentication, <code class="inline">nil</code> can be returned</p></li></ul><h2 id="module-examples" class="section-heading"><a href="#module-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyAppWeb.UserSocket</span><span class="w"> </span><span class="k" data-group-id="5262388687-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Phoenix.Socket</span><span class="w">
+
+  </span><span class="n">channel</span><span class="w"> </span><span class="s">&quot;room:*&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">MyAppWeb.RoomChannel</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">connect</span><span class="p" data-group-id="5262388687-2">(</span><span class="n">params</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="c">_connect_info</span><span class="p" data-group-id="5262388687-2">)</span><span class="w"> </span><span class="k" data-group-id="5262388687-3">do</span><span class="w">
+    </span><span class="p" data-group-id="5262388687-4">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">assign</span><span class="p" data-group-id="5262388687-5">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="ss">:user_id</span><span class="p">,</span><span class="w"> </span><span class="n">params</span><span class="p" data-group-id="5262388687-6">[</span><span class="s">&quot;user_id&quot;</span><span class="p" data-group-id="5262388687-6">]</span><span class="p" data-group-id="5262388687-5">)</span><span class="p" data-group-id="5262388687-4">}</span><span class="w">
+  </span><span class="k" data-group-id="5262388687-3">end</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">id</span><span class="p" data-group-id="5262388687-7">(</span><span class="n">socket</span><span class="p" data-group-id="5262388687-7">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;users_socket:</span><span class="si" data-group-id="5262388687-8">#{</span><span class="n">socket</span><span class="o">.</span><span class="n">assigns</span><span class="o">.</span><span class="n">user_id</span><span class="si" data-group-id="5262388687-8">}</span><span class="s">&quot;</span><span class="w">
+</span><span class="k" data-group-id="5262388687-1">end</span><span class="w">
+
+</span><span class="c1"># Disconnect all user&#39;s socket connections and their multiplexed channels</span><span class="w">
+</span><span class="nc">MyAppWeb.Endpoint</span><span class="o">.</span><span class="n">broadcast</span><span class="p" data-group-id="5262388687-9">(</span><span class="s">&quot;users_socket:&quot;</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;disconnect&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5262388687-10">%{</span><span class="p" data-group-id="5262388687-10">}</span><span class="p" data-group-id="5262388687-9">)</span></code></pre><h2 id="module-socket-fields" class="section-heading"><a href="#module-socket-fields" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Socket fields</span></h2><ul><li><code class="inline">:id</code> - The string id of the socket</li><li><code class="inline">:assigns</code> - The map of socket assigns, default: <code class="inline">%{}</code></li><li><code class="inline">:channel</code> - The current channel module</li><li><code class="inline">:channel_pid</code> - The channel pid</li><li><code class="inline">:endpoint</code> - The endpoint module where this socket originated, for example: <code class="inline">MyAppWeb.Endpoint</code></li><li><code class="inline">:handler</code> - The socket module where this socket originated, for example: <code class="inline">MyAppWeb.UserSocket</code></li><li><code class="inline">:joined</code> - If the socket has effectively joined the channel</li><li><code class="inline">:join_ref</code> - The ref sent by the client when joining</li><li><code class="inline">:ref</code> - The latest ref sent by the client</li><li><code class="inline">:pubsub_server</code> - The registered name of the socket's pubsub server</li><li><code class="inline">:topic</code> - The string topic, for example <code class="inline">&quot;room:123&quot;</code></li><li><code class="inline">:transport</code> - An identifier for the transport, used for logging</li><li><code class="inline">:transport_pid</code> - The pid of the socket's transport process</li><li><code class="inline">:serializer</code> - The serializer for socket messages</li></ul><h2 id="module-using-options" class="section-heading"><a href="#module-using-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Using options</span></h2><p>On <code class="inline">use Phoenix.Socket</code>, the following options are accepted:</p><ul><li><p><code class="inline">:log</code> - the default level to log socket actions. Defaults
+to <code class="inline">:info</code>. May be set to <code class="inline">false</code> to disable it</p></li><li><p><code class="inline">:partitions</code> - each channel is spawned under a supervisor.
+This option controls how many supervisors will be spawned
+to handle channels. Defaults to the number of cores.</p></li></ul><h2 id="module-garbage-collection" class="section-heading"><a href="#module-garbage-collection" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Garbage collection</span></h2><p>It's possible to force garbage collection in the transport process after
+processing large messages. For example, to trigger such from your channels,
+run:</p><pre><code class="makeup elixir" translate="no"><span class="n">send</span><span class="p" data-group-id="0099492032-1">(</span><span class="n">socket</span><span class="o">.</span><span class="n">transport_pid</span><span class="p">,</span><span class="w"> </span><span class="ss">:garbage_collect</span><span class="p" data-group-id="0099492032-1">)</span></code></pre><p>Alternatively, you can configure your endpoint socket to trigger more
+fullsweep garbage collections more frequently, by setting the <code class="inline">:fullsweep_after</code>
+option for websockets. See <a href="Phoenix.Endpoint.html#socket/3"><code class="inline">Phoenix.Endpoint.socket/3</code></a> for more info.</p><h2 id="module-client-server-communication" class="section-heading"><a href="#module-client-server-communication" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Client-server communication</span></h2><p>The encoding of server data and the decoding of client data is done
+according to a serializer, defined in <a href="Phoenix.Socket.Serializer.html"><code class="inline">Phoenix.Socket.Serializer</code></a>.
+By default, JSON encoding is used to broker messages to and from clients.</p><p>The serializer <code class="inline">decode!</code> function must return a <a href="Phoenix.Socket.Message.html"><code class="inline">Phoenix.Socket.Message</code></a>
+which is forwarded to channels except:</p><ul><li><code class="inline">&quot;heartbeat&quot;</code> events in the &quot;phoenix&quot; topic - should just emit an OK reply</li><li><code class="inline">&quot;phx_join&quot;</code> on any topic - should join the topic</li><li><code class="inline">&quot;phx_leave&quot;</code> on any topic - should leave the topic</li></ul><p>Each message also has a <code class="inline">ref</code> field which is used to track responses.</p><p>The server may send messages or replies back. For messages, the
+ref uniquely identifies the message. For replies, the ref matches
+the original message. Both data-types also include a join_ref that
+uniquely identifies the currently joined channel.</p><p>The <a href="Phoenix.Socket.html"><code class="inline">Phoenix.Socket</code></a> implementation may also send special messages
+and replies:</p><ul><li><p><code class="inline">&quot;phx_error&quot;</code> - in case of errors, such as a channel process
+crashing, or when attempting to join an already joined channel</p></li><li><p><code class="inline">&quot;phx_close&quot;</code> - the channel was gracefully closed</p></li></ul><p>Phoenix ships with a JavaScript implementation of both websocket
+and long polling that interacts with Phoenix.Socket and can be
+used as reference for those interested in implementing custom clients.</p><h2 id="module-custom-sockets-and-transports" class="section-heading"><a href="#module-custom-sockets-and-transports" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Custom sockets and transports</span></h2><p>See the <a href="Phoenix.Socket.Transport.html"><code class="inline">Phoenix.Socket.Transport</code></a> documentation for more information on
+writing your own socket that does not leverage channels or for writing
+your own transports that interacts with other sockets.</p><h2 id="module-custom-channels" class="section-heading"><a href="#module-custom-channels" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Custom channels</span></h2><p>You can list any module as a channel as long as it implements
+a <code class="inline">child_spec/1</code> function. The <code class="inline">child_spec/1</code> function receives
+the caller as argument and it must return a child spec that
+initializes a process.</p><p>Once the process is initialized, it will receive the following
+message:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="4895227151-1">{</span><span class="nc">Phoenix.Channel</span><span class="p">,</span><span class="w"> </span><span class="n">auth_payload</span><span class="p">,</span><span class="w"> </span><span class="n">from</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="4895227151-1">}</span></code></pre><p>A custom channel implementation MUST invoke
+<code class="inline">GenServer.reply(from, {:ok | :error, reply_payload})</code> during its
+initialization with a custom <code class="inline">reply_payload</code> that will be sent as
+a reply to the client. Failing to do so will block the socket forever.</p><p>A custom channel receives <a href="Phoenix.Socket.Message.html"><code class="inline">Phoenix.Socket.Message</code></a> structs as regular
+messages from the transport. Replies to those messages and custom
+messages can be sent to the socket at any moment by building an
+appropriate <a href="Phoenix.Socket.Reply.html"><code class="inline">Phoenix.Socket.Reply</code></a> and <a href="Phoenix.Socket.Message.html"><code class="inline">Phoenix.Socket.Message</code></a>
+structs, encoding them with the serializer and dispatching the
+serialized result to the transport.</p><p>For example, to handle &quot;phx_leave&quot; messages, which is recommended
+to be handled by all channel implementations, one may do:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">handle_info</span><span class="p" data-group-id="3190035630-1">(</span><span class="w">
+      </span><span class="p" data-group-id="3190035630-2">%</span><span class="nc" data-group-id="3190035630-2">Message</span><span class="p" data-group-id="3190035630-2">{</span><span class="ss">topic</span><span class="p">:</span><span class="w"> </span><span class="n">topic</span><span class="p">,</span><span class="w"> </span><span class="ss">event</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;phx_leave&quot;</span><span class="p" data-group-id="3190035630-2">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w">
+      </span><span class="p" data-group-id="3190035630-3">%{</span><span class="ss">topic</span><span class="p">:</span><span class="w"> </span><span class="n">topic</span><span class="p">,</span><span class="w"> </span><span class="ss">serializer</span><span class="p">:</span><span class="w"> </span><span class="n">serializer</span><span class="p">,</span><span class="w"> </span><span class="ss">transport_pid</span><span class="p">:</span><span class="w"> </span><span class="n">transport_pid</span><span class="p" data-group-id="3190035630-3">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">socket</span><span class="w">
+    </span><span class="p" data-group-id="3190035630-1">)</span><span class="w"> </span><span class="k" data-group-id="3190035630-4">do</span><span class="w">
+  </span><span class="n">send</span><span class="w"> </span><span class="n">transport_pid</span><span class="p">,</span><span class="w"> </span><span class="n">serializer</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="3190035630-5">(</span><span class="n">build_leave_reply</span><span class="p" data-group-id="3190035630-6">(</span><span class="n">message</span><span class="p" data-group-id="3190035630-6">)</span><span class="p" data-group-id="3190035630-5">)</span><span class="w">
+  </span><span class="p" data-group-id="3190035630-7">{</span><span class="ss">:stop</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3190035630-8">{</span><span class="ss">:shutdown</span><span class="p">,</span><span class="w"> </span><span class="ss">:left</span><span class="p" data-group-id="3190035630-8">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="3190035630-7">}</span><span class="w">
+</span><span class="k" data-group-id="3190035630-4">end</span></code></pre><p>A special message delivered to all channels is a Broadcast with
+event &quot;phx_drain&quot;, which is sent when draining the socket during
+application shutdown. Typically it is handled by sending a drain
+message to the transport, causing it to shutdown:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">handle_info</span><span class="p" data-group-id="1297187685-1">(</span><span class="w">
+      </span><span class="p" data-group-id="1297187685-2">%</span><span class="nc" data-group-id="1297187685-2">Broadcast</span><span class="p" data-group-id="1297187685-2">{</span><span class="ss">event</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;phx_drain&quot;</span><span class="p" data-group-id="1297187685-2">}</span><span class="p">,</span><span class="w">
+      </span><span class="p" data-group-id="1297187685-3">%{</span><span class="ss">transport_pid</span><span class="p">:</span><span class="w"> </span><span class="n">transport_pid</span><span class="p" data-group-id="1297187685-3">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">socket</span><span class="w">
+    </span><span class="p" data-group-id="1297187685-1">)</span><span class="w"> </span><span class="k" data-group-id="1297187685-4">do</span><span class="w">
+  </span><span class="n">send</span><span class="p" data-group-id="1297187685-5">(</span><span class="n">transport_pid</span><span class="p">,</span><span class="w"> </span><span class="ss">:socket_drain</span><span class="p" data-group-id="1297187685-5">)</span><span class="w">
+  </span><span class="p" data-group-id="1297187685-6">{</span><span class="ss">:stop</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1297187685-7">{</span><span class="ss">:shutdown</span><span class="p">,</span><span class="w"> </span><span class="ss">:draining</span><span class="p" data-group-id="1297187685-7">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="1297187685-6">}</span><span class="w">
+</span><span class="k" data-group-id="1297187685-4">end</span></code></pre><p>We also recommend all channels to monitor the <code class="inline">transport_pid</code>
+on <code class="inline">init</code> and exit if the transport exits. We also advise to rewrite
+<code class="inline">:normal</code> exit reasons (usually due to the socket being closed)
+to the <code class="inline">{:shutdown, :closed}</code> to guarantee links are broken on
+the channel exit (as a <code class="inline">:normal</code> exit does not break links):</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">handle_info</span><span class="p" data-group-id="7813267462-1">(</span><span class="p" data-group-id="7813267462-2">{</span><span class="ss">:DOWN</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p">,</span><span class="w"> </span><span class="n">transport_pid</span><span class="p">,</span><span class="w"> </span><span class="n">reason</span><span class="p" data-group-id="7813267462-2">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7813267462-3">%{</span><span class="ss">transport_pid</span><span class="p">:</span><span class="w"> </span><span class="n">transport_pid</span><span class="p" data-group-id="7813267462-3">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="7813267462-1">)</span><span class="w"> </span><span class="k" data-group-id="7813267462-4">do</span><span class="w">
+  </span><span class="n">reason</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">reason</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="ss">:normal</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="7813267462-5">{</span><span class="ss">:shutdown</span><span class="p">,</span><span class="w"> </span><span class="ss">:closed</span><span class="p" data-group-id="7813267462-5">}</span><span class="p">,</span><span class="w"> </span><span class="ss">else</span><span class="p">:</span><span class="w"> </span><span class="n">reason</span><span class="w">
+  </span><span class="p" data-group-id="7813267462-6">{</span><span class="ss">:stop</span><span class="p">,</span><span class="w"> </span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="7813267462-6">}</span><span class="w">
+</span><span class="k" data-group-id="7813267462-4">end</span></code></pre><p>Any process exit is treated as an error by the socket layer unless
+a <code class="inline">{:socket_close, pid, reason}</code> message is sent to the socket before
+shutdown.</p><p>Custom channel implementations cannot be tested with <a href="Phoenix.ChannelTest.html"><code class="inline">Phoenix.ChannelTest</code></a>.</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h2>
+<div class="summary-types summary">
+  <h3>
+    <a href="#types">Types</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:t/0" data-no-tooltip="" translate="no">t()</a>
+
+      </div>
+
+    </div>
+
+</div>
+<div class="summary-callbacks summary">
+  <h3>
+    <a href="#callbacks">Callbacks</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:connect/2" data-no-tooltip="" translate="no">connect(params, t)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Shortcut version of <code class="inline">connect/3</code> which does not receive <code class="inline">connect_info</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:connect/3" data-no-tooltip="" translate="no">connect(params, t, connect_info)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Receives the socket params and authenticates the connection.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:id/1" data-no-tooltip="" translate="no">id(t)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Identifies the socket connection.</p></div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h3>
+    <a href="#functions">Functions</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#assign/2" data-no-tooltip="" translate="no">assign(socket, keyword_or_map)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Adds key/value pairs to socket assigns.
+Accepts a keyword list, a map, or a single-argument function.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#assign/3" data-no-tooltip="" translate="no">assign(socket, key, value)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Adds a <code class="inline">key</code>/<code class="inline">value</code> pair to <code class="inline">socket</code> assigns.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#channel/3" data-no-tooltip="" translate="no">channel(topic_pattern, module, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Defines a channel matching the given topic and transports.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h2>
+
+    <div class="types-list">
+<section class="detail" id="t:t/0">
+
+  <div class="detail-header">
+    <a href="#t:t/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">t()</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/socket.ex#L273" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> t() :: %Phoenix.Socket{
+  assigns: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>(),
+  channel: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(),
+  channel_pid: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(),
+  endpoint: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(),
+  handler: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(),
+  id: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  join_ref: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  joined: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  private: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>(),
+  pubsub_server: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(),
+  ref: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  serializer: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(),
+  topic: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  transport: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(),
+  transport_pid: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>()
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="callbacks" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#callbacks">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Callbacks</span>
+    </h2>
+
+    <div class="callbacks-list">
+<section class="detail" id="c:connect/2">
+
+  <div class="detail-header">
+    <a href="#c:connect/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">connect(params, t)</h1>
+
+        <span class="note">(optional)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/socket.ex#L230" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> connect(params :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>(), <a href="#t:t/0">t</a>()) :: {:ok, <a href="#t:t/0">t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()} | :error</pre>
+
+      </div>
+
+<p>Shortcut version of <code class="inline">connect/3</code> which does not receive <code class="inline">connect_info</code>.</p><p>Provided for backwards compatibility.</p>
+  </section>
+</section>
+<section class="detail" id="c:connect/3">
+
+  <div class="detail-header">
+    <a href="#c:connect/3" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">connect(params, t, connect_info)</h1>
+
+        <span class="note">(optional)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/socket.ex#L222" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> connect(params :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>(), <a href="#t:t/0">t</a>(), connect_info :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  {:ok, <a href="#t:t/0">t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()} | :error</pre>
+
+      </div>
+
+<p>Receives the socket params and authenticates the connection.</p><h2 id="c:connect/3-socket-params-and-assigns" class="section-heading"><a href="#c:connect/3-socket-params-and-assigns" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Socket params and assigns</span></h2><p>Socket params are passed from the client and can
+be used to verify and authenticate a user. After
+verification, you can put default assigns into
+the socket that will be set for all channels, ie</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="2373590547-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">assign</span><span class="p" data-group-id="2373590547-2">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="ss">:user_id</span><span class="p">,</span><span class="w"> </span><span class="n">verified_user_id</span><span class="p" data-group-id="2373590547-2">)</span><span class="p" data-group-id="2373590547-1">}</span></code></pre><p>To deny connection, return <code class="inline">:error</code> or <code class="inline">{:error, term}</code>. To control the
+response the client receives in that case, <a href="https://hexdocs.pm/phoenix/Phoenix.Endpoint.html#socket/3-websocket-configuration">define an error handler in the
+websocket
+configuration</a>.</p><p>See <a href="Phoenix.Token.html"><code class="inline">Phoenix.Token</code></a> documentation for examples in
+performing token verification on connect.</p>
+  </section>
+</section>
+<section class="detail" id="c:id/1">
+
+  <div class="detail-header">
+    <a href="#c:id/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">id(t)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/socket.ex#L246" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> id(<a href="#t:t/0">t</a>()) :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil</pre>
+
+      </div>
+
+<p>Identifies the socket connection.</p><p>Socket IDs are topics that allow you to identify all sockets for a given user:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">id</span><span class="p" data-group-id="5215223998-1">(</span><span class="n">socket</span><span class="p" data-group-id="5215223998-1">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;users_socket:</span><span class="si" data-group-id="5215223998-2">#{</span><span class="n">socket</span><span class="o">.</span><span class="n">assigns</span><span class="o">.</span><span class="n">user_id</span><span class="si" data-group-id="5215223998-2">}</span><span class="s">&quot;</span></code></pre><p>Would allow you to broadcast a <code class="inline">&quot;disconnect&quot;</code> event and terminate
+all active sockets and channels for a given user:</p><pre><code class="makeup elixir" translate="no"><span class="nc">MyAppWeb.Endpoint</span><span class="o">.</span><span class="n">broadcast</span><span class="p" data-group-id="4725232273-1">(</span><span class="s">&quot;users_socket:&quot;</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;disconnect&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4725232273-2">%{</span><span class="p" data-group-id="4725232273-2">}</span><span class="p" data-group-id="4725232273-1">)</span></code></pre><p>Returning <code class="inline">nil</code> makes this socket anonymous.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h2>
+
+    <div class="functions-list">
+<section class="detail" id="assign/2">
+
+  <div class="detail-header">
+    <a href="#assign/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">assign(socket, keyword_or_map)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/socket.ex#L362" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Adds key/value pairs to socket assigns.
+Accepts a keyword list, a map, or a single-argument function.</p><p>When a keyword list or map is provided, it will be merged into the existing assigns.</p><p>If a function is given, it takes the current assigns as an argument and its return
+value will be merged into the current assigns.</p><h2 id="assign/2-examples" class="section-heading"><a href="#assign/2-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">assign</span><span class="p" data-group-id="1005346557-1">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Elixir&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">logo</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;💧&quot;</span><span class="p" data-group-id="1005346557-1">)</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="n">assign</span><span class="p" data-group-id="1005346557-2">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1005346557-3">%{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Elixir&quot;</span><span class="p" data-group-id="1005346557-3">}</span><span class="p" data-group-id="1005346557-2">)</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="n">assign</span><span class="p" data-group-id="1005346557-4">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="k" data-group-id="1005346557-5">fn</span><span class="w"> </span><span class="p" data-group-id="1005346557-6">%{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="ss">logo</span><span class="p">:</span><span class="w"> </span><span class="n">logo</span><span class="p" data-group-id="1005346557-6">}</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p" data-group-id="1005346557-7">%{</span><span class="ss">title</span><span class="p">:</span><span class="w"> </span><span class="nc">Enum</span><span class="o">.</span><span class="n">join</span><span class="p" data-group-id="1005346557-8">(</span><span class="p" data-group-id="1005346557-9">[</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">logo</span><span class="p" data-group-id="1005346557-9">]</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; | &quot;</span><span class="p" data-group-id="1005346557-8">)</span><span class="p" data-group-id="1005346557-7">}</span><span class="w"> </span><span class="k" data-group-id="1005346557-5">end</span><span class="p" data-group-id="1005346557-4">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="assign/3">
+
+  <div class="detail-header">
+    <a href="#assign/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">assign(socket, key, value)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/socket.ex#L342" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Adds a <code class="inline">key</code>/<code class="inline">value</code> pair to <code class="inline">socket</code> assigns.</p><p>See also <a href="#assign/2"><code class="inline">assign/2</code></a> to add multiple key/value pairs.</p><h2 id="assign/3-examples" class="section-heading"><a href="#assign/3-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">assign</span><span class="p" data-group-id="0919909517-1">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="ss">:name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Elixir&quot;</span><span class="p" data-group-id="0919909517-1">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="channel/3">
+
+    <span id="channel/2"></span>
+
+  <div class="detail-header">
+    <a href="#channel/3" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">channel(topic_pattern, module, opts \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/socket.ex#L397" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Defines a channel matching the given topic and transports.</p><ul><li><code class="inline">topic_pattern</code> - The string pattern, for example <code class="inline">&quot;room:*&quot;</code>, <code class="inline">&quot;users:*&quot;</code>,
+or <code class="inline">&quot;system&quot;</code></li><li><code class="inline">module</code> - The channel module handler, for example <code class="inline">MyAppWeb.RoomChannel</code></li><li><code class="inline">opts</code> - The optional list of options, see below</li></ul><h2 id="channel/3-options" class="section-heading"><a href="#channel/3-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h2><ul><li><code class="inline">:assigns</code> - the map of socket assigns to merge into the socket on join</li></ul><h2 id="channel/3-examples" class="section-heading"><a href="#channel/3-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="n">channel</span><span class="w"> </span><span class="s">&quot;topic1:*&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">MyChannel</span></code></pre><h2 id="channel/3-topic-patterns" class="section-heading"><a href="#channel/3-topic-patterns" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Topic Patterns</span></h2><p>The <code class="inline">channel</code> macro accepts topic patterns in two flavors. A splat (the <code class="inline">*</code>
+character) argument can be provided as the last character to indicate a
+<code class="inline">&quot;topic:subtopic&quot;</code> match. If a plain string is provided, only that topic will
+match the channel handler. Most use-cases will use the <code class="inline">&quot;topic:*&quot;</code> pattern to
+allow more versatile topic scoping.</p><p>See <a href="Phoenix.Channel.html"><code class="inline">Phoenix.Channel</code></a> for more information</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix/1.8.5">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix/1.8.5">Hex Preview</a>
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+
+              <a href="Phoenix.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

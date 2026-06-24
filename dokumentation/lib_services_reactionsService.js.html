@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/services/reactionsService.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/services/reactionsService.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const db = require('../../config/db.js');
+const { executeWithRetry } = require('../dbHelpers');
+const pointsService = require('./pointsService');
+const { getWeeklyRemaining } = require('./ideasStatsService');
+
+/**
+ * @fileoverview Service für Reaktionen (Likes/Dislikes) auf Ideen.
+ * Beinhaltet Transaktionslogik, Punktevergabe und Quotenprüfung.
+ * Alle JSDoc-Kommentare in Deutsch.
+ * @module lib/services/reactionsService
+ */
+
+/**
+ * Schaltet ein Like für eine Idee durch einen Benutzer um (Toggle).
+ * Führt notwendige DB-Operationen in einer Transaktion aus, aktualisiert
+ * Zähler und vergibt bzw. korrigiert Punkte für den Autor.
+ * @async
+ * @param {number|string} ideaId - ID der Idee.
+ * @param {number|string} userId - ID des ausführenden Benutzers.
+ * @returns {Promise.&lt;Object>}
+ */
+async function toggleIdeaLike(ideaId, userId) {
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const res1 = await conn.query('SELECT COUNT(*) AS cnt FROM likes WHERE user_id = ? AND idea_id = ?', [userId, ideaId]);
+    const alreadyLiked = Number(res1[0]?.cnt || 0);
+
+    let liked = false;
+    if (alreadyLiked > 0) {
+      await conn.query('DELETE FROM likes WHERE user_id = ? AND idea_id = ?', [userId, ideaId]);
+      await executeWithRetry(conn, 'UPDATE ideas SET like_count = GREATEST(like_count - 1, 0), updated_at = NOW() WHERE idea_id = ?', [ideaId]);
+      
+      const ownerRes = await conn.query('SELECT user_id FROM ideas WHERE idea_id = ?', [ideaId]);
+      const ownerRow = ownerRes[0];
+      if (ownerRow &amp;&amp; ownerRow.user_id !== userId) {
+        await pointsService.addPendingDelta({
+          userId: ownerRow.user_id,
+          delta: -5,
+          reason: 'idea_unliked',
+          source: ideaId,
+          conn
+        });
+      }
+      liked = false;
+    } else {
+      // Check weekly quota
+      const stats = await getWeeklyRemaining(userId);
+      if (stats.remainingLikes &lt;= 0) {
+        await conn.rollback();
+        return { success: false, error: 'Like-Limit erreicht (3 pro Woche)' };
+      }
+
+      // Prüfe auf gegenteilige Reaktion (Dislike) und entferne sie, falls vorhanden
+      const res4 = await conn.query('SELECT COUNT(*) AS cnt FROM dislikes WHERE user_id = ? AND idea_id = ?', [userId, ideaId]);
+      const hadDislike = Number(res4[0]?.cnt || 0);
+
+      if (hadDislike > 0) {
+        await conn.query('DELETE FROM dislikes WHERE user_id = ? AND idea_id = ?', [userId, ideaId]);
+        await executeWithRetry(conn, 'UPDATE ideas SET dislike_count = GREATEST(dislike_count - 1, 0), updated_at = NOW() WHERE idea_id = ?', [ideaId]);
+        // Erstatte dem Autor den Punkt, der durch das Dislike verloren ging
+        const ownerRes2 = await conn.query('SELECT user_id FROM ideas WHERE idea_id = ?', [ideaId]);
+        const ownerRow = ownerRes2[0];
+        if (ownerRow &amp;&amp; ownerRow.user_id !== userId) {
+          await pointsService.addPendingDelta({
+            userId: ownerRow.user_id,
+            delta: 1, // Erstatte die Dislike-Strafe
+            reason: 'idea_undisliked',
+            source: ideaId,
+            conn
+          });
+        }
+      }
+
+      await conn.query('INSERT INTO likes (idea_id, user_id, created_at) VALUES (?, ?, NOW())', [ideaId, userId]);
+      await executeWithRetry(conn, 'UPDATE ideas SET like_count = like_count + 1, updated_at = NOW() WHERE idea_id = ?', [ideaId]);
+      
+      const ownerRes3 = await conn.query('SELECT user_id FROM ideas WHERE idea_id = ?', [ideaId]);
+      const ownerRow = ownerRes3[0];
+      if (ownerRow &amp;&amp; ownerRow.user_id !== userId) {
+        await pointsService.addPendingDelta({
+          userId: ownerRow.user_id,
+          delta: pointsService.POINT_VALUES.IDEA_LIKED_BONUS,
+          reason: 'idea_liked',
+          source: ideaId,
+          conn
+        });
+      }
+      liked = true;
+    }
+
+    await conn.commit();
+    return { success: true, liked };
+  } catch (err) {
+    if (conn) await conn.rollback();
+    throw err;
+  } finally {
+    if (conn) conn.release();
+  }
+}
+
+/**
+ * Schaltet ein Dislike für eine Idee um (Toggle) unter Berücksichtigung
+ * von Wochenquoten. Entfernt ggf. gegenteilige Reaktionen und passt Punkte an.
+ * @async
+ * @param {number|string} ideaId - ID der Idee.
+ * @param {number|string} userId - ID des ausführenden Benutzers.
+ * @returns {Promise.&lt;Object>}
+ */
+async function toggleIdeaDislike(ideaId, userId) {
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const res9 = await conn.query('SELECT COUNT(*) AS cnt FROM dislikes WHERE user_id = ? AND idea_id = ?', [userId, ideaId]);
+    const alreadyDisliked = Number(res9[0]?.cnt || 0);
+
+    if (alreadyDisliked > 0) {
+      await conn.query('DELETE FROM dislikes WHERE user_id = ? AND idea_id = ?', [userId, ideaId]);
+      await executeWithRetry(conn, 'UPDATE ideas SET dislike_count = GREATEST(dislike_count - 1, 0), updated_at = NOW() WHERE idea_id = ?', [ideaId]);
+      
+      const ownerRes4 = await conn.query('SELECT user_id FROM ideas WHERE idea_id = ?', [ideaId]);
+      const ownerRow = ownerRes4[0];
+      if (ownerRow &amp;&amp; ownerRow.user_id !== userId) {
+        await pointsService.addPendingDelta({
+          userId: ownerRow.user_id,
+          delta: 1, // Reward back the penalty
+          reason: 'idea_undisliked',
+          source: ideaId,
+          conn
+        });
+      }
+      await conn.commit();
+      return { success: true, disliked: false };
+    } else {
+      // Prüfe Wochenquota
+      const stats = await getWeeklyRemaining(userId);
+      if (stats.remainingDislikes &lt;= 0) {
+        await conn.rollback();
+        return { success: false, error: 'Dislike-Limit erreicht (3 pro Woche)' };
+      }
+
+      // Entferne gegenteiliges Like, falls vorhanden
+      const res11 = await conn.query('SELECT COUNT(*) AS cnt FROM likes WHERE user_id = ? AND idea_id = ?', [userId, ideaId]);
+      const hadLike = Number(res11[0]?.cnt || 0);
+
+      if (hadLike > 0) {
+        await conn.query('DELETE FROM likes WHERE user_id = ? AND idea_id = ?', [userId, ideaId]);
+        await executeWithRetry(conn, 'UPDATE ideas SET like_count = GREATEST(like_count - 1, 0), updated_at = NOW() WHERE idea_id = ?', [ideaId]);
+      }
+
+      await conn.query('INSERT INTO dislikes (idea_id, user_id, created_at) VALUES (?, ?, NOW())', [ideaId, userId]);
+      await executeWithRetry(conn, 'UPDATE ideas SET dislike_count = dislike_count + 1, updated_at = NOW() WHERE idea_id = ?', [ideaId]);
+
+      const ownerRes = await conn.query('SELECT user_id FROM ideas WHERE idea_id = ?', [ideaId]);
+      const ownerRow = ownerRes[0];
+      if (ownerRow &amp;&amp; ownerRow.user_id !== userId) {
+        await pointsService.addPendingDelta({
+          userId: ownerRow.user_id,
+          delta: pointsService.POINT_VALUES.IDEA_DISLIKED_PENALTY,
+          reason: 'idea_disliked',
+          source: ideaId,
+          conn
+        });
+      }
+
+      await conn.commit();
+      return { success: true, disliked: true };
+    }
+  } catch (err) {
+    if (conn) await conn.rollback();
+    throw err;
+  } finally {
+    if (conn) conn.release();
+  }
+}
+
+module.exports = {
+  toggleIdeaLike,
+  toggleIdeaDislike
+};
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+
+<input type="checkbox" id="site-blur-toggle" class="site-blur-toggle" hidden aria-hidden="true">
+<header id="page-header" class="page-header">
+
+    <div class="header-content">
+      <div>
+         <img src="/assets/logo2.png" alt="logo Ideenboard" class="logo" width="65" height="50"  onclick="window.location.href='/'">
+        </div>
+        <div class="header-right">
+
+                         <% if (user) { %>
+    <a href="/users/account" id="Account-Link">👤 <%= user.username %></a>
+<% } else { %>
+    <a href="/users/auth" id="Login-Link">Login</a>
+<% } %>
+<!-- Expose current user id for client-side scripts -->
+<% if (user) { %>
+    <script>window.currentUserId = <%= user.id %>;</script>
+<% } %>
+<% if (user) { %>
+    <script>
+        try { localStorage.setItem('currentUser', '<%= (user.username || '').replace("'", "\\'") %>'); } catch (e) {}
+    </script>
+<% } %>
+
+
+
+
+           
+            
+             <button class="theme-toggle" onclick="toggleTheme()">🌙/☀️</button>
+            <label for="site-blur-toggle" id="blur-toggle" class="blur-toggle" role="button" tabindex="0" aria-label="Toggle backdrop blur">🔍</label>
+
+            <button class="hamburger" onclick="toggleMenu()" aria-controls="main-nav" aria-expanded="false" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav id="main-nav" role="navigation" aria-hidden="true" aria-label="Main navigation" tabindex="-1">
+                <!-- Mobile-only Logo -->
+                <div class="mobile-nav-header">
+                    <img src="/assets/logo2.png" alt="logo" class="mobile-nav-logo" onclick="window.location.href='/'">
+                    <div class="mobile-nav-actions">
+                        <button class="theme-toggle" onclick="toggleTheme()">🌙/☀️</button>
+                        <label for="site-blur-toggle" id="blur-toggle-mobile" class="blur-toggle" role="button" tabindex="0" aria-label="Toggle backdrop blur">🔍</label>
+                        <% if (user) { %>
+                            <a href="/users/account" class="mobile-account-link">👤 <%= user.username %></a>
+                        <% } else { %>
+                            <a href="/users/auth" class="mobile-account-link">Login</a>
+                        <% } %>
+                    </div>
+                </div>
+
+                <% if (user) { %>
+                    <a href="/ideas" onclick="closeMenu()">Ideen</a>
+                    <a href="/surveys" onclick="closeMenu()">Umfragen</a>
+                    <a href="/projects" onclick="closeMenu()">Projekte</a>
+                    <a href="/dashboard" onclick="closeMenu()">Dashboard</a> 
+                    <a href="/dms" onclick="closeMenu()">Nachrichten</a>
+                <% } %>
+                
+
+                <!-- Mobile-only Account/Login removed from footer -->
+            </nav>
+            <div class="menu-overlay" onclick="closeMenu()"></div>
+        </div>
+    </div>
+</header>
+
+<script defer src="/js/dist/blur-toggle.min.js"></script>
+

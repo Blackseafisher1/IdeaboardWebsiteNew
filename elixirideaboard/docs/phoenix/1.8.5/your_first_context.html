@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix v1.8.5">
+
+
+    <title>2. Your First Context — Phoenix v1.8.5</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-209F6654.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.8.5
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="true">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Latest</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="https://hexdocs.pm/?packages=plug%3Alatest%2Cphoenix%3Alatest%2Cphoenix_html%3Alatest%2Cphoenix_live_view%3Alatest%2Cphoenix_pubsub%3Alatest%2Cphoenix_template%3Alatest&q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Latest</span>
+                <span class="help">Search latest versions of Plug, Phoenix, Phoenix.{HTML, LiveView, PubSub, Template}</span>
+              </button>
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="false">
+                <span class="name">Current version</span>
+                <span class="help">Search only this project</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>2. Your First Context</h1>
+
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/guides/data_modelling/your_first_context.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p>An ecommerce platform has wide-reaching coupling across a codebase so it's important to think about writing well-defined modules. With that in mind, our goal is to build a product catalog API that handles creating, updating, and deleting the products available in our system. We'll start off with the basic features of showcasing our products, and we will add shopping cart features later. We'll see how starting with a solid foundation with isolated boundaries allows us to grow our application naturally as we add functionality.</p><p>Phoenix includes the <a href="Mix.Tasks.Phx.Gen.Html.html"><code class="inline">mix phx.gen.html</code></a>, <a href="Mix.Tasks.Phx.Gen.Json.html"><code class="inline">mix phx.gen.json</code></a>, <a href="Mix.Tasks.Phx.Gen.Live.html"><code class="inline">mix phx.gen.live</code></a>, and <a href="Mix.Tasks.Phx.Gen.Context.html"><code class="inline">mix phx.gen.context</code></a> generators that apply the ideas of isolating functionality in our applications into contexts. These generators are a great way to hit the ground running while Phoenix nudges you in the right direction to grow your application. Let's put these tools to use for our new product catalog context.</p><p>When we run the generators, the context name is optional, and Phoenix will automatically use the plural name as the context module. This allows us to keep moving forward when starting out or when it is not yet clear how the different parts of our system relate to each other. Luckily, the needs of ecommerce systems are well defined nowadays, so it provides an excellent ground for us to design with intent. So let's take a step back and think about the different parts of our system.</p><p>We know that we'll have products to showcase on pages for sale, along with descriptions, pricing, etc. Along with selling products, we know we'll need to support carting, order checkout, and so on. While the products being purchased are related to the cart and checkout processes, showcasing a product and managing the <em>exhibition</em> of our products is distinctly different than tracking what a user has placed in their cart or how an order is placed. A <code class="inline">Catalog</code> context is a natural place for the management of our product details and the showcasing of those products we have for sale.</p><h2 id="starting-with-generators" class="section-heading"><a href="#starting-with-generators" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Starting with generators</span></h2><p>To jump-start our catalog context, we'll use <a href="Mix.Tasks.Phx.Gen.Html.html"><code class="inline">mix phx.gen.html</code></a> which creates a context module that wraps up Ecto access for creating, updating, and deleting products, along with web files like controllers and templates for the web interface into our context. Run the following command at your project root:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.gen.html Catalog Product products title:string \
+</span><span class="">description:string price:decimal views:integer
+</span></code></pre><p>After executing the command, you should see output similar to the following:</p><pre><code class="makeup console" translate="no"><span class="">* creating lib/hello_web/controllers/product_controller.ex
+</span><span class="">* creating lib/hello_web/controllers/product_html/edit.html.heex
+</span><span class="">* creating lib/hello_web/controllers/product_html/index.html.heex
+</span><span class="">* creating lib/hello_web/controllers/product_html/new.html.heex
+</span><span class="">* creating lib/hello_web/controllers/product_html/show.html.heex
+</span><span class="">* creating lib/hello_web/controllers/product_html/product_form.html.heex
+</span><span class="">* creating lib/hello_web/controllers/product_html.ex
+</span><span class="">* creating test/hello_web/controllers/product_controller_test.exs
+</span><span class="">* creating lib/hello/catalog/product.ex
+</span><span class="">* creating priv/repo/migrations/20250201185747_create_products.exs
+</span><span class="">* creating lib/hello/catalog.ex
+</span><span class="">* injecting lib/hello/catalog.ex
+</span><span class="">* creating test/hello/catalog_test.exs
+</span><span class="">* injecting test/hello/catalog_test.exs
+</span><span class="">* creating test/support/fixtures/catalog_fixtures.ex
+</span><span class="">* injecting test/support/fixtures/catalog_fixtures.ex
+</span><span class="">
+</span><span class="">Add the resource to your browser scope in lib/hello_web/router.ex:
+</span><span class="">
+</span><span class="">    resources &quot;/products&quot;, ProductController
+</span><span class="">
+</span><span class="">Remember to update your repository by running migrations:
+</span><span class="">
+</span><span class="">    $ mix ecto.migrate
+</span></code></pre><p>Phoenix generated the web files as expected in <code class="inline">lib/hello_web/</code>. We can also see our context functions were generated inside a <code class="inline">lib/hello/catalog.ex</code> file and our product schema file is placed in the directory of the same name. Note the difference between <code class="inline">lib/hello</code> and <code class="inline">lib/hello_web</code>. We have a <code class="inline">Catalog</code> module to serve as the public API for product catalog functionality, as well as a <code class="inline">Catalog.Product</code> struct, which is an Ecto schema for casting and validating product data. Phoenix also provided web and context tests for us, it also included test helpers for creating entities via the <code class="inline">Hello.Catalog</code> context, which we'll look at later. For now, let's follow the instructions and add the route according to the console instructions, in <code class="inline">lib/hello_web/router.ex</code>:</p><pre><code class="makeup diff" translate="no"><span class="n">  scope &quot;/&quot;, HelloWeb do
+</span><span class="n">    pipe_through :browser
+</span><span class="w">
+</span><span class="n">    get &quot;/&quot;, PageController, :index
+</span><span class="gi">+</span><span class="gi">   resources &quot;/products&quot;, ProductController
+</span><span class="n">  end</span></code></pre><p>With the new route in place, Phoenix reminds us to update our repo by running <a href="https://hexdocs.pm/ecto_sql/3.13.2/Mix.Tasks.Ecto.Migrate.html"><code class="inline">mix ecto.migrate</code></a>, but first we need to make a few tweaks to the generated migration in <code class="inline">priv/repo/migrations/*_create_products.exs</code>:</p><pre><code class="makeup diff" translate="no"><span class="n">  def change do
+</span><span class="n">    create table(:products) do
+</span><span class="n">      add :title, :string
+</span><span class="n">      add :description, :string
+</span><span class="gd">-</span><span class="gd">     add :price, :decimal
+</span><span class="gi">+</span><span class="gi">     add :price, :decimal, precision: 15, scale: 6, null: false
+</span><span class="gd">-</span><span class="gd">     add :views, :integer
+</span><span class="gi">+</span><span class="gi">     add :views, :integer, default: 0, null: false
+</span><span class="w">
+</span><span class="n">      timestamps(type: :utc_datetime)
+</span><span class="n">    end</span></code></pre><p>We modified our price column to a specific precision of 15, scale of 6, along with a not-null constraint. This ensures we store currency with proper precision for any mathematical operations we may perform. Next, we added a default value and not-null constraint to our views count. With our changes in place, we're ready to migrate up our database. Let's do that now:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">mix ecto.migrate
+</span><span class="">14:09:02.260 [info] == Running 20250201185747 Hello.Repo.Migrations.CreateProducts.change/0 forward
+</span><span class="">
+</span><span class="">14:09:02.262 [info] create table products
+</span><span class="">
+</span><span class="">14:09:02.273 [info] == Migrated 20250201185747 in 0.0s
+</span></code></pre><p>Before we jump into the generated code, let's start the server with <a href="Mix.Tasks.Phx.Server.html"><code class="inline">mix phx.server</code></a> and visit <a href="http://localhost:4000/products">http://localhost:4000/products</a>. Let's follow the &quot;New Product&quot; link and click the &quot;Save&quot; button without providing any input. When we submit the form, we can see all the validation errors inline with the inputs. Nice! Out of the box, the context generator included the schema fields in our form template and we can see our default validations for required inputs are in effect. Let's enter some example product data and resubmit the form:</p><pre><code class="text">Product created successfully.
+
+Title: Metaprogramming Elixir
+Description: Write Less Code, Get More Done (and Have Fun!)
+Price: 15.000000
+Views: 0</code></pre><p>If we follow the &quot;Back&quot; link, we get a list of all products, which should contain the one we just created. Likewise, we can update this record or delete it. Now that we've seen how it works in the browser, it's time to take a look at the generated code.</p><section role="note" class="admonition tip"><h4 class="admonition-title tip">Naming things is hard</h4><p>When starting a web application, it may be hard to draw lines or name its different contexts, especially when the business domain you are working with is not as well established as ecommerce.</p><p>For those reasons, Phoenix generators allow you to skip the context name, which is really helpful when you're stuck or still exploring your business domain. For example, our code above would work the same if we used the default <code class="inline">Products</code> context for managing products and it would still allow us to organically discover other resources that belong to the <code class="inline">Products</code> context, such as categories or image galleries.</p><p>We also advise against being too smart when naming your contexts. Pick a name that is clear and obvious to everyone who works (and might work) in the project. As your application grows and the different parts of your system become clear, you can simply rename the context or move resources around. The beauty of Elixir modules is moving them around should be simply a matter of renaming the module names and their callers (and renaming the files for consistency).</p></section><h2 id="grokking-generated-code" class="section-heading"><a href="#grokking-generated-code" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Grokking generated code</span></h2><p>That little <a href="Mix.Tasks.Phx.Gen.Html.html"><code class="inline">mix phx.gen.html</code></a> command packed a surprising punch. We got a lot of functionality out-of-the-box for creating, updating, and deleting products in our catalog. This is far from a full-featured app, but remember, generators are first and foremost learning tools and a starting point for you to begin building real features. Code generation can't solve all your problems, but it will teach you the ins and outs of Phoenix and nudge you towards the proper mindset when designing your application.</p><p>Let's first check out the <code class="inline">ProductController</code> that was generated in <code class="inline">lib/hello_web/controllers/product_controller.ex</code>:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">HelloWeb.ProductController</span><span class="w"> </span><span class="k" data-group-id="6049759423-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">HelloWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:controller</span><span class="w">
+
+  </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Hello.Catalog</span><span class="w">
+  </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Hello.Catalog.Product</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">index</span><span class="p" data-group-id="6049759423-2">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="c">_params</span><span class="p" data-group-id="6049759423-2">)</span><span class="w"> </span><span class="k" data-group-id="6049759423-3">do</span><span class="w">
+    </span><span class="n">products</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Catalog</span><span class="o">.</span><span class="n">list_products</span><span class="p" data-group-id="6049759423-4">(</span><span class="p" data-group-id="6049759423-4">)</span><span class="w">
+    </span><span class="n">render</span><span class="p" data-group-id="6049759423-5">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="ss">:index</span><span class="p">,</span><span class="w"> </span><span class="ss">products</span><span class="p">:</span><span class="w"> </span><span class="n">products</span><span class="p" data-group-id="6049759423-5">)</span><span class="w">
+  </span><span class="k" data-group-id="6049759423-3">end</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">new</span><span class="p" data-group-id="6049759423-6">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="c">_params</span><span class="p" data-group-id="6049759423-6">)</span><span class="w"> </span><span class="k" data-group-id="6049759423-7">do</span><span class="w">
+    </span><span class="n">changeset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Catalog</span><span class="o">.</span><span class="n">change_product</span><span class="p" data-group-id="6049759423-8">(</span><span class="p" data-group-id="6049759423-9">%</span><span class="nc" data-group-id="6049759423-9">Product</span><span class="p" data-group-id="6049759423-9">{</span><span class="p" data-group-id="6049759423-9">}</span><span class="p" data-group-id="6049759423-8">)</span><span class="w">
+    </span><span class="n">render</span><span class="p" data-group-id="6049759423-10">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="ss">:new</span><span class="p">,</span><span class="w"> </span><span class="ss">changeset</span><span class="p">:</span><span class="w"> </span><span class="n">changeset</span><span class="p" data-group-id="6049759423-10">)</span><span class="w">
+  </span><span class="k" data-group-id="6049759423-7">end</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">create</span><span class="p" data-group-id="6049759423-11">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6049759423-12">%{</span><span class="s">&quot;product&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">product_params</span><span class="p" data-group-id="6049759423-12">}</span><span class="p" data-group-id="6049759423-11">)</span><span class="w"> </span><span class="k" data-group-id="6049759423-13">do</span><span class="w">
+    </span><span class="k">case</span><span class="w"> </span><span class="nc">Catalog</span><span class="o">.</span><span class="n">create_product</span><span class="p" data-group-id="6049759423-14">(</span><span class="n">product_params</span><span class="p" data-group-id="6049759423-14">)</span><span class="w"> </span><span class="k" data-group-id="6049759423-15">do</span><span class="w">
+      </span><span class="p" data-group-id="6049759423-16">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">product</span><span class="p" data-group-id="6049759423-16">}</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+        </span><span class="n">conn</span><span class="w">
+        </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">put_flash</span><span class="p" data-group-id="6049759423-17">(</span><span class="ss">:info</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Product created successfully.&quot;</span><span class="p" data-group-id="6049759423-17">)</span><span class="w">
+        </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">redirect</span><span class="p" data-group-id="6049759423-18">(</span><span class="ss">to</span><span class="p">:</span><span class="w"> </span><span class="sx">~p&quot;/products/</span><span class="si" data-group-id="6049759423-19">#{</span><span class="n">product</span><span class="si" data-group-id="6049759423-19">}</span><span class="sx">&quot;</span><span class="p" data-group-id="6049759423-18">)</span><span class="w">
+
+      </span><span class="p" data-group-id="6049759423-20">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6049759423-21">%</span><span class="nc" data-group-id="6049759423-21">Ecto.Changeset</span><span class="p" data-group-id="6049759423-21">{</span><span class="p" data-group-id="6049759423-21">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">changeset</span><span class="p" data-group-id="6049759423-20">}</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+        </span><span class="n">render</span><span class="p" data-group-id="6049759423-22">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="ss">:new</span><span class="p">,</span><span class="w"> </span><span class="ss">changeset</span><span class="p">:</span><span class="w"> </span><span class="n">changeset</span><span class="p" data-group-id="6049759423-22">)</span><span class="w">
+    </span><span class="k" data-group-id="6049759423-15">end</span><span class="w">
+  </span><span class="k" data-group-id="6049759423-13">end</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">show</span><span class="p" data-group-id="6049759423-23">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6049759423-24">%{</span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">id</span><span class="p" data-group-id="6049759423-24">}</span><span class="p" data-group-id="6049759423-23">)</span><span class="w"> </span><span class="k" data-group-id="6049759423-25">do</span><span class="w">
+    </span><span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Catalog</span><span class="o">.</span><span class="n">get_product!</span><span class="p" data-group-id="6049759423-26">(</span><span class="n">id</span><span class="p" data-group-id="6049759423-26">)</span><span class="w">
+    </span><span class="n">render</span><span class="p" data-group-id="6049759423-27">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="p">,</span><span class="w"> </span><span class="ss">product</span><span class="p">:</span><span class="w"> </span><span class="n">product</span><span class="p" data-group-id="6049759423-27">)</span><span class="w">
+  </span><span class="k" data-group-id="6049759423-25">end</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+</span><span class="k" data-group-id="6049759423-1">end</span></code></pre><p>We've seen how controllers work in our <a href="controllers.html">controller guide</a>, so the code probably isn't too surprising. What is worth noticing is how our controller calls into the <code class="inline">Catalog</code> context. We can see that the <code class="inline">index</code> action fetches a list of products with <code class="inline">Catalog.list_products/0</code>, and how products are persisted in the <code class="inline">create</code> action with <code class="inline">Catalog.create_product/1</code>. We haven't yet looked at the catalog context, so we don't yet know how product fetching and creation is happening under the hood – <em>but that's the point</em>. Our Phoenix controller is the web interface into our greater application. It shouldn't be concerned with the details of how products are fetched from the database or persisted into storage. We only care about telling our application to perform some work for us. This is great because our business logic and storage details are decoupled from the web layer of our application. If we move to a full-text storage engine later for fetching products instead of a SQL query, our controller doesn't need to be changed. Likewise, we can reuse our context code from any other interface in our application, be it a channel, mix task, or long-running process importing CSV data.</p><p>In the case of our <code class="inline">create</code> action, when we successfully create a product, we use <a href="Phoenix.Controller.html#put_flash/3"><code class="inline">Phoenix.Controller.put_flash/3</code></a> to show a success message, and then we redirect to the router's product show page. Conversely, if <code class="inline">Catalog.create_product/1</code> fails, we render our <code class="inline">&quot;new.html&quot;</code> template and pass along the Ecto changeset for the template to lift error messages from.</p><p>Next, let's dig deeper and check out our <code class="inline">Catalog</code> context in <code class="inline">lib/hello/catalog.ex</code>:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">Hello.Catalog</span><span class="w"> </span><span class="k" data-group-id="4700910057-1">do</span><span class="w">
+  </span><span class="na">@moduledoc</span><span class="w"> </span><span class="s">&quot;&quot;&quot;
+  The Catalog context.
+  &quot;&quot;&quot;</span><span class="w">
+
+  </span><span class="kn">import</span><span class="w"> </span><span class="nc">Ecto.Query</span><span class="p">,</span><span class="w"> </span><span class="ss">warn</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="w">
+  </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Hello.Repo</span><span class="w">
+
+  </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Hello.Catalog.Product</span><span class="w">
+
+  </span><span class="na">@doc</span><span class="w"> </span><span class="s">&quot;&quot;&quot;
+  Returns the list of products.
+
+  ## Examples
+
+      iex&gt; list_products()
+      [%Product{}, ...]
+
+  &quot;&quot;&quot;</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">list_products</span><span class="w"> </span><span class="k" data-group-id="4700910057-2">do</span><span class="w">
+    </span><span class="nc">Repo</span><span class="o">.</span><span class="n">all</span><span class="p" data-group-id="4700910057-3">(</span><span class="nc">Product</span><span class="p" data-group-id="4700910057-3">)</span><span class="w">
+  </span><span class="k" data-group-id="4700910057-2">end</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+</span><span class="k" data-group-id="4700910057-1">end</span></code></pre><p>This module will be the public API for all product catalog functionality in our system. For example, in addition to product detail management, we may also handle product category classification and product variants for things like optional sizing, trims, etc. If we look at the <code class="inline">list_products/0</code> function, we can see the private details of product fetching. And it's super simple. We have a call to <code class="inline">Repo.all(Product)</code>. We saw how Ecto repo queries worked in the <a href="ecto.html">Ecto guide</a>, so this call should look familiar. Our <code class="inline">list_products</code> function is a generalized function name specifying the <em>intent</em> of our code – namely to list products. The details of that intent where we use our Repo to fetch the products from our PostgreSQL database, are hidden from our callers. This is a common theme we'll see reiterated as we use the Phoenix generators. Phoenix will push us to think about where we have different responsibilities in our application, and then to wrap up those different areas behind well-named modules and functions that make the intent of our code clear, while encapsulating the details.</p><p>Now we know how data is fetched, but how are products persisted? Let's take a look at the <code class="inline">Catalog.create_product/1</code> function:</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="na">@doc</span><span class="w"> </span><span class="s">&quot;&quot;&quot;
+  Creates a product.
+
+  ## Examples
+
+      iex&gt; create_product(%{field: value})
+      {:ok, %Product{}}
+
+      iex&gt; create_product(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  &quot;&quot;&quot;</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">create_product</span><span class="p" data-group-id="1741307547-1">(</span><span class="n">attrs</span><span class="p" data-group-id="1741307547-1">)</span><span class="w"> </span><span class="k" data-group-id="1741307547-2">do</span><span class="w">
+    </span><span class="p" data-group-id="1741307547-3">%</span><span class="nc" data-group-id="1741307547-3">Product</span><span class="p" data-group-id="1741307547-3">{</span><span class="p" data-group-id="1741307547-3">}</span><span class="w">
+    </span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Product</span><span class="o">.</span><span class="n">changeset</span><span class="p" data-group-id="1741307547-4">(</span><span class="n">attrs</span><span class="p" data-group-id="1741307547-4">)</span><span class="w">
+    </span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Repo</span><span class="o">.</span><span class="n">insert</span><span class="p" data-group-id="1741307547-5">(</span><span class="p" data-group-id="1741307547-5">)</span><span class="w">
+  </span><span class="k" data-group-id="1741307547-2">end</span></code></pre><p>There's more documentation than code here, but a couple of things are important to highlight. First, we can see again that our Ecto Repo is used under the hood for database access. You probably also noticed the call to <code class="inline">Product.changeset/2</code>. We talked about changesets before, and now we see them in action in our context.</p><p>If we open up the <code class="inline">Product</code> schema in <code class="inline">lib/hello/catalog/product.ex</code>, it will look immediately familiar:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">Hello.Catalog.Product</span><span class="w"> </span><span class="k" data-group-id="0152722370-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Ecto.Schema</span><span class="w">
+  </span><span class="kn">import</span><span class="w"> </span><span class="nc">Ecto.Changeset</span><span class="w">
+
+  </span><span class="n">schema</span><span class="w"> </span><span class="s">&quot;products&quot;</span><span class="w"> </span><span class="k" data-group-id="0152722370-2">do</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:description</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:price</span><span class="p">,</span><span class="w"> </span><span class="ss">:decimal</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:title</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:views</span><span class="p">,</span><span class="w"> </span><span class="ss">:integer</span><span class="w">
+
+    </span><span class="n">timestamps</span><span class="p" data-group-id="0152722370-3">(</span><span class="ss">type</span><span class="p">:</span><span class="w"> </span><span class="ss">:utc_datetime</span><span class="p" data-group-id="0152722370-3">)</span><span class="w">
+  </span><span class="k" data-group-id="0152722370-2">end</span><span class="w">
+
+  </span><span class="na">@doc</span><span class="w"> </span><span class="no">false</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">changeset</span><span class="p" data-group-id="0152722370-4">(</span><span class="n">product</span><span class="p">,</span><span class="w"> </span><span class="n">attrs</span><span class="p" data-group-id="0152722370-4">)</span><span class="w"> </span><span class="k" data-group-id="0152722370-5">do</span><span class="w">
+    </span><span class="n">product</span><span class="w">
+    </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">cast</span><span class="p" data-group-id="0152722370-6">(</span><span class="n">attrs</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0152722370-7">[</span><span class="ss">:title</span><span class="p">,</span><span class="w"> </span><span class="ss">:description</span><span class="p">,</span><span class="w"> </span><span class="ss">:price</span><span class="p">,</span><span class="w"> </span><span class="ss">:views</span><span class="p" data-group-id="0152722370-7">]</span><span class="p" data-group-id="0152722370-6">)</span><span class="w">
+    </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">validate_required</span><span class="p" data-group-id="0152722370-8">(</span><span class="p" data-group-id="0152722370-9">[</span><span class="ss">:title</span><span class="p">,</span><span class="w"> </span><span class="ss">:description</span><span class="p">,</span><span class="w"> </span><span class="ss">:price</span><span class="p">,</span><span class="w"> </span><span class="ss">:views</span><span class="p" data-group-id="0152722370-9">]</span><span class="p" data-group-id="0152722370-8">)</span><span class="w">
+  </span><span class="k" data-group-id="0152722370-5">end</span><span class="w">
+</span><span class="k" data-group-id="0152722370-1">end</span></code></pre><p>This is just what we saw before when we ran <a href="Mix.Tasks.Phx.Gen.Schema.html"><code class="inline">mix phx.gen.schema</code></a>, except here we see a <code class="inline">@doc false</code> above our <code class="inline">changeset/2</code> function. This tells us that while this function is publicly callable, it's not part of the public context API. Callers that build changesets do so via the context API. For example, <code class="inline">Catalog.create_product/1</code> calls into our <code class="inline">Product.changeset/2</code> to build the changeset from user input. Callers, such as our controller actions, do not access <code class="inline">Product.changeset/2</code> directly. All interaction with our product changesets is done through the public <code class="inline">Catalog</code> context.</p><h2 id="adding-catalog-functions" class="section-heading"><a href="#adding-catalog-functions" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Adding Catalog functions</span></h2><p>As we've seen, your context modules are dedicated modules that expose and group related functionality. Phoenix generates generic functions, such as <code class="inline">list_products</code> and <code class="inline">update_product</code>, but they only serve as a basis for you to grow your business logic and application from. Let's add one of the basic features of our catalog by tracking product page view count.</p><p>For any ecommerce system, the ability to track how many times a product page has been viewed is essential for marketing, suggestions, ranking, etc. While we could try to use the existing <code class="inline">Catalog.update_product</code> function, along the lines of <code class="inline">Catalog.update_product(product, %{views: product.views + 1})</code>, this would not only be prone to race conditions, but it would also require the caller to know too much about our Catalog system. To see why the race condition exists, let's walk through the possible execution of events:</p><p>Intuitively, you would assume the following events:</p><ol><li>User 1 loads the product page with count of 13</li><li>User 1 saves the product page with count of 14</li><li>User 2 loads the product page with count of 14</li><li>User 2 saves the product page with count of 15</li></ol><p>While in practice this would happen:</p><ol><li>User 1 loads the product page with count of 13</li><li>User 2 loads the product page with count of 13</li><li>User 1 saves the product page with count of 14</li><li>User 2 saves the product page with count of 14</li></ol><p>The race conditions would make this an unreliable way to update the existing table since multiple callers may be updating out of date view values. There's a better way.</p><p>Let's think of a function that describes what we want to accomplish. Here's how we would like to use it:</p><pre><code class="makeup elixir" translate="no"><span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Catalog</span><span class="o">.</span><span class="n">inc_page_views</span><span class="p" data-group-id="8266574941-1">(</span><span class="n">product</span><span class="p" data-group-id="8266574941-1">)</span></code></pre><p>That looks great. Our callers will have no confusion over what this function does, and we can wrap up the increment in an atomic operation to prevent race conditions.</p><p>Open up your catalog context (<code class="inline">lib/hello/catalog.ex</code>), and add this new function:</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="nf">inc_page_views</span><span class="p" data-group-id="2414010163-1">(</span><span class="p" data-group-id="2414010163-2">%</span><span class="nc" data-group-id="2414010163-2">Product</span><span class="p" data-group-id="2414010163-2">{</span><span class="p" data-group-id="2414010163-2">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">product</span><span class="p" data-group-id="2414010163-1">)</span><span class="w"> </span><span class="k" data-group-id="2414010163-3">do</span><span class="w">
+    </span><span class="p" data-group-id="2414010163-4">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2414010163-5">[</span><span class="p" data-group-id="2414010163-6">%</span><span class="nc" data-group-id="2414010163-6">Product</span><span class="p" data-group-id="2414010163-6">{</span><span class="ss">views</span><span class="p">:</span><span class="w"> </span><span class="n">views</span><span class="p" data-group-id="2414010163-6">}</span><span class="p" data-group-id="2414010163-5">]</span><span class="p" data-group-id="2414010163-4">}</span><span class="w"> </span><span class="o">=</span><span class="w">
+      </span><span class="n">from</span><span class="p" data-group-id="2414010163-7">(</span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nc">Product</span><span class="p">,</span><span class="w"> </span><span class="ss">where</span><span class="p">:</span><span class="w"> </span><span class="n">p</span><span class="o">.</span><span class="n">id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="o">^</span><span class="n">product</span><span class="o">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="ss">select</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2414010163-8">[</span><span class="ss">:views</span><span class="p" data-group-id="2414010163-8">]</span><span class="p" data-group-id="2414010163-7">)</span><span class="w">
+      </span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Repo</span><span class="o">.</span><span class="n">update_all</span><span class="p" data-group-id="2414010163-9">(</span><span class="ss">inc</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2414010163-10">[</span><span class="ss">views</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="2414010163-10">]</span><span class="p" data-group-id="2414010163-9">)</span><span class="w">
+
+    </span><span class="n">put_in</span><span class="p" data-group-id="2414010163-11">(</span><span class="n">product</span><span class="o">.</span><span class="n">views</span><span class="p">,</span><span class="w"> </span><span class="n">views</span><span class="p" data-group-id="2414010163-11">)</span><span class="w">
+  </span><span class="k" data-group-id="2414010163-3">end</span></code></pre><p>We built a query for fetching the current product given its ID which we pass to <code class="inline">Repo.update_all</code>. Ecto's <code class="inline">Repo.update_all</code> allows us to perform batch updates against the database, and is perfect for atomically updating values, such as incrementing our views count. The result of the repo operation returns the number of updated records, along with the selected schema values specified by the <code class="inline">select</code> option. When we receive the new product views, we use <code class="inline">put_in(product.views, views)</code> to place the new view count within the product struct.</p><p>With our context function in place, let's make use of it in our product controller. Update your <code class="inline">show</code> action in <code class="inline">lib/hello_web/controllers/product_controller.ex</code> to call our new function:</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="nf">show</span><span class="p" data-group-id="8969164322-1">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8969164322-2">%{</span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">id</span><span class="p" data-group-id="8969164322-2">}</span><span class="p" data-group-id="8969164322-1">)</span><span class="w"> </span><span class="k" data-group-id="8969164322-3">do</span><span class="w">
+    </span><span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w">
+      </span><span class="n">id</span><span class="w">
+      </span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Catalog</span><span class="o">.</span><span class="n">get_product!</span><span class="p" data-group-id="8969164322-4">(</span><span class="p" data-group-id="8969164322-4">)</span><span class="w">
+      </span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Catalog</span><span class="o">.</span><span class="n">inc_page_views</span><span class="p" data-group-id="8969164322-5">(</span><span class="p" data-group-id="8969164322-5">)</span><span class="w">
+
+    </span><span class="n">render</span><span class="p" data-group-id="8969164322-6">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="p">,</span><span class="w"> </span><span class="ss">product</span><span class="p">:</span><span class="w"> </span><span class="n">product</span><span class="p" data-group-id="8969164322-6">)</span><span class="w">
+  </span><span class="k" data-group-id="8969164322-3">end</span></code></pre><p>We modified our <code class="inline">show</code> action to pipe our fetched product into <code class="inline">Catalog.inc_page_views/1</code>, which will return the updated product. Then we rendered our template just as before. Let's try it out. Refresh one of your product pages a few times and watch the view count increase.</p><p>We can also see our atomic update in action in the ecto debug logs:</p><pre><code class="text">[debug] QUERY OK source=&quot;products&quot; db=0.5ms idle=834.5ms
+UPDATE &quot;products&quot; AS p0 SET &quot;views&quot; = p0.&quot;views&quot; + $1 WHERE (p0.&quot;id&quot; = $2) RETURNING p0.&quot;views&quot; [1, 1]</code></pre><p>Good work!</p><p>As we've seen, designing with contexts gives you a solid foundation to grow your application from. Using discrete, well-defined APIs that expose the intent of your system allows you to write more maintainable applications with reusable code. Now that we know how to start extending our context API, let's explore handling relationships within a context.</p>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="contexts.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+1. Intro to Contexts
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="in_context_relationships.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+3. In-context Relationships
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix/1.8.5">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix/1.8.5">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/phoenix/1.8.5/show/guides/data_modelling/your_first_context.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+
+              <a href="Phoenix.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

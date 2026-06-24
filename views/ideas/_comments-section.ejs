@@ -1,0 +1,16 @@
+<div class="comments-section"
+     id="comments-section-<%= idea.idea_id %>">
+
+  <h4>Kommentare</h4>
+  <ul class="comments-list" id="comment-list-<%= idea.idea_id %>">
+    <% (idea.comments || []).forEach(c => { 
+      const hasSessionLike = user && user.commentLikes && user.commentLikes[c.comment_id] === true;
+      const userLiked = c.userLiked === true || c.user_liked > 0 || hasSessionLike;
+      const commentWithLike = { ...c, userLiked };
+    %>
+      <%- include('_comment-item', { comment: commentWithLike, user }) %>
+    <% }) %>
+  </ul>
+
+  
+</div>

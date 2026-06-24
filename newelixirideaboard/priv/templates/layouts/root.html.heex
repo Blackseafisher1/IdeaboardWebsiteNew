@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= assigns[:title] || "Ideenboard" %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/htmx.min.js"></script>
+  <script src="/js/htmx-ws.js"></script>
+  <script src="/js/app.js" defer></script>
+</head>
+<body>
+  <%= if user = assigns[:user] do %>
+    <header>
+      <nav>
+        <a href="/">Ideenboard</a>
+        <a href="/ideas">Ideen</a>
+        <a href="/projects">Projekte</a>
+        <a href="/dms">Nachrichten</a>
+        <a href="/groups">Gruppen</a>
+        <a href="/surveys">Umfragen</a>
+        <a href="/dashboard">Dashboard</a>
+        <%= if IdeaBoard.RoleHelpers.is_admin?(user) do %>
+          <a href="/admin">Admin</a>
+        <% end %>
+        <span><%= user.username %></span>
+        <a href="/auth/logout">Logout</a>
+      </nav>
+    </header>
+  <% else %>
+    <header>
+      <nav>
+        <a href="/">Ideenboard</a>
+        <a href="/users/auth">Login</a>
+      </nav>
+    </header>
+  <% end %>
+
+  <main>
+    <%= @inner_content %>
+  </main>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title %></title>
+  
+  <link rel="stylesheet" href="/css/projects.css">
+  <%- include('../partials/head') %>
+</head>
+
+<body>
+<%- include('../partials/header') %>
+
+<main class="projects-page">
+  <section class="projects-header">
+    <div class="hero-box project-hero-box">
+      <h1>Projektübersicht</h1>
+      <p class="subtitle">Verwalten und verfolgen Sie alle aktuellen Projekte</p>
+
+      <% if (authz.isAdmin(user) || authz.isProjectLead(user)) { %>
+        <button class="btn accent" id="openCreateModal">
+          <span class="btn-icon">+</span> Neues Projekt
+        </button>
+      <% } %>
+    </div>
+  </section>
+
+<!-- Suche & Filter Bar (KORRIGIERT) -->
+<section class="projects-filters hero-overlap-next">
+  <div class="filter-controls" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+    <div class="search-wrapper" style="flex-grow: 1;">
+      <div style="display: flex; gap: 8px;">
+         <input type="text" 
+           id="projectSearchInput"
+           name="search"  
+           placeholder="Suche Projekte..."
+           value="<%= currentSearch || '' %>"
+           hx-get="/projects"
+          hx-trigger="keyup changed delay:1000ms"
+           hx-target="#projectsList"
+           hx-include="#currentStatus, #isUserOnlyInput" 
+           hx-push-url="true">
+        
+        <button type="button" onclick="clearSearch()" class="btn" style="white-space: nowrap; max-width: 30px;">
+          ✕
+        </button>
+      </div>
+      <!-- EINZIGES currentStatus (keine Doppelung!) -->
+      <input type="hidden" id="currentStatus" name="status" value="<%= currentStatus || 'all' %>">
+      <input type="hidden" id="isUserOnlyInput" name="userOnly" value="<%= isUserOnly ? 'true' : 'false' %>">
+    </div>
+    
+    <div class="filter-buttons">
+      <!-- hx-get statt onclick + KEIN setActiveFilter nötig! -->
+            <button class="filter-btn <%= (currentStatus === 'all' && !isUserOnly) ? 'active' : '' %>" 
+              data-status="all"
+              hx-get="/projects"
+              hx-target="#projectsList"
+              hx-include="#projectSearchInput"
+              hx-vals='{"status":"all","page":1,"userOnly":"false"}'
+              hx-push-url="true">
+        Alle Projekte
+      </button>
+            <button class="filter-btn <%= isUserOnly ? 'active' : '' %>" 
+              data-status="my"
+              hx-get="/projects"
+              hx-target="#projectsList"
+              hx-include="#projectSearchInput"
+              hx-vals='{"status":"all","page":1,"userOnly":"true"}'
+              hx-push-url="true">
+        Meine Projekte
+      </button>
+            <button class="filter-btn <%= currentStatus === 'Konzeption' ? 'active' : '' %>" 
+              data-status="Konzeption"
+              hx-get="/projects"
+              hx-target="#projectsList"
+              hx-include="#projectSearchInput"
+              hx-vals='{"status":"Konzeption","page":1,"userOnly":"false"}'
+              hx-push-url="true">
+        Konzeption
+      </button>
+            <button class="filter-btn <%= currentStatus === 'Umsetzung' ? 'active' : '' %>" 
+              data-status="Umsetzung"
+              hx-get="/projects"
+              hx-target="#projectsList"
+              hx-include="#projectSearchInput"
+              hx-vals='{"status":"Umsetzung","page":1,"userOnly":"false"}'
+              hx-push-url="true">
+        Umsetzung
+      </button>
+            <button class="filter-btn <%= currentStatus === 'Abgeschlossen' ? 'active' : '' %>" 
+              data-status="Abgeschlossen"
+              hx-get="/projects"
+              hx-target="#projectsList"
+              hx-include="#projectSearchInput"
+              hx-vals='{"status":"Abgeschlossen","page":1,"userOnly":"false"}'
+              hx-push-url="true">
+        Abgeschlossen
+      </button>
+    </div>
+  </div>
+</section>
+
+
+  <!-- Projects Grid mit Polling -->
+<!-- Projects Grid (wie Surveys) -->
+<section class="projects-grid" aria-live="polite">
+      <div id="projectsList"
+        hx-get="/projects/fragment"
+        data-page="<%= currentPage || 1 %>"
+        data-poll-interval="11000"
+        hx-include="#projectSearchInput, #currentStatus"
+        hx-trigger="load, every 11s"
+        hx-swap="innerHTML">
+    <div class="loading-state skeleton-grid" aria-hidden="true">
+      <!-- Skeleton placeholders to reserve layout space and avoid CLS on first load -->
+      <% for (let i = 0; i < 3; i++) { %>
+        <article class="project-card skeleton">
+          <header class="project-header">
+            <div class="project-title-section">
+              <h3 class="project-title">&nbsp;</h3>
+              <div class="project-meta">
+                <span class="project-status">&nbsp;</span>
+                <span class="project-date">&nbsp;</span>
+              </div>
+            </div>
+          </header>
+
+          <div class="project-content">
+            <p class="project-desc">&nbsp;</p>
+
+            <div class="project-progress-section">
+              <div class="progress-header">
+                <span class="progress-label">&nbsp;</span>
+                <span class="progress-value">&nbsp;</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width:40%"></div>
+              </div>
+            </div>
+
+            <div class="project-stats">
+              <div class="stat">
+                <span class="stat-icon">&nbsp;</span>
+                <div class="stat-info">
+                  <span class="stat-value">&nbsp;</span>
+                  <span class="stat-label">&nbsp;</span>
+                </div>
+              </div>
+              <div class="stat">
+                <span class="stat-icon">&nbsp;</span>
+                <div class="stat-info">
+                  <span class="stat-value">&nbsp;</span>
+                  <span class="stat-label">&nbsp;</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+  <!-- Create Project Modal (Original) -->
+  <dialog id="createProjectModal" aria-modal="true" aria-labelledby="createProjectTitle">
+    <form method="dialog" class="modal-close"><button class="btn outline" value="cancel">Schließen</button></form>
+    <form id="createProjectForm" action="/projects" method="POST">
+      <h3 id="createProjectTitle">Neues Projekt</h3>
+      <input type="hidden" name="convertIdeaId" id="convertIdeaId" value="">
+      <input type="hidden" name="expected_author_id" id="expectedAuthorId" value="">
+      <div id="convertIdeaBadge" class="input info-only" style="display:none; margin-bottom: 10px;">Vorausgefüllt aus Idee — überprüfe Daten vor Erstellen</div>
+      <label class="form-label" for="project-name">Projektname *</label>
+      <input id="project-name" class="input" type="text" name="name" placeholder="Projektbezeichnung" required>
+      <label class="form-label" for="project-description">Beschreibung</label>
+      <textarea id="project-description" class="input" name="description" rows="4" placeholder="Projektbeschreibung..."></textarea>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="project-status">Status</label>
+          <select id="project-status" class="input" name="status">
+            <option value="Konzeption">Konzeption</option>
+            <option value="Umsetzung">Umsetzung</option>
+            <option value="Abgeschlossen">Abgeschlossen</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="project-progress">Fortschritt (%)</label>
+          <input id="project-progress" class="input" type="number" name="progress" min="0" max="100" value="0">
+        </div>
+      </div>
+      <% if (authz.isAdmin(user)) { %>
+        <div style="position: relative; margin-bottom: 1rem;">
+          <label class="form-label" for="contactSearch">Ansprechpartner</label>
+          <input id="contactSearch" class="input" type="text" placeholder="Nutzername oder E-Mail suchen..." autocomplete="off">
+          <input id="contactPersonId" type="hidden" name="contact_person_id" value="">
+          <div id="contactSearchResults" class="search-results-dropdown" style="display:none;"></div>
+          <input type="hidden" name="autoPromoteContact" value="off">
+          <label class="form-label" style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+            <input type="checkbox" name="autoPromoteContact" value="on" checked>
+            Ansprechpartner automatisch auf Projektleiter befördern (falls nötig)
+          </label>
+        </div>
+      <% } else if (authz.isProjectLead(user)) { %>
+        <label class="form-label">Ansprechpartner</label>
+        <div class="input info-only"><%= user.username %> (Automatisch zugewiesen)</div>
+        <input type="hidden" name="contact_person_id" value="<%= user.user_id %>">
+      <% } %>
+      <div class="dialog-actions">
+        <button class="btn outline" type="reset">Zurücksetzen</button>
+        <button class="btn" type="submit">Projekt erstellen</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Edit Project Modal (Original) -->
+  <dialog id="editProjectModal" aria-modal="true" aria-labelledby="editProjectTitle">
+    <form method="dialog" class="modal-close"><button class="btn outline" value="cancel">Schließen</button></form>
+    <form id="editProjectForm" action="" method="POST">
+      <h3 id="editProjectTitle">Projekt bearbeiten</h3>
+      <label class="form-label" for="edit-project-name">Projektname *</label>
+      <input id="edit-project-name" class="input" type="text" name="name" required>
+      <label class="form-label" for="edit-project-desc">Beschreibung</label>
+      <textarea id="edit-project-desc" class="input" name="description" rows="4"></textarea>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="edit-project-status">Status</label>
+          <select id="edit-project-status" class="input" name="status">
+            <option value="Konzeption">Konzeption</option>
+            <option value="Umsetzung">Umsetzung</option>
+            <option value="Abgeschlossen">Abgeschlossen</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="edit-project-progress">Fortschritt (%)</label>
+          <input id="edit-project-progress" class="input" type="number" name="progress" min="0" max="100">
+        </div>
+      </div>
+      <% if (authz.isAdmin(user)) { %>
+        <div style="position: relative; margin-bottom: 1rem;">
+          <label class="form-label" for="editContactSearch">Ansprechpartner</label>
+          <input id="editContactSearch" class="input" type="text" placeholder="Nutzername oder E-Mail suchen..." autocomplete="off">
+          <input id="editContactPersonId" type="hidden" name="contact_person_id" value="">
+          <div id="editContactSearchResults" class="search-results-dropdown" style="display:none;"></div>
+        </div>
+      <% } else if (authz.isProjectLead(user)) { %>
+        <label class="form-label">Ansprechpartner</label>
+        <div class="input info-only"><%= user.username %> (Nicht änderbar)</div>
+        <input type="hidden" name="contact_person_id" value="<%= user.user_id %>">
+      <% } %>
+      <div class="dialog-actions">
+        <button class="btn outline" type="reset">Zurücksetzen</button>
+        <button class="btn" type="submit">Änderungen speichern</button>
+      </div>
+    </form>
+    <hr>
+    <div class="danger-zone" style="margin-top: 1rem;">
+      <h4 class="danger">Gefahrenzone</h4>
+      <button id="deleteProjectBtn" class="btn danger" style="width: 100%;">
+        Projekt löschen
+      </button>
+    </div>
+  </dialog>
+
+  <!-- Team Overview Modal -->
+  <dialog id="teamModal" aria-modal="true" aria-labelledby="teamModalTitle">
+    <form method="dialog" class="modal-close"><button class="btn outline" value="cancel">Schließen</button></form>
+    <div class="modal-content">
+      <div class="team-modal-header">
+        <h3 id="teamModalTitle" class="team-modal-title">Projekt-Team: <span id="teamProjectName"></span></h3>
+      </div>
+      
+      <div id="teamManagementSection" class="team-management-box" style="display: none;">
+        <h4>Mitglied hinzufügen</h4>
+        <div class="add-member-form">
+          <div class="search-container">
+            <input type="text" id="userSearchInput" class="input" placeholder="Name oder E-Mail suchen..." autocomplete="off">
+            <div id="userSearchResults" class="search-results-dropdown"></div>
+          </div>
+          <select id="newMemberRole" class="input" style="width: auto;">
+            <option value="Mitglied">Mitglied</option>
+            <option value="Entwickler">Entwickler</option>
+            <option value="Designer">Designer</option>
+            <option value="Tester">Tester</option>
+          </select>
+          <button id="addMemberBtn" class="btn accent">Hinzufügen</button>
+        </div>
+      </div>
+
+      <div class="team-list-container">
+        <table class="team-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Rolle</th>
+              <th>Beigetreten</th>
+              <th class="team-actions-header">Aktionen</th>
+            </tr>
+          </thead>
+          <tbody id="teamListBody">
+            <!-- Team members will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </dialog>
+</main>
+
+<%- include('../partials/footer') %>
+
+<script src="/js/projectsClient.js"></script>
+</body>
+</html>

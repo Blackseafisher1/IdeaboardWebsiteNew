@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/services/dmMessagingService.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/services/dmMessagingService.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Direktnachrichten-Service: Nachrichten lesen, speichern, Konversationen verwalten.
+ * @module lib/services/dmMessagingService
+ */
+const db = require('../../config/db.js');
+
+/**
+ * Holt neue Nachrichten einer Unterhaltung nach einer bestimmten ID.
+ * @async
+ * @param {number} conversationId
+ * @param {number} [afterId]
+ * @returns {Promise&lt;Array&lt;Object>>}
+ */
+async function fetchNewMessages(conversationId, afterId) {
+    const rows = await db.query(`
+        SELECT m.*, u.username as sender_name
+        FROM dm_messages m
+        JOIN users u ON u.user_id = m.sender_id
+        WHERE m.conversation_id = ? AND m.message_id > ?
+        ORDER BY m.message_id ASC
+    `, [conversationId, afterId || 0]);
+    return rows;
+}
+
+/**
+ * Holt geänderte oder neue Nachrichten (Deltas) nach einem Zeitstempel.
+ * @async
+ * @param {number} conversationId
+ * @param {string} since ISO-Zeitstempel oder MySQL-Format
+ * @returns {Promise&lt;Array&lt;Object>>}
+ */
+/**
+ * Holt die neuesten n Nachrichten einer Unterhaltung.
+ * @async
+ * @param {number} conversationId
+ * @param {number} [limit=20]
+ * @returns {Promise&lt;Array&lt;Object>>}
+ */
+async function fetchLatestMessages(conversationId, limit = 20) {
+    const rows = await db.query(`
+        SELECT m.*, u.username as sender_name
+        FROM dm_messages m
+        JOIN users u ON u.user_id = m.sender_id
+        WHERE m.conversation_id = ?
+        ORDER BY m.message_id DESC
+        LIMIT ?
+    `, [conversationId, limit]);
+    return rows.reverse();
+}
+
+/**
+ * Prüft, ob ein Benutzer Zugriff auf eine Unterhaltung hat.
+ * @async
+ * @param {number} conversationId
+ * @param {number} userId
+ * @returns {Promise&lt;boolean>}
+ */
+async function ensureConversationAccess(conversationId, userId) {
+    const rows = await db.query(
+        'SELECT conversation_id FROM dm_conversations WHERE conversation_id = ? AND (user1_id = ? OR user2_id = ?)',
+        [conversationId, userId, userId]
+    );
+    const row = rows[0];
+    return !!row;
+}
+
+/**
+ * Liefert die Konversationen eines Benutzers mit Metadaten (letzte Nachricht, ungelesen).
+ * @async
+ * @param {number} userId
+ * @returns {Promise&lt;Array&lt;Object>>}
+ */
+async function getConversations(userId) {
+    return await db.query(`
+        SELECT 
+            c.conversation_id,
+            c.updated_at,
+            u.user_id as other_user_id,
+            u.username as other_username,
+            (SELECT message FROM dm_messages WHERE conversation_id = c.conversation_id ORDER BY created_at DESC LIMIT 1) as last_message,
+            (SELECT COUNT(*) FROM dm_messages WHERE conversation_id = c.conversation_id AND sender_id != ? AND is_read = FALSE) as unread_count
+        FROM dm_conversations c
+        JOIN users u ON (u.user_id = c.user1_id OR u.user_id = c.user2_id)
+        WHERE (c.user1_id = ? OR c.user2_id = ?) AND u.user_id != ?
+        ORDER BY c.updated_at DESC
+    `, [userId, userId, userId, userId]);
+}
+
+/**
+ * Sucht Benutzer für Direktnachrichten (optional alle Ergebnisse zurückgeben).
+ * @async
+ * @param {number} currentUserId
+ * @param {string} query
+ * @param {number} [limit=20]
+ * @param {boolean} [all=false]
+ * @returns {Promise&lt;Array&lt;Object>>}
+ */
+async function searchUsersForDms(currentUserId, query, limit = 20, all = false) {
+    const likeParam = `${query || ''}%`;
+    const sql = `
+        SELECT
+            u.user_id,
+            u.username,
+            u.email,
+            lm.message AS last_message,
+            lm.created_at AS last_message_time
+        FROM users u
+        LEFT JOIN dm_conversations c
+            ON ( (c.user1_id = u.user_id OR c.user2_id = u.user_id)
+                     AND (c.user1_id = ? OR c.user2_id = ?) )
+        LEFT JOIN (
+            SELECT m1.conversation_id, m1.message, m1.created_at
+            FROM dm_messages m1
+            JOIN (
+                SELECT conversation_id, MAX(created_at) AS max_created
+                FROM dm_messages
+                GROUP BY conversation_id
+            ) mx ON m1.conversation_id = mx.conversation_id AND m1.created_at = mx.max_created
+        ) lm ON lm.conversation_id = c.conversation_id
+        WHERE u.username LIKE ?
+            AND u.user_id != ?
+        ORDER BY
+            CASE WHEN lm.created_at IS NULL THEN 1 ELSE 0 END,
+            lm.created_at DESC,
+            u.username ASC
+        ${all ? '' : 'LIMIT ?'}
+    `;
+
+    const params = [currentUserId, currentUserId, likeParam, currentUserId];
+    if (!all) params.push(limit);
+
+    return await db.query(sql, params);
+}
+
+/**
+ * Liefert eine bestehende Konversation zwischen zwei Nutzern oder erstellt eine neue.
+ * @async
+ * @param {number} userId1
+ * @param {number} userId2
+ * @returns {Promise&lt;Object>} Conversation-Objekt (mit `conversation_id`).
+ */
+async function getOrCreateConversation(userId1, userId2) {
+    const u1 = Number(userId1);
+    const u2 = Number(userId2);
+    const minId = Math.min(u1, u2);
+    const maxId = Math.max(u1, u2);
+
+    const conversationRows = await db.query(`
+        SELECT * FROM dm_conversations 
+        WHERE (user1_id = ? AND user2_id = ?) OR (user1_id = ? AND user2_id = ?)
+    `, [u1, u2, u2, u1]);
+    let conversation = conversationRows[0];
+
+    if (!conversation) {
+        const result = await db.query('INSERT INTO dm_conversations (user1_id, user2_id) VALUES (?, ?)', [minId, maxId]);
+        conversation = { conversation_id: result.insertId };
+    }
+    
+    return conversation;
+}
+
+/**
+ * Markiert Nachrichten als gelesen und liefert die zuletzt gelesene ID zurück.
+ * @async
+ * @param {number} conversationId
+ * @param {number} userId
+ * @returns {Promise&lt;number|null>} Max gelesenes Message-ID oder `null`.
+ */
+async function markMessagesAsRead(conversationId, userId) {
+    const maxIdRows = await db.query(
+        'SELECT MAX(message_id) as maxId FROM dm_messages WHERE conversation_id = ? AND sender_id != ?',
+        [conversationId, userId]
+    );
+    const maxIdRow = maxIdRows[0];
+    const maxId = maxIdRow?.maxId;
+
+    await db.query(
+        'UPDATE dm_messages SET is_read = TRUE WHERE conversation_id = ? AND sender_id != ? AND is_read = FALSE',
+        [conversationId, userId]
+    );
+    
+    return maxId ? Number(maxId) : null;
+}
+
+/**
+ * Liefert Nachrichten einer Konversation mit optionalem Limit.
+ * @async
+ * @param {number} conversationId
+ * @param {number} [limit=1000]
+ * @returns {Promise&lt;Array&lt;Object>>}
+ */
+async function getConversationMessages(conversationId, limit = 1000) {
+    const rows = await db.query(`
+        SELECT m.*, u.username as sender_name FROM dm_messages m
+        JOIN users u ON u.user_id = m.sender_id
+        WHERE m.conversation_id = ? 
+        ORDER BY m.message_id DESC
+        LIMIT ?
+    `, [conversationId, limit]);
+    return rows.reverse();
+}
+
+/**
+ * Liefert Nachrichten einer Konversation vor `beforeId`.
+ * @async
+ * @param {number} conversationId
+ * @param {number} beforeId
+ * @param {number} [limit=20]
+ * @returns {Promise&lt;Array&lt;Object>>}
+ */
+async function getConversationMessagesBefore(conversationId, beforeId, limit = 20) {
+    const rows = await db.query(`
+        SELECT m.*, u.username as sender_name FROM dm_messages m
+        JOIN users u ON u.user_id = m.sender_id
+        WHERE m.conversation_id = ? AND m.message_id &lt; ?
+        ORDER BY m.message_id DESC
+        LIMIT ?
+    `, [conversationId, beforeId, limit]);
+    return rows.reverse();
+}
+
+/**
+ * Speichert eine neue Nachricht und aktualisiert das `updated_at`-Feld der Konversation.
+ * @async
+ * @param {number} conversationId
+ * @param {number} senderId
+ * @param {string} text
+ * @returns {Promise&lt;Object>} Gespeicherte Nachricht mit Sendernamen.
+ */
+async function saveMessage(conversationId, senderId, text) {
+    const resIns = await db.query(
+        'INSERT INTO dm_messages (conversation_id, sender_id, message) VALUES (?, ?, ?)',
+        [conversationId, senderId, text]
+    );
+    const messageId = resIns.insertId;
+
+    // Aktualisiere den `updated_at`-Zeitstempel der Konversation
+    await db.query(
+        'UPDATE dm_conversations SET updated_at = NOW() WHERE conversation_id = ?',
+        [conversationId]
+    );
+
+    const rows = await db.query(`
+        SELECT m.*, u.username AS sender_name
+        FROM dm_messages m
+        JOIN users u ON u.user_id = m.sender_id
+        WHERE m.message_id = ?
+    `, [messageId]);
+    return rows[0];
+}
+
+/**
+ * Versucht den Originaldateinamen einer in einer Nachricht referenzierten Datei zu ermitteln.
+ * @async
+ * @param {number} conversationId
+ * @param {string} filename
+ * @returns {Promise&lt;string>} Originaler Dateiname oder übergebenes `filename`.
+ */
+async function getOriginalFilename(conversationId, filename) {
+    const rows = await db.query(
+        "SELECT message FROM dm_messages WHERE conversation_id = ? AND message LIKE ? LIMIT 1",
+        [conversationId, `%${filename}%`]);
+    if (rows.length > 0) {
+        const msg = rows[0].message;
+        if (msg.startsWith('[FILE]')) {
+            const parts = msg.split('|');
+            if (parts.length > 1) {
+                return parts[1].trim();
+            }
+        }
+    }
+    return filename;
+}
+
+/**
+ * Aktualisiert eine Nachrichttext (versucht `is_edited` Flag zu setzen, fallback wenn Spalte fehlt).
+ * @async
+ * @param {number} messageId
+ * @param {number} userId
+ * @param {string} newText
+ * @returns {Promise&lt;boolean>} `true`, wenn aktualisiert.
+ */
+async function updateMessage(messageId, userId, newText) {
+    // Versuche Nachricht und Flag zu aktualisieren. Wenn die Flag-Spalte fehlt, auf reine Text-Aktualisierung zurückfallen.
+    try {
+        const result = await db.query(
+            'UPDATE dm_messages SET message = ?, is_edited = TRUE, updated_at = NOW() WHERE message_id = ? AND sender_id = ?',
+            [newText, messageId, userId]
+        );
+        return result.affectedRows > 0;
+    } catch (e) {
+        if (e.message &amp;&amp; (e.message.includes('Unknown column') || e.errno === 1054)) {
+            const result = await db.query(
+                'UPDATE dm_messages SET message = ?, updated_at = NOW() WHERE message_id = ? AND sender_id = ?',
+                [newText, messageId, userId]
+            );
+            return result.affectedRows > 0;
+        }
+        throw e;
+    }
+}
+
+/**
+ * Löscht/markiert eine Nachricht als gelöscht (setzt `is_deleted` und ersetzt Text durch `[GELÖSCHT]`).
+ * @async
+ * @param {number} messageId
+ * @param {number} userId
+ * @returns {Promise&lt;boolean>} `true`, wenn gelöscht.
+ */
+async function deleteMessage(messageId, userId) {
+    try {
+        const result = await db.query(
+            'UPDATE dm_messages SET is_deleted = TRUE, message = "[GELÖSCHT]", updated_at = NOW() WHERE message_id = ? AND sender_id = ?',
+            [messageId, userId]
+        );
+        return result.affectedRows > 0;
+    } catch (e) {
+        if (e.message &amp;&amp; (e.message.includes('Unknown column') || e.errno === 1054)) {
+            const result = await db.query(
+                'UPDATE dm_messages SET message = "[GELÖSCHT]", updated_at = NOW() WHERE message_id = ? AND sender_id = ?',
+                [messageId, userId]
+            );
+            return result.affectedRows > 0;
+        }
+        throw e;
+    }
+}
+
+/**
+ * Liefert eine Nachricht nach ID inklusive Sendernamen.
+ * @async
+ * @param {number} messageId
+ * @returns {Promise&lt;Object|undefined>}
+ */
+async function getMessageById(messageId) {
+    const rows = await db.query(`
+        SELECT m.*, u.username AS sender_name
+        FROM dm_messages m
+        JOIN users u ON u.user_id = m.sender_id
+        WHERE m.message_id = ?
+    `, [messageId]);
+    return rows[0];
+}
+
+module.exports = {
+    fetchNewMessages,
+    fetchLatestMessages,
+    ensureConversationAccess,
+    getConversations,
+    searchUsersForDms,
+    getOrCreateConversation,
+    markMessagesAsRead,
+    getConversationMessages,
+    getConversationMessagesBefore,
+    saveMessage,
+    getOriginalFilename,
+    updateMessage,
+    deleteMessage,
+    getMessageById
+};
+
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

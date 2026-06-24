@@ -1,0 +1,44 @@
+<tr id="user-<%= user.user_id %>">
+  <td><%= user.user_id %></td>
+  <td><%= user.username %></td>
+  <td><%= user.email %></td>
+  <td>
+    <form>
+      <input type="hidden" name="user_id" value="<%= user.user_id %>">
+      <select name="new_role_id"
+              data-current-role-id="<%= user.role_id %>"
+              hx-post="/adminPage/change-role"
+              hx-include="closest form"
+              hx-target="closest tr"
+              hx-swap="outerHTML"
+              aria-label="Rolle ändern">
+        <% availableRoles.forEach(function(role) { %>
+          <option value="<%= role.role_id %>" <%= (role.role_id == user.role_id) ? 'selected' : '' %>><%= role.name %></option>
+        <% }); %>
+      </select>
+    </form>
+  </td>
+  <td>
+    <div class="admin-actions">
+      <form hx-post="/adminPage/delete-user"
+            hx-include="closest form"
+            hx-target="closest tr"
+            hx-swap="outerHTML"
+            onsubmit="return confirm('Benutzer wirklich löschen?');">
+        <input type="hidden" name="user_id_to_delete" value="<%= user.user_id %>">
+        <button type="submit" class="action-button danger-button">Löschen</button>
+      </form>
+
+      <form hx-post="/adminPage/reset-password"
+            hx-include="closest form"
+            hx-target="#pwd-<%= user.user_id %>"
+            hx-swap="innerHTML"
+            onsubmit="return confirm('Passwort wirklich zurücksetzen? Dieses Passwort wird sofort gesetzt.');">
+        <input type="hidden" name="user_id" value="<%= user.user_id %>">
+        <button type="submit" class="action-button">Reset PW</button>
+      </form>
+
+      <div id="pwd-<%= user.user_id %>" class="generated-pw-placeholder"></div>
+    </div>
+  </td>
+</tr>

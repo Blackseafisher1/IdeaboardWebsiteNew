@@ -1,0 +1,88 @@
+# Phoenix LiveView v1.1.28 - Table of Contents
+
+Rich, real-time user experiences with server-rendered HTML
+
+## GUIDES
+
+- [Changelog for v1.1](changelog.md)
+
+- Introduction
+  - [Welcome](welcome.md)
+
+- Server-side features
+  - [Assigns and HEEx templates](assigns-eex.md)
+  - [Deployments and recovery](deployments.md)
+  - [Error and exception handling](error-handling.md)
+  - [Gettext for internationalization](gettext.md)
+  - [Live layouts](live-layouts.md)
+  - [Live navigation](live-navigation.md)
+  - [Security considerations](security-model.md)
+  - [Telemetry](telemetry.md)
+  - [Uploads](uploads.md)
+
+- Client-side integration
+  - [Bindings](bindings.md)
+  - [External uploads](external-uploads.md)
+  - [Form bindings](form-bindings.md)
+  - [JavaScript interoperability](js-interop.md)
+  - [Syncing changes and optimistic UIs](syncing-changes.md)
+
+- Cheatsheets
+  - [phx-* HTML attributes](html-attrs.md)
+
+## Modules
+
+- [Phoenix.Component](Phoenix.Component.md): Define reusable function components with HEEx templates.
+- [Phoenix.LiveComponent](Phoenix.LiveComponent.md): LiveComponents are a mechanism to compartmentalize state, markup, and
+events for sharing across LiveViews.
+- [Phoenix.LiveView](Phoenix.LiveView.md): A LiveView is a process that receives events, updates
+its state, and renders updates to a page as diffs.
+- [Phoenix.LiveView.AsyncResult](Phoenix.LiveView.AsyncResult.md): Provides a data structure for tracking the state of an async assign.
+- [Phoenix.LiveView.ColocatedHook](Phoenix.LiveView.ColocatedHook.md): A special HEEx `:type` that extracts [hooks](js-interop.md#client-hooks-via-phx-hook)
+from a co-located `<script>` tag at compile time.
+- [Phoenix.LiveView.ColocatedJS](Phoenix.LiveView.ColocatedJS.md): A special HEEx `:type` that extracts any JavaScript code from a co-located
+`<script>` tag at compile time.
+- [Phoenix.LiveView.Controller](Phoenix.LiveView.Controller.md): Helpers for rendering LiveViews from a controller.
+
+- [Phoenix.LiveView.Debug](Phoenix.LiveView.Debug.md): Functions for runtime introspection and debugging of LiveViews.
+- [Phoenix.LiveView.JS](Phoenix.LiveView.JS.md): Provides commands for executing JavaScript utility operations on the client.
+- [Phoenix.LiveView.Router](Phoenix.LiveView.Router.md): Provides LiveView routing for Phoenix routers.
+
+- [Phoenix.LiveViewTest](Phoenix.LiveViewTest.md): Conveniences for testing function components as well as
+LiveViews and LiveComponents.
+
+- Configuration
+  - [Phoenix.LiveView.HTMLFormatter](Phoenix.LiveView.HTMLFormatter.md): Format HEEx templates from `.heex` files or `~H` sigils.
+  - [Phoenix.LiveView.Logger](Phoenix.LiveView.Logger.md): Instrumenter to handle logging of `Phoenix.LiveView` and `Phoenix.LiveComponent` life-cycle events.
+  - [Phoenix.LiveView.Socket](Phoenix.LiveView.Socket.md): The LiveView socket for Phoenix Endpoints.
+
+- Testing structures
+  - [Phoenix.LiveViewTest.Element](Phoenix.LiveViewTest.Element.md): The struct returned by `Phoenix.LiveViewTest.element/3`.
+  - [Phoenix.LiveViewTest.Upload](Phoenix.LiveViewTest.Upload.md): The struct returned by `Phoenix.LiveViewTest.file_input/4`.
+  - [Phoenix.LiveViewTest.View](Phoenix.LiveViewTest.View.md): The struct for testing LiveViews.
+
+- Upload structures
+  - [Phoenix.LiveView.UploadConfig](Phoenix.LiveView.UploadConfig.md): The struct representing an upload.
+
+  - [Phoenix.LiveView.UploadEntry](Phoenix.LiveView.UploadEntry.md): The struct representing an upload entry.
+
+  - [Phoenix.LiveView.UploadWriter](Phoenix.LiveView.UploadWriter.md): Provide a behavior for writing uploaded chunks to a final destination.
+
+- Plugin API
+  - [Phoenix.LiveComponent.CID](Phoenix.LiveComponent.CID.md): The struct representing an internal unique reference to the component instance,
+available as the `@myself` assign in live components.
+  - [Phoenix.LiveView.Component](Phoenix.LiveView.Component.md): The struct returned by components in .heex templates.
+  - [Phoenix.LiveView.Comprehension](Phoenix.LiveView.Comprehension.md): The struct returned by for-comprehensions in .heex templates.
+
+  - [Phoenix.LiveView.Engine](Phoenix.LiveView.Engine.md): An `EEx` template engine that tracks changes.
+  - [Phoenix.LiveView.HTMLEngine](Phoenix.LiveView.HTMLEngine.md): The HTMLEngine that powers `.heex` templates and the `~H` sigil.
+  - [Phoenix.LiveView.Rendered](Phoenix.LiveView.Rendered.md): The struct returned by .heex templates.
+  - [Phoenix.LiveView.TagEngine](Phoenix.LiveView.TagEngine.md): Building blocks for tag based `Phoenix.Template.Engine`s.
+
+- Exceptions
+  - [Phoenix.LiveView.ReloadError](Phoenix.LiveView.ReloadError.md)
+
+## Mix Tasks
+
+- [mix compile.phoenix_live_view](Mix.Tasks.Compile.PhoenixLiveView.md): A LiveView compiler for HEEx macro components.
+

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.37.3">
+    <meta name="project" content="Plug.Crypto v2.1.1">
+
+
+    <title>Changelog — Plug.Crypto v2.1.1</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-6X3L5KMG.css" />
+
+    <script defer src="dist/sidebar_items-96A05992.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-ALU6OERS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="Plug.Crypto.html" class="sidebar-projectName" translate="no">
+Plug.Crypto
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v2.1.1
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Plug.Crypto</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Changelog</h1>
+
+
+      <a href="https://github.com/elixir-plug/plug_crypto/blob/v2.1.1/CHANGELOG.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+<h2 id="v2-1-1-2025-04-03" class="section-heading">
+  <a href="#v2-1-1-2025-04-03" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v2.1.1 (2025-04-03)</span>
+</h2>
+<ul><li>Fall back <code class="inline">hash_equals</code> when missing OpenSSL support</li></ul><h2 id="v2-1-0-2024-05-02" class="section-heading">
+  <a href="#v2-1-0-2024-05-02" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v2.1.0 (2024-05-02)</span>
+</h2>
+<ul><li>Use <a href="https://hexdocs.pm/elixir/System.html#os_time/1"><code class="inline">System.os_time/1</code></a> as the token signing date, since tokens are meant to be shared across machines</li></ul><h2 id="v2-0-0-2023-10-06" class="section-heading">
+  <a href="#v2-0-0-2023-10-06" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v2.0.0 (2023-10-06)</span>
+</h2>
+<ul><li>Update Elixir requirement to v1.11+ and require Erlang/OTP 23.</li><li>Encryption now uses XChaCha20-Poly1305, which is safer, faster, and generates smaller payloads. This means data encrypted with Plug.Crypto v2.0 cannot be decrypted on Plug.Crypto v1.x. However, Plug.Crypto v2.0 can still decrypt data from Plug.Crypto v1.0.</li><li>Optimize <code class="inline">secure_compare</code>, <code class="inline">masked_compare</code>, and key generator algorithms by relying on <code class="inline">:crypto</code> code when using more recent Erlang/OTP versions.</li></ul><h2 id="v1-2-5-2023-03-10" class="section-heading">
+  <a href="#v1-2-5-2023-03-10" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v1.2.5 (2023-03-10)</span>
+</h2>
+<ul><li>Allow AAD to be given as iolist</li></ul><h2 id="v1-2-4-2023-03-10" class="section-heading">
+  <a href="#v1-2-4-2023-03-10" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v1.2.4 (2023-03-10)</span>
+</h2>
+<ul><li>Allow AAD to be given as argument on message encryptor</li></ul><h2 id="v1-2-3-2022-08-19" class="section-heading">
+  <a href="#v1-2-3-2022-08-19" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v1.2.3 (2022-08-19)</span>
+</h2>
+<ul><li>Remove warnings on Elixir v1.14</li></ul><h2 id="v1-2-2-2021-03-25" class="section-heading">
+  <a href="#v1-2-2-2021-03-25" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v1.2.2 (2021-03-25)</span>
+</h2>
+<ul><li>Remove warnings on Elixir v1.12</li></ul><h2 id="v1-2-1-2021-02-17" class="section-heading">
+  <a href="#v1-2-1-2021-02-17" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v1.2.1 (2021-02-17)</span>
+</h2>
+<ul><li>Add support for Erlang/OTP 24</li></ul><h2 id="v1-2-0-2020-10-07" class="section-heading">
+  <a href="#v1-2-0-2020-10-07" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v1.2.0 (2020-10-07)</span>
+</h2>
+<ul><li>Update Elixir requirement to Elixir 1.7+.</li><li>Fixed a bug that allowed to sign and encrypt stuff with <code class="inline">nil</code> secret key base and salt.</li></ul><h2 id="v1-1-2-2020-02-16" class="section-heading">
+  <a href="#v1-1-2-2020-02-16" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v1.1.2 (2020-02-16)</span>
+</h2>
+<ul><li>Do not key derive empty salts (default to no salt instead).</li></ul><h2 id="v1-1-1-2020-02-14" class="section-heading">
+  <a href="#v1-1-1-2020-02-14" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v1.1.1 (2020-02-14)</span>
+</h2>
+<ul><li>Do not expose encryption with salt API.</li><li>Allow default <code class="inline">:max_age</code> to be set when signing/encrypting.</li></ul><h2 id="v1-1-0-2020-02-11" class="section-heading">
+  <a href="#v1-1-0-2020-02-11" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v1.1.0 (2020-02-11)</span>
+</h2>
+<ul><li>Add high-level <code class="inline">Plug.Crypto.sign/verify</code> and <code class="inline">Plug.Crypto.encrypt/decrypt</code>.</li></ul><h2 id="v1-0-0-2018-10-03" class="section-heading">
+  <a href="#v1-0-0-2018-10-03" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v1.0.0 (2018-10-03)</span>
+</h2>
+<ul><li>Split up the <code class="inline">plug_crypto</code> project from Plug as per <a href="https://github.com/elixir-plug/plug/issues/766">elixir-lang/plug#766</a>.</li></ul>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="api-reference.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+API Reference
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/plug_crypto/2.1.1" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/plug_crypto/2.1.1">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/plug_crypto/2.1.1/show/CHANGELOG.md">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="Plug.Crypto.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.37.3) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

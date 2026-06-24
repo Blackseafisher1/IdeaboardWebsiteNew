@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix v1.8.5">
+
+
+    <title>Deploying with Releases — Phoenix v1.8.5</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-209F6654.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.8.5
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="true">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Latest</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="https://hexdocs.pm/?packages=plug%3Alatest%2Cphoenix%3Alatest%2Cphoenix_html%3Alatest%2Cphoenix_live_view%3Alatest%2Cphoenix_pubsub%3Alatest%2Cphoenix_template%3Alatest&q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Latest</span>
+                <span class="help">Search latest versions of Plug, Phoenix, Phoenix.{HTML, LiveView, PubSub, Template}</span>
+              </button>
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="false">
+                <span class="name">Current version</span>
+                <span class="help">Search only this project</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Deploying with Releases</h1>
+
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/guides/deployment/releases.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p>Our main goal for this guide is to package your Phoenix application into a self-contained directory that includes the Erlang VM, Elixir, all of your code and dependencies. This package can then be dropped into a production machine.</p><h2 id="what-we-ll-need" class="section-heading"><a href="#what-we-ll-need" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">What we'll need</span></h2><p>The only thing we'll need for this guide is a working Phoenix application. For those of us who need a simple application to deploy, please follow the <a href="up_and_running.html">Up and Running guide</a>.</p><h2 id="releases-assemble" class="section-heading"><a href="#releases-assemble" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Releases, assemble!</span></h2><p>If you are not familiar with Elixir releases yet, we recommend you to read <a href="https://hexdocs.pm/mix/Mix.Tasks.Release.html">Elixir's excellent docs</a> before continuing.</p><p>Once that is done, you can assemble a release by going through all of the steps in our general <a href="deployment.html">deployment guide</a> with <a href="https://hexdocs.pm/mix/Mix.Tasks.Release.html"><code class="inline">mix release</code></a> at the end. Let's recap.</p><p>First set the environment variables:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.gen.secret
+</span><span class="">REALLY_LONG_SECRET
+</span><span class="gp unselectable">$ </span><span class="">export SECRET_KEY_BASE=REALLY_LONG_SECRET
+</span><span class="gp unselectable">$ </span><span class="">export DATABASE_URL=ecto://USER:PASS@HOST/database
+</span></code></pre><p>Then load dependencies to compile code and assets:</p><pre><code class="makeup console" translate="no"><span class=""># Initial setup
+</span><span class="gp unselectable">$ </span><span class="">mix deps.get --only prod
+</span><span class="gp unselectable">$ </span><span class="">MIX_ENV=prod mix compile
+</span><span class="">
+</span><span class=""># Compile assets
+</span><span class="gp unselectable">$ </span><span class="">MIX_ENV=prod mix assets.deploy
+</span></code></pre><p>And now run <a href="Mix.Tasks.Phx.Gen.Release.html"><code class="inline">mix phx.gen.release</code></a>:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.gen.release
+</span><span class="">==&gt; my_app
+</span><span class="">* creating rel/overlays/bin/server
+</span><span class="">* creating rel/overlays/bin/server.bat
+</span><span class="">* creating rel/overlays/bin/migrate
+</span><span class="">* creating rel/overlays/bin/migrate.bat
+</span><span class="">* creating lib/my_app/release.ex
+</span><span class="">
+</span><span class="">Your application is ready to be deployed in a release!
+</span><span class="">
+</span><span class="">    # To start your system
+</span><span class="">    _build/dev/rel/my_app/bin/my_app start
+</span><span class="">
+</span><span class="">    # To start your system with the Phoenix server running
+</span><span class="">    _build/dev/rel/my_app/bin/server
+</span><span class="">
+</span><span class="">    # To run migrations
+</span><span class="">    _build/dev/rel/my_app/bin/migrate
+</span><span class="">
+</span><span class="">Once the release is running:
+</span><span class="">
+</span><span class="">    # To connect to it remotely
+</span><span class="">    _build/dev/rel/my_app/bin/my_app remote
+</span><span class="">
+</span><span class="">    # To stop it gracefully (you may also send SIGINT/SIGTERM)
+</span><span class="">    _build/dev/rel/my_app/bin/my_app stop
+</span><span class="">
+</span><span class="">To list all commands:
+</span><span class="">
+</span><span class="">    _build/dev/rel/my_app/bin/my_app
+</span><span class="">
+</span></code></pre><p>The <code class="inline">phx.gen.release</code> task generated a few files for us to assist in releases. First, it created <code class="inline">server</code> and <code class="inline">migrate</code> <em>overlay</em> scripts for conveniently running the phoenix server inside a release or invoking migrations from a release. The files in the <code class="inline">rel/overlays</code> directory are copied into every release environment. Next, it generated a <code class="inline">release.ex</code> file which is used to invoke Ecto migrations without a dependency on <code class="inline">mix</code> itself.</p><p><em>Note</em>: If you are a Docker user, you can pass the <code class="inline">--docker</code> flag to <a href="Mix.Tasks.Phx.Gen.Release.html"><code class="inline">mix phx.gen.release</code></a> to generate a Dockerfile ready for deployment.</p><p>Next, we can invoke <a href="https://hexdocs.pm/mix/Mix.Tasks.Release.html"><code class="inline">mix release</code></a> to build the release:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">MIX_ENV=prod mix release
+</span><span class="">Generated my_app app
+</span><span class="">* assembling my_app-0.1.0 on MIX_ENV=prod
+</span><span class="">* using config/runtime.exs to configure the release at runtime
+</span><span class="">
+</span><span class="">Release created at _build/prod/rel/my_app!
+</span><span class="">
+</span><span class="">    # To start your system
+</span><span class="">    _build/prod/rel/my_app/bin/my_app start
+</span><span class="">
+</span><span class="">...
+</span></code></pre><p>You can start the release by calling <code class="inline">_build/prod/rel/my_app/bin/my_app start</code>, or boot your webserver by calling <code class="inline">_build/prod/rel/my_app/bin/server</code>, where you have to replace <code class="inline">my_app</code> by your current application name.</p><p>Now you can get all of the files under the <code class="inline">_build/prod/rel/my_app</code> directory, package it, and run it in any production machine with the same OS and architecture as the one that assembled the release. For more details, check the <a href="https://hexdocs.pm/mix/Mix.Tasks.Release.html">docs for <code class="inline">mix release</code></a>.</p><h2 id="ecto-migrations" class="section-heading"><a href="#ecto-migrations" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Ecto migrations</span></h2><p>A common need in production systems is to execute custom commands required to set up the production environment. One of such commands is precisely migrating the database. Since we don't have <a href="https://hexdocs.pm/mix/Mix.html"><code class="inline">Mix</code></a>, a <em>build</em> tool, inside releases, which are production artifacts, we need to bring said commands directly into the release.</p><p>The <code class="inline">phx.gen.release</code> command created the following <code class="inline">release.ex</code> file in your project <code class="inline">lib/my_app/release.ex</code>, with the following content:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Release</span><span class="w"> </span><span class="k" data-group-id="5347899257-1">do</span><span class="w">
+  </span><span class="na">@app</span><span class="w"> </span><span class="ss">:my_app</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">migrate</span><span class="w"> </span><span class="k" data-group-id="5347899257-2">do</span><span class="w">
+    </span><span class="n">load_app</span><span class="p" data-group-id="5347899257-3">(</span><span class="p" data-group-id="5347899257-3">)</span><span class="w">
+
+    </span><span class="k">for</span><span class="w"> </span><span class="n">repo</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">repos</span><span class="p" data-group-id="5347899257-4">(</span><span class="p" data-group-id="5347899257-4">)</span><span class="w"> </span><span class="k" data-group-id="5347899257-5">do</span><span class="w">
+      </span><span class="p" data-group-id="5347899257-6">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p" data-group-id="5347899257-6">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Ecto.Migrator</span><span class="o">.</span><span class="n">with_repo</span><span class="p" data-group-id="5347899257-7">(</span><span class="n">repo</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nc">Ecto.Migrator</span><span class="o">.</span><span class="n">run</span><span class="p" data-group-id="5347899257-8">(</span><span class="ni">&amp;1</span><span class="p">,</span><span class="w"> </span><span class="ss">:up</span><span class="p">,</span><span class="w"> </span><span class="ss">all</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p" data-group-id="5347899257-8">)</span><span class="p" data-group-id="5347899257-7">)</span><span class="w">
+    </span><span class="k" data-group-id="5347899257-5">end</span><span class="w">
+  </span><span class="k" data-group-id="5347899257-2">end</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">rollback</span><span class="p" data-group-id="5347899257-9">(</span><span class="n">repo</span><span class="p">,</span><span class="w"> </span><span class="n">version</span><span class="p" data-group-id="5347899257-9">)</span><span class="w"> </span><span class="k" data-group-id="5347899257-10">do</span><span class="w">
+    </span><span class="n">load_app</span><span class="p" data-group-id="5347899257-11">(</span><span class="p" data-group-id="5347899257-11">)</span><span class="w">
+    </span><span class="p" data-group-id="5347899257-12">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p" data-group-id="5347899257-12">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Ecto.Migrator</span><span class="o">.</span><span class="n">with_repo</span><span class="p" data-group-id="5347899257-13">(</span><span class="n">repo</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nc">Ecto.Migrator</span><span class="o">.</span><span class="n">run</span><span class="p" data-group-id="5347899257-14">(</span><span class="ni">&amp;1</span><span class="p">,</span><span class="w"> </span><span class="ss">:down</span><span class="p">,</span><span class="w"> </span><span class="ss">to</span><span class="p">:</span><span class="w"> </span><span class="n">version</span><span class="p" data-group-id="5347899257-14">)</span><span class="p" data-group-id="5347899257-13">)</span><span class="w">
+  </span><span class="k" data-group-id="5347899257-10">end</span><span class="w">
+
+  </span><span class="kd">defp</span><span class="w"> </span><span class="nf">repos</span><span class="w"> </span><span class="k" data-group-id="5347899257-15">do</span><span class="w">
+    </span><span class="nc">Application</span><span class="o">.</span><span class="n">fetch_env!</span><span class="p" data-group-id="5347899257-16">(</span><span class="na">@app</span><span class="p">,</span><span class="w"> </span><span class="ss">:ecto_repos</span><span class="p" data-group-id="5347899257-16">)</span><span class="w">
+  </span><span class="k" data-group-id="5347899257-15">end</span><span class="w">
+
+  </span><span class="kd">defp</span><span class="w"> </span><span class="nf">load_app</span><span class="w"> </span><span class="k" data-group-id="5347899257-17">do</span><span class="w">
+    </span><span class="nc">Application</span><span class="o">.</span><span class="n">ensure_all_started</span><span class="p" data-group-id="5347899257-18">(</span><span class="ss">:ssl</span><span class="p" data-group-id="5347899257-18">)</span><span class="w">
+    </span><span class="nc">Application</span><span class="o">.</span><span class="n">ensure_loaded</span><span class="p" data-group-id="5347899257-19">(</span><span class="na">@app</span><span class="p" data-group-id="5347899257-19">)</span><span class="w">
+  </span><span class="k" data-group-id="5347899257-17">end</span><span class="w">
+</span><span class="k" data-group-id="5347899257-1">end</span></code></pre><p>Where you replace the first two lines by your application names.</p><p>Now you can assemble a new release with <code class="inline">MIX_ENV=prod mix release</code> and you can invoke any code, including the functions in the module above, by calling the <code class="inline">eval</code> command:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">_build/prod/rel/my_app/bin/my_app eval &quot;MyApp.Release.migrate&quot;
+</span></code></pre><p>And that's it! If you peek inside the <code class="inline">migrate</code> script, you'll see it wraps exactly this invocation. Depending on where you are deploying your application, you can invoke the <code class="inline">migrate</code> command separately, or you may want to change the <code class="inline">server</code> script to migrate your database before starting your app.</p><h2 id="custom-commands" class="section-heading"><a href="#custom-commands" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Custom commands</span></h2><p>You can use the same approach used for migrations to create any custom command to run in production. The idea is that each command invokes <code class="inline">load_app</code>, which calls <a href="https://hexdocs.pm/elixir/Application.html#ensure_loaded/1"><code class="inline">Application.ensure_loaded/1</code></a> to load the current application without starting it.</p><p>However, some commands may need to start the whole application. In such cases, <a href="https://hexdocs.pm/elixir/Application.html#ensure_all_started/1"><code class="inline">Application.ensure_all_started/1</code></a> must be used instead of <a href="https://hexdocs.pm/elixir/Application.html#load/1"><code class="inline">Application.load/1</code></a>. Keep in mind starting the application will start all processes in its supervision tree, including the Phoenix endpoint. This can be circumvented by changing your supervision tree to not start certain children under certain conditions. For example, in the release commands file you could do:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defp</span><span class="w"> </span><span class="nf">start_app</span><span class="w"> </span><span class="k" data-group-id="0631885198-1">do</span><span class="w">
+  </span><span class="n">load_app</span><span class="p" data-group-id="0631885198-2">(</span><span class="p" data-group-id="0631885198-2">)</span><span class="w">
+  </span><span class="nc">Application</span><span class="o">.</span><span class="n">put_env</span><span class="p" data-group-id="0631885198-3">(</span><span class="na">@app</span><span class="p">,</span><span class="w"> </span><span class="ss">:minimal</span><span class="p">,</span><span class="w"> </span><span class="no">true</span><span class="p" data-group-id="0631885198-3">)</span><span class="w">
+  </span><span class="nc">Application</span><span class="o">.</span><span class="n">ensure_all_started</span><span class="p" data-group-id="0631885198-4">(</span><span class="na">@app</span><span class="p" data-group-id="0631885198-4">)</span><span class="w">
+</span><span class="k" data-group-id="0631885198-1">end</span></code></pre><p>And then in your application you check <code class="inline">Application.get_env(@app, :minimal)</code> and start only part of the children when it is set.</p><h2 id="containers" class="section-heading"><a href="#containers" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Containers</span></h2><p>Elixir releases work well with container technologies such as Docker. The idea is that you assemble the release inside the Docker container and then build an image based on the release artifacts.</p><p>If you call <code class="inline">mix phx.gen.release --docker</code>, you'll see a new file with content similar to:</p><pre><code class="makeup Dockerfile" translate="no"><span class="c">#</span><span class="c"> Find eligible builder and runner images on Docker Hub. We use Ubuntu/Debian
+</span><span class="c">#</span><span class="c"> instead of Alpine to avoid DNS resolution issues in production.
+</span><span class="c">#</span><span class="w">
+</span><span class="c">#</span><span class="c"> https://hub.docker.com/r/hexpm/elixir/tags?page=1&amp;name=ubuntu
+</span><span class="c">#</span><span class="c"> https://hub.docker.com/_/ubuntu?tab=tags
+</span><span class="c">#</span><span class="w">
+</span><span class="c">#</span><span class="c"> This file is based on these images:
+</span><span class="c">#</span><span class="w">
+</span><span class="c">#</span><span class="c">   - https://hub.docker.com/r/hexpm/elixir/tags - for the build image
+</span><span class="c">#</span><span class="c">   - https://hub.docker.com/_/debian?tab=tags&amp;page=1&amp;name=bullseye-20230612-slim - for the release image
+</span><span class="c">#</span><span class="c">   - https://pkgs.org/ - resource for finding needed packages
+</span><span class="c">#</span><span class="c">   - Ex: hexpm/elixir:1.18.4-erlang-27.3.4.3-debian-trixie-20250908-slim
+</span><span class="c">#</span><span class="w">
+</span><span class="k">ARG </span><span class="n">ELIXIR_VERSION=1.18.4
+</span><span class="k">ARG </span><span class="n">OTP_VERSION=27.3.4.3
+</span><span class="k">ARG </span><span class="n">DEBIAN_VERSION=trixie-20250908-slim
+</span><span class="w">
+</span><span class="k">ARG </span><span class="n">BUILDER_IMAGE=&quot;hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}&quot;
+</span><span class="k">ARG </span><span class="n">RUNNER_IMAGE=&quot;debian:${DEBIAN_VERSION}&quot;
+</span><span class="w">
+</span><span class="k">FROM</span><span class="n"> ${BUILDER_IMAGE} </span><span class="k">AS</span><span class="w"> </span><span class="nv">builder</span><span class="w">
+</span><span class="w">
+</span><span class="c">#</span><span class="c"> install build dependencies
+</span><span class="k">RUN </span><span class="n">apt-get update \
+</span><span class="n">  &amp;&amp; apt-get install -y --no-install-recommends build-essential git \
+</span><span class="n">  &amp;&amp; rm -rf /var/lib/apt/lists/*
+</span><span class="w">
+</span><span class="c">#</span><span class="c"> prepare build dir
+</span><span class="k">WORKDIR </span><span class="n">/app
+</span><span class="w">
+</span><span class="c">#</span><span class="c"> install hex + rebar
+</span><span class="k">RUN </span><span class="n">mix local.hex --force \
+</span><span class="n">  &amp;&amp; mix local.rebar --force
+</span><span class="w">
+</span><span class="c">#</span><span class="c"> set build ENV
+</span><span class="k">ENV </span><span class="n">MIX_ENV=</span><span class="p">&quot;</span><span class="s2">prod</span><span class="p">&quot;</span><span class="w">
+</span><span class="w">
+</span><span class="c">#</span><span class="c"> install mix dependencies
+</span><span class="k">COPY</span><span class="n"> mix.exs mix.lock ./
+</span><span class="k">RUN </span><span class="n">mix deps.get --only $MIX_ENV
+</span><span class="k">RUN </span><span class="n">mkdir config
+</span><span class="w">
+</span><span class="c">#</span><span class="c"> copy compile-time config files before we compile dependencies
+</span><span class="c">#</span><span class="c"> to ensure any relevant config change will trigger the dependencies
+</span><span class="c">#</span><span class="c"> to be re-compiled.
+</span><span class="k">COPY</span><span class="n"> config/config.exs config/${MIX_ENV}.exs config/
+</span><span class="k">RUN </span><span class="n">mix deps.compile
+</span><span class="w">
+</span><span class="k">RUN </span><span class="n">mix assets.setup
+</span><span class="w">
+</span><span class="k">COPY</span><span class="n"> priv priv
+</span><span class="w">
+</span><span class="k">COPY</span><span class="n"> lib lib
+</span><span class="w">
+</span><span class="c">#</span><span class="c"> Compile the release
+</span><span class="k">RUN </span><span class="n">mix compile
+</span><span class="w">
+</span><span class="k">COPY</span><span class="n"> assets assets
+</span><span class="w">
+</span><span class="c">#</span><span class="c"> compile assets
+</span><span class="k">RUN </span><span class="n">mix assets.deploy
+</span><span class="w">
+</span><span class="c">#</span><span class="c"> Changes to config/runtime.exs don&#39;t require recompiling the code
+</span><span class="k">COPY</span><span class="n"> config/runtime.exs config/
+</span><span class="w">
+</span><span class="k">COPY</span><span class="n"> rel rel
+</span><span class="k">RUN </span><span class="n">mix release
+</span><span class="w">
+</span><span class="c">#</span><span class="c"> start a new build stage so that the final image will only contain
+</span><span class="c">#</span><span class="c"> the compiled release and other runtime necessities
+</span><span class="k">FROM</span><span class="n"> ${RUNNER_IMAGE} </span><span class="k">AS</span><span class="w"> </span><span class="nv">final</span><span class="w">
+</span><span class="w">
+</span><span class="k">RUN </span><span class="n">apt-get update \
+</span><span class="n">  &amp;&amp; apt-get install -y --no-install-recommends libstdc++6 openssl libncurses6 locales ca-certificates \
+</span><span class="n">  &amp;&amp; rm -rf /var/lib/apt/lists/*
+</span><span class="w">
+</span><span class="c">#</span><span class="c"> Set the locale
+</span><span class="k">RUN </span><span class="n">sed -i </span><span class="p">&#39;</span><span class="s1">/en_US.UTF-8/s/^# //g</span><span class="p">&#39;</span><span class="n"> /etc/locale.gen \
+</span><span class="n">  &amp;&amp; locale-gen
+</span><span class="w">
+</span><span class="k">ENV </span><span class="n">LANG=en_US.UTF-8
+</span><span class="k">ENV </span><span class="n">LANGUAGE=en_US:en
+</span><span class="k">ENV </span><span class="n">LC_ALL=en_US.UTF-8
+</span><span class="w">
+</span><span class="k">WORKDIR </span><span class="p">&quot;</span><span class="s2">/app</span><span class="p">&quot;</span><span class="w">
+</span><span class="k">RUN </span><span class="n">chown nobody /app
+</span><span class="w">
+</span><span class="c">#</span><span class="c"> set runner ENV
+</span><span class="k">ENV </span><span class="n">MIX_ENV=</span><span class="p">&quot;</span><span class="s2">prod</span><span class="p">&quot;</span><span class="w">
+</span><span class="w">
+</span><span class="c">#</span><span class="c"> Only copy the final release from the build stage
+</span><span class="k">COPY</span><span class="n"> --from=</span><span class="nv">builder</span><span class="n"> --chown=nobody:root /app/_build/${MIX_ENV}/rel/my_app ./
+</span><span class="w">
+</span><span class="k">USER </span><span class="n">nobody
+</span><span class="w">
+</span><span class="c">#</span><span class="c"> If using an environment that doesn&#39;t automatically reap zombie processes, it is
+</span><span class="c">#</span><span class="c"> advised to add an init process such as tini via `apt-get install`
+</span><span class="c">#</span><span class="c"> above and adding an entrypoint. See https://github.com/krallin/tini for details
+</span><span class="c">#</span><span class="c"> ENTRYPOINT [&quot;/tini&quot;, &quot;--&quot;]
+</span><span class="w">
+</span><span class="o">CMD </span><span class="n">[</span><span class="p">&quot;</span><span class="s2">/app/bin/server</span><span class="p">&quot;</span><span class="n">]</span></code></pre><p>Where <code class="inline">my_app</code> is the name of your app. At the end, you will have an application in <code class="inline">/app</code> ready to run as <code class="inline">/app/bin/server</code>.</p><p>A few points about configuring a containerized application:</p><ul><li><p>The more configuration you can provide at runtime (using <code class="inline">config/runtime.exs</code>), the more reusable your images will be across environments. In particular, secrets like database credentials and API keys should not be compiled into the image, but rather should be provided when creating containers based on that image. This is why the <code class="inline">Endpoint</code>'s <code class="inline">:secret_key_base</code> is configured in <code class="inline">config/runtime.exs</code> by default.</p></li><li><p>If possible, any environment variables that are needed at runtime should be read in <code class="inline">config/runtime.exs</code>, not scattered throughout your code. Having them all visible in one place will make it easier to ensure the containers get what they need, especially if the person doing the infrastructure work does not work on the Elixir code. Libraries in particular should never directly read environment variables; all their configuration should be handed to them by the top-level application, preferably <a href="https://hexdocs.pm/elixir/design-anti-patterns.html#using-application-configuration-for-libraries">without using the application environment</a>.</p></li></ul><h2 id="clustering" class="section-heading"><a href="#clustering" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Clustering</span></h2><p>Elixir and the Erlang VM have the incredible ability to be clustered together and pass messages seamlessly between nodes. To enable clustering, we need two distinct features:</p><ul><li><p>Node connection: different instances of the same service should communicate with each other. This is a feature of the Erlang VM.</p></li><li><p>Service discovery: for a given service, you must be able to find the IP address of all instances. Phoenix ships with <code class="inline">dns_cluster</code> to provide out-of-the-box DNS-based service discovery but alternative methods may be used.</p></li></ul><h3 id="dns-discovery" class="section-heading"><a href="#dns-discovery" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">DNS Discovery</span></h3><p>Your clustering configuration is typically added to <code class="inline">rel/env.sh.eex</code>. This is a file that is executed before you release starts, and it is a perfect place to configure your application runtime based on your deployment environment. Here is a general skeleton:</p><pre><code class="makeup sh" translate="no"><span class=""># Uncomment if IPv6 is required
+</span><span class=""># export ECTO_IPV6=&quot;true&quot;
+</span><span class=""># export ERL_AFLAGS=&quot;-proto_dist inet6_tcp&quot;
+</span><span class="">
+</span><span class=""># Erlang uses a port mapper daemon on each node,
+</span><span class=""># it by default runs on port 4369
+</span><span class="">export ERL_EPMD_PORT=4369
+</span><span class="">
+</span><span class=""># Use the ports 4370-4372 for nodes to communicate.
+</span><span class="">export ERL_AFLAGS=&quot;-kernel inet_dist_listen_min 4370 inet_dist_listen_max 4372&quot;
+</span><span class="">
+</span><span class="">export RELEASE_DISTRIBUTION=&quot;name&quot;
+</span><span class="">export RELEASE_NODE=&quot;app-${PLATFORM_DEPLOYMENT_SHA}@${PLATFORM_DEPLOYMENT_IP}&quot;
+</span><span class="">export DNS_CLUSTER_QUERY=&quot;your-app.internal&quot;
+</span></code></pre><p>The script above is doing a couple things:</p><ul><li><p>It configures your app to use ports 4369, 4370, 4371, and 4372 for communication. You may need to explicitly expose those as internal TCP ports in your deployment platform (in addition to the HTTP port of your choice)</p></li><li><p>It then configures your app to use fully qualified names. The name of each app will include the current deployment sha as <code class="inline">PLATFORM_DEPLOYMENT_SHA</code> (the name of the exact environment variable is platform dependent), so each deployment establishes its own cluster, and the current IP as <code class="inline">PLATFORM_DEPLOYMENT_IP</code> (also platform specific). If the IP is not available, you may be able to compute it as <code class="inline">NODE_IP=hostname | tr -d ' '</code></p></li><li><p>Then finally you define a DNS query which will be used to find the IPs of the other instances</p></li></ul><p>Some platforms, such as <a href="https://fly.io/docs/networking/private-networking/">Fly.io</a>, <a href="https://docs.railway.com/guides/private-networking">Railway</a>, and <a href="https://render.com/docs/private-network#direct-ip-communication-advanced">Render</a>, provide private networks with DNS querying out of the box. You only need to adapt the <code class="inline">DNS_CLUSTER_QUERY</code> variable accordingly.</p><p>Other platforms, such as <a href="https://www.digitalocean.com/products/app-platform">Digital Ocean App Platform</a> and <a href="https://northflank.com/features/platform">Northflank</a>, allow nodes to directly connect to each other, but they do not provide DNS service discovery. In this next section, we explore different service discovery mechanisms.</p><h3 id="alternative-discovery-mechanisms" class="section-heading"><a href="#alternative-discovery-mechanisms" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Alternative discovery mechanisms</span></h3><p>While not all platforms support DNS queries for service discovery, there are many alternative strategies for connecting your nodes together. Please checkout the following libraries:</p><ul><li><p><a href="https://github.com/bitwalker/libcluster">libcluster</a> - provides strategies for connecting your nodes using gossip protocols, kubernetes, ec2, and others</p></li><li><p><a href="https://github.com/supabase/libcluster_postgres/">libcluster_postgres</a> - a plugin for <code class="inline">libcluster</code> which uses PostgreSQL for node discovery. Given most applications already use a database, and likely PostgreSQL, this is a suitable option which does not require additional setup</p></li></ul><p>When using the libraries above, you can likely remove <code class="inline">dns_query</code> from your application dependencies.</p><h3 id="epmd-less-deployment" class="section-heading"><a href="#epmd-less-deployment" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text"><code class="inline">epmd</code>-less deployment</span></h3><p>In the snippet above, we used ports 4369, 4370, 4371, and 4372. However, the Erlang VM allows running the distribution over a fixed port, also known as <code class="inline">epmd</code>-less deployments. To enable such, do this.</p><p>Remove the lines:</p><pre><code class="makeup sh" translate="no"><span class="">export ERL_EPMD_PORT=4369
+</span><span class="">export ERL_AFLAGS=&quot;-kernel inet_dist_listen_min 4370 inet_dist_listen_max 4372&quot;
+</span></code></pre><p>Add a file rel/vm.args.eex with the following:</p><pre><code class="makeup elixir" translate="no"><span class="o">-</span><span class="n">start_epmd</span><span class="w"> </span><span class="no">false</span><span class="w"> </span><span class="o">-</span><span class="n">erl_epmd_port</span><span class="w"> </span><span class="mi">6789</span></code></pre><p>Add a file rel/remote.vm.args.eex with the following:</p><pre><code class="makeup elixir" translate="no"><span class="o">-</span><span class="n">start_epmd</span><span class="w"> </span><span class="no">false</span><span class="w"> </span><span class="o">-</span><span class="n">erl_epmd_port</span><span class="w"> </span><span class="mi">6789</span><span class="w"> </span><span class="o">-</span><span class="n">dist_listen</span><span class="w"> </span><span class="no">false</span></code></pre><p>And now only port 6789 (in addition to the HTTP one) needs to be exposed internally between instances.</p>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="deployment.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Introduction to Deployment
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="fly.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Deploying on Fly.io
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix/1.8.5">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix/1.8.5">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/phoenix/1.8.5/show/guides/deployment/releases.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+
+              <a href="Phoenix.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/services/ideasSearchService.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/services/ideasSearchService.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Service für die Suche von Ideen (SQL &amp; Fulltext-Strategien).
+ *
+ * Enthält Hilfsfunktionen zur Normalisierung von Suchparametern,
+ * Aufbau von WHERE-Klauseln und die Ausführung von Fulltext- sowie
+ * Title/Author-Suchen mit Late-Row-Lookup zur Begrenzung von JOINs.
+ * Alle Beschreibungen auf Deutsch.
+ * @module lib/services/ideasSearchService
+ */
+
+const db = require('../../config/db.js');
+const { create: createSqlFragment } = require('../sqlFragmentBuilder');
+const { normalizeAuthor } = require('./ideasEnrichmentService');
+
+// --- Konfiguration &amp; Konstanten ---
+const SQL_ONLY_THRESHOLD = 20000;
+const FUZZY_THRESHOLD = 0.65;
+const PREFILTER_PAGE_SIZE = 5000; 
+const MAX_FUZZY_RESULTS = 2000;
+const MAX_INNER_LIMIT = 1000;
+const FUSE_MULTIPLIER = 10000;
+
+const SORT_WHITELIST = {
+  latest:       { sql: 'i.created_at DESC, i.idea_id DESC', label: 'Latest' },
+  all_latest:   { sql: 'i.created_at DESC, i.idea_id DESC', label: 'All (Latest)' },
+  oldest:       { sql: 'i.created_at ASC, i.idea_id ASC', label: 'Oldest' },
+  all_oldest:   { sql: 'i.created_at ASC, i.idea_id ASC', label: 'All (Oldest)' },
+  likes:        { sql: 'i.like_count DESC, i.created_at DESC, i.idea_id DESC', label: 'Likes' },
+  all_likes:    { sql: 'i.like_count DESC, i.created_at DESC, i.idea_id DESC', label: 'All (Likes)' },
+  dislikes:     { sql: 'i.dislike_count DESC, i.created_at DESC, i.idea_id DESC', label: 'Dislikes' },
+  all_dislikes: { sql: 'i.dislike_count DESC, i.created_at DESC, i.idea_id DESC', label: 'All (Dislikes)' },
+  comments:     { sql: 'i.comment_count DESC, i.created_at DESC, i.idea_id DESC', label: 'Comments' },
+  all_comments: { sql: 'i.comment_count DESC, i.created_at DESC, i.idea_id DESC', label: 'All (Comments)' },
+  score:        { sql: 'i.created_at DESC, i.idea_id DESC', label: 'Score (Global only)' },
+  all_score:    { sql: 'i.created_at DESC, i.idea_id DESC', label: 'All (Score)' },
+};
+
+/**
+ * Caching-Flag für das Vorhandensein der Tabelle `idea_tags`.
+ * @private
+ * @type {boolean|null}
+ */
+let _searchHasTags = null;
+
+/**
+ * Prüft (mit einfachem Cache), ob Tag-Daten für die Suche vorhanden sind.
+ * @async
+ * @returns {Promise&lt;boolean>} `true`, wenn mindestens ein Tag existiert.
+ */
+async function searchHasTags() {
+  if (_searchHasTags !== null) return _searchHasTags;
+  try {
+    const row = await db.query('SELECT 1 FROM idea_tags LIMIT 1');
+    _searchHasTags = (row &amp;&amp; row.length > 0);
+  } catch (e) {
+    _searchHasTags = false;
+  }
+  return _searchHasTags;
+}
+
+/**
+ * Validiert und normalisiert den Sortier-Schlüssel gegen die Whitelist.
+ * Wenn ungültig, wird `latest` zurückgegeben.
+ * @param {string} sortKey - Angefragter Sortierschlüssel.
+ * @returns {string} Validierter Sortierschlüssel.
+ */
+function normalizeSort(sortKey) {
+  return SORT_WHITELIST[sortKey] ? sortKey : 'latest';
+}
+
+/**
+ * Parst eine durch Komma getrennte Tag-Eingabe in eine normalisierte Liste.
+ * Führt Trim und Lowercase durch und entfernt leere Einträge.
+ * @param {string|string[]|undefined} tagsRaw - Rohwert aus Query/Request.
+ * @returns {string[]} Normalisierte Tag-Liste.
+ */
+function parseTagsInput(tagsRaw) {
+  return String(tagsRaw || '')
+    .split(',')
+    // Normalize: trim + lowercase
+    .map(t => t.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+/**
+ * Extrahiert Tag-Werte aus einer WHERE-SQL-Fragment-Signatur.
+ * Erwartet ein Muster wie `t.name IN (?, ?, ...)` und liest die letzten
+ * Parameter aus `params` entsprechend der Anzahl Platzhalter.
+ * @param {string} whereSqlLocal - WHERE-Fragment als SQL-String.
+ * @param {Array} params - Parameterliste zur SQL-Abfrage.
+ * @returns {string[]} Gefundene Tag-Namen (als Strings).
+ */
+function extractTagsFromWhere(whereSqlLocal, params) {
+  if (!whereSqlLocal) return [];
+  const m = whereSqlLocal.match(/t\.name\s+IN\s*\(([^)]+)\)/i);
+  if (!m) return [];
+  const placeholders = (m[1].match(/\?/g) || []).length;
+  if (placeholders === 0) return [];
+  return params.slice(-placeholders).map(String);
+}
+
+/**
+ * Escaped eine Zeichenkette für die Verwendung in regulären Ausdrücken.
+ * @param {string} str - Eingabetext.
+ * @returns {string} Escape-String für RegExp.
+ */
+function escapeForRegexp(str) {
+  if (!str) return '';
+  return String(str).replace(/([\\^$.*+?()\[\]{}|])/g, '\\$1');
+}
+
+/**
+ * Versucht, die `idea_id` für einen exakt übereinstimmenden Titel zu finden.
+ * Probiert verschiedene Kollationen und LIKE-Fälle als Fallbacks.
+ * @async
+ * @param {object} conn - DB-Verbindungsobjekt (z.B. `db` oder Connection).
+ * @param {string} title - Gesuchter Titel.
+ * @returns {Promise&lt;number|null>} Gefundene `idea_id` oder `null`.
+ */
+async function lookupExactTitleIdeaId(conn, title) {
+  if (!title) return null;
+  try {
+    const rows = await conn.query('SELECT idea_id FROM ideas_search WHERE title = ? LIMIT 1', [title]);
+    if (rows &amp;&amp; rows[0] &amp;&amp; rows[0].idea_id) return rows[0].idea_id;
+  } catch (e) {}
+  try {
+    const rows = await conn.query('SELECT idea_id FROM ideas_search WHERE title COLLATE utf8mb4_general_ci = ? LIMIT 1', [title]);
+    if (rows &amp;&amp; rows[0] &amp;&amp; rows[0].idea_id) return rows[0].idea_id;
+  } catch (e) {}
+  try {
+    const rows = await conn.query('SELECT idea_id FROM ideas_search WHERE title LIKE ? LIMIT 1', [title]);
+    if (rows &amp;&amp; rows[0] &amp;&amp; rows[0].idea_id) return rows[0].idea_id;
+  } catch (e) {}
+  return null;
+}
+
+/**
+ * Falls eine exakte Treffer-ID vorhanden ist, stellt diese sicher, dass
+ * sie am Anfang des Ergebnis-Arrays steht. Falls nicht vorhanden, wird
+ * der vollständige Datensatz nachgeladen und vorne eingefügt (bis Limit).
+ * @async
+ * @param {Array&lt;object>} resultsArray - Ergebnis-Array (wird in-place verändert).
+ * @param {number|string|null} exactId - Erwartete `idea_id`.
+ * @param {number} limit - Maximale Anzahl der zurückzugebenden Ergebnisse.
+ * @returns {Promise&lt;number>} `1` wenn ein Datensatz neu eingefügt wurde, sonst `0`.
+ */
+async function ensureExactOnTop(resultsArray, exactId, limit) {
+  if (!exactId) return 0;
+  if (!Array.isArray(resultsArray)) return 0;
+  try {
+    // Wenn die genaue ID bereits im Ergebnis vorkommt, nach vorne rotieren.
+    const idx = resultsArray.findIndex(r => Number(r.idea_id) === Number(exactId));
+    if (idx > 0) {
+      const [itm] = resultsArray.splice(idx, 1);
+      resultsArray.unshift(itm);
+      return 0;
+    }
+    if (idx === -1) {
+      const fullRows = await db.query(
+        'SELECT i.*, u.username AS author_username FROM ideas i JOIN users u ON u.user_id = i.user_id WHERE i.idea_id = ?',
+        [exactId]);
+      if (fullRows &amp;&amp; fullRows[0]) {
+        normalizeAuthor(fullRows);
+        resultsArray.unshift(fullRows[0]);
+        if (resultsArray.length > limit) resultsArray.pop();
+        return 1;
+      }
+    }
+  } catch (e) {}
+  return 0;
+}
+
+/**
+ * Baut Basis-WHERE-Klauseln für Kategorie- und Tag-Filter auf.
+ * Gibt `baseWhere` (Array von SQL-Teilstrings), `baseParams` und die
+ * analysierten `tagList` zurück.
+ * @param {string|number|undefined} categoryId - Optionaler Kategorie-Filter.
+ * @param {string|undefined} tagsRaw - Roh-Tag-String (kommagetrennt).
+ * @returns {{baseWhere:string[],baseParams:Array,categoryIdNum:number,tagList:string[]}}
+ */
+function buildBaseFilters(categoryId, tagsRaw, userId = null, ownedOnly = false) {
+  const baseWhere = [];
+  const baseParams = [];
+  const categoryIdNum = parseInt(categoryId, 10);
+
+  if (Number.isInteger(categoryIdNum)) {
+    baseWhere.push('i.category_id = ?');
+    baseParams.push(categoryIdNum);
+  }
+
+  if (ownedOnly &amp;&amp; userId) {
+    baseWhere.push('i.user_id = ?');
+    baseParams.push(userId);
+  }
+
+  const inputTags = parseTagsInput(tagsRaw);
+  if (inputTags.length > 0) {
+    // Baue Platzhalter-Liste für IN(...) und ergänze WHERE-Existenz-Subquery
+    const placeholders = inputTags.map(() => '?').join(', ');
+    baseWhere.push(`
+      EXISTS (
+        SELECT 1
+        FROM idea_tag_links l
+        JOIN idea_tags t ON t.tag_id = l.tag_id
+        WHERE l.idea_id = i.idea_id
+          AND t.name IN (${placeholders})
+      )
+    `);
+    baseParams.push(...inputTags);
+  }
+
+  return { baseWhere, baseParams, categoryIdNum, tagList: inputTags };
+}
+
+/**
+ * Erzeugt eine boolean-mode kompatible Query-Zeichenkette für Fulltext-Suchen.
+ * Wandelt Eingabe-Tokens in Wildcard-Ausdrücke (z.B. `wort*`) um.
+ * @param {string} rawQ - Rohsuchtext.
+ * @returns {string} Boolean-Mode Query-String.
+ */
+function buildBooleanQuery(rawQ) {
+  if (!rawQ) return '';
+  const parts = [];
+  const tokens = String(rawQ).split(/[\s,.;:!?|/-]+/);
+  for (let t of tokens) {
+    t = t.trim();
+    if (!t) continue;
+    // Remove the mandatory '+' to allow partial matches (e.g. if one word has a typo)
+    if (t.length > 2) {
+      parts.push(`${t}*`);
+    } else {
+      parts.push(`${t}`);
+    }
+  }
+  return parts.join(' ');
+}
+
+/**
+ * Führt die Fulltext- oder Title/Author-Suche aus und nutzt Late-Row-Lookup
+ * um erst IDs zu ermitteln und anschließend die vollständigen Zeilen zu JOINen.
+ * Unterstützt einen Description-only Modus sowie differenzierte Scoring-Fälle.
+ * @async
+ * @param {string} q - Rohsuchtext.
+ * @param {string} booleanQuery - Vorbereitete boolean-mode Query (optional).
+ * @param {string} whereSql - Optionales WHERE-Fragment zur Einschränkung.
+ * @param {Array} baseParams - Parameter für `whereSql`.
+ * @param {number} limit - LIMIT für Ergebnisse.
+ * @param {number} offset - OFFSET für Ergebnisse.
+ * @param {boolean|string} [descriptionMode=true] - `true|'desc_only'` für Beschreibungssuche.
+ * @param {boolean} [debug=false] - Debug-Flag (derzeit nicht prominent genutzt).
+ * @param {string} [sortKey=''] - Gewünschter Sortierschlüssel (Whitelist-Validierung extern).
+ * @returns {Promise.&lt;Object>} Suchergebnisse und Gesamtanzahl.
+ */
+async function executeFulltextSearch(q, booleanQuery, whereSql, baseParams, limit, offset, descriptionMode = true, debug = false, sortKey = '') {
+  const raw = String(q ?? '');
+  const qTrim = raw.trim();
+  const qNorm = qTrim.replace(/\s+/g, ' ');
+
+  if (!qTrim) {
+    return { results: [], total: 0 };
+  }
+
+  // If description-only mode, use description FULLTEXT
+  if (descriptionMode === 'desc_only' || descriptionMode === true) {
+    try {
+      const phraseCond = `(MATCH(s.description) AGAINST(? IN BOOLEAN MODE) OR s.tags LIKE CONCAT('%', ?, '%'))`;
+      const whereClause = whereSql ? `${whereSql} AND ${phraseCond}` : `WHERE ${phraseCond}`;
+
+      // Use Late Row Lookup for description search
+      const listSql = `
+        SELECT i.*, u.username AS author_username
+        FROM (
+          SELECT s.idea_id
+          FROM ideas_search s
+          JOIN ideas i ON i.idea_id = s.idea_id
+          ${whereClause}
+          ORDER BY i.created_at DESC
+          LIMIT ? OFFSET ?
+        ) AS top
+        JOIN ideas i ON i.idea_id = top.idea_id
+        JOIN users u ON u.user_id = i.user_id
+        ORDER BY i.created_at DESC
+      `;
+      const rows = await db.query(listSql, [...(baseParams || []), qNorm, qNorm, Number(limit) || 0, Number(offset) || 0]);
+      normalizeAuthor(rows);
+
+      const countSql = `SELECT COUNT(*) AS total FROM ideas_search s JOIN ideas i ON i.idea_id = s.idea_id ${whereClause}`;
+      const countRows = await db.query(countSql, [...(baseParams || []), qNorm, qNorm]);
+      const total = countRows[0]?.total || 0;
+      return { results: rows, total };
+    } catch (e) {
+      return { results: [], total: 0 };
+    }
+  }
+
+  // Default: title + author SQL search
+  try {
+    const titleBool = buildBooleanQuery(qNorm);
+    const searchCond = `(MATCH(s.title) AGAINST(? IN BOOLEAN MODE) OR s.title = ? OR s.title LIKE CONCAT(?, '%') OR s.author LIKE CONCAT(?, '%'))`;
+    const whereClause = whereSql ? `${whereSql} AND ${searchCond}` : `WHERE ${searchCond}`;
+
+    // Use Late Row Lookup: Search IDs first to avoid joining thousands of rows before LIMIT
+    const listSql = `
+      SELECT i.*, u.username AS author_username,
+             top.title_match_score, top.title_exact_boost, top.title_prefix_boost, top.author_prefix_boost
+      FROM (
+        SELECT s.idea_id,
+          (MATCH(s.title) AGAINST(? IN BOOLEAN MODE)) AS title_match_score,
+          (CASE WHEN s.title = ? THEN 1000000 ELSE 0 END) AS title_exact_boost,
+          (CASE WHEN s.title LIKE CONCAT(?, '%') THEN 50000 ELSE 0 END) AS title_prefix_boost,
+          (CASE WHEN s.author LIKE CONCAT(?, '%') THEN 1000 ELSE 0 END) AS author_prefix_boost
+        FROM ideas_search s
+        JOIN ideas i ON i.idea_id = s.idea_id
+        ${whereClause}
+        ORDER BY (title_exact_boost + title_prefix_boost + title_match_score * 1000 + author_prefix_boost) DESC
+        LIMIT ? OFFSET ?
+      ) AS top
+      JOIN ideas i ON i.idea_id = top.idea_id
+      JOIN users u ON u.user_id = i.user_id
+      ORDER BY (top.title_exact_boost + top.title_prefix_boost + top.title_match_score * 1000 + top.author_prefix_boost) DESC
+    `;
+    const params = [
+      titleBool, qNorm, qNorm, qNorm, // For SELECT scoring columns
+      ...(baseParams || []),         // For whereSql (e.g. category_id)
+      titleBool, qNorm, qNorm, qNorm, // For searchCond in whereClause
+      Number(limit) || 0, Number(offset) || 0
+    ];
+    const rows = await db.query(listSql, params);
+    normalizeAuthor(rows);
+
+    const countSql = `SELECT COUNT(*) AS total FROM ideas_search s JOIN ideas i ON i.idea_id = s.idea_id ${whereClause}`;
+    const countParams = [...(baseParams || []), titleBool, qNorm, qNorm, qNorm];
+    const countRows = await db.query(countSql, countParams);
+    const total = countRows[0]?.total || 0;
+    return { results: rows, total };
+  } catch (e) {
+    return { results: [], total: 0 };
+  }
+}
+
+
+
+module.exports = {
+  SORT_WHITELIST,
+  SQL_ONLY_THRESHOLD,
+  MAX_INNER_LIMIT,
+  searchHasTags,
+  normalizeSort,
+  parseTagsInput,
+  buildBaseFilters,
+  buildBooleanQuery,
+  executeFulltextSearch,
+  lookupExactTitleIdeaId,
+  ensureExactOnTop
+};
+
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

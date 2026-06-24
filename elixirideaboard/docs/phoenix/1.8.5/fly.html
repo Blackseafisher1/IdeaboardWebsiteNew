@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix v1.8.5">
+
+
+    <title>Deploying on Fly.io — Phoenix v1.8.5</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-209F6654.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.8.5
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="true">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Latest</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="https://hexdocs.pm/?packages=plug%3Alatest%2Cphoenix%3Alatest%2Cphoenix_html%3Alatest%2Cphoenix_live_view%3Alatest%2Cphoenix_pubsub%3Alatest%2Cphoenix_template%3Alatest&q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Latest</span>
+                <span class="help">Search latest versions of Plug, Phoenix, Phoenix.{HTML, LiveView, PubSub, Template}</span>
+              </button>
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="false">
+                <span class="name">Current version</span>
+                <span class="help">Search only this project</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Deploying on Fly.io</h1>
+
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/guides/deployment/fly.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p>The main goal for this guide is to get a Phoenix application running on <a href="https://fly.io">Fly.io</a>.</p><p>Fly.io maintains their own guide for Elixir/Phoenix here: <a href="https://fly.io/docs/elixir/getting-started/">Fly.io/docs/elixir/getting-started/</a>. We will keep this guide up but for the latest and greatest check with them!</p><h2 id="what-we-ll-need" class="section-heading"><a href="#what-we-ll-need" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">What we'll need</span></h2><p>The only thing we'll need for this guide is a working Phoenix application. For those of us who need a simple application to deploy, please follow the <a href="https://hexdocs.pm/phoenix/up_and_running.html">Up and Running guide</a>.</p><p>You can just:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.new my_app
+</span></code></pre><h2 id="sections" class="section-heading"><a href="#sections" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Sections</span></h2><p>Let's separate this process into a few steps, so we can keep track of where we are.</p><ul><li>Install the Fly.io CLI</li><li>Sign up for Fly.io</li><li>Deploy the app to Fly.io</li><li>Clustering your application</li><li>Extra Fly.io tips</li><li>Helpful Fly.io resources</li></ul><h2 id="installing-the-fly-io-cli" class="section-heading"><a href="#installing-the-fly-io-cli" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Installing the Fly.io CLI</span></h2><p>Follow the instructions <a href="https://fly.io/docs/getting-started/installing-flyctl/">here</a> to install Flyctl, the command-line interface for the Fly.io platform.</p><h2 id="sign-up-for-fly-io" class="section-heading"><a href="#sign-up-for-fly-io" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Sign up for Fly.io</span></h2><p>We can <a href="https://fly.io/docs/getting-started/log-in-to-fly/">sign up for an account</a> using the CLI.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly auth signup
+</span></code></pre><p>Or sign in.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly auth login
+</span></code></pre><p>Fly has a <a href="https://fly.io/docs/about/pricing/">free tier</a> for most applications. A credit card is required when setting up an account to help prevent abuse. See the <a href="https://fly.io/docs/about/pricing/">pricing</a> page for more details.</p><h2 id="deploy-the-app-to-fly-io" class="section-heading"><a href="#deploy-the-app-to-fly-io" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Deploy the app to Fly.io</span></h2><p>To tell Fly about your application, run <code class="inline">fly launch</code> in the directory with your source code. This creates and configures a Fly.io app.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly launch
+</span></code></pre><p>This scans your source, detects the Phoenix project, and runs <code class="inline">mix phx.gen.release --docker</code> for you! This creates a Dockerfile for you.</p><p>The <code class="inline">fly launch</code> command walks you through a few questions.</p><ul><li>You can name the app or have it generate a random name for you.</li><li>Choose an organization (defaults to <code class="inline">personal</code>). Organizations are a way of sharing applications and resources between Fly.io users.</li><li>Choose a region to deploy to. Defaults to the nearest Fly.io region. You can check out the <a href="https://fly.io/docs/reference/regions/">complete list of regions here</a>.</li><li>Sets up a Postgres DB for you.</li><li>Builds the Dockerfile.</li><li>Deploys your application!</li></ul><p>The <code class="inline">fly launch</code> command also created a <code class="inline">fly.toml</code> file for you. This is where you can set ENV values and other config.</p><h3 id="storing-secrets-on-fly-io" class="section-heading"><a href="#storing-secrets-on-fly-io" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Storing secrets on Fly.io</span></h3><p>You may also have some secrets you'd like to set on your app.</p><p>Use <a href="https://fly.io/docs/reference/secrets/#setting-secrets"><code class="inline">fly secrets</code></a> to configure those.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly secrets set MY_SECRET_KEY=my_secret_value
+</span></code></pre><h3 id="deploying-again" class="section-heading"><a href="#deploying-again" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Deploying again</span></h3><p>When you want to deploy changes to your application, use <code class="inline">fly deploy</code>.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly deploy
+</span></code></pre><p>Note: On Apple Silicon (M1) computers, docker runs cross-platform builds using qemu which might not always work. If you get a segmentation fault error like the following:</p><pre><code class="makeup console" translate="no"><span class=""> =&gt; [build  7/17] RUN mix deps.get --only
+</span><span class=""> =&gt; =&gt; # qemu: uncaught target signal 11 (Segmentation fault) - core dumped
+</span></code></pre><p>You can use fly's remote builder by adding the <code class="inline">--remote-only</code> flag:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly deploy --remote-only
+</span></code></pre><p>You can always check on the status of a deploy</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly status
+</span></code></pre><p>Check your app logs</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly logs
+</span></code></pre><p>If everything looks good, open your app on Fly</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly open
+</span></code></pre><h2 id="clustering-your-application" class="section-heading"><a href="#clustering-your-application" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Clustering your application</span></h2><p>Elixir and the Erlang VM have the incredible ability to be clustered together and pass messages seamlessly between nodes. Phoenix comes with all of the knobs in place, you only need to set the appropriate environment variables before deploying.</p><p>If you used <code class="inline">fly launch</code> to deploy your app, those environment variables are already in place, if not, open up <code class="inline">rel/env.ssh.eex</code> and add:</p><pre><code class="makeup sh" translate="no"><span class="">export ERL_AFLAGS=&quot;-proto_dist inet6_tcp&quot;
+</span><span class="">export RELEASE_DISTRIBUTION=&quot;name&quot;
+</span><span class="">export RELEASE_NODE=&quot;${FLY_APP_NAME}-${FLY_IMAGE_REF##*-}@${FLY_PRIVATE_IP}&quot;
+</span><span class="">
+</span><span class="">export ECTO_IPV6=&quot;true&quot;
+</span><span class="">export DNS_CLUSTER_QUERY=&quot;${FLY_APP_NAME}.internal&quot;
+</span></code></pre><p>The first three environment variables are managed by Elixir and the Erlang/VM:</p><ul><li><code class="inline">ERL_AFLAGS</code> - configures Erlang to use IPv6 for its distribution</li><li><code class="inline">RELEASE_DISTRIBUTION</code> - configures Erlang to named nodes</li><li><code class="inline">RELEASE_NODE</code> - attaches a name to the node, using Fly's app name and deploy reference</li></ul><p>The last two are handled by your <code class="inline">config/runtime.exs</code>:</p><ul><li><code class="inline">ECTO_IPV6</code> - connect to the database using IPv6</li><li><code class="inline">DNS_CLUSTER_QUERY</code> - configures your app to find other nodes using the given DNS query</li></ul><h2 id="extra-fly-io-tips" class="section-heading"><a href="#extra-fly-io-tips" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Extra Fly.io tips</span></h2><h3 id="getting-an-iex-shell-into-a-running-node" class="section-heading"><a href="#getting-an-iex-shell-into-a-running-node" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Getting an IEx shell into a running node</span></h3><p>Elixir supports getting a IEx shell into a running production node.</p><p>There are a couple prerequisites, we first need to establish an <a href="https://fly.io/docs/flyctl/ssh/">SSH Shell</a> to our machine on Fly.io.</p><p>This step sets up a root certificate for your account and then issues a certificate.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly ssh issue --agent
+</span></code></pre><p>With SSH configured, let's open a console.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly ssh console
+</span><span class="">Connecting to my-app-1234.internal... complete
+</span><span class="">/ #
+</span></code></pre><p>If all has gone smoothly, then you have a shell into the machine! Now we just need to launch our remote IEx shell. The deployment Dockerfile was configured to pull our application into <code class="inline">/app</code>. So the command for an app named <code class="inline">my_app</code> looks like this:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">app/bin/my_app remote
+</span><span class="">Erlang/OTP 23 [erts-11.2.1] [source] [64-bit] [smp:1:1] [ds:1:1:10] [async-threads:1]
+</span><span class="">
+</span><span class="">Interactive Elixir (1.11.2) - press Ctrl+C to exit (type h() ENTER for help)
+</span><span class="">iex(my_app@fdaa:0:1da8:a7b:ac4:b204:7e29:2)1&gt;
+</span></code></pre><p>Now we have a running IEx shell into our node! You can safely disconnect using CTRL+C, CTRL+C.</p><h4>Running multiple instances</h4><p>There are two ways to run multiple instances.</p><ol><li>Scale our application to have multiple instances in one region.</li><li>Add an instance to another region (multiple regions).</li></ol><p>Let's first start with a baseline of our single deployment.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly status
+</span><span class="">...
+</span><span class="">Instances
+</span><span class="">ID       VERSION REGION DESIRED STATUS  HEALTH CHECKS      RESTARTS CREATED
+</span><span class="">f9014bf7 26      sea    run     running 1 total, 1 passing 0        1h8m ago
+</span></code></pre><h4>Scaling in a single region</h4><p>Let's scale up to 2 instances in our current region.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly scale count 2
+</span><span class="">Count changed to 2
+</span></code></pre><p>Checking the status, we can see what happened.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly status
+</span><span class="">...
+</span><span class="">Instances
+</span><span class="">ID       VERSION REGION DESIRED STATUS  HEALTH CHECKS      RESTARTS CREATED
+</span><span class="">eb4119d3 27      sea    run     running 1 total, 1 passing 0        39s ago
+</span><span class="">f9014bf7 27      sea    run     running 1 total, 1 passing 0        1h13m ago
+</span></code></pre><p>We now have two instances in the same region.</p><p>Let's make sure they are clustered together. From an IEx shell, we can ask the node we're connected to, what other nodes it can see.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly ssh console -C &quot;/app/bin/my_app remote&quot;
+</span></code></pre><pre><code class="makeup elixir" translate="no"><span class="n">iex</span><span class="p" data-group-id="7763164725-1">(</span><span class="n">my</span><span class="o">-</span><span class="n">app</span><span class="o">-</span><span class="mi">1234</span><span class="na">@fdaa</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="n">da8</span><span class="ss">:a7b</span><span class="ss">:ac2</span><span class="ss">:f901</span><span class="p">:</span><span class="mi">4</span><span class="n">bf7</span><span class="p">:</span><span class="mi">2</span><span class="p" data-group-id="7763164725-1">)</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Node</span><span class="o">.</span><span class="n">list</span><span class="w">
+</span><span class="p" data-group-id="7763164725-2">[</span><span class="ss">:&quot;my-app-1234@fdaa:0:1da8:a7b:ac4:eb41:19d3:2&quot;</span><span class="p" data-group-id="7763164725-2">]</span></code></pre><p>The IEx prompt is included to help show the IP address of the node we are connected to. Then getting the <code class="inline">Node.list</code> returns the other node. Our two instances are connected and clustered!</p><h4>Scaling to multiple regions</h4><p>Fly makes it easy to deploy instances closer to your users. Through the magic of DNS, users are directed to the nearest region where your application is located. You can read more about <a href="https://fly.io/docs/reference/regions/">Fly.io regions here</a>.</p><p>Starting back from our baseline of a single instance running in <code class="inline">sea</code> which is Seattle, Washington (US), let's add the region <code class="inline">ewr</code> which is Parsippany, NJ (US). This puts an instance on both coasts of the US.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly regions add ewr
+</span><span class="">Region Pool:
+</span><span class="">ewr
+</span><span class="">sea
+</span><span class="">Backup Region:
+</span><span class="">iad
+</span><span class="">lax
+</span><span class="">sjc
+</span><span class="">vin
+</span></code></pre><p>Looking at the status shows that we're only in 1 region because our count is set to 1.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly status
+</span><span class="">...
+</span><span class="">Instances
+</span><span class="">ID       VERSION REGION DESIRED STATUS  HEALTH CHECKS      RESTARTS CREATED
+</span><span class="">cdf6c422 29      sea    run     running 1 total, 1 passing 0        58s ago
+</span></code></pre><p>Let's add a 2nd instance and see it deploy to <code class="inline">ewr</code>.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly scale count 2
+</span><span class="">Count changed to 2
+</span></code></pre><p>Now the status shows we have two instances spread across 2 regions!</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly status
+</span><span class="">...
+</span><span class="">Instances
+</span><span class="">ID       VERSION REGION DESIRED STATUS  HEALTH CHECKS      RESTARTS CREATED
+</span><span class="">0a8e6666 30      ewr    run     running 1 total, 1 passing 0        16s ago
+</span><span class="">cdf6c422 30      sea    run     running 1 total, 1 passing 0        6m47s ago
+</span></code></pre><p>Let's ensure they are clustered together.</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly ssh console -C &quot;/app/bin/my_app remote&quot;
+</span></code></pre><pre><code class="makeup elixir" translate="no"><span class="n">iex</span><span class="p" data-group-id="0505309913-1">(</span><span class="n">my</span><span class="o">-</span><span class="n">app</span><span class="o">-</span><span class="mi">1234</span><span class="na">@fdaa</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="n">da8</span><span class="ss">:a7b</span><span class="ss">:ac2</span><span class="ss">:cdf6</span><span class="ss">:c422</span><span class="p">:</span><span class="mi">2</span><span class="p" data-group-id="0505309913-1">)</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Node</span><span class="o">.</span><span class="n">list</span><span class="w">
+</span><span class="p" data-group-id="0505309913-2">[</span><span class="ss">:&quot;my-app-1234@fdaa:0:1da8:a7b:ab2:a8e:6666:2&quot;</span><span class="p" data-group-id="0505309913-2">]</span></code></pre><p>We have two instances of our application deployed to the West and East coasts of the North American continent and they are clustered together! Our users will automatically be directed to the server nearest them.</p><p>The Fly.io platform has built-in distribution support making it easy to cluster distributed Elixir nodes in multiple regions.</p><h2 id="helpful-fly-io-resources" class="section-heading"><a href="#helpful-fly-io-resources" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Helpful Fly.io resources</span></h2><p>Open the Dashboard for your account</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly dashboard
+</span></code></pre><p>Deploy your application</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly deploy
+</span></code></pre><p>Show the status of your deployed application</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly status
+</span></code></pre><p>Access and tail the logs</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly logs
+</span></code></pre><p>Scaling your application up or down</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">fly scale count 2
+</span></code></pre><p>Refer to the <a href="https://fly.io/docs/getting-started/elixir">Fly.io Elixir documentation</a> for additional information.</p><p><a href="https://fly.io/docs/">The Fly.io docs</a> covers things like:</p><ul><li><a href="https://fly.io/docs/flyctl/status/">Status</a> and <a href="https://fly.io/docs/monitoring/logging-overview/">logs</a></li><li><a href="https://fly.io/docs/networking/custom-domain/">Custom domains</a></li><li><a href="https://fly.io/docs/networking/custom-domain-api/">Certificates</a></li></ul><h2 id="troubleshooting" class="section-heading"><a href="#troubleshooting" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Troubleshooting</span></h2><p>See <a href="https://fly.io/docs/getting-started/troubleshooting/">Troubleshooting</a> and <a href="https://fly.io/docs/elixir/the-basics/troubleshooting/">Elixir Troubleshooting</a></p><p>Visit the <a href="https://community.fly.io/">Fly.io Community</a> to find solutions and ask questions.</p>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="releases.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Deploying with Releases
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="gigalixir.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Deploying on Gigalixir
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix/1.8.5">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix/1.8.5">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/phoenix/1.8.5/show/guides/deployment/fly.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+
+              <a href="Phoenix.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

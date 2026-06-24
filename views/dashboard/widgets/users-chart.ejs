@@ -1,0 +1,18 @@
+<div class="chart-card">
+  <h3>Top Benutzer</h3>
+  <div class="chart-container">
+    <% if (stats.topUsers && stats.topUsers.length) { %>
+      <div class="users-list">
+      <% stats.topUsers.forEach(function(u, idx){ %>
+        <div class="user-item">
+          <div class="user-rank">#<%= idx+1 %></div>
+          <div class="user-info"><strong><%= u.username %></strong><span><%= Number(u.ideas_submitted||0) %> Ideen</span></div>
+          <div class="user-stats"> <span>❤️ <%= Number(u.total_likes_received||0) %></span></div>
+        </div>
+      <% }) %>
+      </div>
+    <% } else { %>
+      <p class="no-data">Keine Top-Benutzer vorhanden</p>
+    <% } %>
+  </div>
+</div>

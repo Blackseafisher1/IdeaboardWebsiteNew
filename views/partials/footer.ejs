@@ -1,0 +1,70 @@
+
+<footer class="site-footer">
+  <div class="footer-content">
+    
+    <!-- Section 1: Brand / About -->
+    <div class="footer-section about">
+      <h3>Ideenboard</h3>
+      <p>
+        Dein Platz für kreative Konzepte und modernes Design. 
+        Wir bringen Struktur in deine Gedanken.
+      </p>
+    </div>
+
+  <!-- Sektion 2: Navigation -->
+  <div class="footer-section links">
+    <h3>Navigation</h3>
+    <ul>
+        <% if (user) { %>
+          <li><a href="/ideas">Ideen</a></li>
+          <li><a href="/surveys">Umfragen</a></li>
+          <li><a href="/projects">Projekte</a></li>
+          <li><a href="/dashboard">Dashboard</a></li>
+          <li><a href="/dms">Nachrichten</a></li>
+          <li><a href="/doku">Dokumentation</a></li>
+        <% } else { %>
+          <li><a href="/">Startseite</a></li>
+          <li><a href="/users/auth">Login</a></li>
+           <li><a href="/doku">Dokumentation</a></li>
+        <% } %>
+    </ul>
+  </div>
+
+  <!-- Sektion 3: Rechtliches -->
+  <div class="footer-section legal">
+    <h3>Rechtliches</h3>
+    <ul>
+        <li><a href="/impressum">Impressum</a></li>
+        <li><a href="/datenschutz">Datenschutz</a></li>
+        <li><a href="/agb">AGB</a></li>
+        <li><a href="/kontakt">Kontakt</a></li>
+    </ul>
+  </div>
+
+  </div>
+
+  <!-- Unterer Balken mit Copyright -->
+  <div class="footer-bottom">
+    <p>&copy; Ideenboard – Flat‑UI Design – September 2025</p>
+  </div>
+</footer>
+
+<!-- Chat Edit Modal -->
+<div id="chatEditModal" class="chat-modal-overlay" style="display: none;">
+  <div class="chat-modal-content card">
+    <h3>Nachricht bearbeiten</h3>
+    <textarea id="chatEditField" class="input-field" rows="4"></textarea>
+    <div class="chat-modal-actions">
+      <button id="cancelEditBtn" class="btn secondary">Abbrechen</button>
+      <button id="saveEditBtn" class="btn primary">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Chat Message Context Menu -->
+<div id="chatContextMenu" class="chat-context-menu" style="display: none;">
+  <button id="ctxEditBtn">✎ Bearbeiten</button>
+  <button id="ctxDeleteBtn">🗑 Löschen</button>
+</div>
+
+

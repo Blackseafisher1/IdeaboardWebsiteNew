@@ -1,0 +1,85 @@
+<% (Array.isArray(messages) ? messages : []).forEach(message => { 
+  if (!message) return; // skip falsy/undefined entries
+  const isFile = message.message && message.message.startsWith('[FILE]');
+  let filename, originalName, sizeKB, ext, isImage = false;
+
+  const isGroupChat = typeof isGroup !== 'undefined' && isGroup;
+  const fileBaseURL = isGroupChat ? '/groups/file' : '/dms/file';
+
+  if (isFile) {
+    const parts = message.message.split(' | ');
+    filename     = parts[0].replace('[FILE] ', '');
+    originalName = parts[1] || filename;
+    sizeKB       = parts[2] || 0;
+    ext          = originalName.split('.').pop().toLowerCase();
+    const imageExts = ['jpg','jpeg','png','gif','webp','avif','bmp'];
+    isImage      = imageExts.includes(ext);
+  }
+%>
+    <div class="message <%= (message.sender_id || message.sender_user_id) === currentUserId ? 'sent' : 'received' %> <%= message.is_deleted ? 'deleted' : '' %> <%= isGroupChat ? 'group-msg' : '' %>"
+       data-message-id="<%= message.message_id || message.id %>"
+       data-conversation-id="<%= message.conversation_id || message.group_id %>"
+       data-updated-at="<%= message.updated_at ? (message.updated_at instanceof Date ? message.updated_at.toISOString() : message.updated_at) : '' %>">
+
+    <% if (message.is_deleted) { %>
+      <div class="message-content deleted-content"><i>Diese Nachricht wurde gelöscht.</i></div>
+    <% } else if (isFile && isImage) { %>
+      <div class="message-content file-row file-row-image">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+             data-src="<%= fileBaseURL %>/<%= message.conversation_id || message.group_id %>/<%= filename %>?inline=1"
+             alt="<%= originalName %>"
+             class="chat-image js-open-image-modal"
+             data-full-src="<%= fileBaseURL %>/<%= message.conversation_id || message.group_id %>/<%= filename %>?inline=1">
+
+        <div class="file-text">
+          <a href="<%= fileBaseURL %>/<%= message.conversation_id || message.group_id %>/<%= filename %>?inline=1"
+             class="file-link js-open-image-modal"
+             data-full-src="<%= fileBaseURL %>/<%= message.conversation_id || message.group_id %>/<%= filename %>?inline=1">
+            <%= originalName %>
+          </a>
+          <span class="file-size">(<%= sizeKB %> KB)</span>
+        </div>
+      </div>
+
+    <% } else if (isFile) { %>
+      <div class="message-content file-row">
+        <span class="file-icon">📎</span>
+        <div class="file-text">
+          <a href="<%= fileBaseURL %>/<%= message.conversation_id || message.group_id %>/<%= filename %>"
+             download="<%= originalName %>"
+             class="file-link">
+            <%= originalName %>
+          </a>
+          <span class="file-size">(<%= sizeKB %> KB)</span>
+        </div>
+      </div>
+
+    <% } else { %>
+          <div class="message-content"><%= message.message %></div>
+    <% } %>
+
+    <div class="message-time">
+      <%= new Date(message.created_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) %>
+      <% if (message.is_edited && !message.is_deleted) { %>
+        <span class="edited-marker">(bearbeitet)</span>
+      <% } %>
+      
+      <% if (!isGroupChat) { %>
+        <% if ((message.sender_id || message.sender_user_id) === currentUserId && message.is_read) { %>
+          <span class="read-status">✓✓</span>
+        <% } else if ((message.sender_id || message.sender_user_id) === currentUserId) { %>
+          <span class="read-status">✓</span>
+        <% } %>
+      <% } else if ((message.sender_id || message.sender_user_id) !== currentUserId) { %>
+        <span class="message-sender" style="font-size: 0.7rem; opacity: 0.8; margin-left: 5px;">- <%= message.sender_name %></span>
+      <% } %>
+    </div>
+
+    <% if ((message.sender_id || message.sender_user_id) === currentUserId && !message.is_deleted && !isFile) { %>
+      <div class="message-actions" style="display: none;">
+        <button class="edit-btn" onclick="openEditMessage('<%= message.message_id || message.id %>')">✎</button>
+        <button class="delete-btn" onclick="deleteMessage('<%= message.message_id || message.id %>')">🗑</button>
+      </div>
+    <% } %>
+  </div>
+<% }); %>

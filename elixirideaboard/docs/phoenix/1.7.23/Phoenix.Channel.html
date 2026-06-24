@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.37.2">
+    <meta name="project" content="Phoenix v1.7.23">
+
+
+    <title>Phoenix.Channel — Phoenix v1.7.23</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-6X3L5KMG.css" />
+
+    <script defer src="dist/sidebar_items-169F3323.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-6XHBGSGW.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.7.23
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-behaviour" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Phoenix.Channel</span> <small>behaviour</small>
+      <small class="app-vsn" translate="no">(Phoenix v1.7.23)</small>
+
+    </h1>
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Defines a Phoenix Channel.</p><p>Channels provide a means for bidirectional communication from clients that
+integrate with the <a href="https://hexdocs.pm/phoenix_pubsub/2.1.3/Phoenix.PubSub.html"><code class="inline">Phoenix.PubSub</code></a> layer for soft-realtime functionality.</p><p>For a conceptual overview, see the <a href="channels.html">Channels guide</a>.</p><h2 id="module-topics-callbacks" class="section-heading">
+  <a href="#module-topics-callbacks" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Topics &amp; Callbacks</span>
+</h2>
+<p>Every time you join a channel, you need to choose which particular topic you
+want to listen to. The topic is just an identifier, but by convention it is
+often made of two parts: <code class="inline">&quot;topic:subtopic&quot;</code>. Using the <code class="inline">&quot;topic:subtopic&quot;</code>
+approach pairs nicely with the <a href="Phoenix.Socket.html#channel/3"><code class="inline">Phoenix.Socket.channel/3</code></a> allowing you to
+match on all topics starting with a given prefix by using a splat (the <code class="inline">*</code>
+character) as the last character in the topic pattern:</p><pre><code class="makeup elixir" translate="no"><span class="n">channel</span><span class="w"> </span><span class="s">&quot;room:*&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">MyAppWeb.RoomChannel</span></code></pre><p>Any topic coming into the router with the <code class="inline">&quot;room:&quot;</code> prefix would dispatch
+to <code class="inline">MyAppWeb.RoomChannel</code> in the above example. Topics can also be pattern
+matched in your channels' <code class="inline">join/3</code> callback to pluck out the scoped pattern:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># handles the special `&quot;lobby&quot;` subtopic</span><span class="w">
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">join</span><span class="p" data-group-id="7479760391-1">(</span><span class="s">&quot;room:lobby&quot;</span><span class="p">,</span><span class="w"> </span><span class="c">_payload</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="7479760391-1">)</span><span class="w"> </span><span class="k" data-group-id="7479760391-2">do</span><span class="w">
+  </span><span class="p" data-group-id="7479760391-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="7479760391-3">}</span><span class="w">
+</span><span class="k" data-group-id="7479760391-2">end</span><span class="w">
+
+</span><span class="c1"># handles any other subtopic as the room ID, for example `&quot;room:12&quot;`, `&quot;room:34&quot;`</span><span class="w">
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">join</span><span class="p" data-group-id="7479760391-4">(</span><span class="s">&quot;room:&quot;</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">room_id</span><span class="p">,</span><span class="w"> </span><span class="c">_payload</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="7479760391-4">)</span><span class="w"> </span><span class="k" data-group-id="7479760391-5">do</span><span class="w">
+  </span><span class="p" data-group-id="7479760391-6">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="7479760391-6">}</span><span class="w">
+</span><span class="k" data-group-id="7479760391-5">end</span></code></pre><h2 id="module-authorization" class="section-heading">
+  <a href="#module-authorization" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Authorization</span>
+</h2>
+<p>Clients must join a channel to send and receive PubSub events on that channel.
+Your channels must implement a <code class="inline">join/3</code> callback that authorizes the socket
+for the given topic. For example, you could check if the user is allowed to
+join that particular room.</p><p>To authorize a socket in <code class="inline">join/3</code>, return <code class="inline">{:ok, socket}</code>.
+To refuse authorization in <code class="inline">join/3</code>, return <code class="inline">{:error, reply}</code>.</p><h2 id="module-incoming-events" class="section-heading">
+  <a href="#module-incoming-events" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Incoming Events</span>
+</h2>
+<p>After a client has successfully joined a channel, incoming events from the
+client are routed through the channel's <code class="inline">handle_in/3</code> callbacks. Within these
+callbacks, you can perform any action. Incoming callbacks must return the
+<code class="inline">socket</code> to maintain ephemeral state.</p><p>Typically you'll either forward a message to all listeners with
+<a href="#broadcast!/3"><code class="inline">broadcast!/3</code></a> or reply directly to a client event for request/response style
+messaging.</p><p>General message payloads are received as maps:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">handle_in</span><span class="p" data-group-id="8154304395-1">(</span><span class="s">&quot;new_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8154304395-2">%{</span><span class="s">&quot;uid&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">uid</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;body&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">body</span><span class="p" data-group-id="8154304395-2">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="8154304395-1">)</span><span class="w"> </span><span class="k" data-group-id="8154304395-3">do</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+  </span><span class="p" data-group-id="8154304395-4">{</span><span class="ss">:reply</span><span class="p">,</span><span class="w"> </span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="8154304395-4">}</span><span class="w">
+</span><span class="k" data-group-id="8154304395-3">end</span></code></pre><p>Binary data payloads are passed as a <code class="inline">{:binary, data}</code> tuple:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">handle_in</span><span class="p" data-group-id="8765788031-1">(</span><span class="s">&quot;file_chunk&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8765788031-2">{</span><span class="ss">:binary</span><span class="p">,</span><span class="w"> </span><span class="n">chunk</span><span class="p" data-group-id="8765788031-2">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="8765788031-1">)</span><span class="w"> </span><span class="k" data-group-id="8765788031-3">do</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+  </span><span class="p" data-group-id="8765788031-4">{</span><span class="ss">:reply</span><span class="p">,</span><span class="w"> </span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="8765788031-4">}</span><span class="w">
+</span><span class="k" data-group-id="8765788031-3">end</span></code></pre><h2 id="module-broadcasts" class="section-heading">
+  <a href="#module-broadcasts" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Broadcasts</span>
+</h2>
+<p>Here's an example of receiving an incoming <code class="inline">&quot;new_msg&quot;</code> event from one client,
+and broadcasting the message to all topic subscribers for this socket.</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">handle_in</span><span class="p" data-group-id="3357728949-1">(</span><span class="s">&quot;new_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3357728949-2">%{</span><span class="s">&quot;uid&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">uid</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;body&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">body</span><span class="p" data-group-id="3357728949-2">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="3357728949-1">)</span><span class="w"> </span><span class="k" data-group-id="3357728949-3">do</span><span class="w">
+  </span><span class="n">broadcast!</span><span class="p" data-group-id="3357728949-4">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3357728949-5">%{</span><span class="ss">uid</span><span class="p">:</span><span class="w"> </span><span class="n">uid</span><span class="p">,</span><span class="w"> </span><span class="ss">body</span><span class="p">:</span><span class="w"> </span><span class="n">body</span><span class="p" data-group-id="3357728949-5">}</span><span class="p" data-group-id="3357728949-4">)</span><span class="w">
+  </span><span class="p" data-group-id="3357728949-6">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="3357728949-6">}</span><span class="w">
+</span><span class="k" data-group-id="3357728949-3">end</span></code></pre><h2 id="module-replies" class="section-heading">
+  <a href="#module-replies" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Replies</span>
+</h2>
+<p>Replies are useful for acknowledging a client's message or responding with
+the results of an operation. A reply is sent only to the client connected to
+the current channel process. Behind the scenes, they include the client
+message <code class="inline">ref</code>, which allows the client to correlate the reply it receives
+with the message it sent.</p><p>For example, imagine creating a resource and replying with the created record:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">handle_in</span><span class="p" data-group-id="5994685364-1">(</span><span class="s">&quot;create:post&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">attrs</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="5994685364-1">)</span><span class="w"> </span><span class="k" data-group-id="5994685364-2">do</span><span class="w">
+  </span><span class="n">changeset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Post</span><span class="o">.</span><span class="n">changeset</span><span class="p" data-group-id="5994685364-3">(</span><span class="p" data-group-id="5994685364-4">%</span><span class="nc" data-group-id="5994685364-4">Post</span><span class="p" data-group-id="5994685364-4">{</span><span class="p" data-group-id="5994685364-4">}</span><span class="p">,</span><span class="w"> </span><span class="n">attrs</span><span class="p" data-group-id="5994685364-3">)</span><span class="w">
+
+  </span><span class="k">if</span><span class="w"> </span><span class="n">changeset</span><span class="o">.</span><span class="n">valid?</span><span class="w"> </span><span class="k" data-group-id="5994685364-5">do</span><span class="w">
+    </span><span class="n">post</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Repo</span><span class="o">.</span><span class="n">insert!</span><span class="p" data-group-id="5994685364-6">(</span><span class="n">changeset</span><span class="p" data-group-id="5994685364-6">)</span><span class="w">
+    </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">MyAppWeb.PostView</span><span class="o">.</span><span class="n">render</span><span class="p" data-group-id="5994685364-7">(</span><span class="s">&quot;show.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5994685364-8">%{</span><span class="ss">post</span><span class="p">:</span><span class="w"> </span><span class="n">post</span><span class="p" data-group-id="5994685364-8">}</span><span class="p" data-group-id="5994685364-7">)</span><span class="w">
+    </span><span class="p" data-group-id="5994685364-9">{</span><span class="ss">:reply</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5994685364-10">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p" data-group-id="5994685364-10">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="5994685364-9">}</span><span class="w">
+  </span><span class="k" data-group-id="5994685364-5">else</span><span class="w">
+    </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">MyAppWeb.ChangesetView</span><span class="o">.</span><span class="n">render</span><span class="p" data-group-id="5994685364-11">(</span><span class="s">&quot;errors.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5994685364-12">%{</span><span class="ss">changeset</span><span class="p">:</span><span class="w"> </span><span class="n">changeset</span><span class="p" data-group-id="5994685364-12">}</span><span class="p" data-group-id="5994685364-11">)</span><span class="w">
+    </span><span class="p" data-group-id="5994685364-13">{</span><span class="ss">:reply</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5994685364-14">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p" data-group-id="5994685364-14">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="5994685364-13">}</span><span class="w">
+  </span><span class="k" data-group-id="5994685364-5">end</span><span class="w">
+</span><span class="k" data-group-id="5994685364-2">end</span></code></pre><p>Or you may just want to confirm that the operation succeeded:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">handle_in</span><span class="p" data-group-id="0424548915-1">(</span><span class="s">&quot;create:post&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">attrs</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="0424548915-1">)</span><span class="w"> </span><span class="k" data-group-id="0424548915-2">do</span><span class="w">
+  </span><span class="n">changeset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Post</span><span class="o">.</span><span class="n">changeset</span><span class="p" data-group-id="0424548915-3">(</span><span class="p" data-group-id="0424548915-4">%</span><span class="nc" data-group-id="0424548915-4">Post</span><span class="p" data-group-id="0424548915-4">{</span><span class="p" data-group-id="0424548915-4">}</span><span class="p">,</span><span class="w"> </span><span class="n">attrs</span><span class="p" data-group-id="0424548915-3">)</span><span class="w">
+
+  </span><span class="k">if</span><span class="w"> </span><span class="n">changeset</span><span class="o">.</span><span class="n">valid?</span><span class="w"> </span><span class="k" data-group-id="0424548915-5">do</span><span class="w">
+    </span><span class="nc">Repo</span><span class="o">.</span><span class="n">insert!</span><span class="p" data-group-id="0424548915-6">(</span><span class="n">changeset</span><span class="p" data-group-id="0424548915-6">)</span><span class="w">
+    </span><span class="p" data-group-id="0424548915-7">{</span><span class="ss">:reply</span><span class="p">,</span><span class="w"> </span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="0424548915-7">}</span><span class="w">
+  </span><span class="k" data-group-id="0424548915-5">else</span><span class="w">
+    </span><span class="p" data-group-id="0424548915-8">{</span><span class="ss">:reply</span><span class="p">,</span><span class="w"> </span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="0424548915-8">}</span><span class="w">
+  </span><span class="k" data-group-id="0424548915-5">end</span><span class="w">
+</span><span class="k" data-group-id="0424548915-2">end</span></code></pre><p>Binary data is also supported with replies via a <code class="inline">{:binary, data}</code> tuple:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="1323990853-1">{</span><span class="ss">:reply</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1323990853-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1323990853-3">{</span><span class="ss">:binary</span><span class="p">,</span><span class="w"> </span><span class="n">bin</span><span class="p" data-group-id="1323990853-3">}</span><span class="p" data-group-id="1323990853-2">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="1323990853-1">}</span></code></pre><p>If you don't want to send a reply to the client, you can return:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="6547136813-1">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="6547136813-1">}</span></code></pre><p>One situation when you might do this is if you need to reply later; see
+<a href="#reply/2"><code class="inline">reply/2</code></a>.</p><h2 id="module-pushes" class="section-heading">
+  <a href="#module-pushes" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Pushes</span>
+</h2>
+<p>Calling <a href="#push/3"><code class="inline">push/3</code></a> allows you to send a message to the client which is not a
+reply to a specific client message. Because it is not a reply, a pushed
+message does not contain a client message <code class="inline">ref</code>; there is no prior client
+message to relate it to.</p><p>Possible use cases include notifying a client that:</p><ul><li>You've auto-saved the user's document</li><li>The user's game is ending soon</li><li>The IoT device's settings should be updated</li></ul><p>For example, you could <a href="#push/3"><code class="inline">push/3</code></a> a message to the client in <code class="inline">handle_info/3</code>
+after receiving a <code class="inline">PubSub</code> message relevant to them.</p><pre><code class="makeup elixir" translate="no"><span class="kn">alias</span><span class="w"> </span><span class="nc">Phoenix.Socket.Broadcast</span><span class="w">
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_info</span><span class="p" data-group-id="6896641568-1">(</span><span class="p" data-group-id="6896641568-2">%</span><span class="nc" data-group-id="6896641568-2">Broadcast</span><span class="p" data-group-id="6896641568-2">{</span><span class="ss">topic</span><span class="p">:</span><span class="w"> </span><span class="bp">_</span><span class="p">,</span><span class="w"> </span><span class="ss">event</span><span class="p">:</span><span class="w"> </span><span class="n">event</span><span class="p">,</span><span class="w"> </span><span class="ss">payload</span><span class="p">:</span><span class="w"> </span><span class="n">payload</span><span class="p" data-group-id="6896641568-2">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="6896641568-1">)</span><span class="w"> </span><span class="k" data-group-id="6896641568-3">do</span><span class="w">
+  </span><span class="n">push</span><span class="p" data-group-id="6896641568-4">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="n">event</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="p" data-group-id="6896641568-4">)</span><span class="w">
+  </span><span class="p" data-group-id="6896641568-5">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="6896641568-5">}</span><span class="w">
+</span><span class="k" data-group-id="6896641568-3">end</span></code></pre><p>Push data can be given in the form of a map or a tagged <code class="inline">{:binary, data}</code>
+tuple:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># client asks for their current rank. reply contains it, and client</span><span class="w">
+</span><span class="c1"># is also pushed a leader board and a badge image</span><span class="w">
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_in</span><span class="p" data-group-id="7964361282-1">(</span><span class="s">&quot;current_rank&quot;</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="7964361282-1">)</span><span class="w"> </span><span class="k" data-group-id="7964361282-2">do</span><span class="w">
+  </span><span class="n">push</span><span class="p" data-group-id="7964361282-3">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;leaders&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7964361282-4">%{</span><span class="ss">leaders</span><span class="p">:</span><span class="w"> </span><span class="nc">Game</span><span class="o">.</span><span class="n">get_leaders</span><span class="p" data-group-id="7964361282-5">(</span><span class="n">socket</span><span class="o">.</span><span class="n">assigns</span><span class="o">.</span><span class="n">game_id</span><span class="p" data-group-id="7964361282-5">)</span><span class="p" data-group-id="7964361282-4">}</span><span class="p" data-group-id="7964361282-3">)</span><span class="w">
+  </span><span class="n">push</span><span class="p" data-group-id="7964361282-6">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;badge&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7964361282-7">{</span><span class="ss">:binary</span><span class="p">,</span><span class="w"> </span><span class="nc">File</span><span class="o">.</span><span class="n">read!</span><span class="p" data-group-id="7964361282-8">(</span><span class="n">socket</span><span class="o">.</span><span class="n">assigns</span><span class="o">.</span><span class="n">badge_path</span><span class="p" data-group-id="7964361282-8">)</span><span class="p" data-group-id="7964361282-7">}</span><span class="p" data-group-id="7964361282-6">)</span><span class="w">
+  </span><span class="p" data-group-id="7964361282-9">{</span><span class="ss">:reply</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7964361282-10">%{</span><span class="ss">val</span><span class="p">:</span><span class="w"> </span><span class="nc">Game</span><span class="o">.</span><span class="n">get_rank</span><span class="p" data-group-id="7964361282-11">(</span><span class="n">socket</span><span class="o">.</span><span class="n">assigns</span><span class="p" data-group-id="7964361282-12">[</span><span class="ss">:user</span><span class="p" data-group-id="7964361282-12">]</span><span class="p" data-group-id="7964361282-11">)</span><span class="p" data-group-id="7964361282-10">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="7964361282-9">}</span><span class="w">
+</span><span class="k" data-group-id="7964361282-2">end</span></code></pre><p>Note that in this example, <a href="#push/3"><code class="inline">push/3</code></a> is called from <code class="inline">handle_in/3</code>; in this way
+you can essentially reply N times to a single message from the client. See
+<a href="#reply/2"><code class="inline">reply/2</code></a> for why this may be desirable.</p><h2 id="module-intercepting-outgoing-events" class="section-heading">
+  <a href="#module-intercepting-outgoing-events" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Intercepting Outgoing Events</span>
+</h2>
+<p>When an event is broadcasted with <a href="#broadcast/3"><code class="inline">broadcast/3</code></a>, each channel subscriber can
+choose to intercept the event and have their <code class="inline">handle_out/3</code> callback triggered.
+This allows the event's payload to be customized on a socket by socket basis
+to append extra information, or conditionally filter the message from being
+delivered. If the event is not intercepted with <a href="#intercept/1"><code class="inline">Phoenix.Channel.intercept/1</code></a>,
+then the message is pushed directly to the client:</p><pre><code class="makeup elixir" translate="no"><span class="n">intercept</span><span class="w"> </span><span class="p" data-group-id="6046076038-1">[</span><span class="s">&quot;new_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;user_joined&quot;</span><span class="p" data-group-id="6046076038-1">]</span><span class="w">
+
+</span><span class="c1"># for every socket subscribing to this topic, append an `is_editable`</span><span class="w">
+</span><span class="c1"># value for client metadata.</span><span class="w">
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_out</span><span class="p" data-group-id="6046076038-2">(</span><span class="s">&quot;new_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="6046076038-2">)</span><span class="w"> </span><span class="k" data-group-id="6046076038-3">do</span><span class="w">
+  </span><span class="n">push</span><span class="p" data-group-id="6046076038-4">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">Map</span><span class="o">.</span><span class="n">merge</span><span class="p" data-group-id="6046076038-5">(</span><span class="n">msg</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="6046076038-6">%{</span><span class="ss">is_editable</span><span class="p">:</span><span class="w"> </span><span class="nc">User</span><span class="o">.</span><span class="n">can_edit_message?</span><span class="p" data-group-id="6046076038-7">(</span><span class="n">socket</span><span class="o">.</span><span class="n">assigns</span><span class="p" data-group-id="6046076038-8">[</span><span class="ss">:user</span><span class="p" data-group-id="6046076038-8">]</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p" data-group-id="6046076038-7">)</span><span class="p" data-group-id="6046076038-6">}</span><span class="w">
+  </span><span class="p" data-group-id="6046076038-5">)</span><span class="p" data-group-id="6046076038-4">)</span><span class="w">
+  </span><span class="p" data-group-id="6046076038-9">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="6046076038-9">}</span><span class="w">
+</span><span class="k" data-group-id="6046076038-3">end</span><span class="w">
+
+</span><span class="c1"># do not send broadcasted `&quot;user_joined&quot;` events if this socket&#39;s user</span><span class="w">
+</span><span class="c1"># is ignoring the user who joined.</span><span class="w">
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_out</span><span class="p" data-group-id="6046076038-10">(</span><span class="s">&quot;user_joined&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="6046076038-10">)</span><span class="w"> </span><span class="k" data-group-id="6046076038-11">do</span><span class="w">
+  </span><span class="k">unless</span><span class="w"> </span><span class="nc">User</span><span class="o">.</span><span class="n">ignoring?</span><span class="p" data-group-id="6046076038-12">(</span><span class="n">socket</span><span class="o">.</span><span class="n">assigns</span><span class="p" data-group-id="6046076038-13">[</span><span class="ss">:user</span><span class="p" data-group-id="6046076038-13">]</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="o">.</span><span class="n">user_id</span><span class="p" data-group-id="6046076038-12">)</span><span class="w"> </span><span class="k" data-group-id="6046076038-14">do</span><span class="w">
+    </span><span class="n">push</span><span class="p" data-group-id="6046076038-15">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;user_joined&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p" data-group-id="6046076038-15">)</span><span class="w">
+  </span><span class="k" data-group-id="6046076038-14">end</span><span class="w">
+  </span><span class="p" data-group-id="6046076038-16">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="6046076038-16">}</span><span class="w">
+</span><span class="k" data-group-id="6046076038-11">end</span></code></pre><h2 id="module-broadcasting-to-an-external-topic" class="section-heading">
+  <a href="#module-broadcasting-to-an-external-topic" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Broadcasting to an external topic</span>
+</h2>
+<p>In some cases, you will want to broadcast messages without the context of
+a <code class="inline">socket</code>. This could be for broadcasting from within your channel to an
+external topic, or broadcasting from elsewhere in your application like a
+controller or another process. Such can be done via your endpoint:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># within channel</span><span class="w">
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_in</span><span class="p" data-group-id="0031610219-1">(</span><span class="s">&quot;new_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0031610219-2">%{</span><span class="s">&quot;uid&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">uid</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;body&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">body</span><span class="p" data-group-id="0031610219-2">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="0031610219-1">)</span><span class="w"> </span><span class="k" data-group-id="0031610219-3">do</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+  </span><span class="n">broadcast_from!</span><span class="p" data-group-id="0031610219-4">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0031610219-5">%{</span><span class="ss">uid</span><span class="p">:</span><span class="w"> </span><span class="n">uid</span><span class="p">,</span><span class="w"> </span><span class="ss">body</span><span class="p">:</span><span class="w"> </span><span class="n">body</span><span class="p" data-group-id="0031610219-5">}</span><span class="p" data-group-id="0031610219-4">)</span><span class="w">
+  </span><span class="nc">MyAppWeb.Endpoint</span><span class="o">.</span><span class="n">broadcast_from!</span><span class="p" data-group-id="0031610219-6">(</span><span class="n">self</span><span class="p" data-group-id="0031610219-7">(</span><span class="p" data-group-id="0031610219-7">)</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;room:superadmin&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;new_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0031610219-8">%{</span><span class="ss">uid</span><span class="p">:</span><span class="w"> </span><span class="n">uid</span><span class="p">,</span><span class="w"> </span><span class="ss">body</span><span class="p">:</span><span class="w"> </span><span class="n">body</span><span class="p" data-group-id="0031610219-8">}</span><span class="p" data-group-id="0031610219-6">)</span><span class="w">
+  </span><span class="p" data-group-id="0031610219-9">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="0031610219-9">}</span><span class="w">
+</span><span class="k" data-group-id="0031610219-3">end</span><span class="w">
+
+</span><span class="c1"># within controller</span><span class="w">
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">create</span><span class="p" data-group-id="0031610219-10">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">params</span><span class="p" data-group-id="0031610219-10">)</span><span class="w"> </span><span class="k" data-group-id="0031610219-11">do</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+  </span><span class="nc">MyAppWeb.Endpoint</span><span class="o">.</span><span class="n">broadcast!</span><span class="p" data-group-id="0031610219-12">(</span><span class="s">&quot;room:&quot;</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">rid</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0031610219-13">%{</span><span class="ss">uid</span><span class="p">:</span><span class="w"> </span><span class="n">uid</span><span class="p">,</span><span class="w"> </span><span class="ss">body</span><span class="p">:</span><span class="w"> </span><span class="n">body</span><span class="p" data-group-id="0031610219-13">}</span><span class="p" data-group-id="0031610219-12">)</span><span class="w">
+  </span><span class="nc">MyAppWeb.Endpoint</span><span class="o">.</span><span class="n">broadcast!</span><span class="p" data-group-id="0031610219-14">(</span><span class="s">&quot;room:superadmin&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0031610219-15">%{</span><span class="ss">uid</span><span class="p">:</span><span class="w"> </span><span class="n">uid</span><span class="p">,</span><span class="w"> </span><span class="ss">body</span><span class="p">:</span><span class="w"> </span><span class="n">body</span><span class="p" data-group-id="0031610219-15">}</span><span class="p" data-group-id="0031610219-14">)</span><span class="w">
+  </span><span class="n">redirect</span><span class="p" data-group-id="0031610219-16">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="ss">to</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p" data-group-id="0031610219-16">)</span><span class="w">
+</span><span class="k" data-group-id="0031610219-11">end</span></code></pre><h2 id="module-terminate" class="section-heading">
+  <a href="#module-terminate" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Terminate</span>
+</h2>
+<p>On termination, the channel callback <code class="inline">terminate/2</code> will be invoked with
+the error reason and the socket.</p><p>If we are terminating because the client left, the reason will be
+<code class="inline">{:shutdown, :left}</code>. Similarly, if we are terminating because the
+client connection was closed, the reason will be <code class="inline">{:shutdown, :closed}</code>.</p><p>If any of the callbacks return a <code class="inline">:stop</code> tuple, it will also
+trigger terminate with the reason given in the tuple.</p><p><code class="inline">terminate/2</code>, however, won't be invoked in case of errors nor in
+case of exits. This is the same behaviour as you find in Elixir
+abstractions like <a href="https://hexdocs.pm/elixir/GenServer.html"><code class="inline">GenServer</code></a> and others. Similar to <a href="https://hexdocs.pm/elixir/GenServer.html"><code class="inline">GenServer</code></a>,
+it would also be possible to <code class="inline">:trap_exit</code> to guarantee that <code class="inline">terminate/2</code>
+is invoked. This practice is not encouraged though.</p><p>Generally speaking, if you want to clean something up, it is better to
+monitor your channel process and do the clean up from another process.
+All channel callbacks, including <code class="inline">join/3</code>, are called from within the
+channel process. Therefore, <code class="inline">self()</code> in any of them returns the PID to
+be monitored.</p><h2 id="module-exit-reasons-when-stopping-a-channel" class="section-heading">
+  <a href="#module-exit-reasons-when-stopping-a-channel" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Exit reasons when stopping a channel</span>
+</h2>
+<p>When the channel callbacks return a <code class="inline">:stop</code> tuple, such as:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="5597854505-1">{</span><span class="ss">:stop</span><span class="p">,</span><span class="w"> </span><span class="ss">:shutdown</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="5597854505-1">}</span><span class="w">
+</span><span class="p" data-group-id="5597854505-2">{</span><span class="ss">:stop</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5597854505-3">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="5597854505-3">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="5597854505-2">}</span></code></pre><p>the second argument is the exit reason, which follows the same behaviour as
+standard <a href="https://hexdocs.pm/elixir/GenServer.html"><code class="inline">GenServer</code></a> exits.</p><p>You have three options to choose from when shutting down a channel:</p><ul><li><p><code class="inline">:normal</code> - in such cases, the exit won't be logged and linked processes
+do not exit</p></li><li><p><code class="inline">:shutdown</code> or <code class="inline">{:shutdown, term}</code> - in such cases, the exit won't be
+logged and linked processes exit with the same reason unless they're
+trapping exits</p></li><li><p>any other term - in such cases, the exit will be logged and linked
+processes exit with the same reason unless they're trapping exits</p></li></ul><h2 id="module-subscribing-to-external-topics" class="section-heading">
+  <a href="#module-subscribing-to-external-topics" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Subscribing to external topics</span>
+</h2>
+<p>Sometimes you may need to programmatically subscribe a socket to external
+topics in addition to the internal <code class="inline">socket.topic</code>. For example,
+imagine you have a bidding system where a remote client dynamically sets
+preferences on products they want to receive bidding notifications on.
+Instead of requiring a unique channel process and topic per
+preference, a more efficient and simple approach would be to subscribe a
+single channel to relevant notifications via your endpoint. For example:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyAppWeb.Endpoint.NotificationChannel</span><span class="w"> </span><span class="k" data-group-id="5354715367-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Phoenix.Channel</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">join</span><span class="p" data-group-id="5354715367-2">(</span><span class="s">&quot;notification:&quot;</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5354715367-3">%{</span><span class="s">&quot;ids&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">ids</span><span class="p" data-group-id="5354715367-3">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="5354715367-2">)</span><span class="w"> </span><span class="k" data-group-id="5354715367-4">do</span><span class="w">
+    </span><span class="n">topics</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">product_id</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ids</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;product:</span><span class="si" data-group-id="5354715367-5">#{</span><span class="n">product_id</span><span class="si" data-group-id="5354715367-5">}</span><span class="s">&quot;</span><span class="w">
+
+    </span><span class="p" data-group-id="5354715367-6">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="w">
+          </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">assign</span><span class="p" data-group-id="5354715367-7">(</span><span class="ss">:topics</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5354715367-8">[</span><span class="p" data-group-id="5354715367-8">]</span><span class="p" data-group-id="5354715367-7">)</span><span class="w">
+          </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">put_new_topics</span><span class="p" data-group-id="5354715367-9">(</span><span class="n">topics</span><span class="p" data-group-id="5354715367-9">)</span><span class="p" data-group-id="5354715367-6">}</span><span class="w">
+  </span><span class="k" data-group-id="5354715367-4">end</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_in</span><span class="p" data-group-id="5354715367-10">(</span><span class="s">&quot;watch&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5354715367-11">%{</span><span class="s">&quot;product_id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">id</span><span class="p" data-group-id="5354715367-11">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="5354715367-10">)</span><span class="w"> </span><span class="k" data-group-id="5354715367-12">do</span><span class="w">
+    </span><span class="p" data-group-id="5354715367-13">{</span><span class="ss">:reply</span><span class="p">,</span><span class="w"> </span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">put_new_topics</span><span class="p" data-group-id="5354715367-14">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5354715367-15">[</span><span class="s">&quot;product:</span><span class="si" data-group-id="5354715367-16">#{</span><span class="n">id</span><span class="si" data-group-id="5354715367-16">}</span><span class="s">&quot;</span><span class="p" data-group-id="5354715367-15">]</span><span class="p" data-group-id="5354715367-14">)</span><span class="p" data-group-id="5354715367-13">}</span><span class="w">
+  </span><span class="k" data-group-id="5354715367-12">end</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_in</span><span class="p" data-group-id="5354715367-17">(</span><span class="s">&quot;unwatch&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5354715367-18">%{</span><span class="s">&quot;product_id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">id</span><span class="p" data-group-id="5354715367-18">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="5354715367-17">)</span><span class="w"> </span><span class="k" data-group-id="5354715367-19">do</span><span class="w">
+    </span><span class="p" data-group-id="5354715367-20">{</span><span class="ss">:reply</span><span class="p">,</span><span class="w"> </span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="nc">MyAppWeb.Endpoint</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p" data-group-id="5354715367-21">(</span><span class="s">&quot;product:</span><span class="si" data-group-id="5354715367-22">#{</span><span class="n">id</span><span class="si" data-group-id="5354715367-22">}</span><span class="s">&quot;</span><span class="p" data-group-id="5354715367-21">)</span><span class="p" data-group-id="5354715367-20">}</span><span class="w">
+  </span><span class="k" data-group-id="5354715367-19">end</span><span class="w">
+
+  </span><span class="kd">defp</span><span class="w"> </span><span class="nf">put_new_topics</span><span class="p" data-group-id="5354715367-23">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="n">topics</span><span class="p" data-group-id="5354715367-23">)</span><span class="w"> </span><span class="k" data-group-id="5354715367-24">do</span><span class="w">
+    </span><span class="nc">Enum</span><span class="o">.</span><span class="n">reduce</span><span class="p" data-group-id="5354715367-25">(</span><span class="n">topics</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="k" data-group-id="5354715367-26">fn</span><span class="w"> </span><span class="n">topic</span><span class="p">,</span><span class="w"> </span><span class="n">acc</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+      </span><span class="n">topics</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">acc</span><span class="o">.</span><span class="n">assigns</span><span class="o">.</span><span class="n">topics</span><span class="w">
+      </span><span class="k">if</span><span class="w"> </span><span class="n">topic</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">topics</span><span class="w"> </span><span class="k" data-group-id="5354715367-27">do</span><span class="w">
+        </span><span class="n">acc</span><span class="w">
+      </span><span class="k" data-group-id="5354715367-27">else</span><span class="w">
+        </span><span class="ss">:ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">MyAppWeb.Endpoint</span><span class="o">.</span><span class="n">subscribe</span><span class="p" data-group-id="5354715367-28">(</span><span class="n">topic</span><span class="p" data-group-id="5354715367-28">)</span><span class="w">
+        </span><span class="n">assign</span><span class="p" data-group-id="5354715367-29">(</span><span class="n">acc</span><span class="p">,</span><span class="w"> </span><span class="ss">:topics</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5354715367-30">[</span><span class="n">topic</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">topics</span><span class="p" data-group-id="5354715367-30">]</span><span class="p" data-group-id="5354715367-29">)</span><span class="w">
+      </span><span class="k" data-group-id="5354715367-27">end</span><span class="w">
+    </span><span class="k" data-group-id="5354715367-26">end</span><span class="p" data-group-id="5354715367-25">)</span><span class="w">
+  </span><span class="k" data-group-id="5354715367-24">end</span><span class="w">
+</span><span class="k" data-group-id="5354715367-1">end</span></code></pre><p>Note: the caller must be responsible for preventing duplicate subscriptions.
+After calling <code class="inline">subscribe/1</code> from your endpoint, the same flow applies to
+handling regular Elixir messages within your channel. Most often, you'll
+simply relay the <code class="inline">%Phoenix.Socket.Broadcast{}</code> event and payload:</p><pre><code class="makeup elixir" translate="no"><span class="kn">alias</span><span class="w"> </span><span class="nc">Phoenix.Socket.Broadcast</span><span class="w">
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_info</span><span class="p" data-group-id="8456101537-1">(</span><span class="p" data-group-id="8456101537-2">%</span><span class="nc" data-group-id="8456101537-2">Broadcast</span><span class="p" data-group-id="8456101537-2">{</span><span class="ss">topic</span><span class="p">:</span><span class="w"> </span><span class="bp">_</span><span class="p">,</span><span class="w"> </span><span class="ss">event</span><span class="p">:</span><span class="w"> </span><span class="n">event</span><span class="p">,</span><span class="w"> </span><span class="ss">payload</span><span class="p">:</span><span class="w"> </span><span class="n">payload</span><span class="p" data-group-id="8456101537-2">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="8456101537-1">)</span><span class="w"> </span><span class="k" data-group-id="8456101537-3">do</span><span class="w">
+  </span><span class="n">push</span><span class="p" data-group-id="8456101537-4">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="n">event</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="p" data-group-id="8456101537-4">)</span><span class="w">
+  </span><span class="p" data-group-id="8456101537-5">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="8456101537-5">}</span><span class="w">
+</span><span class="k" data-group-id="8456101537-3">end</span></code></pre><h2 id="module-hibernation" class="section-heading">
+  <a href="#module-hibernation" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Hibernation</span>
+</h2>
+<p>From Erlang/OTP 20, channels automatically hibernate to save memory
+after 15_000 milliseconds of inactivity. This can be customized by
+passing the <code class="inline">:hibernate_after</code> option to <code class="inline">use Phoenix.Channel</code>:</p><pre><code class="makeup elixir" translate="no"><span class="kn">use</span><span class="w"> </span><span class="nc">Phoenix.Channel</span><span class="p">,</span><span class="w"> </span><span class="ss">hibernate_after</span><span class="p">:</span><span class="w"> </span><span class="mi">60_000</span></code></pre><p>You can also set it to <code class="inline">:infinity</code> to fully disable it.</p><h2 id="module-shutdown" class="section-heading">
+  <a href="#module-shutdown" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Shutdown</span>
+</h2>
+<p>You can configure the shutdown behavior of each channel used when your
+application is shutting down by setting the <code class="inline">:shutdown</code> value on use:</p><pre><code class="makeup elixir" translate="no"><span class="kn">use</span><span class="w"> </span><span class="nc">Phoenix.Channel</span><span class="p">,</span><span class="w"> </span><span class="ss">shutdown</span><span class="p">:</span><span class="w"> </span><span class="mi">5_000</span></code></pre><p>It defaults to 5_000. The supported values are described under the
+in the <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a> module docs.</p><h2 id="module-logging" class="section-heading">
+  <a href="#module-logging" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Logging</span>
+</h2>
+<p>By default, channel <code class="inline">&quot;join&quot;</code> and <code class="inline">&quot;handle_in&quot;</code> events are logged, using
+the level <code class="inline">:info</code> and <code class="inline">:debug</code>, respectively. You can change the level used
+for each event, or disable logs, per event type by setting the <code class="inline">:log_join</code>
+and <code class="inline">:log_handle_in</code> options when using <a href="Phoenix.Channel.html"><code class="inline">Phoenix.Channel</code></a>. For example, the
+following configuration logs join events as <code class="inline">:info</code>, but disables logging for
+incoming events:</p><pre><code class="makeup elixir" translate="no"><span class="kn">use</span><span class="w"> </span><span class="nc">Phoenix.Channel</span><span class="p">,</span><span class="w"> </span><span class="ss">log_join</span><span class="p">:</span><span class="w"> </span><span class="ss">:info</span><span class="p">,</span><span class="w"> </span><span class="ss">log_handle_in</span><span class="p">:</span><span class="w"> </span><span class="no">false</span></code></pre><p>Note that changing an event type's level doesn't affect what is logged,
+unless you set it to <code class="inline">false</code>, it affects the associated level.</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:payload/0" data-no-tooltip="" translate="no">payload()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:reply/0" data-no-tooltip="" translate="no">reply()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:socket_ref/0" data-no-tooltip="" translate="no">socket_ref()</a>
+
+      </div>
+
+    </div>
+
+</div>
+<div class="summary-callbacks summary">
+  <h2>
+    <a href="#callbacks">Callbacks</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_call/3" data-no-tooltip="" translate="no">handle_call(msg, from, socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Handle regular GenServer call messages.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_cast/2" data-no-tooltip="" translate="no">handle_cast(msg, socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Handle regular GenServer cast messages.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_in/3" data-no-tooltip="" translate="no">handle_in(event, payload, socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Handle incoming <code class="inline">event</code>s.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_info/2" data-no-tooltip="" translate="no">handle_info(msg, socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Handle regular Elixir process messages.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_out/3" data-no-tooltip="" translate="no">handle_out(event, payload, socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Intercepts outgoing <code class="inline">event</code>s.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:join/3" data-no-tooltip="" translate="no">join(topic, payload, socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Handle channel joins by <code class="inline">topic</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:terminate/2" data-no-tooltip="" translate="no">terminate(reason, t)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Invoked when the channel process is about to exit.</p></div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#broadcast/3" data-no-tooltip="" translate="no">broadcast(socket, event, message)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Broadcast an event to all subscribers of the socket topic.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#broadcast!/3" data-no-tooltip="" translate="no">broadcast!(socket, event, message)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Same as <a href="#broadcast/3"><code class="inline">broadcast/3</code></a>, but raises if broadcast fails.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#broadcast_from/3" data-no-tooltip="" translate="no">broadcast_from(socket, event, message)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Broadcast event from pid to all subscribers of the socket topic.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#broadcast_from!/3" data-no-tooltip="" translate="no">broadcast_from!(socket, event, message)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Same as <a href="#broadcast_from/3"><code class="inline">broadcast_from/3</code></a>, but raises if broadcast fails.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#intercept/1" data-no-tooltip="" translate="no">intercept(events)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Defines which Channel events to intercept for <code class="inline">handle_out/3</code> callbacks.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#push/3" data-no-tooltip="" translate="no">push(socket, event, message)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Sends an event directly to the connected client without requiring a prior
+message from the client.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#reply/2" data-no-tooltip="" translate="no">reply(socket_ref, status)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Replies asynchronously to a socket push.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#socket_ref/1" data-no-tooltip="" translate="no">socket_ref(socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Generates a <code class="inline">socket_ref</code> for an async reply.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+    <div class="types-list">
+<section class="detail" id="t:payload/0">
+
+  <div class="detail-header">
+    <a href="#t:payload/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">payload()</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L352" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> payload() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>() | <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>() | {:binary, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:reply/0">
+
+  <div class="detail-header">
+    <a href="#t:reply/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">reply()</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L353" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> reply() :: status :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>() | {status :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), response :: <a href="#t:payload/0">payload</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:socket_ref/0">
+
+  <div class="detail-header">
+    <a href="#t:socket_ref/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">socket_ref()</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L354" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> socket_ref() ::
+  {transport_pid :: Pid, serializer :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), topic :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(),
+   ref :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), join_ref :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="callbacks" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#callbacks">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Callbacks</span>
+    </h1>
+    <div class="callbacks-list">
+<section class="detail" id="c:handle_call/3">
+
+  <div class="detail-header">
+    <a href="#c:handle_call/3" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_call(msg, from, socket)</h1>
+
+        <span class="note">(optional)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L424" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_call(
+  msg :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  from :: {<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(), tag :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()},
+  socket :: <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()
+) ::
+  {:reply, response :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()}
+  | {:noreply, <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()}
+  | {:stop, reason :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()}</pre>
+
+      </div>
+
+<p>Handle regular GenServer call messages.</p><p>See <a href="https://hexdocs.pm/elixir/GenServer.html#c:handle_call/3"><code class="inline">GenServer.handle_call/3</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="c:handle_cast/2">
+
+  <div class="detail-header">
+    <a href="#c:handle_cast/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_cast(msg, socket)</h1>
+
+        <span class="note">(optional)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L434" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_cast(msg :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), socket :: <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()) ::
+  {:noreply, <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()} | {:stop, reason :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()}</pre>
+
+      </div>
+
+<p>Handle regular GenServer cast messages.</p><p>See <a href="https://hexdocs.pm/elixir/GenServer.html#c:handle_cast/2"><code class="inline">GenServer.handle_cast/2</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="c:handle_in/3">
+
+  <div class="detail-header">
+    <a href="#c:handle_in/3" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_in(event, payload, socket)</h1>
+
+        <span class="note">(optional)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L393" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_in(
+  event :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  payload :: <a href="#t:payload/0">payload</a>(),
+  socket :: <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()
+) ::
+  {:noreply, <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()}
+  | {:noreply, <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">timeout</a>() | :hibernate}
+  | {:reply, <a href="#t:reply/0">reply</a>(), <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()}
+  | {:stop, reason :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()}
+  | {:stop, reason :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), <a href="#t:reply/0">reply</a>(), <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()}</pre>
+
+      </div>
+
+<p>Handle incoming <code class="inline">event</code>s.</p><p>Payloads are serialized before sending with the configured serializer.</p><h2 id="c:handle_in/3-example" class="section-heading">
+  <a href="#c:handle_in/3-example" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Example</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">handle_in</span><span class="p" data-group-id="6035486069-1">(</span><span class="s">&quot;ping&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="6035486069-1">)</span><span class="w"> </span><span class="k" data-group-id="6035486069-2">do</span><span class="w">
+  </span><span class="p" data-group-id="6035486069-3">{</span><span class="ss">:reply</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6035486069-4">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="p" data-group-id="6035486069-4">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="6035486069-3">}</span><span class="w">
+</span><span class="k" data-group-id="6035486069-2">end</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="c:handle_info/2">
+
+  <div class="detail-header">
+    <a href="#c:handle_info/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_info(msg, socket)</h1>
+
+        <span class="note">(optional)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L415" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_info(msg :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), socket :: <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()) ::
+  {:noreply, <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()} | {:stop, reason :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()}</pre>
+
+      </div>
+
+<p>Handle regular Elixir process messages.</p><p>See <a href="https://hexdocs.pm/elixir/GenServer.html#c:handle_info/2"><code class="inline">GenServer.handle_info/2</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="c:handle_out/3">
+
+  <div class="detail-header">
+    <a href="#c:handle_out/3" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_out(event, payload, socket)</h1>
+
+        <span class="note">(optional)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L405" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_out(
+  event :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  payload :: <a href="#t:payload/0">payload</a>(),
+  socket :: <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()
+) ::
+  {:noreply, <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()}
+  | {:noreply, <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">timeout</a>() | :hibernate}
+  | {:stop, reason :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()}</pre>
+
+      </div>
+
+<p>Intercepts outgoing <code class="inline">event</code>s.</p><p>See <a href="#intercept/1"><code class="inline">intercept/1</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="c:join/3">
+
+  <div class="detail-header">
+    <a href="#c:join/3" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">join(topic, payload, socket)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L377" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> join(topic :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), payload :: <a href="#t:payload/0">payload</a>(), socket :: <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()) ::
+  {:ok, <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()}
+  | {:ok, reply :: <a href="#t:payload/0">payload</a>(), <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()}
+  | {:error, reason :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()}</pre>
+
+      </div>
+
+<p>Handle channel joins by <code class="inline">topic</code>.</p><p>To authorize a socket, return <code class="inline">{:ok, socket}</code> or <code class="inline">{:ok, reply, socket}</code>. To
+refuse authorization, return <code class="inline">{:error, reason}</code>.</p><p>Payloads are serialized before sending with the configured serializer.</p><h2 id="c:join/3-example" class="section-heading">
+  <a href="#c:join/3-example" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Example</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">join</span><span class="p" data-group-id="8106325915-1">(</span><span class="s">&quot;room:lobby&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="8106325915-1">)</span><span class="w"> </span><span class="k" data-group-id="8106325915-2">do</span><span class="w">
+  </span><span class="k">if</span><span class="w"> </span><span class="n">authorized?</span><span class="p" data-group-id="8106325915-3">(</span><span class="n">payload</span><span class="p" data-group-id="8106325915-3">)</span><span class="w"> </span><span class="k" data-group-id="8106325915-4">do</span><span class="w">
+    </span><span class="p" data-group-id="8106325915-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="8106325915-5">}</span><span class="w">
+  </span><span class="k" data-group-id="8106325915-4">else</span><span class="w">
+    </span><span class="p" data-group-id="8106325915-6">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8106325915-7">%{</span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;unauthorized&quot;</span><span class="p" data-group-id="8106325915-7">}</span><span class="p" data-group-id="8106325915-6">}</span><span class="w">
+  </span><span class="k" data-group-id="8106325915-4">end</span><span class="w">
+</span><span class="k" data-group-id="8106325915-2">end</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="c:terminate/2">
+
+  <div class="detail-header">
+    <a href="#c:terminate/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">terminate(reason, t)</h1>
+
+        <span class="note">(optional)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L449" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> terminate(
+  reason :: :normal | :shutdown | {:shutdown, :left | :closed | <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()},
+  <a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()
+) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()</pre>
+
+      </div>
+
+<p>Invoked when the channel process is about to exit.</p><p>See <a href="https://hexdocs.pm/elixir/GenServer.html#c:terminate/2"><code class="inline">GenServer.terminate/2</code></a>.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="broadcast/3">
+
+  <div class="detail-header">
+    <a href="#broadcast/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">broadcast(socket, event, message)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L572" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Broadcast an event to all subscribers of the socket topic.</p><p>The event's message must be a serializable map or a tagged <code class="inline">{:binary, data}</code>
+tuple where <code class="inline">data</code> is binary data.</p><h2 id="broadcast/3-examples" class="section-heading">
+  <a href="#broadcast/3-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">broadcast</span><span class="p" data-group-id="5111474307-1">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_message&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5111474307-2">%{</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">content</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p" data-group-id="5111474307-2">}</span><span class="p" data-group-id="5111474307-1">)</span><span class="w">
+</span><span class="ss">:ok</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">broadcast</span><span class="p" data-group-id="5111474307-3">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_message&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5111474307-4">{</span><span class="ss">:binary</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p" data-group-id="5111474307-4">}</span><span class="p" data-group-id="5111474307-3">)</span><span class="w">
+</span><span class="ss">:ok</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="broadcast!/3">
+
+  <div class="detail-header">
+    <a href="#broadcast!/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">broadcast!(socket, event, message)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L580" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Same as <a href="#broadcast/3"><code class="inline">broadcast/3</code></a>, but raises if broadcast fails.</p>
+  </section>
+</section>
+<section class="detail" id="broadcast_from/3">
+
+  <div class="detail-header">
+    <a href="#broadcast_from/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">broadcast_from(socket, event, message)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L601" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Broadcast event from pid to all subscribers of the socket topic.</p><p>The channel that owns the socket will not receive the published
+message. The event's message must be a serializable map or a tagged
+<code class="inline">{:binary, data}</code> tuple where <code class="inline">data</code> is binary data.</p><h2 id="broadcast_from/3-examples" class="section-heading">
+  <a href="#broadcast_from/3-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">broadcast_from</span><span class="p" data-group-id="9012836638-1">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_message&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9012836638-2">%{</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">content</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p" data-group-id="9012836638-2">}</span><span class="p" data-group-id="9012836638-1">)</span><span class="w">
+</span><span class="ss">:ok</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">broadcast_from</span><span class="p" data-group-id="9012836638-3">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_message&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9012836638-4">{</span><span class="ss">:binary</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p" data-group-id="9012836638-4">}</span><span class="p" data-group-id="9012836638-3">)</span><span class="w">
+</span><span class="ss">:ok</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="broadcast_from!/3">
+
+  <div class="detail-header">
+    <a href="#broadcast_from!/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">broadcast_from!(socket, event, message)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L611" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Same as <a href="#broadcast_from/3"><code class="inline">broadcast_from/3</code></a>, but raises if broadcast fails.</p>
+  </section>
+</section>
+<section class="detail" id="intercept/1">
+
+  <div class="detail-header">
+    <a href="#intercept/1" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">intercept(events)</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L535" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Defines which Channel events to intercept for <code class="inline">handle_out/3</code> callbacks.</p><p>By default, broadcasted events are pushed directly to the client, but
+intercepting events gives your channel a chance to customize the event
+for the client to append extra information or filter the message from being
+delivered.</p><p><em>Note</em>: intercepting events can introduce significantly more overhead if a
+large number of subscribers must customize a message since the broadcast will
+be encoded N times instead of a single shared encoding across all subscribers.</p><h2 id="intercept/1-examples" class="section-heading">
+  <a href="#intercept/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="n">intercept</span><span class="w"> </span><span class="p" data-group-id="9835733589-1">[</span><span class="s">&quot;new_msg&quot;</span><span class="p" data-group-id="9835733589-1">]</span><span class="w">
+
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_out</span><span class="p" data-group-id="9835733589-2">(</span><span class="s">&quot;new_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="9835733589-2">)</span><span class="w"> </span><span class="k" data-group-id="9835733589-3">do</span><span class="w">
+  </span><span class="n">push</span><span class="p" data-group-id="9835733589-4">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">Map</span><span class="o">.</span><span class="n">merge</span><span class="p" data-group-id="9835733589-5">(</span><span class="n">payload</span><span class="p">,</span><span class="w">
+    </span><span class="ss">is_editable</span><span class="p">:</span><span class="w"> </span><span class="nc">User</span><span class="o">.</span><span class="n">can_edit_message?</span><span class="p" data-group-id="9835733589-6">(</span><span class="n">socket</span><span class="o">.</span><span class="n">assigns</span><span class="p" data-group-id="9835733589-7">[</span><span class="ss">:user</span><span class="p" data-group-id="9835733589-7">]</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="p" data-group-id="9835733589-6">)</span><span class="w">
+  </span><span class="p" data-group-id="9835733589-5">)</span><span class="p" data-group-id="9835733589-4">)</span><span class="w">
+  </span><span class="p" data-group-id="9835733589-8">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="9835733589-8">}</span><span class="w">
+</span><span class="k" data-group-id="9835733589-3">end</span></code></pre><p><code class="inline">handle_out/3</code> callbacks must return one of:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="8395908166-1">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="nc">Socket</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="8395908166-1">}</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span><span class="p" data-group-id="8395908166-2">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="nc">Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">timeout</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="ss">:hibernate</span><span class="p" data-group-id="8395908166-2">}</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span><span class="p" data-group-id="8395908166-3">{</span><span class="ss">:stop</span><span class="p">,</span><span class="w"> </span><span class="n">reason</span><span class="w"> </span><span class="o">::</span><span class="w"> </span><span class="n">term</span><span class="p">,</span><span class="w"> </span><span class="nc">Socket</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="8395908166-3">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="push/3">
+
+  <div class="detail-header">
+    <a href="#push/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">push(socket, event, message)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L641" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Sends an event directly to the connected client without requiring a prior
+message from the client.</p><p>The event's message must be a serializable map or a tagged <code class="inline">{:binary, data}</code>
+tuple where <code class="inline">data</code> is binary data.</p><p>Note that unlike some in client libraries, this server-side <a href="#push/3"><code class="inline">push/3</code></a> does not
+return a reference. If you need to get a reply from the client and to
+correlate that reply with the message you pushed, you'll need to include a
+unique identifier in the message, track it in the Channel's state, have the
+client include it in its reply, and examine the ref when the reply comes to
+<code class="inline">handle_in/3</code>.</p><h2 id="push/3-examples" class="section-heading">
+  <a href="#push/3-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">push</span><span class="p" data-group-id="8314064621-1">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_message&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8314064621-2">%{</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">content</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p" data-group-id="8314064621-2">}</span><span class="p" data-group-id="8314064621-1">)</span><span class="w">
+</span><span class="ss">:ok</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">push</span><span class="p" data-group-id="8314064621-3">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_message&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8314064621-4">{</span><span class="ss">:binary</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p" data-group-id="8314064621-4">}</span><span class="p" data-group-id="8314064621-3">)</span><span class="w">
+</span><span class="ss">:ok</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="reply/2">
+
+  <div class="detail-header">
+    <a href="#reply/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">reply(socket_ref, status)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L687" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> reply(<a href="#t:socket_ref/0">socket_ref</a>(), <a href="#t:reply/0">reply</a>()) :: :ok</pre>
+
+      </div>
+
+<p>Replies asynchronously to a socket push.</p><p>The usual way of replying to a client's message is to return a tuple from <code class="inline">handle_in/3</code>
+like:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="4636990754-1">{</span><span class="ss">:reply</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4636990754-2">{</span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="p" data-group-id="4636990754-2">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="4636990754-1">}</span></code></pre><p>But sometimes you need to reply to a push asynchronously - that is, after
+your <code class="inline">handle_in/3</code> callback completes. For example, you might need to perform
+work in another process and reply when it's finished.</p><p>You can do this by generating a reference to the socket with <a href="#socket_ref/1"><code class="inline">socket_ref/1</code></a>
+and calling <a href="#reply/2"><code class="inline">reply/2</code></a> with that ref when you're ready to reply.</p><p><em>Note</em>: A <code class="inline">socket_ref</code> is required so the <code class="inline">socket</code> itself is not leaked
+outside the channel. The <code class="inline">socket</code> holds information such as assigns and
+transport configuration, so it's important to not copy this information
+outside of the channel that owns it.</p><p>Technically, <a href="#reply/2"><code class="inline">reply/2</code></a> will allow you to reply multiple times to the same
+client message, and each reply will include the client message <code class="inline">ref</code>. But the
+client may expect only one reply; in that case, <a href="#push/3"><code class="inline">push/3</code></a> would be preferable
+for the additional messages.</p><p>Payloads are serialized before sending with the configured serializer.</p><h2 id="reply/2-examples" class="section-heading">
+  <a href="#reply/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">handle_in</span><span class="p" data-group-id="1130020163-1">(</span><span class="s">&quot;work&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="1130020163-1">)</span><span class="w"> </span><span class="k" data-group-id="1130020163-2">do</span><span class="w">
+  </span><span class="nc">Worker</span><span class="o">.</span><span class="n">perform</span><span class="p" data-group-id="1130020163-3">(</span><span class="n">payload</span><span class="p">,</span><span class="w"> </span><span class="n">socket_ref</span><span class="p" data-group-id="1130020163-4">(</span><span class="n">socket</span><span class="p" data-group-id="1130020163-4">)</span><span class="p" data-group-id="1130020163-3">)</span><span class="w">
+  </span><span class="p" data-group-id="1130020163-5">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="1130020163-5">}</span><span class="w">
+</span><span class="k" data-group-id="1130020163-2">end</span><span class="w">
+
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_info</span><span class="p" data-group-id="1130020163-6">(</span><span class="p" data-group-id="1130020163-7">{</span><span class="ss">:work_complete</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">ref</span><span class="p" data-group-id="1130020163-7">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="1130020163-6">)</span><span class="w"> </span><span class="k" data-group-id="1130020163-8">do</span><span class="w">
+  </span><span class="n">reply</span><span class="p" data-group-id="1130020163-9">(</span><span class="n">ref</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1130020163-10">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p" data-group-id="1130020163-10">}</span><span class="p" data-group-id="1130020163-9">)</span><span class="w">
+  </span><span class="p" data-group-id="1130020163-11">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="1130020163-11">}</span><span class="w">
+</span><span class="k" data-group-id="1130020163-8">end</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="socket_ref/1">
+
+  <div class="detail-header">
+    <a href="#socket_ref/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">socket_ref(socket)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/channel.ex#L701" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> socket_ref(<a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()) :: <a href="#t:socket_ref/0">socket_ref</a>()</pre>
+
+      </div>
+
+<p>Generates a <code class="inline">socket_ref</code> for an async reply.</p><p>See <a href="#reply/2"><code class="inline">reply/2</code></a> for example usage.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/phoenix/1.7.23" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/phoenix/1.7.23">Hex Preview</a>
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="Phoenix.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.37.2) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

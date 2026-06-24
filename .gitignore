@@ -1,0 +1,74 @@
+## Node / package artifacts
+node_modules/
+bun.lockb
+## Node / package artifacts
+node_modules/
+bun.lockb
+package-lock.json
+yarn.lock
+
+
+
+## Environment and secrets
+.env
+.env.*
+.secrets
+credentials.json
+
+## Local IDE / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+## Build / runtime artifacts
+dist/
+build/
+out/
+tmp/
+coverage/
+.nyc_output/
+
+## Uploaded files, local data and caches
+public/uploads/
+public/dist/
+file_stats.json
+backup.txt
+/data
+
+## Logs and archives
+*.log
+*.log.*
+*.7z
+*.zip
+*.tar.gz
+
+## Keys, certs and cloud credentials
+*.pem
+*.key
+*.crt
+*.p12
+.cloudflared/
+Caddyfile.local
+Caddyfile.*.local
+cloudflared-setup.md
+data/admin_keys/
+
+## Database files
+*.sqlite
+*.db
+
+## OS specific
+ehthumbs.db
+Icon
+
+## Misc scripts / debug outputs
+commands.txt
+scripts/debug_search.js
+
+üMarkdown/
+
+
+
+
+

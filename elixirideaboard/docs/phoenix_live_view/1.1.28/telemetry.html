@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix LiveView v1.1.28">
+
+
+    <title>Telemetry — Phoenix LiveView v1.1.28</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-B046587D.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="http://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix LiveView
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.1.28
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix LiveView</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Telemetry</h1>
+
+<a href="telemetry.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+      <a href="https://github.com/phoenixframework/phoenix_live_view/blob/v1.1.28/guides/server/telemetry.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p>LiveView currently exposes the following <a href="https://hexdocs.pm/telemetry"><code class="inline">telemetry</code></a> events:</p><ul><li><p><code class="inline">[:phoenix, :live_view, :mount, :start]</code> - Dispatched by a <a href="Phoenix.LiveView.html"><code class="inline">Phoenix.LiveView</code></a>
+immediately before <a href="Phoenix.LiveView.html#c:mount/3"><code class="inline">mount/3</code></a> is invoked.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="7984674868-1">%{</span><span class="ss">system_time</span><span class="p">:</span><span class="w"> </span><span class="nc">System</span><span class="o">.</span><span class="n">monotonic_time</span><span class="p" data-group-id="7984674868-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="5942089676-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">params</span><span class="p">:</span><span class="w"> </span><span class="n">unsigned_params</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="ss">:not_mounted_at_router</span><span class="p">,</span><span class="w">
+  </span><span class="ss">session</span><span class="p">:</span><span class="w"> </span><span class="n">map</span><span class="p">,</span><span class="w">
+  </span><span class="ss">uri</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="5942089676-2">(</span><span class="p" data-group-id="5942089676-2">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">nil</span><span class="w">
+</span><span class="p" data-group-id="5942089676-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_view, :mount, :stop]</code> - Dispatched by a <a href="Phoenix.LiveView.html"><code class="inline">Phoenix.LiveView</code></a>
+when the <a href="Phoenix.LiveView.html#c:mount/3"><code class="inline">mount/3</code></a> callback completes successfully.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="2466332410-1">%{</span><span class="ss">duration</span><span class="p">:</span><span class="w"> </span><span class="n">native_time</span><span class="p" data-group-id="2466332410-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="8934500183-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">params</span><span class="p">:</span><span class="w"> </span><span class="n">unsigned_params</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="ss">:not_mounted_at_router</span><span class="p">,</span><span class="w">
+  </span><span class="ss">session</span><span class="p">:</span><span class="w"> </span><span class="n">map</span><span class="p">,</span><span class="w">
+  </span><span class="ss">uri</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="8934500183-2">(</span><span class="p" data-group-id="8934500183-2">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">nil</span><span class="w">
+</span><span class="p" data-group-id="8934500183-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_view, :mount, :exception]</code> - Dispatched by a <a href="Phoenix.LiveView.html"><code class="inline">Phoenix.LiveView</code></a>
+when an exception is raised in the <a href="Phoenix.LiveView.html#c:mount/3"><code class="inline">mount/3</code></a> callback.</p><ul><li><p>Measurement: <code class="inline">%{duration: native_time}</code></p></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="2994716989-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">kind</span><span class="p">:</span><span class="w"> </span><span class="n">atom</span><span class="p">,</span><span class="w">
+  </span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="n">term</span><span class="p">,</span><span class="w">
+  </span><span class="ss">params</span><span class="p">:</span><span class="w"> </span><span class="n">unsigned_params</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="ss">:not_mounted_at_router</span><span class="p">,</span><span class="w">
+  </span><span class="ss">session</span><span class="p">:</span><span class="w"> </span><span class="n">map</span><span class="p">,</span><span class="w">
+  </span><span class="ss">uri</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="2994716989-2">(</span><span class="p" data-group-id="2994716989-2">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">nil</span><span class="w">
+</span><span class="p" data-group-id="2994716989-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_view, :handle_params, :start]</code> - Dispatched by a <a href="Phoenix.LiveView.html"><code class="inline">Phoenix.LiveView</code></a>
+immediately before <a href="Phoenix.LiveView.html#c:handle_params/3"><code class="inline">handle_params/3</code></a> is invoked.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="9904822580-1">%{</span><span class="ss">system_time</span><span class="p">:</span><span class="w"> </span><span class="nc">System</span><span class="o">.</span><span class="n">monotonic_time</span><span class="p" data-group-id="9904822580-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="0874199023-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">params</span><span class="p">:</span><span class="w"> </span><span class="n">unsigned_params</span><span class="p">,</span><span class="w">
+  </span><span class="ss">uri</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="0874199023-2">(</span><span class="p" data-group-id="0874199023-2">)</span><span class="w">
+</span><span class="p" data-group-id="0874199023-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_view, :handle_params, :stop]</code> - Dispatched by a <a href="Phoenix.LiveView.html"><code class="inline">Phoenix.LiveView</code></a>
+when the <a href="Phoenix.LiveView.html#c:handle_params/3"><code class="inline">handle_params/3</code></a> callback completes successfully.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="8522130993-1">%{</span><span class="ss">duration</span><span class="p">:</span><span class="w"> </span><span class="n">native_time</span><span class="p" data-group-id="8522130993-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="4753718977-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">params</span><span class="p">:</span><span class="w"> </span><span class="n">unsigned_params</span><span class="p">,</span><span class="w">
+  </span><span class="ss">uri</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="4753718977-2">(</span><span class="p" data-group-id="4753718977-2">)</span><span class="w">
+</span><span class="p" data-group-id="4753718977-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_view, :handle_params, :exception]</code> - Dispatched by a <a href="Phoenix.LiveView.html"><code class="inline">Phoenix.LiveView</code></a>
+when an exception is raised in the <a href="Phoenix.LiveView.html#c:handle_params/3"><code class="inline">handle_params/3</code></a> callback.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="5351665353-1">%{</span><span class="ss">duration</span><span class="p">:</span><span class="w"> </span><span class="n">native_time</span><span class="p" data-group-id="5351665353-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="3032001472-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">kind</span><span class="p">:</span><span class="w"> </span><span class="n">atom</span><span class="p">,</span><span class="w">
+  </span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="n">term</span><span class="p">,</span><span class="w">
+  </span><span class="ss">params</span><span class="p">:</span><span class="w"> </span><span class="n">unsigned_params</span><span class="p">,</span><span class="w">
+  </span><span class="ss">uri</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="3032001472-2">(</span><span class="p" data-group-id="3032001472-2">)</span><span class="w">
+</span><span class="p" data-group-id="3032001472-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_view, :handle_event, :start]</code> - Dispatched by a <a href="Phoenix.LiveView.html"><code class="inline">Phoenix.LiveView</code></a>
+immediately before <a href="Phoenix.LiveView.html#c:handle_event/3"><code class="inline">handle_event/3</code></a> is invoked.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="9102717219-1">%{</span><span class="ss">system_time</span><span class="p">:</span><span class="w"> </span><span class="nc">System</span><span class="o">.</span><span class="n">monotonic_time</span><span class="p" data-group-id="9102717219-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="4421141040-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">event</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="4421141040-2">(</span><span class="p" data-group-id="4421141040-2">)</span><span class="p">,</span><span class="w">
+  </span><span class="ss">params</span><span class="p">:</span><span class="w"> </span><span class="n">unsigned_params</span><span class="w">
+</span><span class="p" data-group-id="4421141040-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_view, :handle_event, :stop]</code> - Dispatched by a <a href="Phoenix.LiveView.html"><code class="inline">Phoenix.LiveView</code></a>
+when the <a href="Phoenix.LiveView.html#c:handle_event/3"><code class="inline">handle_event/3</code></a> callback completes successfully.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="2096125180-1">%{</span><span class="ss">duration</span><span class="p">:</span><span class="w"> </span><span class="n">native_time</span><span class="p" data-group-id="2096125180-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="0450941321-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">event</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="0450941321-2">(</span><span class="p" data-group-id="0450941321-2">)</span><span class="p">,</span><span class="w">
+  </span><span class="ss">params</span><span class="p">:</span><span class="w"> </span><span class="n">unsigned_params</span><span class="w">
+</span><span class="p" data-group-id="0450941321-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_view, :handle_event, :exception]</code> - Dispatched by a <a href="Phoenix.LiveView.html"><code class="inline">Phoenix.LiveView</code></a>
+when an exception is raised in the <a href="Phoenix.LiveView.html#c:handle_event/3"><code class="inline">handle_event/3</code></a> callback.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="6866581153-1">%{</span><span class="ss">duration</span><span class="p">:</span><span class="w"> </span><span class="n">native_time</span><span class="p" data-group-id="6866581153-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="5843145152-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">kind</span><span class="p">:</span><span class="w"> </span><span class="n">atom</span><span class="p">,</span><span class="w">
+  </span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="n">term</span><span class="p">,</span><span class="w">
+  </span><span class="ss">event</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="5843145152-2">(</span><span class="p" data-group-id="5843145152-2">)</span><span class="p">,</span><span class="w">
+  </span><span class="ss">params</span><span class="p">:</span><span class="w"> </span><span class="n">unsigned_params</span><span class="w">
+</span><span class="p" data-group-id="5843145152-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_view, :render, :start]</code> - Dispatched by a <a href="Phoenix.LiveView.html"><code class="inline">Phoenix.LiveView</code></a>
+immediately before <a href="Phoenix.LiveComponent.html#c:render/1"><code class="inline">render/1</code></a> is invoked.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="1774643375-1">%{</span><span class="ss">system_time</span><span class="p">:</span><span class="w"> </span><span class="nc">System</span><span class="o">.</span><span class="n">monotonic_time</span><span class="p" data-group-id="1774643375-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="5567803655-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">force?</span><span class="p">:</span><span class="w"> </span><span class="n">boolean</span><span class="p">,</span><span class="w">
+  </span><span class="ss">changed?</span><span class="p">:</span><span class="w"> </span><span class="n">boolean</span><span class="w">
+</span><span class="p" data-group-id="5567803655-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_view, :render, :stop]</code> - Dispatched by a <a href="Phoenix.LiveView.html"><code class="inline">Phoenix.LiveView</code></a>
+when the <a href="Phoenix.LiveView.html#c:render/1"><code class="inline">render/1</code></a> callback completes successfully.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="1839564988-1">%{</span><span class="ss">duration</span><span class="p">:</span><span class="w"> </span><span class="n">native_time</span><span class="p" data-group-id="1839564988-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="0355802796-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">force?</span><span class="p">:</span><span class="w"> </span><span class="n">boolean</span><span class="p">,</span><span class="w">
+  </span><span class="ss">changed?</span><span class="p">:</span><span class="w"> </span><span class="n">boolean</span><span class="w">
+</span><span class="p" data-group-id="0355802796-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_view, :render, :exception]</code> - Dispatched by a <a href="Phoenix.LiveView.html"><code class="inline">Phoenix.LiveView</code></a>
+when an exception is raised in the <a href="Phoenix.LiveView.html#c:render/1"><code class="inline">render/1</code></a> callback.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="3861340450-1">%{</span><span class="ss">duration</span><span class="p">:</span><span class="w"> </span><span class="n">native_time</span><span class="p" data-group-id="3861340450-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="3520863700-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">kind</span><span class="p">:</span><span class="w"> </span><span class="n">atom</span><span class="p">,</span><span class="w">
+  </span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="n">term</span><span class="p">,</span><span class="w">
+  </span><span class="ss">force?</span><span class="p">:</span><span class="w"> </span><span class="n">boolean</span><span class="p">,</span><span class="w">
+  </span><span class="ss">changed?</span><span class="p">:</span><span class="w"> </span><span class="n">boolean</span><span class="w">
+</span><span class="p" data-group-id="3520863700-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_component, :update, :start]</code> - Dispatched by a <a href="Phoenix.LiveComponent.html"><code class="inline">Phoenix.LiveComponent</code></a>
+immediately before <a href="Phoenix.LiveComponent.html#c:update/2"><code class="inline">update/2</code></a> or a
+<a href="Phoenix.LiveComponent.html#c:update_many/1"><code class="inline">update_many/1</code></a> is invoked.</p><p>In the case of<a href="Phoenix.LiveComponent.html#c:update/2"><code class="inline">update/2</code></a> it might dispatch one event
+for multiple calls.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="8031490250-1">%{</span><span class="ss">system_time</span><span class="p">:</span><span class="w"> </span><span class="nc">System</span><span class="o">.</span><span class="n">monotonic_time</span><span class="p" data-group-id="8031490250-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="7077046084-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">component</span><span class="p">:</span><span class="w"> </span><span class="n">atom</span><span class="p">,</span><span class="w">
+  </span><span class="ss">assigns_sockets</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="7077046084-2">[</span><span class="p" data-group-id="7077046084-3">{</span><span class="n">map</span><span class="p" data-group-id="7077046084-4">(</span><span class="p" data-group-id="7077046084-4">)</span><span class="p">,</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="7077046084-3">}</span><span class="p" data-group-id="7077046084-2">]</span><span class="w">
+</span><span class="p" data-group-id="7077046084-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_component, :update, :stop]</code> - Dispatched by a <a href="Phoenix.LiveComponent.html"><code class="inline">Phoenix.LiveComponent</code></a>
+when the <a href="Phoenix.LiveComponent.html#c:update/2"><code class="inline">update/2</code></a> or a
+<a href="Phoenix.LiveComponent.html#c:update_many/1"><code class="inline">update_many/1</code></a> callback completes successfully.</p><p>In the case of<a href="Phoenix.LiveComponent.html#c:update/2"><code class="inline">update/2</code></a> it might dispatch one event
+for multiple calls. The <code class="inline">sockets</code> metadata contain the updated sockets.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="1578690428-1">%{</span><span class="ss">duration</span><span class="p">:</span><span class="w"> </span><span class="n">native_time</span><span class="p" data-group-id="1578690428-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="3942025526-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">component</span><span class="p">:</span><span class="w"> </span><span class="n">atom</span><span class="p">,</span><span class="w">
+  </span><span class="ss">assigns_sockets</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3942025526-2">[</span><span class="p" data-group-id="3942025526-3">{</span><span class="n">map</span><span class="p" data-group-id="3942025526-4">(</span><span class="p" data-group-id="3942025526-4">)</span><span class="p">,</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="3942025526-3">}</span><span class="p" data-group-id="3942025526-2">]</span><span class="p">,</span><span class="w">
+  </span><span class="ss">sockets</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3942025526-5">[</span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="3942025526-5">]</span><span class="w">
+</span><span class="p" data-group-id="3942025526-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_component, :update, :exception]</code> - Dispatched by a <a href="Phoenix.LiveComponent.html"><code class="inline">Phoenix.LiveComponent</code></a>
+when an exception is raised in the <a href="Phoenix.LiveComponent.html#c:update/2"><code class="inline">update/2</code></a> or a
+<a href="Phoenix.LiveComponent.html#c:update_many/1"><code class="inline">update_many/1</code></a> callback.</p><p>In the case of<a href="Phoenix.LiveComponent.html#c:update/2"><code class="inline">update/2</code></a> it might dispatch one event
+for multiple calls.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="5892561990-1">%{</span><span class="ss">duration</span><span class="p">:</span><span class="w"> </span><span class="n">native_time</span><span class="p" data-group-id="5892561990-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="0765160485-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">kind</span><span class="p">:</span><span class="w"> </span><span class="n">atom</span><span class="p">,</span><span class="w">
+  </span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="n">term</span><span class="p">,</span><span class="w">
+  </span><span class="ss">component</span><span class="p">:</span><span class="w"> </span><span class="n">atom</span><span class="p">,</span><span class="w">
+  </span><span class="ss">assigns_sockets</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0765160485-2">[</span><span class="p" data-group-id="0765160485-3">{</span><span class="n">map</span><span class="p" data-group-id="0765160485-4">(</span><span class="p" data-group-id="0765160485-4">)</span><span class="p">,</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="0765160485-3">}</span><span class="p" data-group-id="0765160485-2">]</span><span class="w">
+</span><span class="p" data-group-id="0765160485-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_component, :handle_event, :start]</code> - Dispatched by a <a href="Phoenix.LiveComponent.html"><code class="inline">Phoenix.LiveComponent</code></a>
+immediately before <a href="Phoenix.LiveComponent.html#c:handle_event/3"><code class="inline">handle_event/3</code></a> is invoked.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="8140925447-1">%{</span><span class="ss">system_time</span><span class="p">:</span><span class="w"> </span><span class="nc">System</span><span class="o">.</span><span class="n">monotonic_time</span><span class="p" data-group-id="8140925447-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="4363654541-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">component</span><span class="p">:</span><span class="w"> </span><span class="n">atom</span><span class="p">,</span><span class="w">
+  </span><span class="ss">event</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="4363654541-2">(</span><span class="p" data-group-id="4363654541-2">)</span><span class="p">,</span><span class="w">
+  </span><span class="ss">params</span><span class="p">:</span><span class="w"> </span><span class="n">unsigned_params</span><span class="w">
+</span><span class="p" data-group-id="4363654541-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_component, :handle_event, :stop]</code> - Dispatched by a <a href="Phoenix.LiveComponent.html"><code class="inline">Phoenix.LiveComponent</code></a>
+when the <a href="Phoenix.LiveComponent.html#c:handle_event/3"><code class="inline">handle_event/3</code></a> callback completes successfully.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="8867767799-1">%{</span><span class="ss">duration</span><span class="p">:</span><span class="w"> </span><span class="n">native_time</span><span class="p" data-group-id="8867767799-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="9093594738-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">component</span><span class="p">:</span><span class="w"> </span><span class="n">atom</span><span class="p">,</span><span class="w">
+  </span><span class="ss">event</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="9093594738-2">(</span><span class="p" data-group-id="9093594738-2">)</span><span class="p">,</span><span class="w">
+  </span><span class="ss">params</span><span class="p">:</span><span class="w"> </span><span class="n">unsigned_params</span><span class="w">
+</span><span class="p" data-group-id="9093594738-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_component, :handle_event, :exception]</code> - Dispatched by a <a href="Phoenix.LiveComponent.html"><code class="inline">Phoenix.LiveComponent</code></a>
+when an exception is raised in the <a href="Phoenix.LiveComponent.html#c:handle_event/3"><code class="inline">handle_event/3</code></a> callback.</p><ul><li><p>Measurement:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="8811256753-1">%{</span><span class="ss">duration</span><span class="p">:</span><span class="w"> </span><span class="n">native_time</span><span class="p" data-group-id="8811256753-1">}</span></code></pre></li><li><p>Metadata:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="7764194702-1">%{</span><span class="w">
+  </span><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+  </span><span class="ss">kind</span><span class="p">:</span><span class="w"> </span><span class="n">atom</span><span class="p">,</span><span class="w">
+  </span><span class="ss">reason</span><span class="p">:</span><span class="w"> </span><span class="n">term</span><span class="p">,</span><span class="w">
+  </span><span class="ss">component</span><span class="p">:</span><span class="w"> </span><span class="n">atom</span><span class="p">,</span><span class="w">
+  </span><span class="ss">event</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="7764194702-2">(</span><span class="p" data-group-id="7764194702-2">)</span><span class="p">,</span><span class="w">
+  </span><span class="ss">params</span><span class="p">:</span><span class="w"> </span><span class="n">unsigned_params</span><span class="w">
+</span><span class="p" data-group-id="7764194702-1">}</span></code></pre></li></ul></li><li><p><code class="inline">[:phoenix, :live_component, :destroyed]</code> - Dispatched by a <a href="Phoenix.LiveComponent.html"><code class="inline">Phoenix.LiveComponent</code></a>
+after it is destroyed. No measurement.</p><ul><li><p>Metadata:</p><p>  %{</p><pre><code class="makeup elixir" translate="no"><span class="ss">socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w">
+</span><span class="ss">component</span><span class="p">:</span><span class="w"> </span><span class="n">atom</span><span class="p">,</span><span class="w">
+</span><span class="ss">cid</span><span class="p">:</span><span class="w"> </span><span class="n">integer</span><span class="p" data-group-id="8632176639-1">(</span><span class="p" data-group-id="8632176639-1">)</span><span class="p">,</span><span class="w">
+</span><span class="ss">live_view_socket</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.LiveView.Socket</span><span class="o">.</span><span class="n">t</span></code></pre><p>  }</p></li></ul></li></ul>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="security-model.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Security considerations
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="uploads.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Uploads
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix_live_view/1.1.28">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix_live_view/1.1.28">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/phoenix_live_view/1.1.28/show/guides/server/telemetry.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="Phoenix LiveView.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js"></script>
+<script>
+  let initialized = false;
+
+  window.addEventListener("exdoc:loaded", () => {
+    if (!initialized) {
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: document.body.className.includes("dark") ? "dark" : "default"
+      });
+      initialized = true;
+    }
+
+    let id = 0;
+    for (const codeEl of document.querySelectorAll("pre code.mermaid")) {
+      const graphDefinition = codeEl.textContent;
+      const graphId = "mermaid-graph-" + id++;
+      mermaid.render(graphId, graphDefinition).then(({svg, bindFunctions}) => {
+        codeEl.innerHTML = svg;
+        bindFunctions?.(codeEl);
+      });
+    }
+  });
+</script>
+
+  </body>
+</html>

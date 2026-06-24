@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.3">
+    <meta name="project" content="Thousand Island v1.5.0">
+
+
+    <title>ThousandIsland.Transport — Thousand Island v1.5.0</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
+
+    <script defer src="dist/sidebar_items-C70A3AD9.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-Y2MUTVIN.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="ThousandIsland.html" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Thousand Island" />
+        </a>
+
+      <div>
+        <a href="ThousandIsland.html" class="sidebar-projectName" translate="no">
+Thousand Island
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.5.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="Pages"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-behaviour" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Thousand Island</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">ThousandIsland.<wbr />Transport</span> <small>behaviour</small>
+      <small class="app-vsn" translate="no">(Thousand Island v1.5.0)</small>
+
+    </h1>
+
+<a href="ThousandIsland.Transport.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+
+      <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L1" title="View Source" class="icon-action" rel="help nofollow">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>This module describes the behaviour required for Thousand Island to interact
+with low-level sockets. It is largely internal to Thousand Island, however users
+are free to implement their own versions of this behaviour backed by whatever
+underlying transport they choose. Such a module can be used in Thousand Island
+by passing its name as the <code class="inline">transport_module</code> option when starting up a server,
+as described in <a href="ThousandIsland.html"><code class="inline">ThousandIsland</code></a>.</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h2>
+<div class="summary-types summary">
+  <h3>
+    <a href="#types">Types</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:address/0" data-no-tooltip="" translate="no">address()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>A socket address</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:listen_options/0" data-no-tooltip="" translate="no">listen_options()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>A listener socket options</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:listener_socket/0" data-no-tooltip="" translate="no">listener_socket()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>A listener socket used to wait for connections</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_accept/0" data-no-tooltip="" translate="no">on_accept()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from an accept/1 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_accept_ssl_error/0" data-no-tooltip="" translate="no">on_accept_ssl_error()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_accept_tcp_error/0" data-no-tooltip="" translate="no">on_accept_tcp_error()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_close/0" data-no-tooltip="" translate="no">on_close()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a close/1 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_connection_information/0" data-no-tooltip="" translate="no">on_connection_information()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a connection_information/1 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_controlling_process/0" data-no-tooltip="" translate="no">on_controlling_process()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a controlling_process/2 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_getopts/0" data-no-tooltip="" translate="no">on_getopts()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a getopts/2 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_handshake/0" data-no-tooltip="" translate="no">on_handshake()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a handshake/1 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_handshake_ssl_error/0" data-no-tooltip="" translate="no">on_handshake_ssl_error()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_listen/0" data-no-tooltip="" translate="no">on_listen()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a listen/2 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_negotiated_protocol/0" data-no-tooltip="" translate="no">on_negotiated_protocol()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a negotiated_protocol/1 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_peercert/0" data-no-tooltip="" translate="no">on_peercert()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a peercert/1 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_peername/0" data-no-tooltip="" translate="no">on_peername()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a peername/1 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_recv/0" data-no-tooltip="" translate="no">on_recv()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a recv/3 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_send/0" data-no-tooltip="" translate="no">on_send()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a send/2 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_sendfile/0" data-no-tooltip="" translate="no">on_sendfile()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a sendfile/4 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_setopts/0" data-no-tooltip="" translate="no">on_setopts()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a setopts/2 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_shutdown/0" data-no-tooltip="" translate="no">on_shutdown()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a shutdown/2 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_sockname/0" data-no-tooltip="" translate="no">on_sockname()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a sockname/1 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:on_upgrade/0" data-no-tooltip="" translate="no">on_upgrade()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The return value from a upgrade/2 call</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:socket/0" data-no-tooltip="" translate="no">socket()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>A socket representing a client connection</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:socket_get_options/0" data-no-tooltip="" translate="no">socket_get_options()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Options which can be set on a socket via setopts/2 (or returned from getopts/1)</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:socket_info/0" data-no-tooltip="" translate="no">socket_info()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Information about an endpoint, either remote ('peer') or local</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:socket_set_options/0" data-no-tooltip="" translate="no">socket_set_options()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Options which can be set on a socket via setopts/2 (or returned from getopts/1)</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:socket_stats/0" data-no-tooltip="" translate="no">socket_stats()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Connection statistics for a given socket</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:way/0" data-no-tooltip="" translate="no">way()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The direction in which to shutdown a connection in advance of closing it</p></div>
+
+    </div>
+
+</div>
+<div class="summary-callbacks summary">
+  <h3>
+    <a href="#callbacks">Callbacks</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:accept/1" data-no-tooltip="" translate="no">accept(listener_socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Wait for a client connection on the given listener socket. This call blocks until
+such a connection arrives, or an error occurs (such as the listener socket being
+closed).</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:close/1" data-no-tooltip="" translate="no">close(arg1)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Closes the given socket.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:connection_information/1" data-no-tooltip="" translate="no">connection_information(socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the SSL connection_info for the given socket. If the socket is not secure,
+<code class="inline">{:error, :not_secure}</code> is returned.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:controlling_process/2" data-no-tooltip="" translate="no">controlling_process(socket, pid)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Transfers ownership of the given socket to the given process. This will always
+be called by the process which currently owns the socket.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:getopts/2" data-no-tooltip="" translate="no">getopts(socket, socket_get_options)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Gets the given options on the socket.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:getstat/1" data-no-tooltip="" translate="no">getstat(socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns stats about the connection on the socket.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handshake/1" data-no-tooltip="" translate="no">handshake(socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Performs an initial handshake on a new client connection (such as that done
+when negotiating an SSL connection). Transports which do not have such a
+handshake can simply pass the socket through unchanged.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:listen/2" data-no-tooltip="" translate="no">listen(port_number, listen_options)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Create and return a listener socket bound to the given port and configured per
+the provided options.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:negotiated_protocol/1" data-no-tooltip="" translate="no">negotiated_protocol(socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the protocol negotiated as part of handshaking. Most typically this is via TLS'
+ALPN or NPN extensions. If the underlying transport does not support protocol negotiation
+(or if one was not negotiated), <code class="inline">{:error, :protocol_not_negotiated}</code> is returned</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:peercert/1" data-no-tooltip="" translate="no">peercert(socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the peer certificate for the given socket in the form of <code class="inline">t:public_key.der_encoded()</code>.
+If the socket is not secure, <code class="inline">{:error, :not_secure}</code> is returned.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:peername/1" data-no-tooltip="" translate="no">peername(socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns information in the form of <code class="inline">t:socket_info()</code> about the remote end of the socket.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:recv/3" data-no-tooltip="" translate="no">recv(socket, num_bytes, timeout)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns available bytes on the given socket. Up to <code class="inline">num_bytes</code> bytes will be
+returned (0 can be passed in to get the next 'available' bytes, typically the
+next packet). If insufficient bytes are available, the function can wait <code class="inline">timeout</code>
+milliseconds for data to arrive.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:secure?/0" data-no-tooltip="" translate="no">secure?()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns whether or not this protocol is secure.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:send/2" data-no-tooltip="" translate="no">send(socket, data)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Sends the given data (specified as a binary or an IO list) on the given socket.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:sendfile/4" data-no-tooltip="" translate="no">sendfile(socket, filename, offset, length)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Sends the contents of the given file based on the provided offset &amp; length</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:setopts/2" data-no-tooltip="" translate="no">setopts(socket, socket_set_options)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Sets the given options on the socket. Should disallow setting of options which
+are not compatible with Thousand Island</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:shutdown/2" data-no-tooltip="" translate="no">shutdown(socket, way)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Shuts down the socket in the given direction.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:sockname/1" data-no-tooltip="" translate="no">sockname(arg1)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns information in the form of <code class="inline">t:socket_info()</code> about the local end of the socket.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:upgrade/2" data-no-tooltip="" translate="no">upgrade(socket, term)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Performs an upgrade of an existing client connection (for example upgrading
+an already-established connection to SSL). Transports which do not support upgrading can return
+<code class="inline">{:error, :unsupported_upgrade}</code>.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h2>
+
+    <div class="types-list">
+<section class="detail" id="t:address/0">
+
+  <div class="detail-header">
+    <a href="#t:address/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">address()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L26" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> address() ::
+  <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:ip_address/0">:inet.ip_address</a>()
+  | <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:local_address/0">:inet.local_address</a>()
+  | {:local, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()}
+  | :unspec
+  | {:undefined, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>A socket address</p>
+  </section>
+</section>
+<section class="detail" id="t:listen_options/0">
+
+  <div class="detail-header">
+    <a href="#t:listen_options/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">listen_options()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L15" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> listen_options() ::
+  [<a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:inet_backend/0">:inet.inet_backend</a>() | <a href="https://www.erlang.org/doc/apps/kernel/gen_tcp.html#t:listen_option/0">:gen_tcp.listen_option</a>()] | [<a href="https://www.erlang.org/doc/apps/ssl/ssl.html#t:tls_server_option/0">:ssl.tls_server_option</a>()]</pre>
+
+      </div>
+
+<p>A listener socket options</p>
+  </section>
+</section>
+<section class="detail" id="t:listener_socket/0">
+
+  <div class="detail-header">
+    <a href="#t:listener_socket/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">listener_socket()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L12" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> listener_socket() :: <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:socket/0">:inet.socket</a>() | <a href="https://www.erlang.org/doc/apps/ssl/ssl.html#t:sslsocket/0">:ssl.sslsocket</a>()</pre>
+
+      </div>
+
+<p>A listener socket used to wait for connections</p>
+  </section>
+</section>
+<section class="detail" id="t:on_accept/0">
+
+  <div class="detail-header">
+    <a href="#t:on_accept/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_accept()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L49" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_accept() ::
+  {:ok, <a href="#t:socket/0">socket</a>()} | {:error, <a href="#t:on_accept_tcp_error/0">on_accept_tcp_error</a>() | <a href="#t:on_accept_ssl_error/0">on_accept_ssl_error</a>()}</pre>
+
+      </div>
+
+<p>The return value from an accept/1 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_accept_ssl_error/0">
+
+  <div class="detail-header">
+    <a href="#t:on_accept_ssl_error/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_accept_ssl_error()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L52" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_accept_ssl_error() :: :closed | :timeout | <a href="https://www.erlang.org/doc/apps/ssl/ssl.html#t:error_alert/0">:ssl.error_alert</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:on_accept_tcp_error/0">
+
+  <div class="detail-header">
+    <a href="#t:on_accept_tcp_error/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_accept_tcp_error()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L51" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_accept_tcp_error() :: :closed | :system_limit | <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:posix/0">:inet.posix</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:on_close/0">
+
+  <div class="detail-header">
+    <a href="#t:on_close/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_close()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L69" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_close() :: :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>The return value from a close/1 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_connection_information/0">
+
+  <div class="detail-header">
+    <a href="#t:on_connection_information/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_connection_information()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L98" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_connection_information() ::
+  {:ok, <a href="https://www.erlang.org/doc/apps/ssl/ssl.html#t:connection_info/0">:ssl.connection_info</a>()} | {:error, reason :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>The return value from a connection_information/1 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_controlling_process/0">
+
+  <div class="detail-header">
+    <a href="#t:on_controlling_process/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_controlling_process()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L55" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_controlling_process() ::
+  :ok | {:error, :closed | :not_owner | :badarg | <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:posix/0">:inet.posix</a>()}</pre>
+
+      </div>
+
+<p>The return value from a controlling_process/2 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_getopts/0">
+
+  <div class="detail-header">
+    <a href="#t:on_getopts/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_getopts()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L83" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_getopts() :: {:ok, [<a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:socket_optval/0">:inet.socket_optval</a>()]} | {:error, <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:posix/0">:inet.posix</a>()}</pre>
+
+      </div>
+
+<p>The return value from a getopts/2 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_handshake/0">
+
+  <div class="detail-header">
+    <a href="#t:on_handshake/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_handshake()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L58" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_handshake() :: {:ok, <a href="#t:socket/0">socket</a>()} | {:error, <a href="#t:on_handshake_ssl_error/0">on_handshake_ssl_error</a>()}</pre>
+
+      </div>
+
+<p>The return value from a handshake/1 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_handshake_ssl_error/0">
+
+  <div class="detail-header">
+    <a href="#t:on_handshake_ssl_error/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_handshake_ssl_error()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L60" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_handshake_ssl_error() :: :closed | :timeout | <a href="https://www.erlang.org/doc/apps/ssl/ssl.html#t:error_alert/0">:ssl.error_alert</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:on_listen/0">
+
+  <div class="detail-header">
+    <a href="#t:on_listen/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_listen()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L45" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_listen() ::
+  {:ok, <a href="#t:listener_socket/0">listener_socket</a>()} | {:error, :system_limit} | {:error, <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:posix/0">:inet.posix</a>()}</pre>
+
+      </div>
+
+<p>The return value from a listen/2 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_negotiated_protocol/0">
+
+  <div class="detail-header">
+    <a href="#t:on_negotiated_protocol/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_negotiated_protocol()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L101" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_negotiated_protocol() ::
+  {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()} | {:error, :protocol_not_negotiated | :closed}</pre>
+
+      </div>
+
+<p>The return value from a negotiated_protocol/1 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_peercert/0">
+
+  <div class="detail-header">
+    <a href="#t:on_peercert/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_peercert()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L95" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_peercert() :: {:ok, <a href="https://www.erlang.org/doc/apps/public_key/public_key.html#t:der_encoded/0">:public_key.der_encoded</a>()} | {:error, reason :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>The return value from a peercert/1 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_peername/0">
+
+  <div class="detail-header">
+    <a href="#t:on_peername/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_peername()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L92" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_peername() :: {:ok, <a href="#t:socket_info/0">socket_info</a>()} | {:error, <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:posix/0">:inet.posix</a>()}</pre>
+
+      </div>
+
+<p>The return value from a peername/1 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_recv/0">
+
+  <div class="detail-header">
+    <a href="#t:on_recv/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_recv()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L72" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_recv() :: {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()} | {:error, :closed | :timeout | <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:posix/0">:inet.posix</a>()}</pre>
+
+      </div>
+
+<p>The return value from a recv/3 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_send/0">
+
+  <div class="detail-header">
+    <a href="#t:on_send/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_send()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L75" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_send() ::
+  :ok | {:error, :closed | {:timeout, rest_data :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()} | <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:posix/0">:inet.posix</a>()}</pre>
+
+      </div>
+
+<p>The return value from a send/2 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_sendfile/0">
+
+  <div class="detail-header">
+    <a href="#t:on_sendfile/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_sendfile()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L78" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_sendfile() ::
+  {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()}
+  | {:error, <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:posix/0">:inet.posix</a>() | :closed | :badarg | :not_owner | :eof}</pre>
+
+      </div>
+
+<p>The return value from a sendfile/4 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_setopts/0">
+
+  <div class="detail-header">
+    <a href="#t:on_setopts/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_setopts()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L86" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_setopts() :: :ok | {:error, <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:posix/0">:inet.posix</a>()}</pre>
+
+      </div>
+
+<p>The return value from a setopts/2 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_shutdown/0">
+
+  <div class="detail-header">
+    <a href="#t:on_shutdown/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_shutdown()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L66" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_shutdown() :: :ok | {:error, <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:posix/0">:inet.posix</a>()}</pre>
+
+      </div>
+
+<p>The return value from a shutdown/2 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_sockname/0">
+
+  <div class="detail-header">
+    <a href="#t:on_sockname/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_sockname()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L89" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_sockname() :: {:ok, <a href="#t:socket_info/0">socket_info</a>()} | {:error, <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:posix/0">:inet.posix</a>()}</pre>
+
+      </div>
+
+<p>The return value from a sockname/1 call</p>
+  </section>
+</section>
+<section class="detail" id="t:on_upgrade/0">
+
+  <div class="detail-header">
+    <a href="#t:on_upgrade/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">on_upgrade()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L63" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> on_upgrade() :: {:ok, <a href="#t:socket/0">socket</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
+
+      </div>
+
+<p>The return value from a upgrade/2 call</p>
+  </section>
+</section>
+<section class="detail" id="t:socket/0">
+
+  <div class="detail-header">
+    <a href="#t:socket/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">socket()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L19" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> socket() :: <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:socket/0">:inet.socket</a>() | <a href="https://www.erlang.org/doc/apps/ssl/ssl.html#t:sslsocket/0">:ssl.sslsocket</a>()</pre>
+
+      </div>
+
+<p>A socket representing a client connection</p>
+  </section>
+</section>
+<section class="detail" id="t:socket_get_options/0">
+
+  <div class="detail-header">
+    <a href="#t:socket_get_options/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">socket_get_options()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L36" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> socket_get_options() :: [<a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:socket_getopt/0">:inet.socket_getopt</a>()]</pre>
+
+      </div>
+
+<p>Options which can be set on a socket via setopts/2 (or returned from getopts/1)</p>
+  </section>
+</section>
+<section class="detail" id="t:socket_info/0">
+
+  <div class="detail-header">
+    <a href="#t:socket_info/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">socket_info()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L22" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> socket_info() ::
+  {<a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:ip_address/0">:inet.ip_address</a>(), <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:port_number/0">:inet.port_number</a>()} | <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:returned_non_ip_address/0">:inet.returned_non_ip_address</a>()</pre>
+
+      </div>
+
+<p>Information about an endpoint, either remote ('peer') or local</p>
+  </section>
+</section>
+<section class="detail" id="t:socket_set_options/0">
+
+  <div class="detail-header">
+    <a href="#t:socket_set_options/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">socket_set_options()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L39" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> socket_set_options() :: [<a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:socket_setopt/0">:inet.socket_setopt</a>()]</pre>
+
+      </div>
+
+<p>Options which can be set on a socket via setopts/2 (or returned from getopts/1)</p>
+  </section>
+</section>
+<section class="detail" id="t:socket_stats/0">
+
+  <div class="detail-header">
+    <a href="#t:socket_stats/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">socket_stats()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L33" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> socket_stats() ::
+  {:ok, [{<a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:stat_option/0">:inet.stat_option</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>()}]} | {:error, <a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:posix/0">:inet.posix</a>()}</pre>
+
+      </div>
+
+<p>Connection statistics for a given socket</p>
+  </section>
+</section>
+<section class="detail" id="t:way/0">
+
+  <div class="detail-header">
+    <a href="#t:way/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">way()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L42" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> way() :: :read | :write | :read_write</pre>
+
+      </div>
+
+<p>The direction in which to shutdown a connection in advance of closing it</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="callbacks" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#callbacks">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Callbacks</span>
+    </h2>
+
+    <div class="callbacks-list">
+<section class="detail" id="c:accept/1">
+
+  <div class="detail-header">
+    <a href="#c:accept/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">accept(listener_socket)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L116" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> accept(<a href="#t:listener_socket/0">listener_socket</a>()) :: <a href="#t:on_accept/0">on_accept</a>()</pre>
+
+      </div>
+
+<p>Wait for a client connection on the given listener socket. This call blocks until
+such a connection arrives, or an error occurs (such as the listener socket being
+closed).</p>
+  </section>
+</section>
+<section class="detail" id="c:close/1">
+
+  <div class="detail-header">
+    <a href="#c:close/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">close(arg1)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L180" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> close(<a href="#t:socket/0">socket</a>() | <a href="#t:listener_socket/0">listener_socket</a>()) :: <a href="#t:on_close/0">on_close</a>()</pre>
+
+      </div>
+
+<p>Closes the given socket.</p>
+  </section>
+</section>
+<section class="detail" id="c:connection_information/1">
+
+  <div class="detail-header">
+    <a href="#c:connection_information/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">connection_information(socket)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L219" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> connection_information(<a href="#t:socket/0">socket</a>()) :: <a href="#t:on_connection_information/0">on_connection_information</a>()</pre>
+
+      </div>
+
+<p>Returns the SSL connection_info for the given socket. If the socket is not secure,
+<code class="inline">{:error, :not_secure}</code> is returned.</p>
+  </section>
+</section>
+<section class="detail" id="c:controlling_process/2">
+
+  <div class="detail-header">
+    <a href="#c:controlling_process/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">controlling_process(socket, pid)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L136" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> controlling_process(<a href="#t:socket/0">socket</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>()) :: <a href="#t:on_controlling_process/0">on_controlling_process</a>()</pre>
+
+      </div>
+
+<p>Transfers ownership of the given socket to the given process. This will always
+be called by the process which currently owns the socket.</p>
+  </section>
+</section>
+<section class="detail" id="c:getopts/2">
+
+  <div class="detail-header">
+    <a href="#c:getopts/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">getopts(socket, socket_get_options)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L164" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> getopts(<a href="#t:socket/0">socket</a>(), <a href="#t:socket_get_options/0">socket_get_options</a>()) :: <a href="#t:on_getopts/0">on_getopts</a>()</pre>
+
+      </div>
+
+<p>Gets the given options on the socket.</p>
+  </section>
+</section>
+<section class="detail" id="c:getstat/1">
+
+  <div class="detail-header">
+    <a href="#c:getstat/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">getstat(socket)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L206" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> getstat(<a href="#t:socket/0">socket</a>()) :: <a href="#t:socket_stats/0">socket_stats</a>()</pre>
+
+      </div>
+
+<p>Returns stats about the connection on the socket.</p>
+  </section>
+</section>
+<section class="detail" id="c:handshake/1">
+
+  <div class="detail-header">
+    <a href="#c:handshake/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handshake(socket)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L123" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handshake(<a href="#t:socket/0">socket</a>()) :: <a href="#t:on_handshake/0">on_handshake</a>()</pre>
+
+      </div>
+
+<p>Performs an initial handshake on a new client connection (such as that done
+when negotiating an SSL connection). Transports which do not have such a
+handshake can simply pass the socket through unchanged.</p>
+  </section>
+</section>
+<section class="detail" id="c:listen/2">
+
+  <div class="detail-header">
+    <a href="#c:listen/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">listen(port_number, listen_options)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L108" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> listen(<a href="https://www.erlang.org/doc/apps/kernel/inet.html#t:port_number/0">:inet.port_number</a>(), <a href="#t:listen_options/0">listen_options</a>()) ::
+  {:ok, <a href="#t:listener_socket/0">listener_socket</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Create and return a listener socket bound to the given port and configured per
+the provided options.</p>
+  </section>
+</section>
+<section class="detail" id="c:negotiated_protocol/1">
+
+  <div class="detail-header">
+    <a href="#c:negotiated_protocol/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">negotiated_protocol(socket)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L213" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> negotiated_protocol(<a href="#t:socket/0">socket</a>()) :: <a href="#t:on_negotiated_protocol/0">on_negotiated_protocol</a>()</pre>
+
+      </div>
+
+<p>Returns the protocol negotiated as part of handshaking. Most typically this is via TLS'
+ALPN or NPN extensions. If the underlying transport does not support protocol negotiation
+(or if one was not negotiated), <code class="inline">{:error, :protocol_not_negotiated}</code> is returned</p>
+  </section>
+</section>
+<section class="detail" id="c:peercert/1">
+
+  <div class="detail-header">
+    <a href="#c:peercert/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">peercert(socket)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L196" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> peercert(<a href="#t:socket/0">socket</a>()) :: <a href="#t:on_peercert/0">on_peercert</a>()</pre>
+
+      </div>
+
+<p>Returns the peer certificate for the given socket in the form of <code class="inline">t:public_key.der_encoded()</code>.
+If the socket is not secure, <code class="inline">{:error, :not_secure}</code> is returned.</p>
+  </section>
+</section>
+<section class="detail" id="c:peername/1">
+
+  <div class="detail-header">
+    <a href="#c:peername/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">peername(socket)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L190" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> peername(<a href="#t:socket/0">socket</a>()) :: <a href="#t:on_peername/0">on_peername</a>()</pre>
+
+      </div>
+
+<p>Returns information in the form of <code class="inline">t:socket_info()</code> about the remote end of the socket.</p>
+  </section>
+</section>
+<section class="detail" id="c:recv/3">
+
+  <div class="detail-header">
+    <a href="#c:recv/3" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">recv(socket, num_bytes, timeout)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L144" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> recv(<a href="#t:socket/0">socket</a>(), num_bytes :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(), timeout :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">timeout</a>()) ::
+  <a href="#t:on_recv/0">on_recv</a>()</pre>
+
+      </div>
+
+<p>Returns available bytes on the given socket. Up to <code class="inline">num_bytes</code> bytes will be
+returned (0 can be passed in to get the next 'available' bytes, typically the
+next packet). If insufficient bytes are available, the function can wait <code class="inline">timeout</code>
+milliseconds for data to arrive.</p>
+  </section>
+</section>
+<section class="detail" id="c:secure?/0">
+
+  <div class="detail-header">
+    <a href="#c:secure?/0" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">secure?()</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L201" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> secure?() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Returns whether or not this protocol is secure.</p>
+  </section>
+</section>
+<section class="detail" id="c:send/2">
+
+  <div class="detail-header">
+    <a href="#c:send/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">send(socket, data)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L149" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> send(<a href="#t:socket/0">socket</a>(), data :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>()) :: <a href="#t:on_send/0">on_send</a>()</pre>
+
+      </div>
+
+<p>Sends the given data (specified as a binary or an IO list) on the given socket.</p>
+  </section>
+</section>
+<section class="detail" id="c:sendfile/4">
+
+  <div class="detail-header">
+    <a href="#c:sendfile/4" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">sendfile(socket, filename, offset, length)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L154" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> sendfile(
+  <a href="#t:socket/0">socket</a>(),
+  filename :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  offset :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  length :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()
+) :: <a href="#t:on_sendfile/0">on_sendfile</a>()</pre>
+
+      </div>
+
+<p>Sends the contents of the given file based on the provided offset &amp; length</p>
+  </section>
+</section>
+<section class="detail" id="c:setopts/2">
+
+  <div class="detail-header">
+    <a href="#c:setopts/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">setopts(socket, socket_set_options)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L170" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> setopts(<a href="#t:socket/0">socket</a>(), <a href="#t:socket_set_options/0">socket_set_options</a>()) :: <a href="#t:on_setopts/0">on_setopts</a>()</pre>
+
+      </div>
+
+<p>Sets the given options on the socket. Should disallow setting of options which
+are not compatible with Thousand Island</p>
+  </section>
+</section>
+<section class="detail" id="c:shutdown/2">
+
+  <div class="detail-header">
+    <a href="#c:shutdown/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">shutdown(socket, way)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L175" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> shutdown(<a href="#t:socket/0">socket</a>(), <a href="#t:way/0">way</a>()) :: <a href="#t:on_shutdown/0">on_shutdown</a>()</pre>
+
+      </div>
+
+<p>Shuts down the socket in the given direction.</p>
+  </section>
+</section>
+<section class="detail" id="c:sockname/1">
+
+  <div class="detail-header">
+    <a href="#c:sockname/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">sockname(arg1)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L185" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> sockname(<a href="#t:socket/0">socket</a>() | <a href="#t:listener_socket/0">listener_socket</a>()) :: <a href="#t:on_sockname/0">on_sockname</a>()</pre>
+
+      </div>
+
+<p>Returns information in the form of <code class="inline">t:socket_info()</code> about the local end of the socket.</p>
+  </section>
+</section>
+<section class="detail" id="c:upgrade/2">
+
+  <div class="detail-header">
+    <a href="#c:upgrade/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">upgrade(socket, term)</h1>
+
+
+        <a href="https://github.com/mtrudel/thousand_island/blob/main/lib/thousand_island/transport.ex#L130" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> upgrade(<a href="#t:socket/0">socket</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) :: <a href="#t:on_upgrade/0">on_upgrade</a>()</pre>
+
+      </div>
+
+<p>Performs an upgrade of an existing client connection (for example upgrading
+an already-established connection to SSL). Transports which do not support upgrading can return
+<code class="inline">{:error, :unsupported_upgrade}</code>.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/thousand_island/1.5.0">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/thousand_island/1.5.0">Hex Preview</a>
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="Thousand Island.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.3) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

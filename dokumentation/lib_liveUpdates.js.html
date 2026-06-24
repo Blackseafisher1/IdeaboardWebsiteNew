@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/liveUpdates.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/liveUpdates.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview In-Memory und Redis-synchronisierte Live-Update-Verwaltung.
+ * Verwaltet Versionsnummern, Change-Log und SSE-Warte-Callbacks.
+ * @module lib/liveUpdates
+ */
+
+const { redis, redisSub, ensureSubscribe, awaitRedisReady, safePublish } = require('./redis');
+
+/** @constant {number} @readonly */
+const MAX_LOG_ENTRIES = 200;
+
+let globalVersion = 1;
+/** @type {Map&lt;string, number>} */
+const ideaVersions = new Map(); // ideaId -> last version number
+/** @type {Array&lt;Object>} */
+const changeLog = []; // { version, idea_id, action, idea_version, ...meta }
+/** @type {Set&lt;Object>} */
+const sseWaiters = new Set(); // { since, trigger, cleanup }
+
+// Abonniere prozessübergreifende Änderungen über Redis und verarbeite eingehende Nachrichten
+ensureSubscribe('IDEABOARD_CHANGES');
+// Redis-Subscriber: bei eingehenden Nachrichten den Payload parsen und als Änderung anwenden
+redisSub.on('message', (channel, message) => {
+  if (channel === 'IDEABOARD_CHANGES') {
+    try {
+      const data = JSON.parse(message);
+      applyChange(data.ideaId, data.action, data.meta, true);
+    } catch (e) { console.error('Redis-Synchronisationsfehler:', e &amp;&amp; e.message ? e.message : e); }
+  }
+});
+
+/**
+ * Liefert die aktuelle globale Versionsnummer.
+ * @returns {number}
+ */
+function getCurrentVersion() {
+  return globalVersion;
+}
+
+/**
+ * Liefert die zuletzt bekannte Version einer Idee.
+ * @param {number|string} ideaId
+ * @returns {number}
+ */
+function getIdeaVersion(ideaId) {
+  return ideaVersions.get(String(ideaId)) || 0;
+}
+
+/**
+ * Wendet eine Änderung an: erhöht die globale Version, aktualisiert Log und Versionen.
+ * @param {number|string|null} ideaId - ID der betroffenen Idee oder `null`.
+ * @param {string} action - Aktionstyp (z. B. 'create', 'update', 'delete').
+ * @param {Object} [meta={}] - Zusätzliche Metadaten zur Änderung.
+ * @param {boolean} [IsFromRedis=false] - `true`, wenn die Änderung aus Redis synchronisiert wurde.
+ * @returns {Object} Das erzeugte Change-Objekt.
+ */
+function applyChange(ideaId, action, meta = {}, IsFromRedis = false) {
+  // Einfache Duplikaterkennung, wenn Änderungen aus Redis stammen: falls eine identische Änderung
+  // für dieselbe `idea_id` und `action` bereits im `changeLog` existiert, erneut überspringen.
+  const ideaIdStr = ideaId != null ? String(ideaId) : null;
+  if (IsFromRedis &amp;&amp; ideaIdStr) {
+    try {
+      // Versuch, Duplikate zu erkennen: wenn für dieselbe Idee+Action bereits ein
+      // Change-Log-Eintrag existiert, der die Meta-Daten enthält, überspringen.
+      const metaStr = JSON.stringify(meta || {});
+      const found = changeLog.find(e => e.idea_id === Number(ideaIdStr) &amp;&amp; e.action === action &amp;&amp; JSON.stringify(e).includes(metaStr));
+      if (found) return found; // bereits angewendet
+    } catch (e) {
+      // Bei JSON-Fehlern nicht kritisch — Änderung wird normal angewendet
+    }
+  }
+  globalVersion += 1;
+  const ideaVersion = ideaIdStr ? globalVersion : null;
+
+  if (ideaIdStr) ideaVersions.set(ideaIdStr, globalVersion);
+
+  // Sanitize meta: BigInt-Werte in sichere JS-Typen umwandeln
+/**
+ * sanitizeValue — Funktion mit spezifischer Aufgabe, siehe Implementierung.
+ *
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function sanitizeValue
+ */
+  /**
+   * Sanitisiert Meta-Werte für das Change-Log: wandelt `bigint` in sichere JS-Typen um
+   * (Number wenn innerhalb von SAFE_INTEGER, sonst String) und rekursiv über Objekte/Arrays.
+   * @param {*} v - Ursprünglicher Meta-Wert
+   * @returns {*} Sanitiserter Wert
+   */
+  function sanitizeValue(v) {
+    if (typeof v === 'bigint') {
+      if (v &lt;= BigInt(Number.MAX_SAFE_INTEGER) &amp;&amp; v >= BigInt(Number.MIN_SAFE_INTEGER)) return Number(v);
+      return v.toString();
+    }
+    if (Array.isArray(v)) return v.map(sanitizeValue);
+    if (v &amp;&amp; typeof v === 'object') {
+      const o = {};
+      for (const k of Object.keys(v)) o[k] = sanitizeValue(v[k]);
+      return o;
+    }
+    return v;
+  }
+
+  const safeMeta = sanitizeValue(meta);
+
+  const change = {
+    version: globalVersion,
+    idea_id: ideaIdStr ? Number(ideaIdStr) : null,
+    action,
+    idea_version: ideaVersion,
+    ...safeMeta
+  };
+
+  changeLog.push(change);
+  if (changeLog.length > MAX_LOG_ENTRIES) changeLog.shift();
+
+  notifyWaiters();
+  return change;
+}
+
+/**
+ * Zeichnet eine Änderung auf und versucht, sie über Redis zu veröffentlichen.
+ * @param {number|string|null} ideaId
+ * @param {string} action
+ * @param {Object} [meta={}] 
+ * @returns {Promise&lt;Object>|Object} Entweder ein Promise beim Redis-Publish oder das lokale Change-Objekt.
+ */
+function recordChange(ideaId, action, meta = {}) {
+  // Wenn Redis verbunden ist, versuche zu publishen und überlasse Abonnenten die Reihenfolge.
+  // Auf das Publish warten und bei Fehlschlag deterministisch lokal anwenden.
+  if (redis.status === 'ready') {
+    // Wenn Redis verfügbar ist, versuche die Änderung zu publishen. Falls Publish fehlschlägt,
+    // wende lokal deterministisch an und logge den Fehler.
+    return (async () => {
+      try {
+        await safePublish('IDEABOARD_CHANGES', { ideaId, action, meta });
+        return { pending: true };
+      } catch (err) {
+        console.error('Redis publish failed — falling back to local apply:', err &amp;&amp; err.message ? err.message : err);
+        return applyChange(ideaId, action, meta);
+      }
+    })();
+  }
+
+  // Fallback for local-only (no Redis)
+  return applyChange(ideaId, action, meta);
+}
+
+/**
+ * Liefert alle Änderungen seit einer gegebenen Versionsnummer.
+ * @param {number} since - Versionsnummer-Grundlage.
+ * @returns {Array&lt;Object>} Array mit Change-Objekten.
+ */
+function getChangesSince(since) {
+  const sinceNum = Number.isFinite(since) ? since : 0;
+  // Filtere Change-Log und liefere alle Einträge, deren Version größer als `since` ist.
+  return changeLog.filter(entry => entry.version > sinceNum);
+}
+
+/**
+ * Benachrichtigt registrierte SSE-Warte-Callbacks, falls neue Änderungen vorliegen.
+ */
+function notifyWaiters() {
+  // SSE waiters
+  for (const waiter of Array.from(sseWaiters)) {
+    if (globalVersion > waiter.since) {
+      const changes = getChangesSince(waiter.since);
+      if (changes.length > 0) {
+        waiter.trigger({ version: globalVersion, changes });
+        waiter.since = globalVersion;
+      }
+    }
+  }
+}
+
+/**
+ * Registriert einen SSE-Warte-Callback, der bei neuen Änderungen ausgelöst wird.
+ * @param {number} since - Versionsnummer, ab der Änderungen gewünscht sind.
+ * @param {function(Object):void} trigger - Callback, das mit einem Objekt `{version, changes}` aufgerufen wird.
+ * @returns {Object} Ein Warte-Handle mit einer `cleanup()`-Methode zum Entfernen.
+ */
+function registerSSEWaiter(since, trigger) {
+  const waiter = {
+    since,
+    trigger,
+    // Entfernt diesen Waiter aus der internen Menge (cleanup-Funktion für z. B. Verbindungsschluss)
+    cleanup: () => sseWaiters.delete(waiter)
+  };
+  sseWaiters.add(waiter);
+  return waiter;
+}
+
+module.exports = {
+  getCurrentVersion,
+  getIdeaVersion,
+  recordChange,
+  getChangesSince,
+  registerSSEWaiter
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

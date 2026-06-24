@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  
+  <%- include('../partials/head') %>
+
+  <style>
+    /* 1. Define Variables using light-dark() */
+    :root {
+      color-scheme: light dark;
+      --bg: light-dark(#ffffff, #121212);
+      --text: light-dark(#000000, #e0e0e0);
+      --accent: #1abc9c;
+      --accent-dark: #15a78c;
+      --error-red: #d63031;
+
+      /* UI Specifics */
+      --glass-bg: light-dark(color-mix(in srgb, black 5%, transparent), color-mix(in srgb, white 5%, transparent));
+      --text-shadow: light-dark(0 1px 0 color-mix(in srgb, var(--accent) 6%, transparent), none);
+      --card-border: light-dark(color-mix(in srgb, black 10%, transparent), color-mix(in srgb, white 10%, transparent));
+      --card-hover-border: var(--accent);
+      --input-bg: light-dark(color-mix(in srgb, black 3%, transparent), color-mix(in srgb, white 5%, transparent));
+    }
+
+    /* 2. Global Styles */
+    body.auth-page {
+      margin: 0;
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      
+      /* Use variables */
+      background-color: var(--bg);
+      color: var(--text);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* 4. Glass/Card Container */
+    .auth-container {
+      width: 100%;
+      max-width: 400px;
+      max-height: 400px;
+      padding: 2.5rem;
+      border-radius: 16px;
+      
+      /* Glassmorphism Effect */
+      background-color: var(--glass-bg); /* Uses your glass var */
+      backdrop-filter: blur(10px);       /* Blurs background behind it */
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* Subtle depth */
+    }
+
+    /* Typography */
+    .auth-container h1 {
+      margin: 0 0 0.5rem 0;
+      color: var(--text);
+      font-size: 1.8rem;
+      font-weight: 700;
+      text-shadow: var(--text-shadow);
+    }
+
+    .auth-container p {
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+      opacity: 0.8; /* Slightly muted text */
+      line-height: 1.5;
+    }
+
+    /* Form Layout */
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .auth-form label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    /* Input Fields */
+    .auth-form input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.8rem;
+      margin-bottom: 1.5rem;
+      
+      background-color: var(--input-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .auth-form input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+      background-color: transparent;
+    }
+
+    /* Primary Button */
+    .auth-form button {
+      width: 100%;
+      padding: 0.9rem;
+      border: none;
+      border-radius: 8px;
+      
+      background-color: var(--accent);
+      color: #fff; /* Always white text on accent button */
+      
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .auth-form button:hover {
+      background-color: var(--accent-dark);
+    }
+
+    .auth-form button:active {
+      transform: translateY(1px);
+    }
+
+    /* Error Box */
+    .error {
+      background-color: rgba(214, 48, 49, 0.1); /* 10% opacity of error-red */
+      color: var(--error-red);
+      border: 1px solid var(--error-red);
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body class="auth-page">
+  <main class="container auth-container">
+    <h1>Admin-Setup</h1>
+    <p>Bitte neues Passwort setzen, bevor du fortfährst.</p>
+    
+    <% if (validationMsg) { %>
+      <div class="error"><%= validationMsg %></div>
+    <% } %>
+
+    <form method="POST" action="/users/admin-setup" class="auth-form">
+      <div>
+        <label for="newPassword">Neues Passwort</label>
+        <input type="password" id="newPassword" name="newPassword" required minlength="6" autofocus placeholder="••••••••">
+      </div>
+      <button type="submit">Passwort speichern</button>
+    </form>
+  </main>
+</body>
+</html>

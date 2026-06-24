@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/services/dashboardService.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/services/dashboardService.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Dashboard-Service: Metriken, Top-Ideen, aktive Nutzer und Statistiken.
+ * @module lib/services/dashboardService
+ */
+const db = require('../../config/db.js');
+const categoriesService = require('./categoriesService');
+
+/**
+ * Liefert Kennzahlen für das Dashboard (neue Ideen, aktive Nutzer, aktive Kategorien).
+ * @async
+ * @returns {Promise&lt;Object>} Objekt mit `newIdeasCount`, `activeUsersCount`, `activeCategoriesCount`.
+ */
+async function getMetrics() {
+    const newIdeasRows = await db.query(`
+      SELECT COALESCE(SUM(idea_count), 0) as new_ideas_count 
+      FROM monthly_stats 
+      WHERE month >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m')
+    `);
+    const new_ideas_count = newIdeasRows[0]?.new_ideas_count || 0;
+
+    const activeUsersRows = await db.query(`
+      SELECT COUNT(DISTINCT user_id) as active_users_count
+      FROM (
+        SELECT user_id FROM ideas WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        UNION SELECT user_id FROM likes WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        UNION SELECT user_id FROM comments WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+      ) as active_users
+    `);
+    const active_users_count = activeUsersRows[0]?.active_users_count || 0;
+
+    const activeCategoriesRows = await db.query(`
+      SELECT COUNT(DISTINCT c.category_id) as active_categories_count
+      FROM categories c JOIN ideas i ON c.category_id = i.category_id
+    `);
+    const active_categories_count = activeCategoriesRows[0]?.active_categories_count || 0;
+
+    return {
+        newIdeasCount: Number(new_ideas_count) || 0,
+        activeUsersCount: Number(active_users_count) || 0,
+        activeCategoriesCount: Number(active_categories_count) || 0
+    };
+}
+
+/**
+ * Liefert die Top-Ideen der letzten 7 Tage sortiert nach Engagement.
+ * @async
+ * @param {number} [limit=3]
+ * @returns {Promise&lt;Array&lt;Object>>} Array von Ideen-Objekten mit Metadaten.
+ */
+async function getTopIdeas(limit = 3) {
+    const topIdeas = await db.query(`
+      SELECT i.idea_id, i.title, i.description, i.category_id,
+             u.username as author, c.name as category_name,
+             i.like_count, i.dislike_count, i.comment_count,
+             (i.like_count - i.dislike_count) as engagement_score
+      FROM ideas i
+      LEFT JOIN users u ON i.user_id = u.user_id
+      LEFT JOIN categories c ON i.category_id = c.category_id
+      WHERE i.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+      ORDER BY engagement_score DESC, like_count DESC
+      LIMIT ?
+    `, [limit]);
+
+  // Normalisiere Zähler-Felder und initialisiere `tags`-Array
+  const result = topIdeas.map(i => ({
+        ...i,
+        likes_count: Number(i.like_count ?? 0),
+        dislikes_count: Number(i.dislike_count ?? 0),
+        comments_count: Number(i.comment_count ?? 0),
+        tags: []
+    }));
+
+    const ideaIds = result.map(i => i.idea_id);
+    if (ideaIds.length > 0) {
+        const tags = await db.query(`
+          SELECT itl.idea_id, t.name 
+          FROM idea_tag_links itl JOIN idea_tags t ON itl.tag_id = t.tag_id
+          WHERE itl.idea_id IN (?)
+        `, [ideaIds]);
+    // Baue eine Map von idea_id -> [tagNames]
+    const tagsMap = {};
+    tags.forEach(t => {
+      if (!tagsMap[t.idea_id]) tagsMap[t.idea_id] = [];
+      tagsMap[t.idea_id].push(t.name);
+    });
+
+    // Hänge die Tags an die jeweiligen Ergebnis-Objekte an
+    result.forEach(idea => {
+      idea.tags = tagsMap[idea.idea_id] || [];
+    });
+    }
+
+    return result;
+}
+
+/**
+ * Liefert die aktivsten Nutzer der letzten 30 Tage.
+ * @async
+ * @param {number} [limit=10]
+ * @returns {Promise&lt;Array&lt;Object>>}
+ */
+async function getActiveUsers(limit = 10) {
+    const activeUsers = await db.query(`
+      SELECT u.user_id, u.username,
+           (SELECT COUNT(*) FROM ideas WHERE user_id = u.user_id) as ideas_count,
+           (SELECT COUNT(*) FROM comments WHERE user_id = u.user_id) as comments_count,
+           up.current_points
+      FROM users u
+        LEFT JOIN user_points up ON u.user_id = up.user_id
+        WHERE u.user_id IN (
+            SELECT user_id FROM ideas WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            UNION SELECT user_id FROM comments WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        )
+        ORDER BY up.current_points DESC
+      LIMIT ?
+    `, [limit]);
+    return activeUsers;
+}
+
+module.exports = {
+  getMetrics,
+  getTopIdeas,
+  getActiveUsers,
+  getNewIdeasCount,
+  getPopularCategories,
+  getProjectStats,
+  getMonthlyStats,
+  getTopUsers,
+  getAllCategories,
+  getIdeaCardData
+};
+
+/**
+ * Zählt neue Ideen in einem Zeitraum (30 Tage Standard).
+ * @async
+ * @returns {Promise&lt;number>} Anzahl neuer Ideen.
+ */
+async function getNewIdeasCount() {
+    const result = await db.query(`
+      SELECT COALESCE(SUM(idea_count), 0) as new_ideas_count
+      FROM monthly_stats 
+      WHERE month >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 30 DAY), '%Y-%m')
+    `);
+    return Number(result[0]?.new_ideas_count) || 0;
+}
+
+/**
+ * Liefert populäre Kategorien nach Anzahl der Ideen.
+ * @async
+ * @param {number} [limit=5]
+ * @returns {Promise&lt;Array&lt;Object>>}
+ */
+async function getPopularCategories(limit = 5) {
+    const popularCategories = await db.query(`
+      SELECT c.category_id, c.name as category_name, COUNT(i.idea_id) as idea_count,
+      ROUND((COUNT(i.idea_id) / (SELECT COUNT(*) FROM ideas WHERE category_id IS NOT NULL)) * 100, 1) as percentage
+      FROM categories c LEFT JOIN ideas i ON c.category_id = i.category_id
+      GROUP BY c.category_id, c.name ORDER BY idea_count DESC LIMIT ?
+    `, [limit]);
+
+  // Normalisiere Zahlenfelder in den Kategorien-Resultaten
+  return popularCategories.map(cat => ({
+    ...cat,
+    idea_count: Number(cat.idea_count) || 0,
+    percentage: Number(cat.percentage) || 0
+  }));
+}
+
+/**
+ * Liefert Projektstatistiken (Status-Verteilung, Durchschnittsfortschritt).
+ * @async
+ * @returns {Promise&lt;Array&lt;Object>>}
+ */
+async function getProjectStats() {
+    const projectStats = await db.query(`
+      SELECT status, COUNT(*) as count, ROUND(AVG(progress), 1) as avg_progress
+      FROM projects GROUP BY status
+    `);
+
+  const totalProjects = (projectStats || []).reduce((s, x) => s + (Number(x.count) || 0), 0) || 0;
+  // Berechne Prozentanteile und normalisiere Zahlen
+  return (projectStats || []).map(p => ({
+    ...p,
+    count: Number(p.count) || 0,
+    avg_progress: Number(p.avg_progress) || 0,
+    percentage: totalProjects > 0 ? Number(((Number(p.count) / totalProjects) * 100).toFixed(1)) : 0
+  }));
+}
+
+/**
+ * Liefert monatliche Statistiken der letzten `months` Monate.
+ * @async
+ * @param {number} [months=6]
+ * @returns {Promise&lt;Array&lt;Object>>}
+ */
+async function getMonthlyStats(months = 6) {
+    const monthlyStats = await db.query(`
+      SELECT month, idea_count, active_users 
+      FROM monthly_stats 
+      WHERE month >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL ? MONTH), '%Y-%m')
+      ORDER BY month ASC
+    `, [months]);
+
+  // Normalisiere Monatsstatistiken (Zahlenfelder)
+  return (monthlyStats || []).map(m => ({
+    ...m,
+    idea_count: Number(m.idea_count) || 0,
+    active_users: Number(m.active_users) || 0
+  }));
+}
+
+/**
+ * Liefert Top-Users nach eingereichten Ideen und Likes.
+ * @async
+ * @param {number} [limit=5]
+ * @returns {Promise&lt;Array&lt;Object>>}
+ */
+async function getTopUsers(limit = 5) {
+    const topUsers = await db.query(`
+      SELECT u.username, COUNT(i.idea_id) as ideas_submitted,
+      COALESCE(SUM(i.like_count), 0) as total_likes_received
+      FROM users u LEFT JOIN ideas i ON u.user_id = i.user_id
+      GROUP BY u.user_id, u.username ORDER BY ideas_submitted DESC, total_likes_received DESC LIMIT ?
+    `, [limit]);
+
+  // Normalisiere Top-User Felder
+  return (topUsers || []).map(tu => ({
+    ...tu,
+    ideas_submitted: Number(tu.ideas_submitted) || 0,
+    total_likes_received: Number(tu.total_likes_received) || 0
+  }));
+}
+
+/**
+ * Liefert alle Kategorien (Wrapper zu categoriesService.getAll).
+ * @async
+ * @returns {Promise&lt;Array&lt;Object>>}
+ */
+async function getAllCategories() {
+    return categoriesService.getAll();
+}
+
+/**
+ * Liefert Daten für eine Idea-Card inklusive Kommentare und Tags.
+ * @async
+ * @param {number} ideaId
+ * @returns {Promise.&lt;Object>|null} Card-Daten oder `null`, wenn Idee nicht gefunden.
+ */
+async function getIdeaCardData(ideaId) {
+    const ideaRows = await db.query(`
+      SELECT 
+        i.idea_id,
+        i.title,
+        i.description,
+        i.category_id,
+        u.username as author,
+        c.name as category_name,
+        i.like_count as likes_count,
+        i.dislike_count as dislikes_count,
+        i.comment_count as comments_count
+      FROM ideas i
+      LEFT JOIN users u ON i.user_id = u.user_id
+      LEFT JOIN categories c ON i.category_id = c.category_id
+      WHERE i.idea_id = ?
+    `, [ideaId]);
+
+    const idea = Array.isArray(ideaRows) ? ideaRows[0] : ideaRows;
+    if (!idea) return null;
+
+    const tagsRows = await db.query(`
+      SELECT t.name 
+      FROM idea_tag_links itl
+      JOIN idea_tags t ON itl.tag_id = t.tag_id
+      WHERE itl.idea_id = ?
+    `, [ideaId]);
+
+  // Extrahiere Tag-Namen und setze Zähler
+  idea.tags = (Array.isArray(tagsRows) ? tagsRows : []).map(t => t.name);
+    idea.tag_count = Number(idea.tags?.length || 0);
+    idea.file_count = 0; // Placeholder as in original code
+
+    const comments = await db.query(`
+      SELECT c.*, u.username as author
+      FROM comments c
+      JOIN users u ON c.user_id = u.user_id
+      WHERE c.idea_id = ?
+      ORDER BY c.created_at DESC
+    `, [ideaId]);
+
+    return { idea, comments: Array.isArray(comments) ? comments : [] };
+}
+
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

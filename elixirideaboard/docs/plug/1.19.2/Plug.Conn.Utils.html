@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.39.2">
+    <meta name="project" content="Plug v1.19.2">
+
+
+    <title>Plug.Conn.Utils — Plug v1.19.2</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-VYWJUHZE.css" />
+
+    <script defer src="dist/sidebar_items-B73977CD.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-XBCM4BHM.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+Plug
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.19.2
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Plug</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Plug.Conn.Utils</span> 
+      <small class="app-vsn" translate="no">(Plug v1.19.2)</small>
+
+    </h1>
+
+      <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/conn/utils.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Utilities for working with connection data</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:params/0" data-no-tooltip="" translate="no">params()</a>
+
+      </div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#content_type/1" data-no-tooltip="" translate="no">content_type(binary)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Parses content type (without wildcards).</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#list/1" data-no-tooltip="" translate="no">list(binary)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Parses a comma-separated list of header values.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#media_type/1" data-no-tooltip="" translate="no">media_type(binary)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Parses media types (with wildcards).</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#params/1" data-no-tooltip="" translate="no">params(t)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Parses headers parameters.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#token/1" data-no-tooltip="" translate="no">token(token)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Parses a value as defined in <a href="http://www.w3.org/Protocols/rfc1341/4_Content-Type.html">RFC-1341</a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#validate_utf8!/3" data-no-tooltip="" translate="no">validate_utf8!(binary, exception, context)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Validates the given binary is valid UTF-8.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+
+    <div class="types-list">
+<section class="detail" id="t:params/0">
+
+  <div class="detail-header">
+    <a href="#t:params/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">params()</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/conn/utils.ex#L6" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> params() :: %{optional(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+
+    <div class="functions-list">
+<section class="detail" id="content_type/1">
+
+  <div class="detail-header">
+    <a href="#content_type/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">content_type(binary)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/conn/utils.ex#L125" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> content_type(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()) ::
+  {:ok, type :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), subtype :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), <a href="#t:params/0">params</a>()} | :error</pre>
+
+      </div>
+
+<p>Parses content type (without wildcards).</p><p>It is similar to <a href="#media_type/1"><code class="inline">media_type/1</code></a> except wildcards are
+not accepted in the type nor in the subtype.</p><h2 id="content_type/1-examples" class="section-heading"><a href="#content_type/1-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">content_type</span><span class="w"> </span><span class="s">&quot;x-sample/json; charset=utf-8&quot;</span><span class="w">
+</span><span class="p" data-group-id="8703810530-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;x-sample&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;json&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8703810530-2">%{</span><span class="s">&quot;charset&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;utf-8&quot;</span><span class="p" data-group-id="8703810530-2">}</span><span class="p" data-group-id="8703810530-1">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">content_type</span><span class="w"> </span><span class="s">&quot;x-sample/json  ; charset=utf-8  ; foo=bar&quot;</span><span class="w">
+</span><span class="p" data-group-id="8703810530-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;x-sample&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;json&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8703810530-4">%{</span><span class="s">&quot;charset&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;utf-8&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p" data-group-id="8703810530-4">}</span><span class="p" data-group-id="8703810530-3">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">content_type</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\r</span><span class="se">\n</span><span class="s"> text/plain;</span><span class="se">\r</span><span class="se">\n</span><span class="s"> charset=utf-8</span><span class="se">\r</span><span class="se">\n</span><span class="s">&quot;</span><span class="w">
+</span><span class="p" data-group-id="8703810530-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;text&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;plain&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8703810530-6">%{</span><span class="s">&quot;charset&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;utf-8&quot;</span><span class="p" data-group-id="8703810530-6">}</span><span class="p" data-group-id="8703810530-5">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">content_type</span><span class="w"> </span><span class="s">&quot;text/plain&quot;</span><span class="w">
+</span><span class="p" data-group-id="8703810530-7">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;text&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;plain&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8703810530-8">%{</span><span class="p" data-group-id="8703810530-8">}</span><span class="p" data-group-id="8703810530-7">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">content_type</span><span class="w"> </span><span class="s">&quot;x/*&quot;</span><span class="w">
+</span><span class="ss">:error</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">content_type</span><span class="w"> </span><span class="s">&quot;*/*&quot;</span><span class="w">
+</span><span class="ss">:error</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">content_type</span><span class="w"> </span><span class="s">&quot;something&quot;</span><span class="w">
+</span><span class="ss">:error</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="list/1">
+
+  <div class="detail-header">
+    <a href="#list/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">list(binary)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/conn/utils.ex#L282" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> list(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()) :: [<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()]</pre>
+
+      </div>
+
+<p>Parses a comma-separated list of header values.</p><h2 id="list/1-examples" class="section-heading"><a href="#list/1-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">list</span><span class="p" data-group-id="1347586085-1">(</span><span class="s">&quot;foo, bar&quot;</span><span class="p" data-group-id="1347586085-1">)</span><span class="w">
+</span><span class="p" data-group-id="1347586085-2">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p" data-group-id="1347586085-2">]</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">list</span><span class="p" data-group-id="1347586085-3">(</span><span class="s">&quot;foobar&quot;</span><span class="p" data-group-id="1347586085-3">)</span><span class="w">
+</span><span class="p" data-group-id="1347586085-4">[</span><span class="s">&quot;foobar&quot;</span><span class="p" data-group-id="1347586085-4">]</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">list</span><span class="p" data-group-id="1347586085-5">(</span><span class="s">&quot;&quot;</span><span class="p" data-group-id="1347586085-5">)</span><span class="w">
+</span><span class="p" data-group-id="1347586085-6">[</span><span class="p" data-group-id="1347586085-6">]</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">list</span><span class="p" data-group-id="1347586085-7">(</span><span class="s">&quot;empties, , are,, filtered&quot;</span><span class="p" data-group-id="1347586085-7">)</span><span class="w">
+</span><span class="p" data-group-id="1347586085-8">[</span><span class="s">&quot;empties&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;are&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;filtered&quot;</span><span class="p" data-group-id="1347586085-8">]</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">list</span><span class="p" data-group-id="1347586085-9">(</span><span class="s">&quot;whitespace , , ,,   is   ,definitely,optional&quot;</span><span class="p" data-group-id="1347586085-9">)</span><span class="w">
+</span><span class="p" data-group-id="1347586085-10">[</span><span class="s">&quot;whitespace&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;is&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;definitely&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;optional&quot;</span><span class="p" data-group-id="1347586085-10">]</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="media_type/1">
+
+  <div class="detail-header">
+    <a href="#media_type/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">media_type(binary)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/conn/utils.ex#L58" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> media_type(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()) ::
+  {:ok, type :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), subtype :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), <a href="#t:params/0">params</a>()} | :error</pre>
+
+      </div>
+
+<p>Parses media types (with wildcards).</p><p>Type and subtype are case insensitive while the
+sensitiveness of params depends on their keys and
+therefore are not handled by this parser.</p><p>Returns:</p><ul><li><code class="inline">{:ok, type, subtype, map_of_params}</code> if everything goes fine</li><li><code class="inline">:error</code> if the media type isn't valid</li></ul><h2 id="media_type/1-examples" class="section-heading"><a href="#media_type/1-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">media_type</span><span class="w"> </span><span class="s">&quot;text/plain&quot;</span><span class="w">
+</span><span class="p" data-group-id="3947778996-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;text&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;plain&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3947778996-2">%{</span><span class="p" data-group-id="3947778996-2">}</span><span class="p" data-group-id="3947778996-1">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">media_type</span><span class="w"> </span><span class="s">&quot;APPLICATION/vnd.ms-data+XML&quot;</span><span class="w">
+</span><span class="p" data-group-id="3947778996-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;application&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;vnd.ms-data+xml&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3947778996-4">%{</span><span class="p" data-group-id="3947778996-4">}</span><span class="p" data-group-id="3947778996-3">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">media_type</span><span class="w"> </span><span class="s">&quot;application/media_control+xml&quot;</span><span class="w">
+</span><span class="p" data-group-id="3947778996-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;application&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;media_control+xml&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3947778996-6">%{</span><span class="p" data-group-id="3947778996-6">}</span><span class="p" data-group-id="3947778996-5">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">media_type</span><span class="w"> </span><span class="s">&quot;text/*; q=1.0&quot;</span><span class="w">
+</span><span class="p" data-group-id="3947778996-7">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;text&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3947778996-8">%{</span><span class="s">&quot;q&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;1.0&quot;</span><span class="p" data-group-id="3947778996-8">}</span><span class="p" data-group-id="3947778996-7">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">media_type</span><span class="w"> </span><span class="s">&quot;*/*; q=1.0&quot;</span><span class="w">
+</span><span class="p" data-group-id="3947778996-9">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3947778996-10">%{</span><span class="s">&quot;q&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;1.0&quot;</span><span class="p" data-group-id="3947778996-10">}</span><span class="p" data-group-id="3947778996-9">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">media_type</span><span class="w"> </span><span class="s">&quot;x y&quot;</span><span class="w">
+</span><span class="ss">:error</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">media_type</span><span class="w"> </span><span class="s">&quot;*/html&quot;</span><span class="w">
+</span><span class="ss">:error</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">media_type</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="w">
+</span><span class="ss">:error</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">media_type</span><span class="w"> </span><span class="s">&quot;x/y z&quot;</span><span class="w">
+</span><span class="ss">:error</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="params/1">
+
+  <div class="detail-header">
+    <a href="#params/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">params(t)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/conn/utils.ex#L173" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> params(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()) :: <a href="#t:params/0">params</a>()</pre>
+
+      </div>
+
+<p>Parses headers parameters.</p><p>Keys are case insensitive and downcased,
+invalid key-value pairs are discarded.</p><h2 id="params/1-examples" class="section-heading"><a href="#params/1-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="p" data-group-id="7626249320-1">(</span><span class="s">&quot;foo=bar&quot;</span><span class="p" data-group-id="7626249320-1">)</span><span class="w">
+</span><span class="p" data-group-id="7626249320-2">%{</span><span class="s">&quot;foo&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p" data-group-id="7626249320-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="p" data-group-id="7626249320-3">(</span><span class="s">&quot;  foo=bar  &quot;</span><span class="p" data-group-id="7626249320-3">)</span><span class="w">
+</span><span class="p" data-group-id="7626249320-4">%{</span><span class="s">&quot;foo&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p" data-group-id="7626249320-4">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="p" data-group-id="7626249320-5">(</span><span class="s">&quot;FOO=bar&quot;</span><span class="p" data-group-id="7626249320-5">)</span><span class="w">
+</span><span class="p" data-group-id="7626249320-6">%{</span><span class="s">&quot;foo&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p" data-group-id="7626249320-6">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="p" data-group-id="7626249320-7">(</span><span class="s">&quot;Foo=bar; baz=BOING&quot;</span><span class="p" data-group-id="7626249320-7">)</span><span class="w">
+</span><span class="p" data-group-id="7626249320-8">%{</span><span class="s">&quot;foo&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;baz&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;BOING&quot;</span><span class="p" data-group-id="7626249320-8">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="p" data-group-id="7626249320-9">(</span><span class="s">&quot;foo=BAR ; wat&quot;</span><span class="p" data-group-id="7626249320-9">)</span><span class="w">
+</span><span class="p" data-group-id="7626249320-10">%{</span><span class="s">&quot;foo&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;BAR&quot;</span><span class="p" data-group-id="7626249320-10">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="p" data-group-id="7626249320-11">(</span><span class="s">&quot;foo=</span><span class="se">\&quot;</span><span class="s">bar</span><span class="se">\&quot;</span><span class="s">; baz=</span><span class="se">\&quot;</span><span class="s">boing</span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="p" data-group-id="7626249320-11">)</span><span class="w">
+</span><span class="p" data-group-id="7626249320-12">%{</span><span class="s">&quot;foo&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;baz&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;boing&quot;</span><span class="p" data-group-id="7626249320-12">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="p" data-group-id="7626249320-13">(</span><span class="s">&quot;foo=</span><span class="se">\&quot;</span><span class="s">bar;</span><span class="se">\&quot;</span><span class="s">; baz=</span><span class="se">\&quot;</span><span class="s">boing</span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="p" data-group-id="7626249320-13">)</span><span class="w">
+</span><span class="p" data-group-id="7626249320-14">%{</span><span class="s">&quot;foo&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;bar;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;baz&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;boing&quot;</span><span class="p" data-group-id="7626249320-14">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="p" data-group-id="7626249320-15">(</span><span class="s">&quot;=&quot;</span><span class="p" data-group-id="7626249320-15">)</span><span class="w">
+</span><span class="p" data-group-id="7626249320-16">%{</span><span class="p" data-group-id="7626249320-16">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="p" data-group-id="7626249320-17">(</span><span class="s">&quot;;&quot;</span><span class="p" data-group-id="7626249320-17">)</span><span class="w">
+</span><span class="p" data-group-id="7626249320-18">%{</span><span class="p" data-group-id="7626249320-18">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="p" data-group-id="7626249320-19">(</span><span class="s">&quot;foo=&quot;</span><span class="p" data-group-id="7626249320-19">)</span><span class="w">
+</span><span class="p" data-group-id="7626249320-20">%{</span><span class="p" data-group-id="7626249320-20">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="token/1">
+
+  <div class="detail-header">
+    <a href="#token/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">token(token)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/conn/utils.ex#L242" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> token(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>() | false</pre>
+
+      </div>
+
+<p>Parses a value as defined in <a href="http://www.w3.org/Protocols/rfc1341/4_Content-Type.html">RFC-1341</a>.</p><p>For convenience, trims whitespace at the end of the token.
+Returns <code class="inline">false</code> if the token is invalid.</p><h2 id="token/1-examples" class="section-heading"><a href="#token/1-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">token</span><span class="p" data-group-id="5066074843-1">(</span><span class="s">&quot;foo&quot;</span><span class="p" data-group-id="5066074843-1">)</span><span class="w">
+</span><span class="s">&quot;foo&quot;</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">token</span><span class="p" data-group-id="5066074843-2">(</span><span class="s">&quot;foo-bar&quot;</span><span class="p" data-group-id="5066074843-2">)</span><span class="w">
+</span><span class="s">&quot;foo-bar&quot;</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">token</span><span class="p" data-group-id="5066074843-3">(</span><span class="s">&quot;&lt;foo&gt;&quot;</span><span class="p" data-group-id="5066074843-3">)</span><span class="w">
+</span><span class="no">false</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">token</span><span class="p" data-group-id="5066074843-4">(</span><span class="s">~s[&quot;&lt;foo&gt;&quot;]</span><span class="p" data-group-id="5066074843-4">)</span><span class="w">
+</span><span class="s">&quot;&lt;foo&gt;&quot;</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">token</span><span class="p" data-group-id="5066074843-5">(</span><span class="s">~S[&quot;&lt;f\oo&gt;\&quot;&lt;b\ar&gt;&quot;]</span><span class="p" data-group-id="5066074843-5">)</span><span class="w">
+</span><span class="s">&quot;&lt;foo&gt;</span><span class="se">\&quot;</span><span class="s">&lt;bar&gt;&quot;</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">token</span><span class="p" data-group-id="5066074843-6">(</span><span class="s">~s[&quot;]</span><span class="p" data-group-id="5066074843-6">)</span><span class="w">
+</span><span class="no">false</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">token</span><span class="p" data-group-id="5066074843-7">(</span><span class="s">&quot;foo  &quot;</span><span class="p" data-group-id="5066074843-7">)</span><span class="w">
+</span><span class="s">&quot;foo&quot;</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">token</span><span class="p" data-group-id="5066074843-8">(</span><span class="s">&quot;foo bar&quot;</span><span class="p" data-group-id="5066074843-8">)</span><span class="w">
+</span><span class="no">false</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">token</span><span class="p" data-group-id="5066074843-9">(</span><span class="s">&quot;&quot;</span><span class="p" data-group-id="5066074843-9">)</span><span class="w">
+</span><span class="no">false</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">token</span><span class="p" data-group-id="5066074843-10">(</span><span class="s">&quot; &quot;</span><span class="p" data-group-id="5066074843-10">)</span><span class="w">
+</span><span class="s">&quot;&quot;</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="validate_utf8!/3">
+
+  <div class="detail-header">
+    <a href="#validate_utf8!/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">validate_utf8!(binary, exception, context)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/conn/utils.ex#L293" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> validate_utf8!(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()) :: :ok | <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">no_return</a>()</pre>
+
+      </div>
+
+<p>Validates the given binary is valid UTF-8.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/plug/1.19.2" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/plug/1.19.2">Hex Preview</a>
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+            Go to package docs
+          </button>
+
+            <a href="Plug.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.39.2) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix v1.8.5">
+
+
+    <title>Up and Running — Phoenix v1.8.5</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-209F6654.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.8.5
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="true">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Latest</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="https://hexdocs.pm/?packages=plug%3Alatest%2Cphoenix%3Alatest%2Cphoenix_html%3Alatest%2Cphoenix_live_view%3Alatest%2Cphoenix_pubsub%3Alatest%2Cphoenix_template%3Alatest&q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Latest</span>
+                <span class="help">Search latest versions of Plug, Phoenix, Phoenix.{HTML, LiveView, PubSub, Template}</span>
+              </button>
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="false">
+                <span class="name">Current version</span>
+                <span class="help">Search only this project</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Up and Running</h1>
+
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/guides/introduction/up_and_running.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p>There are two mechanisms to start a new Phoenix application: the express option, supported on some OSes, and via <a href="Mix.Tasks.Phx.New.html"><code class="inline">mix phx.new</code></a>. Let's check it out.</p><h2 id="phoenix-express" class="section-heading"><a href="#phoenix-express" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Phoenix Express</span></h2><p>A single command will get you up and running in seconds:</p><p>For macOS/Ubuntu:</p><pre><code class="makeup bash" translate="no"><span class="gp unselectable">$ </span><span class="">curl https://new.phoenixframework.org/myapp | sh
+</span></code></pre><p>For Windows PowerShell:</p><pre><code class="makeup bash" translate="no"><span class="">curl.exe -fsSO https://new.phoenixframework.org/myapp.bat; .\myapp.bat
+</span></code></pre><p>The above will install Erlang, Elixir, and Phoenix, and generate a fresh Phoenix application. It will also automatically pick one of PostgreSQL or MySQL as the database, and fallback to SQLite if none of them are available. Once the command above completes, it will open up a Phoenix application, with the steps necessary to complete your installation. Note your Phoenix application name is taken from the path.</p><p>If your operating system is not supported, or the command above fails, don't fret! You can still start your Phoenix application using <a href="Mix.Tasks.Phx.New.html"><code class="inline">mix phx.new</code></a>.</p><h2 id="via-mix-phx-new" class="section-heading"><a href="#via-mix-phx-new" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Via <a href="Mix.Tasks.Phx.New.html"><code class="inline">mix phx.new</code></a></span></h2><p>In order to create a new Phoenix application, you will need to install Erlang, Elixir, and Phoenix. See the <a href="installation.html">Installation Guide</a> for more information. If you share your application with someone, they will also need to follow the Installation Guide steps to set it all up.</p><p>Once you are ready, you can run <a href="Mix.Tasks.Phx.New.html"><code class="inline">mix phx.new</code></a> from any directory in order to bootstrap our Phoenix application. Phoenix will accept either an absolute or relative path for the directory of our new project. Assuming that the name of our application is <code class="inline">hello</code>, let's run the following command:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.new hello
+</span></code></pre><blockquote><p>By default, <a href="Mix.Tasks.Phx.New.html"><code class="inline">mix phx.new</code></a> includes a number of optional dependencies, for example:</p><ul><li><p><a href="ecto.html">Ecto</a> for communicating with a data store, such as PostgreSQL, MySQL, and others. You can skip this with <code class="inline">--no-ecto</code>.</p></li><li><p><a href="https://hexdocs.pm/phoenix_html/Phoenix.HTML.html">Phoenix.HTML</a>, <a href="https://tailwindcss.com">TailwindCSS</a>, and <a href="https://esbuild.github.io">Esbuild</a> for HTML applications. You can skip them with the <code class="inline">--no-html</code> and <code class="inline">--no-assets</code> flags.</p></li><li><p><a href="https://hexdocs.pm/phoenix_live_view/">Phoenix.LiveView</a> for building realtime and interactive web applications. You can skip this with <code class="inline">--no-live</code>.</p></li></ul><p>Run <a href="Mix.Tasks.Phx.New.html"><code class="inline">mix help phx.new</code></a> to learn all options.</p></blockquote><pre><code class="makeup console" translate="no"><span class="">mix phx.new hello
+</span><span class="">* creating hello/config/config.exs
+</span><span class="">* creating hello/config/dev.exs
+</span><span class="">* creating hello/config/prod.exs
+</span><span class="">...
+</span><span class="">
+</span><span class="">Fetch and install dependencies? [Yn]
+</span></code></pre><p>Phoenix generates the directory structure and all the files we will need for our application.</p><blockquote><p>Phoenix promotes the usage of git as version control software: among the generated files we find a <code class="inline">.gitignore</code>. We can <code class="inline">git init</code> our repository, and immediately add and commit all that hasn't been marked ignored.</p></blockquote><p>When it's done, it will ask us if we want it to install our dependencies for us. Let's say yes to that.</p><pre><code class="makeup console" translate="no"><span class="">Fetch and install dependencies? [Yn] Y
+</span><span class="">* running mix deps.get
+</span><span class="">* running mix assets.setup
+</span><span class="">* running mix deps.compile
+</span><span class="">
+</span><span class="">We are almost there! The following steps are missing:
+</span><span class="">
+</span><span class="">    $ cd hello
+</span><span class="">
+</span><span class="">Then configure your database in config/dev.exs and run:
+</span><span class="">
+</span><span class="">    $ mix ecto.create
+</span><span class="">
+</span><span class="">Start your Phoenix app with:
+</span><span class="">
+</span><span class="">    $ mix phx.server
+</span><span class="">
+</span><span class="">You can also run your app inside IEx (Interactive Elixir) as:
+</span><span class="">
+</span><span class="">    $ iex -S mix phx.server
+</span></code></pre><p>Once our dependencies are installed, the task will prompt us to change into our project directory and start our application.</p><p>Phoenix assumes that our PostgreSQL database will have a <code class="inline">postgres</code> user account with the correct permissions and a password of &quot;postgres&quot;. Let's give it a try.</p><p>First, we'll <code class="inline">cd</code> into the <code class="inline">hello/</code> directory we've just created:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">cd hello
+</span></code></pre><p>Now we'll create our database:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">mix ecto.create
+</span><span class="">Compiling 13 files (.ex)
+</span><span class="">Generated hello app
+</span><span class="">The database for Hello.Repo has been created
+</span></code></pre><p>In case the database could not be created, see <a href="ecto.html#mix-tasks">our Ecto section on Mix tasks</a> or run <a href="https://hexdocs.pm/ecto/3.13.2/Mix.Tasks.Ecto.Create.html"><code class="inline">mix help ecto.create</code></a>.</p><p>And finally, we'll start the Phoenix server:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.server
+</span><span class="">[info] Running HelloWeb.Endpoint with Bandit 1.5.7 at 127.0.0.1:4000 (http)
+</span><span class="">[info] Access HelloWeb.Endpoint at http://localhost:4000
+</span><span class="">[watch] build finished, watching for changes...
+</span><span class="">...
+</span></code></pre><p>If we choose not to have Phoenix install our dependencies when we generate a new application, the <a href="Mix.Tasks.Phx.New.html"><code class="inline">mix phx.new</code></a> task will prompt us to take the necessary steps when we do want to install them.</p><pre><code class="makeup console" translate="no"><span class="">Fetch and install dependencies? [Yn] n
+</span><span class="">
+</span><span class="">We are almost there! The following steps are missing:
+</span><span class="">
+</span><span class="">    $ cd hello
+</span><span class="">    $ mix deps.get
+</span><span class="">
+</span><span class="">Then configure your database in config/dev.exs and run:
+</span><span class="">
+</span><span class="">    $ mix ecto.create
+</span><span class="">
+</span><span class="">Start your Phoenix app with:
+</span><span class="">
+</span><span class="">    $ mix phx.server
+</span><span class="">
+</span><span class="">You can also run your app inside IEx (Interactive Elixir) as:
+</span><span class="">
+</span><span class="">    $ iex -S mix phx.server
+</span></code></pre><p>By default, Phoenix accepts requests on port 4000. If we point our favorite web browser at <a href="http://localhost:4000">http://localhost:4000</a>, we should see the Phoenix Framework welcome page.</p><picture>  <source media="(prefers-color-scheme: dark)" srcset="assets/images/welcome-to-phoenix-dark.png" />
+  <source media="(prefers-color-scheme: light)" srcset="assets/images/welcome-to-phoenix.png" />
+  <img src="assets/images/welcome-to-phoenix.png" alt="Phoenix Welcome Page" /></picture><p>If your screen looks like the image above, congratulations! You now have a working Phoenix application. In case you can't see the page above, try accessing it via <a href="http://127.0.0.1:4000">http://127.0.0.1:4000</a> and later make sure your OS has defined &quot;localhost&quot; as &quot;127.0.0.1&quot;.</p><p>To stop it, we hit <code class="inline">ctrl-c</code> twice.</p><p>Now you are ready to explore the world provided by Phoenix! See <a href="community.html">our community page</a> for books, screencasts, courses, and more.</p><p>Alternatively, you can continue reading these guides to have a quick introduction into all the parts that make your Phoenix application. If that's the case, you can read the guides in any order or start with our guide that explains the <a href="directory_structure.html">Phoenix directory structure</a>.</p>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="installation.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Installation
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="community.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Community
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix/1.8.5">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix/1.8.5">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/phoenix/1.8.5/show/guides/introduction/up_and_running.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+
+              <a href="Phoenix.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

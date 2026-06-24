@@ -1,0 +1,91 @@
+<section id="charts-grid" class="charts-grid">
+  <!-- 1. Beliebteste Kategorien -->
+  <div class="chart-card labels-under">
+    <h3>Beliebteste Kategorien</h3>
+    <div class="chart-container">
+      <% if (stats.popularCategories && stats.popularCategories.length) { %>
+        <% stats.popularCategories.forEach(function(category){ %>
+          <div class="bar-chart-item">
+            <div class="bar-header">
+              <span class="category-icon">📊</span>
+              <span class="category-name"><strong><%= category.category_name || category.name %></strong></span>
+            </div>
+            <div class="bar-track-container">
+              <div class="bar-track"><div class="bar-fill" style="--bar-width:<%= Number(category.percentage||0) %>%; width:<%= Number(category.percentage||0) %>%"></div></div>
+              <span class="bar-percentage"><%= Number(category.percentage||0) %>%</span>
+              <span class="category-count"><%= Number(category.idea_count||0) %> Ideen</span>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p class="no-data">Keine Kategorien vorhanden</p>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- 2. Beliebteste Projekte -->
+  <div class="chart-card labels-under">
+    <h3>Beliebteste Projekte</h3>
+    <div class="chart-container">
+      <% if (stats.popularProjects && stats.popularProjects.length) { %>
+        <% stats.popularProjects.forEach(function(p){ %>
+          <div class="bar-chart-item">
+            <div class="bar-header">
+              <span class="category-icon">📁</span>
+              <span class="category-name"><strong><%= p.name || 'Projekt' %></strong></span>
+            </div>
+            <div class="bar-track-container">
+              <div class="bar-track"><div class="bar-fill" style="--bar-width:<%= Number(p.percentage||0) %>%; width:<%= Number(p.percentage||0) %>%"></div></div>
+              <span class="bar-percentage"><%= Number(p.percentage||0).toFixed(1) %>%</span>
+              <span class="category-count"><%= Number(p.count||0) %> Ideen</span>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p class="no-data">Keine Projekte vorhanden</p>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- 3. Top Benutzer -->
+  <div class="chart-card">
+    <h3>Top Benutzer</h3>
+    <div class="chart-container">
+      <% if (stats.topUsers && stats.topUsers.length) { %>
+        <div class="users-list">
+        <% stats.topUsers.forEach(function(u, idx){ %>
+          <div class="user-item">
+            <div class="user-rank">#<%= idx+1 %></div>
+            <div class="user-info"><strong><%= u.username %></strong><span><%= Number(u.ideas_submitted||0) %> Ideen</span></div>
+            <div class="user-stats"> <span>❤️ <%= Number(u.total_likes_received||0) %></span></div>
+          </div>
+        <% }) %>
+        </div>
+      <% } else { %>
+        <p class="no-data">Keine Top-Benutzer vorhanden</p>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- 4. Monatliche Statistik (full-width) -->
+  <div class="chart-card full-width">
+    <h3>Monatliche Entwicklung</h3>
+    <div class="line-chart-container">
+      <% if (stats.monthlyStats && stats.monthlyStats.length > 1) { %>
+        <div class="line-chart">
+          <% const months = (stats.monthlyStats||[]).slice().sort((a,b)=> a.month.localeCompare(b.month)); %>
+          <% const counts = months.map(m=>Number(m.idea_count||0)); const max = counts.length?Math.max(...counts):1; %>
+          <% months.forEach(function(m){ %>
+            <div class="line-chart-bar">
+              <div class="bar" style="height:<%= ((Number(m.idea_count||0)/max)*100) %>%"></div>
+              <span class="bar-label"><%= Number(m.idea_count||0) %></span>
+              <span class="month-label"><%= m.month %></span>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="no-data">Nicht genügend Monatsdaten (mind. 2 Monate) vorhanden</p>
+      <% } %>
+    </div>
+  </div>
+</section>

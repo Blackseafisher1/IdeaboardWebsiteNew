@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix LiveView v1.1.28">
+
+
+    <title>phx-* HTML attributes — Phoenix LiveView v1.1.28</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-B046587D.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="http://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix LiveView
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.1.28
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-cheatmd" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix LiveView</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>phx-* HTML attributes</h1>
+
+      <a onclick="window.print()" title="Print Cheatsheet" class="icon-action" rel="print">
+        <i class="ri-printer-line" aria-hidden="true"></i>
+        <span class="sr-only">Print Cheatsheet</span>
+      </a>
+
+<a href="html-attrs.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+      <a href="https://github.com/phoenixframework/phoenix_live_view/blob/v1.1.28/guides/cheatsheets/html-attrs.cheatmd#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p>A summary of special HTML attributes used in Phoenix LiveView templates.
+Each attribute is linked to its documentation for more details.</p><section class="h2 col-2"><h2 id="event-handlers" class="col-2 section-heading"><a href="#event-handlers" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Event Handlers</span></h2><p>Attribute values can be:</p><ul><li>An event name for the <a href="Phoenix.LiveView.html#c:handle_event/3"><code class="inline">handle_event</code></a> server callback</li><li><a href="bindings.html#js-commands">JS commands</a> to be executed directly on the client</li></ul><blockquote><p>Use <a href="bindings.html#click-events"><code class="inline">phx-value-*</code></a> attributes to pass params to the server.</p></blockquote><blockquote><p>Use <a href="bindings.html#rate-limiting-events-with-debounce-and-throttle"><code class="inline">phx-debounce</code> and <code class="inline">phx-throttle</code></a> to control the frequency of events.</p></blockquote><section class="h3"><h3 id="click" class="section-heading"><a href="#click" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Click</span></h3><table><thead><tr><th style="text-align: left;">Attributes</th></tr></thead><tbody><tr><td style="text-align: left;"><a href="bindings.html#click-events"><code class="inline">phx-click</code></a> <a href="bindings.html#click-events"><code class="inline">phx-click-away</code></a></td></tr></tbody></table></section><section class="h3"><h3 id="focus" class="section-heading"><a href="#focus" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Focus</span></h3><table><thead><tr><th style="text-align: left;">Attributes</th></tr></thead><tbody><tr><td style="text-align: left;"><a href="bindings.html#focus-and-blur-events"><code class="inline">phx-blur</code></a> <a href="bindings.html#focus-and-blur-events"><code class="inline">phx-focus</code></a></td></tr><tr><td style="text-align: left;"><a href="bindings.html#focus-and-blur-events"><code class="inline">phx-window-blur</code></a> <a href="bindings.html#focus-and-blur-events"><code class="inline">phx-window-focus</code></a></td></tr></tbody></table></section><section class="h3"><h3 id="keyboard" class="section-heading"><a href="#keyboard" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Keyboard</span></h3><table><thead><tr><th style="text-align: left;">Attributes</th></tr></thead><tbody><tr><td style="text-align: left;"><a href="bindings.html#key-events"><code class="inline">phx-keydown</code></a> <a href="bindings.html#key-events"><code class="inline">phx-keyup</code></a></td></tr><tr><td style="text-align: left;"><a href="bindings.html#key-events"><code class="inline">phx-window-keydown</code></a> <a href="bindings.html#key-events"><code class="inline">phx-window-keyup</code></a></td></tr></tbody></table><blockquote><p>Use the <code class="inline">phx-key</code> attribute to listen to specific keys.</p></blockquote></section><section class="h3"><h3 id="scroll" class="section-heading"><a href="#scroll" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Scroll</span></h3><table><thead><tr><th style="text-align: left;">Attributes</th></tr></thead><tbody><tr><td style="text-align: left;"><a href="bindings.html#scroll-events-and-infinite-stream-pagination"><code class="inline">phx-viewport-top</code></a> <a href="bindings.html#scroll-events-and-infinite-stream-pagination"><code class="inline">phx-viewport-bottom</code></a></td></tr></tbody></table></section><section class="h3"><h3 id="example" class="section-heading"><a href="#example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Example</span></h3><h4>lib/hello_web/live/hello_live.html.heex</h4><pre class="wrap"><code class="makeup heex" translate="no"><span class="p">&lt;</span><span class="nt">button</span><span class="w"> </span><span class="na">type</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">button</span><span class="p">&quot;</span><span class="w"> </span><span class="na">phx-click</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">click</span><span class="p">&quot;</span><span class="w"> </span><span class="na">phx-value-user</span><span class="p">=</span><span class="p" data-group-id="2735632609-1">{</span><span class="na">@current_user</span><span class="o">.</span><span class="n">id</span><span class="p" data-group-id="2735632609-1">}</span><span class="p">&gt;</span><span class="n">Click Me</span><span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span><span class="w">
+</span><span class="p">&lt;</span><span class="nt">button</span><span class="w"> </span><span class="na">type</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">button</span><span class="p">&quot;</span><span class="w"> </span><span class="na">phx-click</span><span class="p">=</span><span class="p" data-group-id="2735632609-2">{</span><span class="nc">JS</span><span class="o">.</span><span class="n">toggle</span><span class="p" data-group-id="2735632609-ex-1">(</span><span class="ss">to</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#example&quot;</span><span class="p" data-group-id="2735632609-ex-1">)</span><span class="p" data-group-id="2735632609-2">}</span><span class="p">&gt;</span><span class="n">Toggle</span><span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span></code></pre></section></section><section class="h2 col-2"><h2 id="form-event-handlers" class="col-2 section-heading"><a href="#form-event-handlers" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Form Event Handlers</span></h2><section class="h3"><h3 id="on-form-elements" class="section-heading"><a href="#on-form-elements" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">On <code class="inline">&lt;form&gt;</code> elements</span></h3><table><thead><tr><th style="text-align: left;">Attribute</th><th style="text-align: left;">Value</th></tr></thead><tbody><tr><td style="text-align: left;"><a href="form-bindings.html"><code class="inline">phx-change</code></a></td><td style="text-align: left;">Event name or <a href="bindings.html#js-commands">JS commands</a></td></tr><tr><td style="text-align: left;"><a href="form-bindings.html"><code class="inline">phx-submit</code></a></td><td style="text-align: left;">Event name or <a href="bindings.html#js-commands">JS commands</a></td></tr><tr><td style="text-align: left;"><a href="form-bindings.html"><code class="inline">phx-auto-recover</code></a></td><td style="text-align: left;">Event name, <a href="bindings.html#js-commands">JS commands</a> or <code class="inline">&quot;ignore&quot;</code></td></tr><tr><td style="text-align: left;"><a href="form-bindings.html"><code class="inline">phx-trigger-action</code></a></td><td style="text-align: left;"><code class="inline">true</code> or <code class="inline">false</code></td></tr></tbody></table></section><section class="h3"><h3 id="on-button-elements" class="section-heading"><a href="#on-button-elements" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">On <code class="inline">&lt;button&gt;</code> elements</span></h3><table><thead><tr><th style="text-align: left;">Attribute</th><th style="text-align: left;">Value</th></tr></thead><tbody><tr><td style="text-align: left;"><a href="form-bindings.html#javascript-client-specifics"><code class="inline">phx-disable-with</code></a></td><td style="text-align: left;">Text to show during event submission</td></tr></tbody></table></section><section class="h3"><h3 id="form-example" class="section-heading"><a href="#form-example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Form Example</span></h3><h4>lib/hello_web/live/hello_live.html.heex</h4><pre class="wrap"><code class="makeup heex" translate="no"><span class="p">&lt;</span><span class="nt">form</span><span class="w"> </span><span class="na">id</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">m</span><span class="s2">y</span><span class="s2">-</span><span class="s2">f</span><span class="s2">o</span><span class="s2">r</span><span class="s2">m</span><span class="p">&quot;</span><span class="w"> </span><span class="na">phx-change</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">validate</span><span class="p">&quot;</span><span class="w"> </span><span class="na">phx-submit</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">save</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">input</span><span class="w"> </span><span class="na">type</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">text</span><span class="p">&quot;</span><span class="w"> </span><span class="na">name</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">name</span><span class="p">&quot;</span><span class="w"> </span><span class="na">phx-debounce</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">500</span><span class="p">&quot;</span><span class="w"> </span><span class="na">phx-throttle</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">500</span><span class="p">&quot;</span><span class="w"> </span><span class="p">/&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">button</span><span class="w"> </span><span class="na">type</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">submit</span><span class="p">&quot;</span><span class="w"> </span><span class="na">phx-disable-with</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">Saving...</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="n">Save</span><span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span><span class="w">
+</span><span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span></code></pre></section></section><section class="h2"><h2 id="socket-connection-lifecycle" class="section-heading"><a href="#socket-connection-lifecycle" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Socket Connection Lifecycle</span></h2><table><thead><tr><th style="text-align: left;">Attribute</th><th style="text-align: left;">Value</th></tr></thead><tbody><tr><td style="text-align: left;"><a href="bindings.html#lifecycle-events"><code class="inline">phx-connected</code></a></td><td style="text-align: left;"><a href="bindings.html#js-commands">JS commands</a> executed after the <a href="js-interop.html"><code class="inline">LiveSocket</code></a> connects</td></tr><tr><td style="text-align: left;"><a href="bindings.html#lifecycle-events"><code class="inline">phx-disconnected</code></a></td><td style="text-align: left;"><a href="bindings.html#js-commands">JS commands</a> executed after the <a href="js-interop.html"><code class="inline">LiveSocket</code></a> disconnects</td></tr></tbody></table><h4>lib/hello_web/live/hello_live.html.heex</h4><pre><code class="makeup heex" translate="no"><span class="p">&lt;</span><span class="nt">div</span><span class="w"> </span><span class="na">id</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">s</span><span class="s2">t</span><span class="s2">a</span><span class="s2">t</span><span class="s2">u</span><span class="s2">s</span><span class="p">&quot;</span><span class="w"> </span><span class="na">class</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">h</span><span class="s2">i</span><span class="s2">d</span><span class="s2">d</span><span class="s2">e</span><span class="s2">n</span><span class="p">&quot;</span><span class="w"> </span><span class="na">phx-disconnected</span><span class="p">=</span><span class="p" data-group-id="9196548390-1">{</span><span class="nc">JS</span><span class="o">.</span><span class="n">show</span><span class="p" data-group-id="9196548390-ex-1">(</span><span class="p" data-group-id="9196548390-ex-1">)</span><span class="p" data-group-id="9196548390-1">}</span><span class="w"> </span><span class="na">phx-connected</span><span class="p">=</span><span class="p" data-group-id="9196548390-2">{</span><span class="nc">JS</span><span class="o">.</span><span class="n">hide</span><span class="p" data-group-id="9196548390-ex-2">(</span><span class="p" data-group-id="9196548390-ex-2">)</span><span class="p" data-group-id="9196548390-2">}</span><span class="p">&gt;</span><span class="w">
+</span><span class="n">  Attempting to reconnect...
+</span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre></section><section class="h2"><h2 id="dom-element-lifecycle" class="section-heading"><a href="#dom-element-lifecycle" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">DOM Element Lifecycle</span></h2><table><thead><tr><th style="text-align: left;">Attribute</th><th style="text-align: left;">Value</th></tr></thead><tbody><tr><td style="text-align: left;"><a href="bindings.html#dom-patching"><code class="inline">phx-mounted</code></a></td><td style="text-align: left;"><a href="bindings.html#js-commands">JS commands</a> executed after the element is mounted</td></tr><tr><td style="text-align: left;"><a href="bindings.html#dom-patching"><code class="inline">phx-remove</code></a></td><td style="text-align: left;"><a href="bindings.html#js-commands">JS commands</a> executed during the element removal</td></tr><tr><td style="text-align: left;"><a href="bindings.html#dom-patching"><code class="inline">phx-update</code></a></td><td style="text-align: left;"><code class="inline">&quot;replace&quot;</code> (default), <code class="inline">&quot;stream&quot;</code> or <code class="inline">&quot;ignore&quot;</code>, configures DOM patching behavior</td></tr></tbody></table><h4>lib/hello_web/live/hello_live.html.heex</h4><pre><code class="makeup heex" translate="no"><span class="p">&lt;</span><span class="nt">div</span><span class="w">
+</span><span class="w">  </span><span class="na">id</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">i</span><span class="s2">f</span><span class="s2">r</span><span class="s2">a</span><span class="s2">m</span><span class="s2">e</span><span class="s2">-</span><span class="s2">c</span><span class="s2">o</span><span class="s2">n</span><span class="s2">t</span><span class="s2">a</span><span class="s2">i</span><span class="s2">n</span><span class="s2">e</span><span class="s2">r</span><span class="p">&quot;</span><span class="w">
+</span><span class="w">  </span><span class="na">phx-mounted</span><span class="p">=</span><span class="p" data-group-id="7462382998-1">{</span><span class="nc">JS</span><span class="o">.</span><span class="n">transition</span><span class="p" data-group-id="7462382998-ex-1">(</span><span class="s">&quot;animate-bounce&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">time</span><span class="p">:</span><span class="w"> </span><span class="mi">2000</span><span class="p" data-group-id="7462382998-ex-1">)</span><span class="p" data-group-id="7462382998-1">}</span><span class="w">
+</span><span class="w">  </span><span class="na">phx-remove</span><span class="p">=</span><span class="p" data-group-id="7462382998-2">{</span><span class="nc">JS</span><span class="o">.</span><span class="n">hide</span><span class="p" data-group-id="7462382998-ex-2">(</span><span class="ss">transition</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="7462382998-ex-3">{</span><span class="s">&quot;transition-all transform ease-in duration-200&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;opacity-100&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;opacity-0&quot;</span><span class="p" data-group-id="7462382998-ex-3">}</span><span class="p" data-group-id="7462382998-ex-2">)</span><span class="p" data-group-id="7462382998-2">}</span><span class="w">
+</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">button</span><span class="w"> </span><span class="na">type</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">button</span><span class="p">&quot;</span><span class="w"> </span><span class="na">phx-click</span><span class="p">=</span><span class="p" data-group-id="7462382998-3">{</span><span class="nc">JS</span><span class="o">.</span><span class="n">exec</span><span class="p" data-group-id="7462382998-ex-4">(</span><span class="s">&quot;phx-remove&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">to</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#iframe-container&quot;</span><span class="p" data-group-id="7462382998-ex-4">)</span><span class="p" data-group-id="7462382998-3">}</span><span class="p">&gt;</span><span class="n">Hide</span><span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">iframe</span><span class="w"> </span><span class="na">id</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">i</span><span class="s2">f</span><span class="s2">r</span><span class="s2">a</span><span class="s2">m</span><span class="s2">e</span><span class="p">&quot;</span><span class="w"> </span><span class="na">src</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">https://example.com</span><span class="p">&quot;</span><span class="w"> </span><span class="na">phx-update</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">ignore</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="p">&lt;/</span><span class="nt">iframe</span><span class="p">&gt;</span><span class="w">
+</span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre></section><section class="h2"><h2 id="client-hooks" class="section-heading"><a href="#client-hooks" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Client Hooks</span></h2><table><thead><tr><th style="text-align: left;">Attribute</th><th style="text-align: left;">Value</th></tr></thead><tbody><tr><td style="text-align: left;"><a href="js-interop.html#client-hooks-via-phx-hook"><code class="inline">phx-hook</code></a></td><td style="text-align: left;">The name of a previously defined JavaScript hook in the <a href="js-interop.html"><code class="inline">LiveSocket</code></a></td></tr></tbody></table><p>Client hooks provide bidirectional communication between client and server using
+<code class="inline">this.pushEvent</code> and <code class="inline">this.handleEvent</code> to send and receive events.</p><h4>lib/hello_web/live/hello_live.html.heex</h4><pre><code class="makeup heex" translate="no"><span class="p">&lt;</span><span class="nt">div</span><span class="w"> </span><span class="na">id</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">e</span><span class="s2">x</span><span class="s2">a</span><span class="s2">m</span><span class="s2">p</span><span class="s2">l</span><span class="s2">e</span><span class="p">&quot;</span><span class="w"> </span><span class="na">phx-hook</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">Example</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span><span class="n">Events</span><span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">ul</span><span class="w"> </span><span class="na">id</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">e</span><span class="s2">x</span><span class="s2">a</span><span class="s2">m</span><span class="s2">p</span><span class="s2">l</span><span class="s2">e</span><span class="s2">-</span><span class="s2">e</span><span class="s2">v</span><span class="s2">e</span><span class="s2">n</span><span class="s2">t</span><span class="s2">s</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span><span class="w">
+</span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre><h4>assets/js/app.js</h4><pre><code class="makeup javascript" translate="no"><span class="kt">let</span><span class="w"> </span><span class="no">Hooks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="p">}</span><span class="w">
+</span><span class="bp">Hooks</span><span class="p">.</span><span class="n">Example</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">  </span><span class="c1">//</span><span class="c1"> Callbacks
+</span><span class="w">  </span><span class="nf">mounted</span><span class="p">(</span><span class="p">)</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nb">this</span><span class="p">.</span><span class="nf">appendEvent</span><span class="p">(</span><span class="p">&quot;</span><span class="s2">Mounted</span><span class="p">&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="nf">beforeUpdate</span><span class="p">(</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nb">this</span><span class="p">.</span><span class="nf">appendEvent</span><span class="p">(</span><span class="p">&quot;</span><span class="s2">Before Update</span><span class="p">&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="nf">updated</span><span class="p">(</span><span class="p">)</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nb">this</span><span class="p">.</span><span class="nf">appendEvent</span><span class="p">(</span><span class="p">&quot;</span><span class="s2">Updated</span><span class="p">&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="nf">destroyed</span><span class="p">(</span><span class="p">)</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nb">this</span><span class="p">.</span><span class="nf">appendEvent</span><span class="p">(</span><span class="p">&quot;</span><span class="s2">Destroyed</span><span class="p">&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="nf">disconnected</span><span class="p">(</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nb">this</span><span class="p">.</span><span class="nf">appendEvent</span><span class="p">(</span><span class="p">&quot;</span><span class="s2">Disconnected</span><span class="p">&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="p">,</span><span class="w">
+</span><span class="w">  </span><span class="nf">reconnected</span><span class="p">(</span><span class="p">)</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nb">this</span><span class="p">.</span><span class="nf">appendEvent</span><span class="p">(</span><span class="p">&quot;</span><span class="s2">Reconnected</span><span class="p">&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="p">,</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span><span class="c1">//</span><span class="c1"> Custom Helper
+</span><span class="w">  </span><span class="nf">appendEvent</span><span class="p">(</span><span class="nv">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">    </span><span class="nb">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nv">name</span><span class="p">)</span><span class="w">
+</span><span class="w">    </span><span class="kt">let</span><span class="w"> </span><span class="nv">li</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nf">createElement</span><span class="p">(</span><span class="p">&quot;</span><span class="s2">li</span><span class="p">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">    </span><span class="nv">li</span><span class="p">.</span><span class="n">innerText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">name</span><span class="w">
+</span><span class="w">    </span><span class="nb">this</span><span class="p">.</span><span class="n">el</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="p">&quot;</span><span class="s2">#example-events</span><span class="p">&quot;</span><span class="p">)</span><span class="p">.</span><span class="nf">appendChild</span><span class="p">(</span><span class="nv">li</span><span class="p">)</span><span class="w">
+</span><span class="w">  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="w">
+</span><span class="kt">let</span><span class="w"> </span><span class="nv">liveSocket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nv">LiveSocket</span><span class="p">(</span><span class="p">&quot;</span><span class="s2">/live</span><span class="p">&quot;</span><span class="p">,</span><span class="w"> </span><span class="no">Socket</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">hooks</span><span class="p">:</span><span class="w"> </span><span class="no">Hooks</span><span class="p">}</span><span class="p">)</span></code></pre></section><section class="h2"><h2 id="tracking-static-assets" class="section-heading"><a href="#tracking-static-assets" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Tracking Static Assets</span></h2><table><thead><tr><th style="text-align: left;">Attribute</th><th style="text-align: left;">Value</th></tr></thead><tbody><tr><td style="text-align: left;"><a href="Phoenix.LiveView.html#static_changed?/1"><code class="inline">phx-track-static</code></a></td><td style="text-align: left;">None, used to annotate static files</td></tr></tbody></table><h4>lib/hello_web/components/layouts/root.html.heex</h4><pre><code class="makeup heex" translate="no"><span class="p">&lt;</span><span class="nt">link</span><span class="w"> </span><span class="na">phx-track-static</span><span class="w"> </span><span class="na">rel</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">stylesheet</span><span class="p">&quot;</span><span class="w"> </span><span class="na">href</span><span class="p">=</span><span class="p" data-group-id="5252099213-1">{</span><span class="sx">~p&quot;/assets/app.css&quot;</span><span class="p" data-group-id="5252099213-1">}</span><span class="w"> </span><span class="p">/&gt;</span><span class="w">
+</span><span class="p">&lt;</span><span class="nt">script</span><span class="w"> </span><span class="na">defer</span><span class="w"> </span><span class="na">phx-track-static</span><span class="w"> </span><span class="na">type</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">text/javascript</span><span class="p">&quot;</span><span class="w"> </span><span class="na">src</span><span class="p">=</span><span class="p" data-group-id="5252099213-2">{</span><span class="sx">~p&quot;/assets/app.js&quot;</span><span class="p" data-group-id="5252099213-2">}</span><span class="p">&gt;</span><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></section><section class="h2"><h2 id="formatting-syntax" class="section-heading"><a href="#formatting-syntax" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Formatting &amp; Syntax</span></h2><table><thead><tr><th style="text-align: left;">Attribute</th><th style="text-align: left;">Value</th></tr></thead><tbody><tr><td style="text-align: left;"><a href="Phoenix.LiveView.HTMLFormatter.html#module-skip-formatting"><code class="inline">phx-no-format</code></a></td><td style="text-align: left;">Presence (or <code class="inline">true</code>) skips automatic HEEx formatting for the element block</td></tr><tr><td style="text-align: left;"><a href="Phoenix.Component.html#sigil_H/2-interpolating-blocks"><code class="inline">phx-no-curly-interpolation</code></a></td><td style="text-align: left;">Presence (or <code class="inline">true</code>) disables <code class="inline">{...}</code> interpolation inside the element, requiring <code class="inline">&lt;%= ... %&gt;</code> syntax</td></tr></tbody></table></section>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="syncing-changes.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Syncing changes and optimistic UIs
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix_live_view/1.1.28">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix_live_view/1.1.28">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/phoenix_live_view/1.1.28/show/guides/cheatsheets/html-attrs.cheatmd">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="Phoenix LiveView.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js"></script>
+<script>
+  let initialized = false;
+
+  window.addEventListener("exdoc:loaded", () => {
+    if (!initialized) {
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: document.body.className.includes("dark") ? "dark" : "default"
+      });
+      initialized = true;
+    }
+
+    let id = 0;
+    for (const codeEl of document.querySelectorAll("pre code.mermaid")) {
+      const graphDefinition = codeEl.textContent;
+      const graphId = "mermaid-graph-" + id++;
+      mermaid.render(graphId, graphDefinition).then(({svg, bindFunctions}) => {
+        codeEl.innerHTML = svg;
+        bindFunctions?.(codeEl);
+      });
+    }
+  });
+</script>
+
+  </body>
+</html>

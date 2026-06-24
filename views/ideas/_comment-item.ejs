@@ -1,0 +1,62 @@
+<!-- _comment-item.ejs-->
+<li class="comment-item" id="comment-<%= comment.comment_id %>" data-comment-id="<%= comment.comment_id %>">
+  <div class="comment-meta">
+    <span class="comment-author"><%= comment.username %></span>
+    <span class="comment-date"><%= new Date(comment.created_at).toLocaleString('de-DE') %></span>
+    
+    <div class="comment-actions">
+
+      
+      <div class="reaction-control">
+        <button
+          type="button"
+          class="comment-reaction-btn <%= comment.userReactionEmoji ? 'active' : '' %>"
+          data-comment-id="<%= comment.comment_id %>"
+          data-idea-id="<%= comment.idea_id %>"
+          aria-expanded="false"
+          title="Emoji-Reaktion">
+          <%= comment.userReactionEmoji || '🙂' %>
+        </button>
+        <div class="emoji-popover" data-comment-id="<%= comment.comment_id %>">
+         <form class="emoji-popover-form"
+                hx-post="/ideas/eigen/<%= comment.comment_id %>/react?idea_id=<%= comment.idea_id %>"
+                hx-target="#comment-<%= comment.comment_id %>"
+                hx-swap="outerHTML">
+            <% ['❤️','😂','😮','😢','😡','🎉','🙏','👀','🤔'].forEach(function(em){ %>
+              <button type="submit" name="emoji" value="<%= em %>"><%= em %></button>
+            <% }); %>
+          </form>
+        </div>
+      </div>
+
+      <a
+  hx-post="/ideas/eigen/<%= comment.comment_id %>/like?idea_id=<%= comment.idea_id %>"
+  hx-trigger="click"
+  hx-target="#comment-<%= comment.comment_id %>"
+  hx-swap="outerHTML"
+
+  class="comment-like-link <%= comment.userLiked ? 'liked' : '' %>"
+  title="Kommentar von <%= comment.username %> liken">
+  👍 <%= comment.like_count || 0 %>
+</a>
+
+     
+      <!-- DM Link -->
+      <% if (user && comment.user_id && comment.user_id !== user.id) { %>
+        <a class="dm-btn" href="/dms/direct/<%= comment.user_id %>">
+          💬 DM
+        </a>
+      <% } %>
+    </div>
+  </div>
+
+  <% if (comment.reactionsTotal > 0) { %>
+    <div class="comment-reaction-bar" aria-hidden="true">
+      <% (comment.topReactions || []).forEach(function(r) { %>
+        <span class="reaction-chip"><%= r.emoji %> <span class="reaction-count"><%= r.count %></span></span>
+      <% }); %>
+      <span class="reaction-total">Gesamt: <%= comment.reactionsTotal %></span>
+    </div>
+  <% } %>
+  <p class="comment-text"><%= comment.text %></p>
+</li>

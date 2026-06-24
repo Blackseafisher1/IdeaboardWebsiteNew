@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix LiveView v1.1.28">
+
+
+    <title>Assigns and HEEx templates — Phoenix LiveView v1.1.28</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-B046587D.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="http://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix LiveView
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.1.28
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix LiveView</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Assigns and HEEx templates</h1>
+
+<a href="assigns-eex.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+      <a href="https://github.com/phoenixframework/phoenix_live_view/blob/v1.1.28/guides/server/assigns-eex.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p>All of the data in a LiveView is stored in the socket, which is a server
+side struct called <a href="Phoenix.LiveView.Socket.html"><code class="inline">Phoenix.LiveView.Socket</code></a>. Your own data is stored
+under the <code class="inline">assigns</code> key of said struct. The server data is never shared
+with the client beyond what your template renders.</p><p>Phoenix template language is called HEEx (HTML+EEx). EEx is Embedded
+Elixir, an Elixir string template engine. Those templates
+are either files with the <code class="inline">.heex</code> extension or they are created
+directly in source files via the <code class="inline">~H</code> sigil. You can learn more about
+the HEEx syntax by checking the docs for <a href="Phoenix.Component.html#sigil_H/2">the <code class="inline">~H</code> sigil</a>.</p><p>The <a href="Phoenix.Component.html#assign/2"><code class="inline">Phoenix.Component.assign/2</code></a> and <a href="Phoenix.Component.html#assign/3"><code class="inline">Phoenix.Component.assign/3</code></a>
+functions help store those values. Those values can be accessed
+in the LiveView as <code class="inline">socket.assigns.name</code> but they are accessed
+inside HEEx templates as <code class="inline">@name</code>.</p><p>In this section, we are going to cover how LiveView minimizes
+the payload over the wire by understanding the interplay between
+assigns and templates.</p><h2 id="change-tracking" class="section-heading"><a href="#change-tracking" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Change tracking</span></h2><p>When you first render a <code class="inline">.heex</code> template, it will send all of the
+static and dynamic parts of the template to the client. Imagine the
+following template:</p><pre><code class="makeup heex" translate="no"><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span><span class="p" data-group-id="1345356545-1">{</span><span class="n">expand_title</span><span class="p" data-group-id="1345356545-ex-1">(</span><span class="na">@title</span><span class="p" data-group-id="1345356545-ex-1">)</span><span class="p" data-group-id="1345356545-1">}</span><span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span></code></pre><p>It has two static parts, <code class="inline">&lt;h1&gt;</code> and <code class="inline">&lt;/h1&gt;</code> and one dynamic part
+made of <code class="inline">expand_title(@title)</code>. Further rendering of this template
+won't resend the static parts and it will only resend the dynamic
+part if it changes.</p><p>The tracking of changes is done via assigns. If the <code class="inline">@title</code> assign
+changes, then LiveView will execute the dynamic parts of the template,
+<code class="inline">expand_title(@title)</code>, and send the new content. If <code class="inline">@title</code> is the same,
+nothing is executed and nothing is sent.</p><p>Change tracking also works when accessing map/struct fields.
+Take this template:</p><pre><code class="makeup heex" translate="no"><span class="p">&lt;</span><span class="nt">div</span><span class="w"> </span><span class="na">id</span><span class="p">=</span><span class="p" data-group-id="3930742180-1">{</span><span class="s">&quot;user_</span><span class="si" data-group-id="3930742180-ex-1">#{</span><span class="na">@user</span><span class="o">.</span><span class="n">id</span><span class="si" data-group-id="3930742180-ex-1">}</span><span class="s">&quot;</span><span class="p" data-group-id="3930742180-1">}</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p" data-group-id="3930742180-2">{</span><span class="na">@user</span><span class="o">.</span><span class="n">name</span><span class="p" data-group-id="3930742180-2">}</span><span class="w">
+</span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre><p>If the <code class="inline">@user.name</code> changes but <code class="inline">@user.id</code> doesn't, then LiveView
+will re-render only <code class="inline">@user.name</code> and it will not execute or resend <code class="inline">@user.id</code>
+at all.</p><p>The change tracking also works when rendering other templates as
+long as they are also <code class="inline">.heex</code> templates:</p><pre><code class="makeup heex" translate="no"><span class="p" data-group-id="1066919441-1">{</span><span class="n">render</span><span class="p" data-group-id="1066919441-ex-1">(</span><span class="s">&quot;child_template.html&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">assigns</span><span class="p" data-group-id="1066919441-ex-1">)</span><span class="p" data-group-id="1066919441-1">}</span></code></pre><p>Or when using function components:</p><pre><code class="makeup heex" translate="no"><span class="p">&lt;</span><span class="nf">.show_name</span><span class="w"> </span><span class="na">name</span><span class="p">=</span><span class="p" data-group-id="1152042507-1">{</span><span class="na">@user</span><span class="o">.</span><span class="n">name</span><span class="p" data-group-id="1152042507-1">}</span><span class="w"> </span><span class="p">/&gt;</span></code></pre><p>The assign tracking feature also implies that you MUST avoid performing
+direct operations in the template. For example, if you perform a database
+query in your template:</p><pre><code class="makeup heex" translate="no"><span class="p" data-group-id="5844347475-1">&lt;%=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nc">Repo</span><span class="o">.</span><span class="n">all</span><span class="p" data-group-id="5844347475-ex-1">(</span><span class="nc">User</span><span class="p" data-group-id="5844347475-ex-1">)</span><span class="w"> </span><span class="k" data-group-id="5844347475-ex-2">do</span><span class="w"> </span><span class="p" data-group-id="5844347475-1">%&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p" data-group-id="5844347475-2">{</span><span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="p" data-group-id="5844347475-2">}</span><span class="w">
+</span><span class="p" data-group-id="5844347475-3">&lt;%</span><span class="w"> </span><span class="k" data-group-id="5844347475-ex-2">end</span><span class="w"> </span><span class="p" data-group-id="5844347475-3">%&gt;</span></code></pre><p>Then Phoenix will never re-render the section above, even if the number of
+users in the database changes. Instead, you need to store the users as
+assigns in your LiveView before it renders the template:</p><pre><code class="makeup elixir" translate="no"><span class="n">assign</span><span class="p" data-group-id="3912645034-1">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="ss">:users</span><span class="p">,</span><span class="w"> </span><span class="nc">Repo</span><span class="o">.</span><span class="n">all</span><span class="p" data-group-id="3912645034-2">(</span><span class="nc">User</span><span class="p" data-group-id="3912645034-2">)</span><span class="p" data-group-id="3912645034-1">)</span></code></pre><p>Generally speaking, <strong>data loading should never happen inside the template</strong>,
+regardless if you are using LiveView or not. The difference is that LiveView
+enforces this best practice.</p><h2 id="common-pitfalls" class="section-heading"><a href="#common-pitfalls" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Common pitfalls</span></h2><p>There are some common pitfalls to keep in mind when using the <code class="inline">~H</code> sigil
+or <code class="inline">.heex</code> templates inside LiveViews.</p><h3 id="variables" class="section-heading"><a href="#variables" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Variables</span></h3><p>Due to the scope of variables, LiveView has to disable change tracking
+whenever variables are used in the template, with the exception of
+variables introduced by Elixir block constructs such as <code class="inline">case</code>,
+<code class="inline">for</code>, <code class="inline">if</code>, and others. Therefore, you <strong>must avoid</strong> code like
+this in your HEEx templates:</p><pre><code class="makeup heex" translate="no"><span class="p" data-group-id="9934276968-1">&lt;%</span><span class="w"> </span><span class="n">some_var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="na">@x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="na">@y</span><span class="w"> </span><span class="p" data-group-id="9934276968-1">%&gt;</span><span class="w">
+</span><span class="p" data-group-id="9934276968-2">{</span><span class="n">some_var</span><span class="p" data-group-id="9934276968-2">}</span></code></pre><p>Instead, use a function:</p><pre><code class="makeup heex" translate="no"><span class="p" data-group-id="8260496258-1">{</span><span class="n">sum</span><span class="p" data-group-id="8260496258-ex-1">(</span><span class="na">@x</span><span class="p">,</span><span class="w"> </span><span class="na">@y</span><span class="p" data-group-id="8260496258-ex-1">)</span><span class="p" data-group-id="8260496258-1">}</span></code></pre><p>Similarly, <strong>do not</strong> define variables at the top of your <code class="inline">render</code> function
+for LiveViews or LiveComponents. Since LiveView cannot track <code class="inline">sum</code> or <code class="inline">title</code>,
+if either value changes, both must be re-rendered by LiveView.</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">render</span><span class="p" data-group-id="9975121065-1">(</span><span class="n">assigns</span><span class="p" data-group-id="9975121065-1">)</span><span class="w"> </span><span class="k" data-group-id="9975121065-2">do</span><span class="w">
+  </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assigns</span><span class="o">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">assigns</span><span class="o">.</span><span class="n">y</span><span class="w">
+  </span><span class="n">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assigns</span><span class="o">.</span><span class="n">title</span><span class="w">
+
+  </span><span class="sx">~H&quot;&quot;&quot;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span><span class="p" data-group-id="5080805049-1">{</span><span class="n">title</span><span class="p" data-group-id="5080805049-1">}</span><span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span><span class="p" data-group-id="5080805049-2">{</span><span class="n">sum</span><span class="p" data-group-id="5080805049-2">}</span><span class="w">
+</span><span class="w">  </span><span class="sx">&quot;&quot;&quot;</span><span class="w">
+</span><span class="k" data-group-id="9975121065-2">end</span></code></pre><p>Instead use the <code class="inline">assign/2</code>, <code class="inline">assign/3</code>, <code class="inline">assign_new/3</code>, and <code class="inline">update/3</code>
+functions to compute it. Any assign defined or updated this way will be marked as
+changed, while other assigns like <code class="inline">@title</code> will still be tracked by LiveView.</p><pre><code class="makeup elixir" translate="no"><span class="n">assign</span><span class="p" data-group-id="2102985310-1">(</span><span class="n">assigns</span><span class="p">,</span><span class="w"> </span><span class="ss">sum</span><span class="p">:</span><span class="w"> </span><span class="n">assigns</span><span class="o">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">assigns</span><span class="o">.</span><span class="n">y</span><span class="p" data-group-id="2102985310-1">)</span></code></pre><p>The same functions can be used inside function components too:</p><pre><code class="makeup elixir" translate="no"><span class="n">attr</span><span class="w"> </span><span class="ss">:x</span><span class="p">,</span><span class="w"> </span><span class="ss">:integer</span><span class="p">,</span><span class="w"> </span><span class="ss">required</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+</span><span class="n">attr</span><span class="w"> </span><span class="ss">:y</span><span class="p">,</span><span class="w"> </span><span class="ss">:integer</span><span class="p">,</span><span class="w"> </span><span class="ss">required</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+</span><span class="n">attr</span><span class="w"> </span><span class="ss">:title</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">required</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">sum_component</span><span class="p" data-group-id="4801164040-1">(</span><span class="n">assigns</span><span class="p" data-group-id="4801164040-1">)</span><span class="w"> </span><span class="k" data-group-id="4801164040-2">do</span><span class="w">
+  </span><span class="n">assigns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assign</span><span class="p" data-group-id="4801164040-3">(</span><span class="n">assigns</span><span class="p">,</span><span class="w"> </span><span class="ss">sum</span><span class="p">:</span><span class="w"> </span><span class="n">assigns</span><span class="o">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">assigns</span><span class="o">.</span><span class="n">y</span><span class="p" data-group-id="4801164040-3">)</span><span class="w">
+
+  </span><span class="sx">~H&quot;&quot;&quot;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span><span class="p" data-group-id="3920120243-1">{</span><span class="na">@title</span><span class="p" data-group-id="3920120243-1">}</span><span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span><span class="p" data-group-id="3920120243-2">{</span><span class="na">@sum</span><span class="p" data-group-id="3920120243-2">}</span><span class="w">
+</span><span class="w">  </span><span class="sx">&quot;&quot;&quot;</span><span class="w">
+</span><span class="k" data-group-id="4801164040-2">end</span></code></pre><p>Generally speaking, avoid accessing variables inside <code class="inline">HEEx</code> templates, as code that
+access variables is always executed on every render. The exception are variables
+introduced by Elixir's block constructs, such as <code class="inline">if</code> and <code class="inline">for</code> comprehensions.
+For example, accessing the <code class="inline">post</code> variable defined by the comprehension below
+works as expected:</p><pre><code class="makeup heex" translate="no"><span class="p" data-group-id="0985260325-1">&lt;%=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">post</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="na">@posts</span><span class="w"> </span><span class="k" data-group-id="0985260325-ex-1">do</span><span class="w"> </span><span class="p" data-group-id="0985260325-1">%&gt;</span><span class="w">
+</span><span class="n">  ...
+</span><span class="p" data-group-id="0985260325-2">&lt;%</span><span class="w"> </span><span class="k" data-group-id="0985260325-ex-1">end</span><span class="w"> </span><span class="p" data-group-id="0985260325-2">%&gt;</span></code></pre><h3 id="the-assigns-variable" class="section-heading"><a href="#the-assigns-variable" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">The <code class="inline">assigns</code> variable</span></h3><p>When talking about variables, it is also worth discussing the <code class="inline">assigns</code>
+special variable. Every time you use the <code class="inline">~H</code> sigil, you must define an
+<code class="inline">assigns</code> variable, which is also available on every <code class="inline">.heex</code> template.
+However, we must avoid accessing this variable directly inside templates
+and instead use <code class="inline">@</code> for accessing specific keys. This also applies to
+function components. Let's see some examples.</p><p>Sometimes you might want to pass all assigns from one function component to
+another. For example, imagine you have a complex <code class="inline">card</code> component with
+header, content and footer section. You might refactor your component
+into three smaller components internally:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">card</span><span class="p" data-group-id="5545725928-1">(</span><span class="n">assigns</span><span class="p" data-group-id="5545725928-1">)</span><span class="w"> </span><span class="k" data-group-id="5545725928-2">do</span><span class="w">
+  </span><span class="sx">~H&quot;&quot;&quot;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">div</span><span class="w"> </span><span class="na">class</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">c</span><span class="s2">a</span><span class="s2">r</span><span class="s2">d</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nf">.card_header</span><span class="w"> </span><span class="p" data-group-id="7672412275-1">{</span><span class="n">assigns</span><span class="p" data-group-id="7672412275-1">}</span><span class="w"> </span><span class="p">/&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nf">.card_body</span><span class="w"> </span><span class="p" data-group-id="7672412275-2">{</span><span class="n">assigns</span><span class="p" data-group-id="7672412275-2">}</span><span class="w"> </span><span class="p">/&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nf">.card_footer</span><span class="w"> </span><span class="p" data-group-id="7672412275-3">{</span><span class="n">assigns</span><span class="p" data-group-id="7672412275-3">}</span><span class="w"> </span><span class="p">/&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="sx">&quot;&quot;&quot;</span><span class="w">
+</span><span class="k" data-group-id="5545725928-2">end</span><span class="w">
+
+</span><span class="kd">defp</span><span class="w"> </span><span class="nf">card_header</span><span class="p" data-group-id="5545725928-3">(</span><span class="n">assigns</span><span class="p" data-group-id="5545725928-3">)</span><span class="w"> </span><span class="k" data-group-id="5545725928-4">do</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+</span><span class="k" data-group-id="5545725928-4">end</span><span class="w">
+
+</span><span class="kd">defp</span><span class="w"> </span><span class="nf">card_body</span><span class="p" data-group-id="5545725928-5">(</span><span class="n">assigns</span><span class="p" data-group-id="5545725928-5">)</span><span class="w"> </span><span class="k" data-group-id="5545725928-6">do</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+</span><span class="k" data-group-id="5545725928-6">end</span><span class="w">
+
+</span><span class="kd">defp</span><span class="w"> </span><span class="nf">card_footer</span><span class="p" data-group-id="5545725928-7">(</span><span class="n">assigns</span><span class="p" data-group-id="5545725928-7">)</span><span class="w"> </span><span class="k" data-group-id="5545725928-8">do</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+</span><span class="k" data-group-id="5545725928-8">end</span></code></pre><p>Because of the way function components handle attributes, the above code will
+not perform change tracking and it will always re-render all three components
+on every change.</p><p>Generally, you should avoid passing all assigns and instead be explicit about
+which assigns the child components need:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">card</span><span class="p" data-group-id="2604663356-1">(</span><span class="n">assigns</span><span class="p" data-group-id="2604663356-1">)</span><span class="w"> </span><span class="k" data-group-id="2604663356-2">do</span><span class="w">
+  </span><span class="sx">~H&quot;&quot;&quot;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">div</span><span class="w"> </span><span class="na">class</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">c</span><span class="s2">a</span><span class="s2">r</span><span class="s2">d</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nf">.card_header</span><span class="w"> </span><span class="na">title</span><span class="p">=</span><span class="p" data-group-id="9141768988-1">{</span><span class="na">@title</span><span class="p" data-group-id="9141768988-1">}</span><span class="w"> </span><span class="na">class</span><span class="p">=</span><span class="p" data-group-id="9141768988-2">{</span><span class="na">@title_class</span><span class="p" data-group-id="9141768988-2">}</span><span class="w"> </span><span class="p">/&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nf">.card_body</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">      </span><span class="p" data-group-id="9141768988-3">{</span><span class="n">render_slot</span><span class="p" data-group-id="2604663356-3">(</span><span class="na">@inner_block</span><span class="p" data-group-id="2604663356-3">)</span><span class="p" data-group-id="9141768988-3">}</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;/</span><span class="nf">.card_body</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nf">.card_footer</span><span class="w"> </span><span class="na">on_close</span><span class="p">=</span><span class="p" data-group-id="9141768988-4">{</span><span class="na">@on_close</span><span class="p" data-group-id="9141768988-4">}</span><span class="w"> </span><span class="p">/&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="sx">&quot;&quot;&quot;</span><span class="w">
+</span><span class="k" data-group-id="2604663356-2">end</span></code></pre><p>If you really need to pass all assigns you should instead use the regular
+function call syntax. This is the only case where accessing <code class="inline">assigns</code> inside
+templates is acceptable:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">card</span><span class="p" data-group-id="1221120066-1">(</span><span class="n">assigns</span><span class="p" data-group-id="1221120066-1">)</span><span class="w"> </span><span class="k" data-group-id="1221120066-2">do</span><span class="w">
+  </span><span class="sx">~H&quot;&quot;&quot;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">div</span><span class="w"> </span><span class="na">class</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">c</span><span class="s2">a</span><span class="s2">r</span><span class="s2">d</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p" data-group-id="5755325716-1">{</span><span class="n">card_header</span><span class="p" data-group-id="1221120066-3">(</span><span class="n">assigns</span><span class="p" data-group-id="1221120066-3">)</span><span class="p" data-group-id="5755325716-1">}</span><span class="w">
+</span><span class="w">    </span><span class="p" data-group-id="5755325716-2">{</span><span class="n">card_body</span><span class="p" data-group-id="1221120066-4">(</span><span class="n">assigns</span><span class="p" data-group-id="1221120066-4">)</span><span class="p" data-group-id="5755325716-2">}</span><span class="w">
+</span><span class="w">    </span><span class="p" data-group-id="5755325716-3">{</span><span class="n">card_footer</span><span class="p" data-group-id="1221120066-5">(</span><span class="n">assigns</span><span class="p" data-group-id="1221120066-5">)</span><span class="p" data-group-id="5755325716-3">}</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="sx">&quot;&quot;&quot;</span><span class="w">
+</span><span class="k" data-group-id="1221120066-2">end</span></code></pre><p>This ensures that the change tracking information from the parent component
+is passed to each child component, only re-rendering what is necessary.
+However, generally speaking, it is best to avoid passing <code class="inline">assigns</code> altogether
+and instead let LiveView figure out the best way to track changes.</p><h3 id="modifying-the-assigns-variable" class="section-heading"><a href="#modifying-the-assigns-variable" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Modifying the <code class="inline">assigns</code> variable</span></h3><p>Never modify the <code class="inline">assigns</code> variable in a function component through generic functions like <a href="https://hexdocs.pm/elixir/Map.html#put/3"><code class="inline">Map.put/3</code></a> or <a href="https://hexdocs.pm/elixir/Map.html#merge/2"><code class="inline">Map.merge/2</code></a>. Instead, use <a href="Phoenix.Component.html#assign/2"><code class="inline">Phoenix.Component.assign/2</code></a>, <a href="Phoenix.Component.html#assign/3"><code class="inline">Phoenix.Component.assign/3</code></a>, <a href="Phoenix.Component.html#assign_new/3"><code class="inline">Phoenix.Component.assign_new/3</code></a>, or <a href="Phoenix.Component.html#update/3"><code class="inline">Phoenix.Component.update/3</code></a>. If you modify the <code class="inline">assigns</code> variable with e.g. <a href="https://hexdocs.pm/elixir/Map.html#put/3"><code class="inline">Map.put/3</code></a>, those assigns inside your <code class="inline">HEEx</code> template will not update after the initial render. Using the LiveView specific assign functions is required for change tracking to work.</p><p>So, <strong>never do this</strong>:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">card</span><span class="p" data-group-id="0981463938-1">(</span><span class="n">assigns</span><span class="p" data-group-id="0981463938-1">)</span><span class="w"> </span><span class="k" data-group-id="0981463938-2">do</span><span class="w">
+  </span><span class="n">assigns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Map</span><span class="o">.</span><span class="n">put</span><span class="p" data-group-id="0981463938-3">(</span><span class="n">assigns</span><span class="p">,</span><span class="w"> </span><span class="ss">:sum</span><span class="p">,</span><span class="w"> </span><span class="nc">Enum</span><span class="o">.</span><span class="n">sum</span><span class="p" data-group-id="0981463938-4">(</span><span class="n">assigns</span><span class="o">.</span><span class="n">values</span><span class="p" data-group-id="0981463938-4">)</span><span class="p" data-group-id="0981463938-3">)</span><span class="w">
+
+  </span><span class="sx">~H&quot;&quot;&quot;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="p" data-group-id="9577600651-1">{</span><span class="na">@sum</span><span class="p" data-group-id="9577600651-1">}</span><span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="sx">&quot;&quot;&quot;</span><span class="w">
+</span><span class="k" data-group-id="0981463938-2">end</span></code></pre><p>But instead do this:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">card</span><span class="p" data-group-id="9338924345-1">(</span><span class="n">assigns</span><span class="p" data-group-id="9338924345-1">)</span><span class="w"> </span><span class="k" data-group-id="9338924345-2">do</span><span class="w">
+  </span><span class="n">assigns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assign</span><span class="p" data-group-id="9338924345-3">(</span><span class="n">assigns</span><span class="p">,</span><span class="w"> </span><span class="ss">:sum</span><span class="p">,</span><span class="w"> </span><span class="nc">Enum</span><span class="o">.</span><span class="n">sum</span><span class="p" data-group-id="9338924345-4">(</span><span class="n">assigns</span><span class="o">.</span><span class="n">values</span><span class="p" data-group-id="9338924345-4">)</span><span class="p" data-group-id="9338924345-3">)</span><span class="w">
+
+  </span><span class="sx">~H&quot;&quot;&quot;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="p" data-group-id="7839137249-1">{</span><span class="na">@sum</span><span class="p" data-group-id="7839137249-1">}</span><span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="sx">&quot;&quot;&quot;</span><span class="w">
+</span><span class="k" data-group-id="9338924345-2">end</span></code></pre><p>If you use <a href="https://hexdocs.pm/elixir/Map.html#put/3"><code class="inline">Map.put/3</code></a> instead of <code class="inline">assign/3</code> here, the <code class="inline">sum</code> assign will not update if you change the <code class="inline">values</code> after the initial render of the <code class="inline">HEEx</code> template.</p><h3 id="comprehensions" class="section-heading"><a href="#comprehensions" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Comprehensions</span></h3><p>HEEx supports comprehensions in templates, which is a way to traverse lists
+and collections. For example:</p><pre><code class="makeup heex" translate="no"><span class="p" data-group-id="7202501619-1">&lt;%=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">post</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="na">@posts</span><span class="w"> </span><span class="k" data-group-id="7202501619-ex-1">do</span><span class="w"> </span><span class="p" data-group-id="7202501619-1">%&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">section</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span><span class="p" data-group-id="7202501619-2">{</span><span class="n">expand_title</span><span class="p" data-group-id="7202501619-ex-2">(</span><span class="n">post</span><span class="o">.</span><span class="n">title</span><span class="p" data-group-id="7202501619-ex-2">)</span><span class="p" data-group-id="7202501619-2">}</span><span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;/</span><span class="nt">section</span><span class="p">&gt;</span><span class="w">
+</span><span class="p" data-group-id="7202501619-3">&lt;%</span><span class="w"> </span><span class="k" data-group-id="7202501619-ex-1">end</span><span class="w"> </span><span class="p" data-group-id="7202501619-3">%&gt;</span></code></pre><p>Or using the special <code class="inline">:for</code> attribute:</p><pre><code class="makeup heex" translate="no"><span class="p">&lt;</span><span class="nt">section</span><span class="w"> </span><span class="na">:for</span><span class="p">=</span><span class="p" data-group-id="0101832620-1">{</span><span class="n">post</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="na">@posts</span><span class="p" data-group-id="0101832620-1">}</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span><span class="p" data-group-id="0101832620-2">{</span><span class="n">expand_title</span><span class="p" data-group-id="0101832620-ex-1">(</span><span class="n">post</span><span class="o">.</span><span class="n">title</span><span class="p" data-group-id="0101832620-ex-1">)</span><span class="p" data-group-id="0101832620-2">}</span><span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span><span class="w">
+</span><span class="p">&lt;/</span><span class="nt">section</span><span class="p">&gt;</span></code></pre><p>Comprehensions in templates are optimized so the static parts of
+a comprehension are only sent once, regardless of the number of items.
+Furthermore, LiveView tracks changes within the collection given to the
+comprehension. In the ideal case, if only a single entry in <code class="inline">@posts</code>
+changes, only this entry is sent again. By default, the index is used
+to track changes. This means that if an entry is inserted, any entries after
+that index will be considered changed and sent again. To optimize this, you can
+also pass a <code class="inline">:key</code> on tags in HEEx:</p><pre><code class="makeup heex" translate="no"><span class="p">&lt;</span><span class="nt">section</span><span class="w"> </span><span class="na">:for</span><span class="p">=</span><span class="p" data-group-id="0178395244-1">{</span><span class="n">post</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="na">@posts</span><span class="p" data-group-id="0178395244-1">}</span><span class="w"> </span><span class="na">:key</span><span class="p">=</span><span class="p" data-group-id="0178395244-2">{</span><span class="n">post</span><span class="o">.</span><span class="n">id</span><span class="p" data-group-id="0178395244-2">}</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span><span class="p" data-group-id="0178395244-3">{</span><span class="n">expand_title</span><span class="p" data-group-id="0178395244-ex-1">(</span><span class="n">post</span><span class="o">.</span><span class="n">title</span><span class="p" data-group-id="0178395244-ex-1">)</span><span class="p" data-group-id="0178395244-3">}</span><span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span><span class="w">
+</span><span class="p">&lt;/</span><span class="nt">section</span><span class="p">&gt;</span></code></pre><p>You can read more about <code class="inline">:key</code> in the <a href="Phoenix.Component.html#sigil_H/2-special-attributes">documentation for <code class="inline">sigil_H/2</code></a>.</p><p>To track changes in comprehensions, LiveView needs to perform additional
+bookkeeping, which requires extra memory on the server. If memory usage is a
+concern, you should also consider to use <a href="Phoenix.LiveView.html#stream/4"><code class="inline">Phoenix.LiveView.stream/4</code></a>, which
+allows you to manage collections without keeping them in memory.</p><h3 id="summary" class="section-heading"><a href="#summary" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Summary</span></h3><p>To sum up:</p><ol><li><p>Avoid defining local variables inside HEEx templates, except within Elixir's constructs</p></li><li><p>Avoid passing or accessing the <code class="inline">assigns</code> variable inside HEEx templates</p></li><li><p>Only use LiveView specific assign functions to modify the <code class="inline">assigns</code> variable</p></li></ol>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="welcome.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Welcome
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="deployments.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Deployments and recovery
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix_live_view/1.1.28">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix_live_view/1.1.28">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/phoenix_live_view/1.1.28/show/guides/server/assigns-eex.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="Phoenix LiveView.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js"></script>
+<script>
+  let initialized = false;
+
+  window.addEventListener("exdoc:loaded", () => {
+    if (!initialized) {
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: document.body.className.includes("dark") ? "dark" : "default"
+      });
+      initialized = true;
+    }
+
+    let id = 0;
+    for (const codeEl of document.querySelectorAll("pre code.mermaid")) {
+      const graphDefinition = codeEl.textContent;
+      const graphId = "mermaid-graph-" + id++;
+      mermaid.render(graphId, graphDefinition).then(({svg, bindFunctions}) => {
+        codeEl.innerHTML = svg;
+        bindFunctions?.(codeEl);
+      });
+    }
+  });
+</script>
+
+  </body>
+</html>

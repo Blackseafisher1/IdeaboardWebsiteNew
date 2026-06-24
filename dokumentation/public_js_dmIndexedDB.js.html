@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: public/js/dmIndexedDB.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: public/js/dmIndexedDB.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Minimal-Wrapper für IndexedDB (derzeit deaktiviert, für spätere Nutzung bereitgestellt).
+ * @module public/js/dmIndexedDB
+ */
+(function (global) {
+  'use strict';
+
+  /**
+   * Initialize DB name for a given user/namespace and return the opened DB promise.
+   * Calling with the same name is a no-op; different name resets the cached promise so DB re-opens.
+   * @param {string} [userId]
+   * @param {string} [namespace='dm']
+   * @returns {Promise&lt;IDBDatabase>}
+   */
+  function init(userId, namespace = 'dm') {
+    const user = userId || (typeof localStorage !== 'undefined' &amp;&amp; localStorage.getItem('currentUser')) || 'anon';
+    // single DB per user
+    const desired = `${DB_NAME_PREFIX}_${String(user).toLowerCase()}`;
+    CURRENT_NAMESPACE = namespace || 'dm';
+    if (DB_NAME !== desired) {
+      DB_NAME = desired;
+      dbPromise = null; // force reopen with new name
+    }
+    return openDB();
+  }
+
+  // backward-compatible alias used in some client code
+  function initDB(userId, namespace) { return init(userId, namespace); }
+
+  /**
+   * Wandelt ein IDBRequest in ein Promise um.
+   * @param {IDBRequest} req
+   * @returns {Promise&lt;any>}
+   */
+  function promisifyRequest(req) {
+    // Wandelt ein IDBRequest in ein Promise um; löst bei onsuccess auf und lehnt bei onerror ab.
+    return new Promise((resolve, reject) => {
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  /**
+   * Resolve the appropriate object store name for a given purpose and DB.
+   * Falls back to legacy store names when the desired per-purpose store does not exist.
+   * @param {IDBDatabase} db
+   * @param {string} kind - 'messages'|'images' etc.
+   * @returns {string}
+   */
+  function getStoreName(db, kind) {
+    let desired;
+    if (kind === 'messages') desired = `messages_${CURRENT_NAMESPACE}`;
+    else if (kind === 'images') desired = `files_${CURRENT_NAMESPACE}`;
+    else desired = `${kind}_${CURRENT_NAMESPACE}`;
+    try {
+      if (db &amp;&amp; db.objectStoreNames &amp;&amp; db.objectStoreNames.contains(desired)) return desired;
+      if (db &amp;&amp; db.objectStoreNames &amp;&amp; db.objectStoreNames.contains(kind)) return kind;
+      // legacy image store name
+      if (kind === 'images' &amp;&amp; db &amp;&amp; db.objectStoreNames &amp;&amp; db.objectStoreNames.contains('images')) return 'images';
+    } catch (e) {}
+    return desired;
+  }
+
+  /**
+   * Speichert ein Bildblob unter `fileKey`.
+   * @async
+   * @param {string} fileKey
+   * @param {Blob} blob
+   * @param {Object} [meta]
+   * @returns {Promise&lt;boolean>}
+   */
+  async function saveImage(fileKey, blob, meta = {}) {
+    const db = await openDB();
+    const imagesStoreName = getStoreName(db, 'images');
+    const tx = db.transaction(imagesStoreName, 'readwrite');
+    const store = tx.objectStore(imagesStoreName);
+    // Schreibe das Bild-Record in den Images-Store und löse Promise entsprechend
+    return new Promise((resolve, reject) => {
+      const rec = Object.assign({ fileKey, blob, ts: Date.now() }, meta);
+      const req = store.put(rec);
+      req.onsuccess = () => resolve(true);
+      req.onerror = (e) => reject(e.target.error);
+    });
+  }
+
+  /**
+   * Liest ein gespeichertens Bild aus der DB.
+   * @async
+   * @param {string} fileKey
+   * @returns {Promise&lt;Object|null>} Record oder null
+   */
+  async function getImage(fileKey) {
+    if (!fileKey) return null;
+    const db = await openDB();
+    const imagesStore = getStoreName(db, 'images');
+    const tx = db.transaction(imagesStore, 'readonly');
+    const store = tx.objectStore(imagesStore);
+    // Liefert das gespeicherte Bild-Record oder null, falls nicht vorhanden.
+    return promisifyRequest(store.get(fileKey)).then(r => r || null).catch(() => null);
+  }
+
+  /**
+   * Entfernt ältere Nachrichten einer Konversation, sodass nur `keepN` verbleiben.
+   * @async
+   * @param {string|number} conversationId
+   * @param {number} [keepN=200]
+   * @returns {Promise&lt;number>} Anzahl gelöschter Einträge
+   */
+  async function pruneConversation(conversationId, keepN = 200) {
+    const db = await openDB();
+    const messagesStoreName = getStoreName(db, 'messages');
+    const tx = db.transaction(messagesStoreName, 'readwrite');
+    const store = tx.objectStore(messagesStoreName);
+    /**
+     * Beschreibung: idx.
+     * @returns {void}
+     */
+    const idx = store.index('conv_msg');
+    // Öffnet einen Cursor über alle Nachrichten der Konversation und löscht ältere, falls nötig
+    return new Promise((resolve, reject) => {
+      const range = IDBKeyRange.bound([conversationId, 0], [conversationId, Number.MAX_SAFE_INTEGER]);
+      const cursorReq = idx.openCursor(range, 'next');
+      const toDelete = [];
+      const all = [];
+      cursorReq.onsuccess = (e) => {
+        const cursor = e.target.result;
+        if (!cursor) {
+          // Früheste Einträge löschen, falls Anzahl > keepN
+          if (all.length &lt;= keepN) return resolve(0);
+          const delCount = all.length - keepN;
+          for (let i = 0; i &lt; delCount; i++) toDelete.push(all[i]);
+          (async () => {
+            // Lösche ältere Records asynchron, ignoriere Fehler beim Löschen einzelner Datensätze
+            for (const rec of toDelete) {
+              try { store.delete(rec.id); } catch (e) {}
+            }
+            resolve(toDelete.length);
+          })();
+          return;
+        }
+        all.push(cursor.value);
+        cursor.continue();
+      };
+      cursorReq.onerror = (e) => reject(e.target.error);
+    });
+  }
+
+  /* Message helpers (minimal implementations) */
+  async function saveMessages(conversationId, msgs) {
+    if (!msgs || !msgs.length) return;
+    const db = await openDB();
+    const messagesStoreName = getStoreName(db, 'messages');
+    const tx = db.transaction(messagesStoreName, 'readwrite');
+    const store = tx.objectStore(messagesStoreName);
+    // When a unique index exists on ['conversationId','messageId'] a put() that
+    // attempts to create a second record with the same pair will fail the
+    // transaction. To avoid this we first attempt to resolve an existing
+    // record via the 'conv_msg' index and reuse its primary key so put() will
+    // perform an update instead of an insert.
+    const idxExists = !!(store.index &amp;&amp; (() => { try { return store.index('conv_msg'); } catch (e) { return null; } })());
+    for (const m of msgs) {
+      const hasRealMsgId = (m.messageId !== undefined &amp;&amp; m.messageId !== null &amp;&amp; !Number.isNaN(Number(m.messageId)));
+      const effectiveMsgId = hasRealMsgId ? m.messageId : `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      // Default primary id we will use if no existing record is found.
+      let id = m.id || `msg_${conversationId}_${effectiveMsgId}`;
+
+      const rec = {
+        id: id,
+        conversationId: conversationId,
+        messageId: effectiveMsgId,
+        data: m
+      };
+
+      try {
+        if (idxExists) {
+          // Try to find existing record for this conversation/message pair
+          const getReq = store.index('conv_msg').get([conversationId, effectiveMsgId]);
+          try {
+            const existing = await promisifyRequest(getReq);
+            if (existing &amp;&amp; existing.id) {
+              // reuse existing primary key so put() updates instead of creating a duplicate
+              rec.id = existing.id;
+            }
+          } catch (e) {
+            // if the lookup fails for any reason, continue and let put() attempt
+            // the insert/update; the tx.onerror will catch constraint failures.
+            console.warn('conv_msg lookup failed:', e);
+          }
+        }
+        store.put(rec);
+      } catch (e) {
+        console.warn('Immediate put error:', e);
+      }
+    }
+    return new Promise((resolve, reject) => {
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = (e) => {
+        const error = tx.error || (e.target &amp;&amp; e.target.error) || new Error('saveMessages transaction failed');
+        console.error('IndexedDB saveMessages error:', error);
+        reject(error);
+      };
+    });
+  }
+
+  async function getMessages(conversationId, opts = {}) {
+    if (!conversationId) return [];
+    const db = await openDB();
+    const messagesStoreName = getStoreName(db, 'messages');
+    const tx = db.transaction(messagesStoreName, 'readonly');
+    const store = tx.objectStore(messagesStoreName);
+    let results = [];
+    try {
+      const idx = store.index &amp;&amp; store.index('conversation');
+      if (idx) {
+        const req = idx.getAll(conversationId);
+        results = await promisifyRequest(req);
+      } else {
+        // fallback: getAll and filter
+        const allReq = store.getAll();
+        const all = await promisifyRequest(allReq);
+        results = (all || []).filter(r => String(r.conversationId) === String(conversationId));
+      }
+    } catch (e) {
+      results = [];
+    }
+    // map to message objects
+    const mapped = (results || []).map(r => r.data || r);
+    if (opts.limit) return mapped.slice(-opts.limit);
+    return mapped;
+  }
+
+  async function hasMessage(conversationId, messageId) {
+    if (!conversationId || messageId === undefined || messageId === null) return false;
+    const db = await openDB();
+    const messagesStoreName = getStoreName(db, 'messages');
+    const tx = db.transaction(messagesStoreName, 'readonly');
+    const store = tx.objectStore(messagesStoreName);
+    try {
+      const idx = store.index &amp;&amp; store.index('conv_msg');
+      if (idx) {
+        const req = idx.get([conversationId, messageId]);
+        const r = await promisifyRequest(req);
+        return !!r;
+      }
+    } catch (e) {}
+    // fallback: scan
+    const all = await promisifyRequest(store.getAll()).catch(() => []);
+    return (all || []).some(r => String(r.conversationId) === String(conversationId) &amp;&amp; String(r.messageId) === String(messageId));
+  }
+
+  async function editMessage(conversationId, messageId, update) {
+    if (!conversationId || messageId === undefined || messageId === null) return false;
+    const db = await openDB();
+    const messagesStoreName = getStoreName(db, 'messages');
+    const tx = db.transaction(messagesStoreName, 'readwrite');
+    const store = tx.objectStore(messagesStoreName);
+    try {
+      const idx = store.index &amp;&amp; store.index('conv_msg');
+      if (idx) {
+        const req = idx.get([conversationId, messageId]);
+        const rec = await promisifyRequest(req);
+        if (!rec) return false;
+        rec.data = Object.assign(rec.data || {}, update);
+        await promisifyRequest(store.put(rec));
+        return true;
+      }
+    } catch (e) {}
+    // fallback: scan &amp; update
+    const all = await promisifyRequest(store.getAll()).catch(() => []);
+    for (const r of (all || [])) {
+      if (String(r.conversationId) === String(conversationId) &amp;&amp; String(r.messageId) === String(messageId)) {
+        r.data = Object.assign(r.data || {}, update);
+        try { await promisifyRequest(store.put(r)); } catch (e) {}
+        return true;
+      }
+    }
+    return false;
+  }
+
+  async function deleteMessage(conversationId, messageId) {
+    if (!conversationId || messageId === undefined || messageId === null) return false;
+    const db = await openDB();
+    const messagesStoreName = getStoreName(db, 'messages');
+    const tx = db.transaction(messagesStoreName, 'readwrite');
+    const store = tx.objectStore(messagesStoreName);
+    try {
+      const idx = store.index &amp;&amp; store.index('conv_msg');
+      if (idx) {
+        const req = idx.get([conversationId, messageId]);
+        const rec = await promisifyRequest(req);
+        if (rec &amp;&amp; rec.id) {
+          await promisifyRequest(store.delete(rec.id));
+          return true;
+        }
+        return false;
+      }
+    } catch (e) {}
+    // fallback: scan &amp; delete
+    const all = await promisifyRequest(store.getAll()).catch(() => []);
+    for (const r of (all || [])) {
+      if (String(r.conversationId) === String(conversationId) &amp;&amp; String(r.messageId) === String(messageId)) {
+        try { await promisifyRequest(store.delete(r.id)); } catch (e) {}
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // simple applyServerMarkers: update messages by id or messageId
+  async function applyServerMarkers(conversationId, markers) {
+    if (!markers || !Array.isArray(markers)) return;
+    for (const m of markers) {
+      if (m.type === 'update' &amp;&amp; m.messageId) {
+        await editMessage(conversationId, m.messageId, m.changes || {});
+      }
+    }
+  }
+
+  // API bereitstellen
+  const dmIndexedDB = {
+    initDB,
+    getMessages,
+    saveMessages,
+    hasMessage,
+    editMessage,
+    deleteMessage,
+    applyServerMarkers,
+    saveImage,
+    getImage,
+    pruneConversation
+  };
+
+  // An `window` anhängen, damit Client-Skripte darauf zugreifen können
+  if (!global.dmIndexedDB) global.dmIndexedDB = dmIndexedDB;
+  if (typeof module !== 'undefined' &amp;&amp; module.exports) module.exports = dmIndexedDB;
+
+})(typeof window !== 'undefined' ? window : this);
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmIndexedDB.html">public/js/dmIndexedDB</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Feb 27 2026 00:46:58 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: public/js/projectsClient.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: public/js/projectsClient.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Client-Logik für Projekte/Surveys: Filter, Modals, Team-Management.
+ * @module public/js/projectsClient
+ */
+
+// Client-seitige Filterung entfernt — serverseitiges HTMX-Fragment übernimmt das Filtern.
+
+// Sicherstellen, dass beim Klicken des Projekt-Filters der aktive Zustand angezeigt wird und das versteckte Input synchronisiert bleibt
+document.addEventListener('click', (e) => {
+  /**
+   * Beschreibung: btn.
+   * @returns {void}
+   */
+  const btn = e.target.closest &amp;&amp; e.target.closest('.filter-btn[data-status]');
+  if (!btn) return;
+/**
+ * anonymousArrowLine16 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine16
+ */
+  document.querySelectorAll('.filter-btn[data-status]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const cur = document.getElementById('currentStatus');
+  if (cur) cur.value = btn.dataset.status;
+});
+
+// Fortschrittsbalken-Animation
+/**
+ * Animiert Fortschrittsbalken basierend auf `data-progress`.
+ * @returns {void}
+ */
+function animateProgressBars() {
+/**
+ * anonymousArrowLine35 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine35
+ */
+  document.querySelectorAll('.progress-fill').forEach(bar => {
+    const progress = bar.dataset.progress;
+    bar.style.width = progress + '%';
+  });
+}
+
+/**
+ * anonymousArrowLine48 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine48
+ */
+document.addEventListener('DOMContentLoaded', () => {
+  animateProgressBars();
+});
+
+// Erneutes Animieren nach HTMX-Swaps
+/**
+ * anonymousArrowLine60 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine60
+ */
+document.addEventListener('htmx:afterSwap', (e) => {
+  if (e.detail.target.id === 'projectsList' || e.detail.target.closest('#projectsList')) {
+    animateProgressBars();
+  }
+});
+
+// Modal-Verwaltung
+const openCreateModalBtns = document.querySelectorAll('#openCreateModal, #openCreateModalEmpty');
+const createProjectModal = document.getElementById('createProjectModal');
+/**
+ * Beschreibung: editProjectModal.
+ * @returns {void}
+ */
+const editProjectModal = document.getElementById('editProjectModal');
+
+if (createProjectModal) {
+/**
+ * anonymousArrowLine83 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine83
+ */
+    openCreateModalBtns.forEach(btn => {
+/**
+ * anonymousArrowLine91 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine91
+ */
+      btn.addEventListener('click', () => {
+        createProjectModal.showModal();
+        document.getElementById('project-name')?.focus();
+      });
+    });
+}
+
+// Logik: Projekt bearbeiten
+/**
+ * anonymousArrowLine106 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine106
+ */
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('edit-project')) {
+    const projectId = e.target.dataset.id;
+      const projectCard = document.getElementById(`project-${projectId}`);
+      
+      if (projectCard) {
+        const title = projectCard.querySelector('.project-title').textContent;
+        // ... (restliche Edit-Logik) ...
+        // Sicherstellen, dass Felder korrekt übernommen werden
+        const descEl = projectCard.querySelector('.project-desc');
+        const description = descEl ? descEl.textContent.trim() : '';
+        
+        document.getElementById('edit-project-name').value = title;
+        document.getElementById('edit-project-desc').value = description === 'Keine Beschreibung verfügbar' ? '' : description;
+        
+        // Status- und Fortschrittslogik...
+        const status = projectCard.dataset.status || 'Konzeption';
+        document.getElementById('edit-project-status').value = status;
+        
+        // Fehlerbehebung beim Auslesen des Fortschritts
+        const progressFill = projectCard.querySelector('.progress-fill');
+        const progress = progressFill ? progressFill.dataset.progress : 0;
+        document.getElementById('edit-project-progress').value = progress;
+
+        const contactSelect = document.getElementById('edit-project-contact');
+        if (contactSelect &amp;&amp; projectCard.dataset.contactId) {
+            contactSelect.value = projectCard.dataset.contactId;
+        }
+
+        document.getElementById('editProjectForm').action = `/projects/${projectId}/edit`;
+        
+        // Lösche-Button im Modal konfigurieren
+        const deleteBtn = document.getElementById('deleteProjectBtn');
+        if (deleteBtn) {
+/**
+ * anonymousArrowLine147 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine147
+ */
+           deleteBtn.onclick = () => {
+             if (confirm('Möchten Sie dieses Projekt wirklich löschen?')) {
+               htmx.ajax('POST', `/projects/${projectId}/delete`, {
+                 target: `#project-${projectId}`,
+                 swap: 'outerHTML'
+               });
+               editProjectModal.close();
+             }
+           };
+        }
+
+        editProjectModal.showModal();
+      }
+    }
+  });
+
+    // Löschen wird über HTMX-Attribute am Löschen-Button gehandhabt (kein zusätzliches JS erforderlich)
+
+  // Suche zurücksetzen (wie bei Surveys)
+/**
+ * Setzt Suchfelder zurück und lädt die erste Seite des Fragments per HTMX.
+ * @returns {void}
+ */
+function clearSearch() {
+  const searchInput = document.getElementById('projectSearchInput');
+  if (searchInput) searchInput.value = '';
+  
+  const status = document.getElementById('currentStatus')?.value || 'all';
+  // Fragment-Endpunkt anfragen, um zu vermeiden, dass die vollständige Seiten-HTML zurückgegeben wird
+  htmx.ajax('GET', `/projects/fragment?status=${encodeURIComponent(status)}&amp;search=&amp;page=1`, {
+    target: '#projectsList', 
+    swap: 'innerHTML'
+  });
+}
+
+// --- Team-Management-Logik ---
+const teamModal = document.getElementById('teamModal');
+const teamListBody = document.getElementById('teamListBody');
+const teamProjectName = document.getElementById('teamProjectName');
+const teamManagementSection = document.getElementById('teamManagementSection');
+const userSearchInput = document.getElementById('userSearchInput');
+const userSearchResults = document.getElementById('userSearchResults');
+const addMemberBtn = document.getElementById('addMemberBtn');
+const newMemberRole = document.getElementById('newMemberRole');
+
+let currentProjectId = null;
+/**
+ * Beschreibung: selectedUserId.
+ * @returns {void}
+ */
+let selectedUserId = null;
+
+/**
+ * anonymousArrowLine206 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine206
+ */
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('view-team')) {
+    const btn = e.target;
+    const projectId = btn.dataset.id;
+    const projectName = btn.dataset.name;
+    const projectCard = document.getElementById(`project-${projectId}`);
+
+    if (!projectCard) return;
+
+    currentProjectId = projectId;
+    if (teamProjectName) teamProjectName.textContent = projectName;
+    
+      // Team-Daten aus Attribut parsen
+    try {
+      const teamData = JSON.parse(projectCard.dataset.team || '[]');
+      const canManage = projectCard.dataset.canManageTeam === 'true';
+      
+      renderTeam(teamData, canManage);
+      
+      if (teamManagementSection) {
+        teamManagementSection.style.display = canManage ? 'block' : 'none';
+      }
+    } catch (err) {
+      console.error('Error parsing team data:', err);
+    }
+
+    if (teamModal) teamModal.showModal();
+  }
+});
+
+// Wir behalten loadTeam bei, um nach Aktionen (Hinzufügen/Entfernen) zu aktualisieren
+/**
+ * Lädt Team-Daten für ein Projekt und aktualisiert das Modal.
+ * @async
+ * @param {string|number} projectId
+ * @returns {Promise&lt;void>}
+ */
+async function loadTeam(projectId) {
+  try {
+    const res = await fetch(`/projects/${projectId}/team`);
+    const data = await res.json();
+    
+    // Update the card's data attribute so it's fresh if reopened
+    const projectCard = document.getElementById(`project-${projectId}`);
+    if (projectCard) {
+      projectCard.dataset.team = JSON.stringify(data.team);
+      // canManage is usually static for a project-user pair but let's update just in case
+      projectCard.dataset.canManageTeam = String(data.canManage);
+    }
+
+    renderTeam(data.team, data.canManage);
+    
+    if (teamManagementSection) {
+      teamManagementSection.style.display = data.canManage ? 'block' : 'none';
+    }
+  } catch (err) {
+    console.error('Error loading team:', err);
+  }
+}
+
+/**
+ * Rendert die Team-Tabelle im Team-Modal.
+ * @param {Array&lt;Object>} team
+ * @param {boolean} canManage
+ * @returns {void}
+ */
+function renderTeam(team, canManage) {
+  if (!teamListBody) return;
+  if (team.length === 0) {
+    teamListBody.innerHTML = '&lt;tr>&lt;td colspan="4" class="empty-team-msg">Keine Teammitglieder gefunden.&lt;/td>&lt;/tr>';
+    return;
+  }
+/**
+ * anonymousArrowLine285 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine285
+ */
+  teamListBody.innerHTML = team.map(member => `
+    &lt;tr>
+      &lt;td>
+        ${member.user_id ? `
+          &lt;a href="/dms/direct/${member.user_id}" class="team-member-link" title="Nachricht an ${member.username} senden">
+            ${member.username}
+          &lt;/a>
+        ` : `
+          &lt;span class="team-member-name">${member.username}&lt;/span>
+        `}
+      &lt;/td>
+      &lt;td>${member.role}&lt;/td>
+      &lt;td>${new Date(member.joined_at).toLocaleDateString('de-DE')}&lt;/td>
+      &lt;td>
+        ${canManage &amp;&amp; member.user_id ? `&lt;button class="remove-member-btn" onclick="removeMember(${member.user_id})">Entfernen&lt;/button>` : '-'}
+      &lt;/td>
+    &lt;/tr>
+  `).join('');
+}
+
+// Benutzersuche-Logik
+let searchTimeout;
+/**
+ * anonymousArrowLine314 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine314
+ */
+userSearchInput?.addEventListener('input', (e) => {
+  clearTimeout(searchTimeout);
+  const query = e.target.value.trim();
+  
+  if (query.length &lt; 2) {
+    if (userSearchResults) userSearchResults.style.display = 'none';
+    return;
+  }
+  
+/**
+ * anonymousArrowLine330 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine330
+ */
+  searchTimeout = setTimeout(async () => {
+    try {
+      const res = await fetch(`/projects/users/search?q=${encodeURIComponent(query)}`);
+      const users = await res.json();
+      
+      if (userSearchResults) {
+        if (users.length > 0) {
+/**
+ * anonymousArrowLine344 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine344
+ */
+          userSearchResults.innerHTML = users.map(u => `
+            &lt;div class="search-result-item" data-id="${u.user_id}" data-name="${u.username}">
+              ${u.username} (${u.email})
+            &lt;/div>
+          `).join('');
+          userSearchResults.style.display = 'block';
+        } else {
+          userSearchResults.style.display = 'none';
+        }
+      }
+    } catch (err) {
+      console.error('Search error:', err);
+    }
+  }, 300);
+});
+
+/**
+ * anonymousArrowLine367 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine367
+ */
+userSearchResults?.addEventListener('click', (e) => {
+  const item = e.target.closest('.search-result-item');
+  if (item) {
+    selectedUserId = item.dataset.id;
+    if (userSearchInput) userSearchInput.value = item.dataset.name;
+    userSearchResults.style.display = 'none';
+  }
+});
+
+// Mitglied hinzufügen
+/**
+ * anonymousArrowLine384 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine384
+ */
+addMemberBtn?.addEventListener('click', async () => {
+  if (!selectedUserId || !currentProjectId) {
+    alert('Bitte wählen Sie einen Nutzer aus der Liste aus.');
+    return;
+  }
+  
+  try {
+    const res = await fetch(`/projects/${currentProjectId}/team/add`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: selectedUserId,
+        role: newMemberRole ? newMemberRole.value : 'Mitglied'
+      })
+    });
+    
+    if (res.ok) {
+      selectedUserId = null;
+      if (userSearchInput) userSearchInput.value = '';
+      await loadTeam(currentProjectId);
+    } else {
+      const errorText = await res.text();
+      alert('Fehler beim Hinzufügen des Mitglieds: ' + errorText);
+    }
+  } catch (err) {
+    console.error('Add member error:', err);
+  }
+});
+
+// Mitglied entfernen (globale Funktion für onclick)
+/**
+ * Entfernt ein Mitglied aus dem Projekt-Team (Bestätigung wird verlangt).
+ * @async
+ * @param {number} userId
+ * @returns {Promise&lt;void>}
+ */
+window.removeMember = async (userId) => {
+  if (!confirm('Mitglied wirklich aus dem Team entfernen?')) return;
+  
+  try {
+    /**
+     * Beschreibung: res.
+     * @returns {void}
+     */
+    const res = await fetch(`/projects/${currentProjectId}/team/remove/${userId}`, {
+      method: 'POST'
+    });
+    
+    if (res.ok) {
+      await loadTeam(currentProjectId);
+    } else {
+      alert('Fehler beim Entfernen des Mitglieds');
+    }
+  } catch (err) {
+    console.error('Remove member error:', err);
+  }
+};
+
+// Close search results when clicking outside
+/**
+ * anonymousArrowLine450 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine450
+ */
+document.addEventListener('click', (e) => {
+  if (userSearchResults &amp;&amp; !e.target.closest('#userSearchInput') &amp;&amp; !e.target.closest('#userSearchResults')) {
+    userSearchResults.style.display = 'none';
+  }
+});
+
+// Simple inactivity-based polling control for HTMX polling
+(function() {
+  const INACTIVITY_TIMEOUT = 120000; // 2 minutes
+  let timeoutId = null;
+  /**
+   * Beschreibung: setupInactivityStop.
+   * @returns {void}
+   */
+  function setupInactivityStop(containerId) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+
+    // Save original hx-trigger
+    if (!el.dataset.originalHxTrigger) el.dataset.originalHxTrigger = el.getAttribute('hx-trigger') || '';
+
+    /**
+     * Beschreibung: disablePolling.
+     * @returns {void}
+     */
+    function disablePolling() {
+      const orig = el.dataset.originalHxTrigger || '';
+      /**
+       * Beschreibung: newTrig.
+       * @returns {void}
+       */
+      const newTrig = orig.split(',').map(s => s.trim()).filter(t => !t.startsWith('every')).join(', ');
+      el.setAttribute('hx-trigger', newTrig || 'load');
+      if (window.htmx) htmx.process(el);
+    }
+
+    /**
+     * Beschreibung: enablePolling.
+     * @returns {void}
+     */
+    function enablePolling() {
+      /**
+       * Beschreibung: orig.
+       * @returns {void}
+       */
+      const orig = el.dataset.originalHxTrigger || '';
+      el.setAttribute('hx-trigger', orig);
+      if (window.htmx) htmx.process(el);
+    }
+
+/**
+ * resetTimer steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function resetTimer
+ */
+    function resetTimer() {
+      // reset HTMX 'every' timer by removing and re-adding the 'every' part
+      try {
+        disablePolling();
+/**
+ * anonymousArrowLine511 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine511
+ */
+        setTimeout(() => { enablePolling(); }, 50);
+      } catch (e) {}
+
+      if (timeoutId) clearTimeout(timeoutId);
+/**
+ * anonymousArrowLine522 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine522
+ */
+      timeoutId = setTimeout(() => { disablePolling(); }, INACTIVITY_TIMEOUT);
+    }
+
+/**
+ * anonymousArrowLine532 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine532
+ */
+    ['mousemove','keydown','click','touchstart'].forEach(ev => window.addEventListener(ev, resetTimer, { passive: true }));
+/**
+ * anonymousArrowLine540 steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @param {*} args - Beschreibung von args
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function anonymousArrowLine540
+ */
+    document.addEventListener('visibilitychange', () => { if (document.hidden) { if (timeoutId) clearTimeout(timeoutId); disablePolling(); } else resetTimer(); });
+    window.addEventListener('focus', resetTimer);
+    document.addEventListener('htmx:afterRequest', resetTimer);
+
+    document.addEventListener('DOMContentLoaded', resetTimer);
+  }
+
+  setupInactivityStop('projectsList');
+})();
+
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmIndexedDB.html">public/js/dmIndexedDB</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_projectsClient.html">public/js/projectsClient</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul><h3>Global</h3><ul><li><a href="global.html#anonymousArrowLine1">anonymousArrowLine1</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Tue Feb 24 2026 10:54:20 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

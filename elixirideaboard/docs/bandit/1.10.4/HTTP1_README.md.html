@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Bandit v1.10.4">
+
+
+    <title>HTTP/1 Implementation Notes — Bandit v1.10.4</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-E4120B41.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="Bandit.html" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Bandit" />
+        </a>
+
+      <div>
+        <a href="Bandit.html" class="sidebar-projectName" translate="no">
+Bandit
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.10.4
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="Pages"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Bandit</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>HTTP/1 Handler</h1>
+
+<a href="HTTP1_README.md.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+      <a href="https://github.com/mtrudel/bandit/blob/main/lib/bandit/http1/README.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p>Included in this folder is a complete <a href="https://hexdocs.pm/thousand_island/1.4.3/ThousandIsland.Handler.html"><code class="inline">ThousandIsland.Handler</code></a> based implementation of HTTP/1.x as
+defined in <a href="https://datatracker.ietf.org/doc/rfc9112">RFC 9112</a>.</p><h2 id="process-model" class="section-heading"><a href="#process-model" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Process model</span></h2><p>Within a Bandit server, an HTTP/1 connection is modeled as a single process.
+This process is tied to the lifecycle of the underlying TCP connection; in the
+case of an HTTP client which makes use of HTTP's keep-alive feature to make
+multiple requests on the same connection, all of these requests will be serviced
+by this same process.</p><p>The execution model to handle a given request is quite straightforward: the
+underlying <a href="https://github.com/mtrudel/thousand_island">Thousand Island</a> library
+will call <code class="inline">Bandit.HTTP1.Handler.handle_data/3</code>, which will then construct a
+<code class="inline">Bandit.HTTP1.Socket</code> struct that conforms to the <code class="inline">Bandit.HTTPTransport</code>
+protocol. It will then call <code class="inline">Bandit.Pipeline.run/3</code>, which will go through the
+process of reading the request (by calling functions on the
+<code class="inline">Bandit.HTTPTransport</code> protocol), and constructing a <a href="https://hexdocs.pm/plug/1.19.1/Plug.Conn.html"><code class="inline">Plug.Conn</code></a> structure to
+represent the request and subsequently pass it to the configured <a href="https://hexdocs.pm/plug/1.19.1/Plug.html"><code class="inline">Plug</code></a> module.</p><h1>Testing</h1><p>All of this is exhaustively tested. Tests are located in <code class="inline">request_test.exs</code>, and
+are broadly either concerned with testing network-facing aspects of the
+implementation (ie: how well Bandit satisfies the relevant RFCs) or the Plug-facing
+aspects of the implementation.</p><p>Unfortunately, there is no HTTP/1 equivalent to the external h2spec test suite.</p>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="readme.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+README
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="HTTP2_README.md.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+HTTP/2 Implementation Notes
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/bandit/1.10.4">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/bandit/1.10.4">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/bandit/1.10.4/show/lib/bandit/http1/README.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="Bandit.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,36 @@
+<div class="chart-card">
+  <h3>Beliebteste Kategorien</h3>
+  <div class="chart-container">
+    <% const categoryIcons = { 
+      'Innovation': '💡', 
+      'Prozess': '⚙️', 
+      'Produkt': '📦', 
+      'Kultur': '👥',
+      'default': '📊' 
+    }; %>
+    
+    <% if (stats.popularCategories && stats.popularCategories.length > 0) { %>
+      <% stats.popularCategories.forEach(category => { %>
+        <% 
+          const categoryName = category.category_name || category.name || 'Unbekannte Kategorie';
+          const icon = categoryIcons[categoryName] || categoryIcons['default'];
+        %>
+        <div class="bar-chart-item">
+          <div class="bar-header">
+            <span class="category-icon"><%= icon %></span>
+            <span class="category-name"><strong><%= categoryName %></strong></span>
+            <span class="category-count"><%= category.idea_count || 0 %> Ideen</span>
+          </div>
+          <div class="bar-track-container">
+            <div class="bar-track">
+              <div class="bar-fill" style="width: <%= category.percentage || 0 %>%;" data-category="<%= categoryName %>"></div>
+            </div>
+            <span class="bar-percentage"><%= category.percentage || 0 %>%</span>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p class="no-data">Keine Kategorien vorhanden</p>
+    <% } %>
+  </div>
+</div>

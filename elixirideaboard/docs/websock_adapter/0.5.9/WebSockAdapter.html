@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.39.1">
+    <meta name="project" content="WebSockAdapter v0.5.9">
+
+
+    <title>WebSockAdapter — WebSockAdapter v0.5.9</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-ZFNMEJKT.css" />
+
+    <script defer src="dist/sidebar_items-D8410607.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-HBZYRXZS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="api-reference.html" class="sidebar-projectName" translate="no">
+WebSockAdapter
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v0.5.9
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of WebSockAdapter</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">WebSockAdapter</span> 
+      <small class="app-vsn" translate="no">(WebSockAdapter v0.5.9)</small>
+
+    </h1>
+
+      <a href="https://github.com/phoenixframework/websock_adapter/blob/main/lib/websock_adapter.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Defines adapters to allow common Web Servers to serve applications via the <a href="https://hexdocs.pm/websock/0.5.3/WebSock.html"><code class="inline">WebSock</code></a> API.
+Also provides a consistent upgrade facility to upgrade <a href="https://hexdocs.pm/plug/1.18.1/Plug.Conn.html"><code class="inline">Plug.Conn</code></a> requests to <a href="https://hexdocs.pm/websock/0.5.3/WebSock.html"><code class="inline">WebSock</code></a>
+connections for supported servers.</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:connection_opt/0" data-no-tooltip="" translate="no">connection_opt()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The type of a supported connection option</p></div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#upgrade/4" data-no-tooltip="" translate="no">upgrade(conn, websock, state, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Upgrades the provided <a><code class="inline">Plug.Conn</code></a> connection request to a <a><code class="inline">WebSock</code></a> connection using the
+provided <a><code class="inline">WebSock</code></a> compliant module as a handler.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+
+    <div class="types-list">
+<section class="detail" id="t:connection_opt/0">
+
+  <div class="detail-header">
+    <a href="#t:connection_opt/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">connection_opt()</h1>
+
+
+        <a href="https://github.com/phoenixframework/websock_adapter/blob/main/lib/websock_adapter.ex#L9" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> connection_opt() ::
+  {:compress, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()}
+  | {:timeout, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">timeout</a>()}
+  | {:max_frame_size, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()}
+  | {:fullsweep_after, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()}
+  | {:max_heap_size, <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:max_heap_size/0">:erlang.max_heap_size</a>()}
+  | {:validate_utf8, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()}
+  | {:active_n, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>()}</pre>
+
+      </div>
+
+<p>The type of a supported connection option</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+
+    <div class="functions-list">
+<section class="detail" id="upgrade/4">
+
+  <div class="detail-header">
+    <a href="#upgrade/4" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">upgrade(conn, websock, state, opts)</h1>
+
+
+        <a href="https://github.com/phoenixframework/websock_adapter/blob/main/lib/websock_adapter.ex#L63" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> upgrade(<a href="https://hexdocs.pm/plug/1.18.1/Plug.Conn.html#t:t/0">Plug.Conn.t</a>(), <a href="https://hexdocs.pm/websock/0.5.3/WebSock.html#t:impl/0">WebSock.impl</a>(), <a href="https://hexdocs.pm/websock/0.5.3/WebSock.html#t:state/0">WebSock.state</a>(), [<a href="#t:connection_opt/0">connection_opt</a>()]) ::
+  <a href="https://hexdocs.pm/plug/1.18.1/Plug.Conn.html#t:t/0">Plug.Conn.t</a>()</pre>
+
+      </div>
+
+<p>Upgrades the provided <a href="https://hexdocs.pm/plug/1.18.1/Plug.Conn.html"><code class="inline">Plug.Conn</code></a> connection request to a <a href="https://hexdocs.pm/websock/0.5.3/WebSock.html"><code class="inline">WebSock</code></a> connection using the
+provided <a href="https://hexdocs.pm/websock/0.5.3/WebSock.html"><code class="inline">WebSock</code></a> compliant module as a handler.</p><p>This function returns the passed <code class="inline">conn</code> set to an <code class="inline">:upgraded</code> state. If <code class="inline">early_validate_upgrade</code>
+is set to true (as it is by default), the request is first examined to determine if it
+represents a valid WebSocket upgrade. If errors are discovered in the request, a
+<a href="WebSockAdapter.UpgradeError.html"><code class="inline">WebSockAdapter.UpgradeError</code></a> is raised containing information about the failure</p><p>The provided <code class="inline">state</code> value will be used as the argument for <a href="https://hexdocs.pm/websock/0.5.3/WebSock.html#c:init/1"><code class="inline">WebSock.init/1</code></a> once the WebSocket
+connection has been successfully negotiated.</p><p>The <code class="inline">opts</code> keyword list argument allows a number of options to be set on the WebSocket
+connection. Not all options may be supported by the underlying HTTP server. Possible values are
+as follows:</p><ul><li><code class="inline">early_validate_upgrade</code>: A boolean indicating whether or not WebSockAdapter should attempt to
+validate the WebSocket upgrade request before returning from this call. The underlying webserver
+may still perform its own validation during the actual upgrade process, but since this occurs
+after the <a href="https://hexdocs.pm/plug/1.18.1/Plug.html#c:call/2"><code class="inline">Plug.call/2</code></a> lifecycle it can be difficult to meaningfully handle failed upgrades.
+Having WebSockAdapter do its own checks as part of this call helps to alleviate this. Defaults
+to <code class="inline">true</code></li><li><code class="inline">timeout</code>: The number of milliseconds to wait after no client data is received before
+closing the connection. Defaults to <code class="inline">60_000</code></li><li><code class="inline">compress</code>: Whether or not to accept negotiation of a compression extension with the client.
+Defaults to <code class="inline">false</code></li><li><code class="inline">max_frame_size</code>: The maximum frame size to accept, in octets. If a frame size larger than this
+is received the connection will be closed. Defaults to <code class="inline">:infinity</code></li><li><code class="inline">fullsweep_after</code>: The maximum number of garbage collections before forcing a fullsweep of
+the WebSocket connection process. Setting this option requires OTP 24 or newer</li><li><code class="inline">max_heap_size</code>: The maximum size of the websocket process heap in words, or a configuration
+map. See <code class="inline">:erlang.max_heap_size()</code> for more info</li><li><code class="inline">validate_utf8</code>: Whether the server should verify that the payload of text and close frames is valid UTF-8.
+This is required by the protocol specification but in some cases it may be more interesting to disable it
+in order to save resources. Note that binary frames do not have this UTF-8 requirement and are what should be
+used under normal circumstances if necessary</li><li><code class="inline">active_n</code>: (Cowboy only) The number of packets Cowboy will request from the socket at once. This can be used to tweak
+the performance of the server. Higher values reduce the number of times Cowboy need to request more
+packets from the port driver at the expense of potentially higher memory being used.
+This option does not apply to Websocket over HTTP/2</li><li><code class="inline">deflate_options</code>: A keyword list of options to pass to the deflate library.
+See <a href="https://hexdocs.pm/bandit/1.8.0/Bandit.html"><code class="inline">Bandit</code></a> or <code class="inline">:cow_ws</code> documentation for more details</li></ul>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/websock_adapter/0.5.9" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/websock_adapter/0.5.9">Hex Preview</a>
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="WebSockAdapter.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.39.1) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

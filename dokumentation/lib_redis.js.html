@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/redis.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/redis.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Redis-Wrapper: Haupt-Client, Subscriber-Client und Hilfsfunktionen.
+ * @module lib/redis
+ */
+
+const Redis = require('ioredis');
+
+const REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
+
+// Erzeuge zwei Redis-Clients: einen für allgemeine Befehle, einen für Subscriptions
+const redis = new Redis(REDIS_URL, {
+    maxRetriesPerRequest: null,
+    enableReadyCheck: false
+});
+
+const redisSub = new Redis(REDIS_URL, {
+    maxRetriesPerRequest: null,
+    enableReadyCheck: false
+});
+
+// Verbessere Beobachtbarkeit: Lifecycle-Events für Debugging und Monitoring loggen
+redis.on('connect', () => console.log('Redis: connect'));
+redis.on('ready', () => console.log('Redis: ready'));
+redis.on('reconnecting', (delay) => console.warn('Redis: reconnecting in', delay));
+redis.on('close', () => console.warn('Redis: close'));
+redis.on('end', () => console.warn('Redis: end'));
+redis.on('error', (err) => {
+    console.warn('Redis Connection Error:', err &amp;&amp; err.message ? err.message : err);
+});
+
+// Subscriber-Client: getrennte Logs, damit Subscription-Lifecycle erkennbar ist
+redisSub.on('connect', () => console.log('RedisSub: connect'));
+redisSub.on('ready', () => console.log('RedisSub: ready'));
+redisSub.on('reconnecting', (delay) => console.warn('RedisSub: reconnecting in', delay));
+redisSub.on('close', () => console.warn('RedisSub: close'));
+redisSub.on('end', () => console.warn('RedisSub: end'));
+redisSub.on('error', (err) => {
+    console.warn('Redis Sub Connection Error:', err &amp;&amp; err.message ? err.message : err);
+});
+
+// Wartet auf Bereitschaft des Haupt-Redis-Clients (optionales Timeout)
+/**
+ * Wartet, bis der Haupt-Redis-Client `ready` ist oder ein Timeout eintritt.
+ * @param {number} [timeout=5000] - Timeout in Millisekunden, 0 = kein Timeout.
+ * @returns {Promise&lt;void>} Erfüllt, sobald Redis bereit ist.
+ * @throws {Error} Bei Timeout oder Verbindungsfehler.
+ */
+function awaitRedisReady(timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        if (redis.status === 'ready') return resolve();
+
+        // Handler für erfolgreiche Bereitschaft
+        const onReady = () => { cleanup(); resolve(); };
+        // Handler für Fehler während des Verbindungsaufbaus
+        const onError = (err) => { cleanup(); reject(err); };
+        // Entfernt die Event-Listener
+        const cleanup = () => {
+            redis.removeListener('ready', onReady);
+            redis.removeListener('error', onError);
+        };
+
+        redis.on('ready', onReady);
+        redis.on('error', onError);
+
+        if (timeout > 0) {
+            const tid = setTimeout(() => {
+                cleanup();
+                reject(new Error('awaitRedisReady timeout'));
+            }, timeout);
+            // Wrap resolve, damit Timeout beim Erfüllen gecleart wird
+            const origResolve = resolve;
+            resolve = (...args) => { clearTimeout(tid); origResolve(...args); };
+        }
+    });
+}
+
+// Ensure a subscription to a channel — subscribe when ready and re-subscribe on ready after reconnects
+/**
+ * Stellt sicher, dass der Subscriber-Client auf einen Kanal abonniert ist.
+ * Bei Verfügbarkeit des Clients wird `subscribe` ausgeführt; bei späterer Ready
+ *-Ereignissen wird erneut versucht, das Abonnement herzustellen.
+ * @param {string} channel - Kanalname.
+ * @returns {void}
+ */
+function ensureSubscribe(channel) {
+    const doSubscribe = () => {
+        redisSub.subscribe(channel).then((count) => {
+            console.log(`RedisSub: subscribed to ${channel} (count=${count})`);
+        }).catch((err) => {
+            console.error('RedisSub: subscribe error for', channel, err &amp;&amp; err.message ? err.message : err);
+        });
+    };
+
+    if (redisSub.status === 'ready') doSubscribe();
+    redisSub.on('ready', doSubscribe);
+}
+
+module.exports = {
+    redis,
+    redisSub,
+    // Rückgabewert `true` wenn Redis in einem brauchbaren Zustand ist (ready/connecting)
+    isRedisEnabled: () => redis.status === 'ready' || redis.status === 'connecting',
+    awaitRedisReady,
+    ensureSubscribe,
+    // Safely stringify payloads (convert BigInt -> number|string) and publish
+    safePublish: async (channel, payload) => {
+        // Konvertiert BigInt in Number (falls sicher) oder String, um JSON.stringify-Fehler zu vermeiden
+        const safeStringify = (obj) => JSON.stringify(obj, (_k, v) => {
+            if (typeof v === 'bigint') {
+                if (v &lt;= BigInt(Number.MAX_SAFE_INTEGER) &amp;&amp; v >= BigInt(Number.MIN_SAFE_INTEGER)) return Number(v);
+                return v.toString();
+            }
+            return v;
+        });
+
+        try {
+            const body = safeStringify(payload);
+            return await redis.publish(channel, body);
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    }
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

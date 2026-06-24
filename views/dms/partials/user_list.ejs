@@ -1,0 +1,32 @@
+<div class="user-list">
+    <% users.forEach(user => { %>
+        <a href="/dms/chat/<%= user.user_id %>" class="conversation-item" aria-label="Chat mit <%= user.username %>" style="content-visibility: auto; contain-intrinsic-size: 56px;">
+            <div class="conversation-main">
+                <span class="username"><%= user.username %></span>
+                <% if (user.last_message) { %>
+                    <div class="last-message-preview">
+                        <% if (user.last_message.startsWith('[FILE]')) { %>
+                            <% 
+                               let parts = user.last_message.split('|');
+                               let displayName = parts.length > 1 ? parts[1].trim() : 'Datei';
+                            %>
+                            📎 Datei: <%= displayName %>
+                        <% } else { %>
+                            "<%= user.last_message %>"
+                        <% } %>
+                    </div>
+                <% } else { %>
+                    <div class="last-message-preview empty">
+                        Noch keine Nachrichten
+                    </div>
+                <% } %>
+            </div>
+            <% if (user.last_message_time) { %>
+                <div class="conversation-time">
+                    <%= new Date(user.last_message_time).toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}) %>
+                </div>
+            <% } %>
+        </a>
+    <% }) %>
+</div>
+

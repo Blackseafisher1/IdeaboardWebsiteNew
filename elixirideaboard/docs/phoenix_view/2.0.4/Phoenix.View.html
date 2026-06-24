@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.34.0">
+    <meta name="project" content="phoenix_view v2.0.4">
+
+
+    <title>Phoenix.View — phoenix_view v2.0.4</title>
+    <link rel="stylesheet" href="dist/html-elixir-K5ICTFVY.css" />
+
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-B0BB86CA.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-Q4PYR6ZR.js"></script>
+
+  </head>
+  <body data-type="modules" class="page-module">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="Phoenix.View.html" class="sidebar-projectName" translate="no">
+phoenix_view
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v2.0.4
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of phoenix_view</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <h1>
+
+      <a href="https://github.com/phoenixframework/phoenix_view/blob/v2.0.4/lib/phoenix_view.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+    <span translate="no">Phoenix.View</span> 
+    <small class="app-vsn" translate="no">(phoenix_view v2.0.4)</small>
+
+  </h1>
+
+
+    <section id="moduledoc">
+<p>A module for generating <code class="inline">render/2</code> functions from templates on disk.</p><p>With design patterns introduced by <code class="inline">Phoenix.LiveView</code>, this module has fallen
+out of fashion in favor of <code class="inline">Phoenix.Component</code>, even in non LiveView
+applications. See the &quot;Replaced by <code class="inline">Phoenix.Component</code>&quot; section below.</p><h2 id="module-examples" class="section-heading">
+  <a href="#module-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<p>In Phoenix v1.6 and earlier, new Phoenix apps defined a blueprint for views
+at <code class="inline">lib/your_app_web.ex</code>. It generally looked like this:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">YourAppWeb</span><span class="w"> </span><span class="k" data-group-id="8962154297-1">do</span><span class="w">
+  </span><span class="c1"># ...</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">view</span><span class="w"> </span><span class="k" data-group-id="8962154297-2">do</span><span class="w">
+    </span><span class="k">quote</span><span class="w"> </span><span class="k" data-group-id="8962154297-3">do</span><span class="w">
+      </span><span class="kn">use</span><span class="w"> </span><span class="nc">Phoenix.View</span><span class="p">,</span><span class="w"> </span><span class="ss">root</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;lib/your_app_web/templates&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">namespace</span><span class="p">:</span><span class="w"> </span><span class="nc">YourAppWeb</span><span class="w">
+
+      </span><span class="c1"># Import convenience functions from controllers</span><span class="w">
+      </span><span class="kn">import</span><span class="w"> </span><span class="nc">Phoenix.Controller</span><span class="p">,</span><span class="w">
+        </span><span class="ss">only</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8962154297-4">[</span><span class="ss">get_flash</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">get_flash</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="ss">view_module</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">view_template</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="8962154297-4">]</span><span class="w">
+
+      </span><span class="c1"># Use all HTML functionality (forms, tags, etc)</span><span class="w">
+      </span><span class="kn">use</span><span class="w"> </span><span class="nc">Phoenix.HTML</span><span class="w">
+
+      </span><span class="kn">import</span><span class="w"> </span><span class="nc">YourAppWeb.ErrorHelpers</span><span class="w">
+      </span><span class="kn">import</span><span class="w"> </span><span class="nc">YourAppWeb.Gettext</span><span class="w">
+    </span><span class="k" data-group-id="8962154297-3">end</span><span class="w">
+  </span><span class="k" data-group-id="8962154297-2">end</span><span class="w">
+
+  </span><span class="c1"># ...</span><span class="w">
+</span><span class="k" data-group-id="8962154297-1">end</span></code></pre><p>Then you could use the definition above to define any view in your application:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">YourAppWeb.UserView</span><span class="w"> </span><span class="k" data-group-id="3175930761-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">YourAppWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:view</span><span class="w">
+</span><span class="k" data-group-id="3175930761-1">end</span></code></pre><p>Because we defined the template root to be &quot;lib/your_app_web/templates&quot;,
+<a href="Phoenix.View.html"><code class="inline">Phoenix.View</code></a> will automatically load all templates at &quot;your_app_web/templates/user&quot;
+and include them in the <code class="inline">YourApp.UserView</code>. For example, imagine we have the
+template:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># your_app_web/templates/user/index.html.heex</span><span class="w">
+</span><span class="nc">Hello</span><span class="w"> </span><span class="o">&lt;</span><span class="p">%</span><span class="o">=</span><span class="w"> </span><span class="na">@name</span><span class="w"> </span><span class="p">%</span><span class="o">&gt;</span></code></pre><p>The <code class="inline">.heex</code> extension maps to a template engine which tells Phoenix how
+to compile the code in the file into Elixir source code. After it is
+compiled, the template can be rendered as:</p><pre><code class="makeup elixir" translate="no"><span class="nc">Phoenix.View</span><span class="o">.</span><span class="n">render_to_string</span><span class="p" data-group-id="8360046450-1">(</span><span class="nc">YourApp.UserView</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;index.html&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;John Doe&quot;</span><span class="p" data-group-id="8360046450-1">)</span><span class="w">
+</span><span class="c1">#=&gt; &quot;Hello John Doe&quot;</span></code></pre><h2 id="module-rendering-and-formats" class="section-heading">
+  <a href="#module-rendering-and-formats" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Rendering and formats</span>
+</h2>
+<p><a href="Phoenix.View.html"><code class="inline">Phoenix.View</code></a> renders templates.</p><p>A template has a name, which also contains a format. For example,
+in the previous section we have rendered the &quot;index.html&quot; template:</p><pre><code class="makeup elixir" translate="no"><span class="nc">Phoenix.View</span><span class="o">.</span><span class="n">render_to_string</span><span class="p" data-group-id="4201788860-1">(</span><span class="nc">YourApp.UserView</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;index.html&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;John Doe&quot;</span><span class="p" data-group-id="4201788860-1">)</span><span class="w">
+</span><span class="c1">#=&gt; &quot;Hello John Doe&quot;</span></code></pre><p>While we got a string at the end, that's not actually what our templates
+render. Let's take a deeper look:</p><pre><code class="makeup elixir" translate="no"><span class="nc">Phoenix.View</span><span class="o">.</span><span class="n">render</span><span class="p" data-group-id="0478791900-1">(</span><span class="nc">YourApp.UserView</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;index.html&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;John Doe&quot;</span><span class="p" data-group-id="0478791900-1">)</span><span class="w">
+</span><span class="c1">#=&gt; ...</span></code></pre><p>This inner representation allows us to separate how templates render and
+how they are encoded. For example, if you want to render JSON data, we
+could do so by adding a &quot;show.json&quot; entry to <code class="inline">render/2</code> in our view:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">YourAppWeb.UserView</span><span class="w"> </span><span class="k" data-group-id="2360468480-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">YourAppWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:view</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">render</span><span class="p" data-group-id="2360468480-2">(</span><span class="s">&quot;show.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2360468480-3">%{</span><span class="ss">user</span><span class="p">:</span><span class="w"> </span><span class="n">user</span><span class="p" data-group-id="2360468480-3">}</span><span class="p" data-group-id="2360468480-2">)</span><span class="w"> </span><span class="k" data-group-id="2360468480-4">do</span><span class="w">
+    </span><span class="p" data-group-id="2360468480-5">%{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="ss">address</span><span class="p">:</span><span class="w"> </span><span class="n">user</span><span class="o">.</span><span class="n">address</span><span class="p" data-group-id="2360468480-5">}</span><span class="w">
+  </span><span class="k" data-group-id="2360468480-4">end</span><span class="w">
+</span><span class="k" data-group-id="2360468480-1">end</span></code></pre><p>Notice that in order to render JSON data, we don't need to explicitly
+return a JSON string! Instead, we just return data that is encodable to
+JSON. Now, when we call:</p><pre><code class="makeup elixir" translate="no"><span class="nc">Phoenix.View</span><span class="o">.</span><span class="n">render_to_string</span><span class="p" data-group-id="3799039258-1">(</span><span class="nc">YourApp.UserView</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;user.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">user</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3799039258-2">%</span><span class="nc" data-group-id="3799039258-2">User</span><span class="p" data-group-id="3799039258-2">{</span><span class="n">...</span><span class="p" data-group-id="3799039258-2">}</span><span class="p" data-group-id="3799039258-1">)</span></code></pre><p>Because the template has the <code class="inline">.json</code> extension, Phoenix knows how to
+encode the map returned for the &quot;user.json&quot; template into an actual
+JSON payload to be sent over the wire.</p><p>Phoenix ships with some template engines and format encoders, which
+can be further configured in the Phoenix application. You can read
+more about format encoders in <a href="https://hexdocs.pm/phoenix_template/1.0.0/Phoenix.Template.html"><code class="inline">Phoenix.Template</code></a> documentation.</p><h2 id="module-replaced-by-phoenix-component" class="section-heading">
+  <a href="#module-replaced-by-phoenix-component" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Replaced by <code class="inline">Phoenix.Component</code></span>
+</h2>
+<p>In <code class="inline">Phoenix.LiveView</code>, <a href="Phoenix.View.html"><code class="inline">Phoenix.View</code></a> was replaced by <code class="inline">Phoenix.Component</code>.
+With Phoenix v1.7+ we can also use <code class="inline">Phoenix.Component</code> to render traditional
+templates as functional components, using the <code class="inline">embed_templates</code> function.</p><p>For example, in Phoenix v1.7+, the <code class="inline">YourAppWeb.UserView</code> above would be
+written as:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">YourAppWeb.UserHTML</span><span class="w"> </span><span class="k" data-group-id="0455305323-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">YourAppWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:html</span><span class="w">
+
+  </span><span class="n">embed_templates</span><span class="w"> </span><span class="s">&quot;users/*&quot;</span><span class="w">
+</span><span class="k" data-group-id="0455305323-1">end</span></code></pre><p>The benefit of <code class="inline">Phoenix.Component</code> is that it unifies the rendering of
+traditional request/response life cycles with the composable component
+model provided by LiveView.</p><p>The table below summarizes how the defaults changed from Phoenix v1.6 to v1.7:</p><table><thead><tr><th style="text-align: left;">Feature</th><th style="text-align: left;">Phoenix v1.6</th><th style="text-align: left;">Phoenix v1.7</th></tr></thead><tbody><tr><td style="text-align: left;"><code class="inline">MyController.action/2</code> renders</td><td style="text-align: left;"><code class="inline">MyView.render(&quot;action.html&quot;, assigns)</code></td><td style="text-align: left;"><code class="inline">MyHTML.action(assigns)</code></td></tr><tr><td style="text-align: left;">Define views at</td><td style="text-align: left;"><code class="inline">lib/my_app/views/my_view.ex</code></td><td style="text-align: left;"><code class="inline">lib/my_app/controllers/my_html.ex</code></td></tr><tr><td style="text-align: left;">At the top of your views</td><td style="text-align: left;"><code class="inline">use MyAppWeb, :view</code></td><td style="text-align: left;"><code class="inline">use MyAppWeb, :html</code></td></tr><tr><td style="text-align: left;">Default template language</td><td style="text-align: left;"><a href="https://hexdocs.pm/eex/EEx.html"><code class="inline">EEx</code></a> (<code class="inline">.eex</code> extension)</td><td style="text-align: left;"><code class="inline">HEEx</code> (<code class="inline">.heex</code> extension)</td></tr><tr><td style="text-align: left;">To embed templates from disk</td><td style="text-align: left;"><code class="inline">use Phoenix.View</code></td><td style="text-align: left;"><code class="inline">use Phoenix.Component</code> (+ <code class="inline">embed_templates</code>)</td></tr><tr><td style="text-align: left;">HTML helpers (forms, links, etc)</td><td style="text-align: left;"><code class="inline">use Phoenix.HTML</code></td><td style="text-align: left;"><code class="inline">use Phoenix.Component</code></td></tr></tbody></table><p>However, note Phoenix v1.7 is backwards compatible with v1.6 if you want to
+keep with the old style. The functionality in this module will be maintained
+in the long term though for those who cannot or prefer not to migrate.</p><h3 id="module-migrating-to-phoenix-component" class="section-heading">
+  <a href="#module-migrating-to-phoenix-component" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Migrating to Phoenix.Component</span>
+</h3>
+<p>Migrating your current views to components be done in a few steps. You should
+also be able to migrate one view at a time.</p><blockquote><p>It may be helpful to generate a new project using Phoenix v1.7+ to compare
+code samples during this process.</p></blockquote><p>The first step is to define <code class="inline">def html</code> in your <code class="inline">lib/my_app_web.ex</code> module.
+This function is similar to <code class="inline">def view</code>, but it replaces <code class="inline">use Phoenix.View</code>
+by <code class="inline">use Phoenix.Component</code> (requires LiveView 0.18.3 or later). We also
+recomend to add <code class="inline">import Phoenix.View</code> inside <code class="inline">def html</code> while migrating.</p><p>Then, for each view, you must follow these steps (we will assume the
+current view is called <code class="inline">MyAppWeb.MyView</code>):</p><ol><li><p>Replace <a href="#render_existing/3"><code class="inline">render_existing/3</code></a> calls by <a href="https://hexdocs.pm/elixir/Kernel.html#function_exported?/3"><code class="inline">function_exported?/3</code></a> checks,
+according to the <code class="inline">render_existing</code> documentation.</p></li><li><p>Replace <code class="inline">use MyApp, :view</code> by <code class="inline">use MyApp, :html</code> and invoke
+<code class="inline">embed_templates &quot;../templates/my/*&quot;</code>. Alternatively, you can move
+both the HTML file and its templates to the <code class="inline">controllers</code> directory,
+to align with Phoenix v1.7 conventions.</p></li><li><p>Your templates may now break if they are calling <code class="inline">render/2</code>.
+You can address this by replacing <code class="inline">render/2</code> with a function
+component. For instance, <code class="inline">render(&quot;_form.html&quot;, changeset: @changeset, user: @user)</code>
+must now be called as <code class="inline">&lt;._form changeset={@changeset} user={@user} /&gt;</code>.
+If passing all assigns, <code class="inline">render(&quot;_form.html&quot;, assigns)</code> becomes
+<code class="inline">&lt;%= _form(assigns) %&gt;</code></p></li><li><p>Your templates may now break if they are calling <a href="#render_layout/4"><code class="inline">render_layout/4</code></a>.
+You can address this by converting the layout into a function component
+that receives its contents as a slot. See <a href="#render_layout/4"><code class="inline">render_layout/4</code></a> docs</p></li></ol><p>Now you are using components! Once you convert all views, you should
+be able to remove <a href="Phoenix.View.html"><code class="inline">Phoenix.View</code></a> as a dependency from your project.</p><p>Remove <code class="inline">def view</code> and also remove the <code class="inline">import Phoenix.View</code> from
+<code class="inline">def html</code> in your <code class="inline">lib/my_app_web.ex</code> module. When doing so,
+compilation may fail if you are using certain functions:</p><ul><li><p>Replace <a href="#render/3"><code class="inline">render/3</code></a> with a function component. For instance,
+<code class="inline">render(OtherView, &quot;_form.html&quot;, changeset: @changeset, user: @user)</code>
+can now be called as <code class="inline">&lt;OtherView.form changeset={@changeset} user={@user} /&gt;</code>.
+If passing all assigns, <code class="inline">render(OtherView, &quot;_form.html&quot;, assigns)</code>
+becomes <code class="inline">&lt;%= OtherView._form(assigns) %&gt;</code>.</p></li><li><p>If you are using <a href="Phoenix.View.html"><code class="inline">Phoenix.View</code></a> for APIs, you can remove <a href="Phoenix.View.html"><code class="inline">Phoenix.View</code></a>
+altogether. Instead of <code class="inline">def render(&quot;index.html&quot;, assigns)</code>, use <code class="inline">def users(assigns)</code>.
+Instead of <code class="inline">def render(&quot;show.html&quot;, assigns)</code>, do <code class="inline">def user(assigns)</code>.
+Instead <code class="inline">render_one</code>/<code class="inline">render_many</code>, call the <code class="inline">users/1</code> and <code class="inline">user/1</code> functions
+directly.</p></li></ul>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#__using__/1" data-no-tooltip translate="no">__using__(opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>When used, defines the current module as a main view module.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#module_to_template_root/3" data-no-tooltip translate="no">module_to_template_root(module, base, suffix)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Converts a module, without the suffix, to a template root.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#render/3" data-no-tooltip translate="no">render(module, template, assigns)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Renders a template.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#render_existing/3" data-no-tooltip translate="no">render_existing(module, template, assigns \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Renders a template only if it exists.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#render_layout/4" data-no-tooltip translate="no">render_layout(module, template, assigns, list)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Renders the given layout passing the given <code class="inline">do/end</code> block
+as <code class="inline">@inner_content</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#render_many/4" data-no-tooltip translate="no">render_many(collection, view, template, assigns \\ %{})</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Renders a collection.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#render_one/4" data-no-tooltip translate="no">render_one(resource, view, template, assigns \\ %{})</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Renders a single item if not nil.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#render_to_iodata/3" data-no-tooltip translate="no">render_to_iodata(module, template, assign)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Renders the template and returns iodata.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#render_to_string/3" data-no-tooltip translate="no">render_to_string(module, template, assign)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Renders the template and returns a string.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#template_path_to_name/2" data-no-tooltip translate="no">template_path_to_name(path, root)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Converts the template path into the template name.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="__using__/1">
+
+  <div class="detail-header">
+    <a href="#__using__/1" class="detail-link" data-no-tooltip title="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this macro</span>
+    </a>
+    <h1 class="signature" translate="no">__using__(opts)</h1>
+
+      <a href="https://github.com/phoenixframework/phoenix_view/blob/v2.0.4/lib/phoenix_view.ex#L221" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+      <span class="note">(macro)</span>
+
+  </div>
+
+  <section class="docstring">
+
+<p>When used, defines the current module as a main view module.</p><h2 id="__using__/1-options" class="section-heading">
+  <a href="#__using__/1-options" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Options</span>
+</h2>
+<ul><li><code class="inline">:root</code> - the template root to find templates</li><li><code class="inline">:path</code> - the optional path to search for templates within the <code class="inline">:root</code>.
+Defaults to the underscored view module name. A blank string may
+be provided to use the <code class="inline">:root</code> path directly as the template lookup path</li><li><code class="inline">:namespace</code> - the namespace to consider when calculating view paths</li><li><code class="inline">:pattern</code> - the wildcard pattern to apply to the root
+when finding templates. Default <code class="inline">&quot;*&quot;</code></li></ul><p>The <code class="inline">:root</code> option is required while the <code class="inline">:namespace</code> defaults to the
+first nesting in the module name. For instance, both <code class="inline">MyApp.UserView</code>
+and <code class="inline">MyApp.Admin.UserView</code> have namespace <code class="inline">MyApp</code>.</p><p>The <code class="inline">:namespace</code> and <code class="inline">:path</code> options are used to calculate template
+lookup paths. For example, if you are in <code class="inline">MyApp.UserView</code> and the
+namespace is <code class="inline">MyApp</code>, templates are expected at <code class="inline">Path.join(root, &quot;user&quot;)</code>.
+On the other hand, if the view is <code class="inline">MyApp.Admin.UserView</code>,
+the path will be <code class="inline">Path.join(root, &quot;admin/user&quot;)</code> and so on. For
+explicit root path locations, the <code class="inline">:path</code> option can be provided instead.
+The <code class="inline">:root</code> and <code class="inline">:path</code> are joined to form the final lookup path.
+A blank string may be provided to use the <code class="inline">:root</code> path directly as the
+template lookup path.</p><p>Setting the namespace to <code class="inline">MyApp.Admin</code> in the second example will force
+the template to also be looked up at <code class="inline">Path.join(root, &quot;user&quot;)</code>.</p>
+  </section>
+</section>
+<section class="detail" id="module_to_template_root/3">
+
+  <div class="detail-header">
+    <a href="#module_to_template_root/3" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">module_to_template_root(module, base, suffix)</h1>
+
+      <a href="https://github.com/phoenixframework/phoenix_view/blob/v2.0.4/lib/phoenix_view.ex#L637" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Converts a module, without the suffix, to a template root.</p><h2 id="module_to_template_root/3-examples" class="section-heading">
+  <a href="#module_to_template_root/3-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Phoenix.View</span><span class="o">.</span><span class="n">module_to_template_root</span><span class="p" data-group-id="1269514497-1">(</span><span class="nc">MyApp.UserView</span><span class="p">,</span><span class="w"> </span><span class="nc">MyApp</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;View&quot;</span><span class="p" data-group-id="1269514497-1">)</span><span class="w">
+</span><span class="s">&quot;user&quot;</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Phoenix.View</span><span class="o">.</span><span class="n">module_to_template_root</span><span class="p" data-group-id="1269514497-2">(</span><span class="nc">MyApp.Admin.User</span><span class="p">,</span><span class="w"> </span><span class="nc">MyApp</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;View&quot;</span><span class="p" data-group-id="1269514497-2">)</span><span class="w">
+</span><span class="s">&quot;admin/user&quot;</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Phoenix.View</span><span class="o">.</span><span class="n">module_to_template_root</span><span class="p" data-group-id="1269514497-3">(</span><span class="nc">MyApp.Admin.User</span><span class="p">,</span><span class="w"> </span><span class="nc">MyApp.Admin</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;View&quot;</span><span class="p" data-group-id="1269514497-3">)</span><span class="w">
+</span><span class="s">&quot;user&quot;</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Phoenix.View</span><span class="o">.</span><span class="n">module_to_template_root</span><span class="p" data-group-id="1269514497-4">(</span><span class="nc">MyApp.View</span><span class="p">,</span><span class="w"> </span><span class="nc">MyApp</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;View&quot;</span><span class="p" data-group-id="1269514497-4">)</span><span class="w">
+</span><span class="s">&quot;&quot;</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Phoenix.View</span><span class="o">.</span><span class="n">module_to_template_root</span><span class="p" data-group-id="1269514497-5">(</span><span class="nc">MyApp.View</span><span class="p">,</span><span class="w"> </span><span class="nc">MyApp.View</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;View&quot;</span><span class="p" data-group-id="1269514497-5">)</span><span class="w">
+</span><span class="s">&quot;&quot;</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="render/3">
+
+  <div class="detail-header">
+    <a href="#render/3" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">render(module, template, assigns)</h1>
+
+      <a href="https://github.com/phoenixframework/phoenix_view/blob/v2.0.4/lib/phoenix_view.ex#L386" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Renders a template.</p><p>It expects the view module, the template as a string, and a
+set of assigns.</p><p>Notice that this function returns the inner representation of a
+template. If you want the encoded template as a result, use
+<a href="#render_to_iodata/3"><code class="inline">render_to_iodata/3</code></a> instead.</p><h2 id="render/3-examples" class="section-heading">
+  <a href="#render/3-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="nc">Phoenix.View</span><span class="o">.</span><span class="n">render</span><span class="p" data-group-id="8851937226-1">(</span><span class="nc">YourApp.UserView</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;index.html&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;John Doe&quot;</span><span class="p" data-group-id="8851937226-1">)</span><span class="w">
+</span><span class="c1">#=&gt; {:safe, &quot;Hello John Doe&quot;}</span></code></pre><h2 id="render/3-assigns" class="section-heading">
+  <a href="#render/3-assigns" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Assigns</span>
+</h2>
+<p>Assigns are meant to be user data that will be available in templates.
+However, there are keys under assigns that are specially handled by
+Phoenix, they are:</p><ul><li><code class="inline">:layout</code> - tells Phoenix to wrap the rendered result in the
+given layout. See next section</li></ul><h2 id="render/3-layouts" class="section-heading">
+  <a href="#render/3-layouts" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Layouts</span>
+</h2>
+<p>Templates can be rendered within other templates using the <code class="inline">:layout</code>
+option. <code class="inline">:layout</code> accepts a tuple of the form
+<code class="inline">{LayoutModule, &quot;template.extension&quot;}</code>.</p><p>To template that goes inside the layout will be placed in the <code class="inline">@inner_content</code>
+assign:</p><pre><code class="makeup elixir" translate="no"><span class="o">&lt;</span><span class="p">%</span><span class="o">=</span><span class="w"> </span><span class="na">@inner_content</span><span class="w"> </span><span class="p">%</span><span class="o">&gt;</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="render_existing/3">
+
+    <span id="render_existing/2"></span>
+
+  <div class="detail-header">
+    <a href="#render_existing/3" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">render_existing(module, template, assigns \\ [])</h1>
+
+      <a href="https://github.com/phoenixframework/phoenix_view/blob/v2.0.4/lib/phoenix_view.ex#L483" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Renders a template only if it exists.</p><blockquote><p>Note: Using this functionality has been discouraged in
+recent Phoenix versions, see the &quot;Alternatives&quot; section
+below.</p></blockquote><p>This function works the same as <a href="#render/3"><code class="inline">render/3</code></a>, but returns
+<code class="inline">nil</code> instead of raising. This is often used with
+<code class="inline">Phoenix.Controller.view_module/1</code> and <code class="inline">Phoenix.Controller.view_template/1</code>,
+which must be imported into your views. See the &quot;Examples&quot;
+section below.</p><h2 id="render_existing/3-alternatives" class="section-heading">
+  <a href="#render_existing/3-alternatives" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Alternatives</span>
+</h2>
+<p>This function is discouraged. If you need to render something
+conditionally, the simplest way is to check for an optional
+function in your views.</p><p>Consider the case where the application has a sidebar in its
+layout and it wants certain views to render additional buttons
+in the sidebar. Inside your sidebar, you could do:</p><pre><code class="makeup elixir" translate="no"><span class="o">&lt;</span><span class="n">div</span><span class="w"> </span><span class="n">class</span><span class="o">=</span><span class="s">&quot;sidebar&quot;</span><span class="o">&gt;</span><span class="w">
+  </span><span class="o">&lt;</span><span class="p">%</span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">function_exported?</span><span class="p" data-group-id="1263696631-1">(</span><span class="n">view_module</span><span class="p" data-group-id="1263696631-2">(</span><span class="na">@conn</span><span class="p" data-group-id="1263696631-2">)</span><span class="p">,</span><span class="w"> </span><span class="ss">:sidebar_additions</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="1263696631-1">)</span><span class="w"> </span><span class="k" data-group-id="1263696631-3">do</span><span class="w"> </span><span class="p">%</span><span class="o">&gt;</span><span class="w">
+    </span><span class="o">&lt;</span><span class="p">%</span><span class="o">=</span><span class="w"> </span><span class="n">view_module</span><span class="p" data-group-id="1263696631-4">(</span><span class="na">@conn</span><span class="p" data-group-id="1263696631-4">)</span><span class="o">.</span><span class="n">sidebar_additions</span><span class="p" data-group-id="1263696631-5">(</span><span class="n">assigns</span><span class="p" data-group-id="1263696631-5">)</span><span class="w"> </span><span class="p">%</span><span class="o">&gt;</span><span class="w">
+  </span><span class="o">&lt;</span><span class="p">%</span><span class="w"> </span><span class="k" data-group-id="1263696631-3">end</span><span class="w"> </span><span class="p">%</span><span class="o">&gt;</span><span class="w">
+</span><span class="o">&lt;</span><span class="o">/</span><span class="n">div</span><span class="o">&gt;</span></code></pre><p>If you are using Phoenix.LiveView, you could do similar by
+accessing the view under <code class="inline">@socket</code>:</p><pre><code class="makeup elixir" translate="no"><span class="o">&lt;</span><span class="n">div</span><span class="w"> </span><span class="n">class</span><span class="o">=</span><span class="s">&quot;sidebar&quot;</span><span class="o">&gt;</span><span class="w">
+  </span><span class="o">&lt;</span><span class="p">%</span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">function_exported?</span><span class="p" data-group-id="9505874468-1">(</span><span class="na">@socket</span><span class="o">.</span><span class="n">view</span><span class="p">,</span><span class="w"> </span><span class="ss">:sidebar_additions</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="9505874468-1">)</span><span class="w"> </span><span class="k" data-group-id="9505874468-2">do</span><span class="w"> </span><span class="p">%</span><span class="o">&gt;</span><span class="w">
+    </span><span class="o">&lt;</span><span class="p">%</span><span class="o">=</span><span class="w"> </span><span class="na">@socket</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">sidebar_additions</span><span class="p" data-group-id="9505874468-3">(</span><span class="n">assigns</span><span class="p" data-group-id="9505874468-3">)</span><span class="w"> </span><span class="p">%</span><span class="o">&gt;</span><span class="w">
+  </span><span class="o">&lt;</span><span class="p">%</span><span class="w"> </span><span class="k" data-group-id="9505874468-2">end</span><span class="w"> </span><span class="p">%</span><span class="o">&gt;</span><span class="w">
+</span><span class="o">&lt;</span><span class="o">/</span><span class="n">div</span><span class="o">&gt;</span></code></pre><p>Then, in your view or live view, you do:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">sidebar_additions</span><span class="p" data-group-id="9840688413-1">(</span><span class="n">assigns</span><span class="p" data-group-id="9840688413-1">)</span><span class="w"> </span><span class="k" data-group-id="9840688413-2">do</span><span class="w">
+  </span><span class="err">~</span><span class="nc">H</span><span class="err">\</span><span class="s">&quot;&quot;</span><span class="s">&quot;
+  ...my additional buttons...
+  </span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="err">&quot;</span></code></pre><h2 id="render_existing/3-using-render_existing" class="section-heading">
+  <a href="#render_existing/3-using-render_existing" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Using render_existing</span>
+</h2>
+<p>Consider the case where the application wants to allow entries
+to be added to a sidebar. This feature could be achieved with:</p><pre><code class="makeup elixir" translate="no"><span class="o">&lt;</span><span class="p">%</span><span class="o">=</span><span class="w"> </span><span class="n">render_existing</span><span class="w"> </span><span class="n">view_module</span><span class="p" data-group-id="7530146110-1">(</span><span class="na">@conn</span><span class="p" data-group-id="7530146110-1">)</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;sidebar_additions.html&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">assigns</span><span class="w"> </span><span class="p">%</span><span class="o">&gt;</span></code></pre><p>Then the module under <code class="inline">view_module(@conn)</code> can decide to provide
+scripts with either a precompiled template, or by implementing the
+function directly, ie:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">render</span><span class="p" data-group-id="4569759862-1">(</span><span class="s">&quot;sidebar_additions.html&quot;</span><span class="p">,</span><span class="w"> </span><span class="c">_assigns</span><span class="p" data-group-id="4569759862-1">)</span><span class="w"> </span><span class="k" data-group-id="4569759862-2">do</span><span class="w">
+  </span><span class="sx">~H&quot;&quot;&quot;
+  ...my additional buttons...
+  &quot;&quot;&quot;</span><span class="w">
+</span><span class="k" data-group-id="4569759862-2">end</span></code></pre><p>To use a precompiled template, create a <code class="inline">scripts.html.eex</code> file in
+the <code class="inline">templates</code> directory for the corresponding view you want it to
+render for. For example, for the <code class="inline">UserView</code>, create the <code class="inline">scripts.html.eex</code>
+file at <code class="inline">your_app_web/templates/user/</code>.</p>
+  </section>
+</section>
+<section class="detail" id="render_layout/4">
+
+  <div class="detail-header">
+    <a href="#render_layout/4" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">render_layout(module, template, assigns, list)</h1>
+
+      <a href="https://github.com/phoenixframework/phoenix_view/blob/v2.0.4/lib/phoenix_view.ex#L341" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Renders the given layout passing the given <code class="inline">do/end</code> block
+as <code class="inline">@inner_content</code>.</p><p>This can be useful to implement nested layouts. For example,
+imagine you have an application layout like this:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># layout/app.html.heex</span><span class="w">
+</span><span class="o">&lt;</span><span class="n">html</span><span class="o">&gt;</span><span class="w">
+</span><span class="o">&lt;</span><span class="n">head</span><span class="o">&gt;</span><span class="w">
+  </span><span class="o">&lt;</span><span class="n">title</span><span class="o">&gt;</span><span class="nc">Title</span><span class="o">&lt;</span><span class="o">/</span><span class="n">title</span><span class="o">&gt;</span><span class="w">
+</span><span class="o">&lt;</span><span class="o">/</span><span class="n">head</span><span class="o">&gt;</span><span class="w">
+</span><span class="o">&lt;</span><span class="n">body</span><span class="o">&gt;</span><span class="w">
+  </span><span class="o">&lt;</span><span class="n">div</span><span class="w"> </span><span class="n">class</span><span class="o">=</span><span class="s">&quot;menu&quot;</span><span class="o">&gt;</span><span class="n">...</span><span class="o">&lt;</span><span class="o">/</span><span class="n">div</span><span class="o">&gt;</span><span class="w">
+  </span><span class="o">&lt;</span><span class="p">%</span><span class="o">=</span><span class="w"> </span><span class="na">@inner_content</span><span class="w"> </span><span class="p">%</span><span class="o">&gt;</span><span class="w">
+</span><span class="o">&lt;</span><span class="o">/</span><span class="n">body</span><span class="o">&gt;</span></code></pre><p>This layout is used by many parts of your application. However,
+there is a subsection of your application that wants to also add
+a sidebar. Let's call it &quot;blog.html&quot;. You can build on top of the
+existing layout in two steps. First, define the blog layout:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># layout/blog.html.heex</span><span class="w">
+</span><span class="o">&lt;</span><span class="p">%</span><span class="o">=</span><span class="w"> </span><span class="n">render_layout</span><span class="w"> </span><span class="nc">LayoutView</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;app.html&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">assigns</span><span class="w"> </span><span class="k" data-group-id="6676410836-1">do</span><span class="w"> </span><span class="p">%</span><span class="o">&gt;</span><span class="w">
+  </span><span class="o">&lt;</span><span class="n">div</span><span class="w"> </span><span class="n">class</span><span class="o">=</span><span class="s">&quot;sidebar&quot;</span><span class="o">&gt;</span><span class="n">...</span><span class="o">&lt;</span><span class="o">/</span><span class="n">div</span><span class="o">&gt;</span><span class="w">
+  </span><span class="o">&lt;</span><span class="p">%</span><span class="o">=</span><span class="w"> </span><span class="na">@inner_content</span><span class="w"> </span><span class="p">%</span><span class="o">&gt;</span><span class="w">
+</span><span class="o">&lt;</span><span class="p">%</span><span class="w"> </span><span class="k" data-group-id="6676410836-1">end</span><span class="w"> </span><span class="p">%</span><span class="o">&gt;</span></code></pre><p>And now you can simply use it from your controller:</p><pre><code class="makeup elixir" translate="no"><span class="n">plug</span><span class="w"> </span><span class="ss">:put_layout</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;blog.html&quot;</span></code></pre><h2 id="render_layout/4-alternatives" class="section-heading">
+  <a href="#render_layout/4-alternatives" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Alternatives</span>
+</h2>
+<p><a href="#render_layout/4"><code class="inline">render_layout/4</code></a> is discouraged in favor of components.
+If you need to share functionality, you can create components
+with bits of functionality you want to reuse. For example,
+the code above could be rewritten with a layout component:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">layout</span><span class="p" data-group-id="0627155232-1">(</span><span class="n">assigns</span><span class="p" data-group-id="0627155232-1">)</span><span class="w"> </span><span class="k" data-group-id="0627155232-2">do</span><span class="w">
+  </span><span class="sx">~H&quot;&quot;&quot;
+  &lt;div ...&gt;
+    &lt;%= render_slot(@sidebar) %&gt;
+    &lt;%= render_slot(@inner_block) %&gt;
+  &lt;/div&gt;
+  &quot;&quot;&quot;</span><span class="w">
+</span><span class="k" data-group-id="0627155232-2">end</span></code></pre><p>Which can be used as:</p><pre><code class="makeup elixir" translate="no"><span class="o">&lt;</span><span class="o">.</span><span class="n">layout</span><span class="o">&gt;</span><span class="w">
+  </span><span class="nc">Main</span><span class="w"> </span><span class="n">content</span><span class="w">
+</span><span class="o">&lt;</span><span class="o">/</span><span class="o">.</span><span class="n">layout</span><span class="o">&gt;</span></code></pre><p>Or:</p><pre><code class="makeup elixir" translate="no"><span class="o">&lt;</span><span class="o">.</span><span class="n">layout</span><span class="o">&gt;</span><span class="w">
+  </span><span class="o">&lt;</span><span class="ss">:sidebar</span><span class="o">&gt;</span><span class="nc">Additional</span><span class="w"> </span><span class="n">sidebar</span><span class="w"> </span><span class="n">content</span><span class="o">&lt;</span><span class="o">/</span><span class="ss">:sidebar</span><span class="o">&gt;</span><span class="w">
+  </span><span class="nc">Main</span><span class="w"> </span><span class="n">content</span><span class="w">
+</span><span class="o">&lt;</span><span class="o">/</span><span class="o">.</span><span class="n">layout</span><span class="o">&gt;</span></code></pre><p>The advantage of using components is that you can handle all
+of the sidebar markup inside the parent layout component,
+instead of spreading it across multiple files.</p>
+  </section>
+</section>
+<section class="detail" id="render_many/4">
+
+    <span id="render_many/3"></span>
+
+  <div class="detail-header">
+    <a href="#render_many/4" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">render_many(collection, view, template, assigns \\ %{})</h1>
+
+      <a href="https://github.com/phoenixframework/phoenix_view/blob/v2.0.4/lib/phoenix_view.ex#L517" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Renders a collection.</p><p>It receives a collection as an enumerable of structs and returns
+the rendered collection in a list. This is typically used to render
+a collection as structured data. For example, to render a list of
+users to json:</p><pre><code class="makeup elixir" translate="no"><span class="n">render_many</span><span class="p" data-group-id="2282102745-1">(</span><span class="n">users</span><span class="p">,</span><span class="w"> </span><span class="nc">UserView</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;show.json&quot;</span><span class="p" data-group-id="2282102745-1">)</span></code></pre><p>which is roughly equivalent to:</p><pre><code class="makeup elixir" translate="no"><span class="nc">Enum</span><span class="o">.</span><span class="n">map</span><span class="p" data-group-id="7955139116-1">(</span><span class="n">users</span><span class="p">,</span><span class="w"> </span><span class="k" data-group-id="7955139116-2">fn</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+  </span><span class="n">render</span><span class="p" data-group-id="7955139116-3">(</span><span class="nc">UserView</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;show.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">user</span><span class="p">:</span><span class="w"> </span><span class="n">user</span><span class="p" data-group-id="7955139116-3">)</span><span class="w">
+</span><span class="k" data-group-id="7955139116-2">end</span><span class="p" data-group-id="7955139116-1">)</span></code></pre><p>The underlying user is passed to the view and template as <code class="inline">:user</code>,
+which is inferred from the view name. The name of the key
+in assigns can be customized with the <code class="inline">:as</code> option:</p><pre><code class="makeup elixir" translate="no"><span class="n">render_many</span><span class="p" data-group-id="7002572225-1">(</span><span class="n">users</span><span class="p">,</span><span class="w"> </span><span class="nc">UserView</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;show.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">as</span><span class="p">:</span><span class="w"> </span><span class="ss">:data</span><span class="p" data-group-id="7002572225-1">)</span></code></pre><p>is roughly equivalent to:</p><pre><code class="makeup elixir" translate="no"><span class="nc">Enum</span><span class="o">.</span><span class="n">map</span><span class="p" data-group-id="2801760972-1">(</span><span class="n">users</span><span class="p">,</span><span class="w"> </span><span class="k" data-group-id="2801760972-2">fn</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+  </span><span class="n">render</span><span class="p" data-group-id="2801760972-3">(</span><span class="nc">UserView</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;show.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">data</span><span class="p">:</span><span class="w"> </span><span class="n">user</span><span class="p" data-group-id="2801760972-3">)</span><span class="w">
+</span><span class="k" data-group-id="2801760972-2">end</span><span class="p" data-group-id="2801760972-1">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="render_one/4">
+
+    <span id="render_one/3"></span>
+
+  <div class="detail-header">
+    <a href="#render_one/4" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">render_one(resource, view, template, assigns \\ %{})</h1>
+
+      <a href="https://github.com/phoenixframework/phoenix_view/blob/v2.0.4/lib/phoenix_view.ex#L552" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Renders a single item if not nil.</p><p>The following:</p><pre><code class="makeup elixir" translate="no"><span class="n">render_one</span><span class="p" data-group-id="8931734596-1">(</span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="nc">UserView</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;show.json&quot;</span><span class="p" data-group-id="8931734596-1">)</span></code></pre><p>is roughly equivalent to:</p><pre><code class="makeup elixir" translate="no"><span class="k">if</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="no">nil</span><span class="w"> </span><span class="k" data-group-id="3738602189-1">do</span><span class="w">
+  </span><span class="n">render</span><span class="p" data-group-id="3738602189-2">(</span><span class="nc">UserView</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;show.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">user</span><span class="p">:</span><span class="w"> </span><span class="n">user</span><span class="p" data-group-id="3738602189-2">)</span><span class="w">
+</span><span class="k" data-group-id="3738602189-1">end</span></code></pre><p>The underlying user is passed to the view and template as
+<code class="inline">:user</code>, which is inflected from the view name. The name
+of the key in assigns can be customized with the <code class="inline">:as</code> option:</p><pre><code class="makeup elixir" translate="no"><span class="n">render_one</span><span class="p" data-group-id="2071181600-1">(</span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="nc">UserView</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;show.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">as</span><span class="p">:</span><span class="w"> </span><span class="ss">:data</span><span class="p" data-group-id="2071181600-1">)</span></code></pre><p>is roughly equivalent to:</p><pre><code class="makeup elixir" translate="no"><span class="k">if</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="no">nil</span><span class="w"> </span><span class="k" data-group-id="7440592799-1">do</span><span class="w">
+  </span><span class="n">render</span><span class="p" data-group-id="7440592799-2">(</span><span class="nc">UserView</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;show.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">data</span><span class="p">:</span><span class="w"> </span><span class="n">user</span><span class="p" data-group-id="7440592799-2">)</span><span class="w">
+</span><span class="k" data-group-id="7440592799-1">end</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="render_to_iodata/3">
+
+  <div class="detail-header">
+    <a href="#render_to_iodata/3" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">render_to_iodata(module, template, assign)</h1>
+
+      <a href="https://github.com/phoenixframework/phoenix_view/blob/v2.0.4/lib/phoenix_view.ex#L576" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Renders the template and returns iodata.</p>
+  </section>
+</section>
+<section class="detail" id="render_to_string/3">
+
+  <div class="detail-header">
+    <a href="#render_to_string/3" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">render_to_string(module, template, assign)</h1>
+
+      <a href="https://github.com/phoenixframework/phoenix_view/blob/v2.0.4/lib/phoenix_view.ex#L583" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Renders the template and returns a string.</p>
+  </section>
+</section>
+<section class="detail" id="template_path_to_name/2">
+
+  <div class="detail-header">
+    <a href="#template_path_to_name/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">template_path_to_name(path, root)</h1>
+
+      <a href="https://github.com/phoenixframework/phoenix_view/blob/v2.0.4/lib/phoenix_view.ex#L610" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> template_path_to_name(<a href="https://hexdocs.pm/elixir/Path.html#t:t/0">Path.t</a>(), <a href="https://hexdocs.pm/elixir/Path.html#t:t/0">Path.t</a>()) :: <a href="https://hexdocs.pm/elixir/Path.html#t:t/0">Path.t</a>()</pre>
+
+      </div>
+
+<p>Converts the template path into the template name.</p><h2 id="template_path_to_name/2-examples" class="section-heading">
+  <a href="#template_path_to_name/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Phoenix.View</span><span class="o">.</span><span class="n">template_path_to_name</span><span class="p" data-group-id="1960424623-1">(</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="w">  </span><span class="s">&quot;lib/templates/admin/users/show.html.eex&quot;</span><span class="p">,</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="w">  </span><span class="s">&quot;lib/templates&quot;</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="p" data-group-id="1960424623-1">)</span><span class="w">
+</span><span class="s">&quot;admin/users/show.html&quot;</span></code></pre>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/phoenix_view/2.0.4" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/phoenix_view/2.0.4">Hex Preview</a>
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="phoenix_view.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.0) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,40 @@
+<div class="idea-stats"
+     id="idea-stats-<%= idea.idea_id %>"
+     style="flex-wrap: wrap;">
+  <% if (user && !idea.isOwner) { %>
+    <form class="like-form-inline"
+          method="POST"
+          action="/ideas/<%= idea.idea_id %>/like"
+          hx-post="/ideas/<%= idea.idea_id %>/like"
+          hx-target="#idea-stats-<%= idea.idea_id %>"
+          hx-swap="outerHTML"
+          hx-preserve-scroll="true">
+      <button class="btn-stats <%= idea.userLiked ? 'liked' : '' %>"
+              type="submit">
+        ❤️ <%= idea.likes_count || 0 %>
+      </button>
+    </form>
+
+    <form class="dislike-form-inline"
+          method="POST"
+          action="/ideas/<%= idea.idea_id %>/dislike"
+          hx-post="/ideas/<%= idea.idea_id %>/dislike"
+          hx-target="#idea-stats-<%= idea.idea_id %>"
+          hx-swap="outerHTML"
+          hx-preserve-scroll="true">
+      <button class="btn-stats <%= idea.userDisliked ? 'disliked' : '' %>"
+              type="submit">
+        👎 <%= idea.dislikes_count || 0 %>
+      </button>
+    </form>
+  <% } else { %>
+    <span class="stats-count">❤️ <%= idea.likes_count || 0 %></span>
+    <span class="stats-count">👎 <%= idea.dislikes_count || 0 %></span>
+  <% } %>
+
+  <span class="stats-count">💬 <%= idea.comments_count || 0 %></span>
+
+  <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+    <div class="stats-error" role="alert"><%= errorMessage %></div>
+  <% } %>
+</div>

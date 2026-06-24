@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: routes/dashboard.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: routes/dashboard.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Dashboard-Routen und Widget-Endpoints (Partials) für das Admin-Dashboard.
+ * Liefert Metriken, Top-Ideen, Charts und Idea-Card-Partial.
+ * @module routes/dashboard
+ */
+
+const express = require('express');
+const router = express.Router();
+const asyncHandler = require('../lib/asyncHandler');
+const dashboardService = require('../lib/services/dashboardService');
+const { isLoggedIn } = require('./middleware');
+
+// Schütze alle Dashboard-Routen (Nur angemeldete Nutzer)
+router.use(isLoggedIn);
+
+/**
+ * GET /dashboard
+ * Zeigt die Hauptansicht des Dashboards an.
+ * @name GET /
+ * @function
+ * @inner
+ */
+router.get('/', asyncHandler(async (req, res) => {
+  res.render('dashboard/dashboard', {
+    title: 'Dashboard - Übersicht',
+    user: req.session.user
+  });
+}));
+
+/**
+ * GET /dashboard/widgets/metrics
+ * Liefert das Widget für Metriken (neue Ideen, aktive Nutzer).
+ * @name GET /widgets/metrics
+ * @function
+ * @inner
+ */
+router.get('/widgets/metrics', asyncHandler(async (req, res) => {
+  const stats = await dashboardService.getMetrics();
+  res.render('dashboard/partials/metrics', { stats });
+}));
+
+/**
+ * GET /dashboard/widgets/new-ideas-number
+ * Liefert nur die Anzahl der neuen Ideen als Reintext.
+ * @name GET /widgets/new-ideas-number
+ * @function
+ * @inner
+ */
+router.get('/widgets/new-ideas-number', asyncHandler(async (req, res) => {
+  const count = await dashboardService.getNewIdeasCount();
+  res.send(String(count));
+}));
+
+/**
+ * GET /dashboard/widgets/top-ideas
+ * Liefert das Widget für die Top-Ideen.
+ * @name GET /widgets/top-ideas
+ * @function
+ * @inner
+ */
+router.get('/widgets/top-ideas', asyncHandler(async (req, res) => {
+  const topIdeas = await dashboardService.getTopIdeas(3);
+  res.render('dashboard/partials/top-ideas', { topIdeas });
+}));
+
+/**
+ * GET /dashboard/widgets/charts
+ * Liefert das Widget-Grid mit Diagrammen und Statistiken.
+ * @name GET /widgets/charts
+ * @function
+ * @inner
+ */
+router.get('/widgets/charts', asyncHandler(async (req, res) => {
+  const [popularCategories, projectStats, monthlyStats, topUsers, categories] = await Promise.all([
+    dashboardService.getPopularCategories(5),
+    dashboardService.getProjectStats(),
+    dashboardService.getMonthlyStats(6),
+    dashboardService.getTopUsers(5),
+    dashboardService.getAllCategories()
+  ]);
+
+  // Project-Statistiken umformen: hier werden Status-Felder als projektnamen
+  // genutzt, damit das Widget eine konsistente Struktur erhält.
+  const popularProjects = projectStats.map(p => ({
+    project_id: p.status,
+    name: p.status,
+    count: p.count,
+    percentage: p.percentage
+  }));
+
+  res.render('dashboard/widgets/charts-grid', {
+    stats: { 
+      popularCategories, 
+      projectStats, 
+      monthlyStats, 
+      topUsers, 
+      categories, 
+      popularProjects 
+    }
+  });
+}));
+
+/**
+ * GET /dashboard/:id/card
+ * Liefert eine einzelne Ideen-Karte für das Dashboard.
+ * @name GET /:id/card
+ * @function
+ * @inner
+ */
+router.get('/:id/card', asyncHandler(async (req, res) => {
+  const data = await dashboardService.getIdeaCardData(req.params.id);
+  if (!data) {
+    return res.status(404).send('Idee nicht gefunden');
+  }
+
+  res.render('partials/idea-card', {
+    idea: data.idea,
+    comments: data.comments,
+    user: req.session.user,
+    isSingleCard: true
+  });
+}));
+
+/**
+ * GET /dashboard/widgets/project-stats
+ * Liefert das Widget für Projekt-Status-Statistiken.
+ * @name GET /widgets/project-stats
+ * @function
+ * @inner
+ */
+router.get('/widgets/project-stats', asyncHandler(async (req, res) => {
+  const projectStats = await dashboardService.getProjectStats();
+  res.render('dashboard/partials/project-stats', { projectStats });
+}));
+
+/**
+ * GET /dashboard/widgets/monthly-stats
+ * Liefert das Widget für monatliche Statistiken.
+ * @name GET /widgets/monthly-stats
+ * @function
+ * @inner
+ */
+router.get('/widgets/monthly-stats', asyncHandler(async (req, res) => {
+  const monthlyStats = await dashboardService.getMonthlyStats(6);
+  res.render('dashboard/partials/monthly-stats', { monthlyStats });
+}));
+
+/**
+ * GET /dashboard/widgets/top-users
+ * Liefert das Widget für Top-Benutzer.
+ * @name GET /widgets/top-users
+ * @function
+ * @inner
+ */
+router.get('/widgets/top-users', asyncHandler(async (req, res) => {
+  const topUsers = await dashboardService.getTopUsers(5);
+  res.render('dashboard/partials/top-users', { topUsers });
+}));
+
+module.exports = router;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

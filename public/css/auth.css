@@ -1,0 +1,142 @@
+/* AUTH-SEITEN - Login, Registrierung,*/
+.auth-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: var(--bg);
+    perspective: 1000px;
+    margin-top: 0;
+}
+
+.auth-card {
+    position: relative;
+    width: clamp(280px, 92vw, 420px);
+    min-height: 520px;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent !important;
+}
+
+.auth-card.flipped {
+    transform: rotateY(180deg);
+}
+
+.auth-face {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: var(--surface);
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px color-mix(in srgb, black 15%, transparent);
+    border: 1px solid var(--card-border);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+/* Sicherstellen, dass Steuerelemente auch transformiert anklickbar bleiben */
+.auth-card, .auth-face, .auth-face * {
+    pointer-events: auto;
+}
+
+.auth-toggle {
+    cursor: pointer;
+}
+
+.auth-face.auth-front {
+    transform: rotateY(0deg) translateZ(1px);
+    z-index: 2;
+}
+
+.auth-face.auth-back {
+    transform: rotateY(180deg) translateZ(1px);
+    z-index: 1;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Sicherstellen, dass das Stacking beim Umdrehen der Karte korrekt bleibt */
+.auth-card.flipped .auth-face.auth-front { z-index: 1; }
+.auth-card.flipped .auth-face.auth-back  { z-index: 2; }
+
+.auth-face h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+/* Ausrichtung des Login-Titels */
+.auth-face.auth-front h2.auth-title-right {
+    text-align: right;
+    margin-right: 0.5rem;
+}
+
+.auth-face form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.auth-face .input {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+    background: color-mix(in srgb, var(--text) 3%, transparent);
+    color: var(--text);
+    box-sizing: border-box;
+}
+
+.auth-face .btn {
+    padding: 0.8rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.auth-face p {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.auth-toggle {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    font-size: inherit;
+    text-decoration: underline;
+}
+
+.validation-error {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: color-mix(in srgb, var(--danger) 8%, transparent);
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+
+
+/* Mobiles Responsivs Verhalten */
+@media (max-width: 480px) {
+    .auth-section { padding: 1rem; }
+    .auth-card { min-height: 480px; }
+    .auth-face { padding: 1.5rem; }
+    .auth-face h2 { font-size: 1.5rem; margin-bottom: 1rem; }
+    .auth-face.auth-front h2.auth-title-right { text-align: left; margin-right: 0; }
+    .auth-face .input, .auth-face .btn { padding: 0.7rem; }
+}

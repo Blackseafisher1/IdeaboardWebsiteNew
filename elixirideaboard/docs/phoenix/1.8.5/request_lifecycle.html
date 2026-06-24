@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix v1.8.5">
+
+
+    <title>Request life-cycle — Phoenix v1.8.5</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-209F6654.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.8.5
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="true">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Latest</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="https://hexdocs.pm/?packages=plug%3Alatest%2Cphoenix%3Alatest%2Cphoenix_html%3Alatest%2Cphoenix_live_view%3Alatest%2Cphoenix_pubsub%3Alatest%2Cphoenix_template%3Alatest&q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Latest</span>
+                <span class="help">Search latest versions of Plug, Phoenix, Phoenix.{HTML, LiveView, PubSub, Template}</span>
+              </button>
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="false">
+                <span class="name">Current version</span>
+                <span class="help">Search only this project</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Request life-cycle</h1>
+
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/guides/request_lifecycle.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<blockquote><p><strong>Requirement</strong>: This guide expects that you have gone through the <a href="installation.html">introductory guides</a> and got a Phoenix application <a href="up_and_running.html">up and running</a>.</p></blockquote><p>The goal of this guide is to talk about Phoenix's request life-cycle. This guide will take a practical approach where we will learn by doing: we will add two new pages to our Phoenix project and comment on how the pieces fit together along the way.</p><p>Let's get on with our first new Phoenix page!</p><h2 id="adding-a-new-page" class="section-heading"><a href="#adding-a-new-page" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Adding a new page</span></h2><p>When your browser accesses <a href="http://localhost:4000/">http://localhost:4000/</a>, it sends an HTTP request to whatever service is running on that address, in this case our Phoenix application. The HTTP request is made of a verb and a path. For example, the following browser requests translate into:</p><table><thead><tr><th style="text-align: left;">Browser address bar</th><th style="text-align: left;">Verb</th><th style="text-align: left;">Path</th></tr></thead><tbody><tr><td style="text-align: left;"><a href="http://localhost:4000/">http://localhost:4000/</a></td><td style="text-align: left;">GET</td><td style="text-align: left;">/</td></tr><tr><td style="text-align: left;"><a href="http://localhost:4000/hello">http://localhost:4000/hello</a></td><td style="text-align: left;">GET</td><td style="text-align: left;">/hello</td></tr><tr><td style="text-align: left;"><a href="http://localhost:4000/hello/world">http://localhost:4000/hello/world</a></td><td style="text-align: left;">GET</td><td style="text-align: left;">/hello/world</td></tr></tbody></table><p>There are other HTTP verbs. For example, submitting a form typically uses the POST verb.</p><p>Web applications typically handle requests by mapping each verb/path pair onto a specific part of your application. In Phoenix, this mapping is done by the router. For example, we may map &quot;/articles&quot; to a portion of our application that shows all articles. Therefore, to add a new page, our first task is to add a new route.</p><h3 id="a-new-route" class="section-heading"><a href="#a-new-route" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">A new route</span></h3><p>The router maps unique HTTP verb/path pairs to controller/action pairs which will handle them. Controllers in Phoenix are simply Elixir modules. Actions are functions that are defined within these controllers.</p><p>Phoenix generates a router file for us in new applications at <code class="inline">lib/hello_web/router.ex</code>. This is where we will be working for this section.</p><p>The route for our &quot;Welcome to Phoenix!&quot; page from the previous <a href="up_and_running.html">Up And Running Guide</a> looks like this:</p><pre><code class="makeup elixir" translate="no"><span class="n">get</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:home</span></code></pre><p>Let's digest what this route is telling us. Visiting <a href="http://localhost:4000/">http://localhost:4000/</a> issues an HTTP <code class="inline">GET</code> request to the root path. All requests like this will be handled by the <code class="inline">home/2</code> function in the <code class="inline">HelloWeb.PageController</code> module defined in <code class="inline">lib/hello_web/controllers/page_controller.ex</code>.</p><p>The page we are going to build will say &quot;Hello World, from Phoenix!&quot; when we point our browser to <a href="http://localhost:4000/hello">http://localhost:4000/hello</a>.</p><p>The first thing we need to do is to create the page route for a new page. Let's open up <code class="inline">lib/hello_web/router.ex</code> in a text editor. For a brand new application, it looks like this:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">HelloWeb.Router</span><span class="w"> </span><span class="k" data-group-id="9586855108-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">HelloWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:router</span><span class="w">
+
+  </span><span class="n">pipeline</span><span class="w"> </span><span class="ss">:browser</span><span class="w"> </span><span class="k" data-group-id="9586855108-2">do</span><span class="w">
+    </span><span class="n">plug</span><span class="w"> </span><span class="ss">:accepts</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9586855108-3">[</span><span class="s">&quot;html&quot;</span><span class="p" data-group-id="9586855108-3">]</span><span class="w">
+    </span><span class="n">plug</span><span class="w"> </span><span class="ss">:fetch_session</span><span class="w">
+    </span><span class="n">plug</span><span class="w"> </span><span class="ss">:fetch_live_flash</span><span class="w">
+    </span><span class="n">plug</span><span class="w"> </span><span class="ss">:put_root_layout</span><span class="p">,</span><span class="w"> </span><span class="ss">html</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="9586855108-4">{</span><span class="nc">HelloWeb.Layouts</span><span class="p">,</span><span class="w"> </span><span class="ss">:root</span><span class="p" data-group-id="9586855108-4">}</span><span class="w">
+    </span><span class="n">plug</span><span class="w"> </span><span class="ss">:protect_from_forgery</span><span class="w">
+    </span><span class="n">plug</span><span class="w"> </span><span class="ss">:put_secure_browser_headers</span><span class="w">
+  </span><span class="k" data-group-id="9586855108-2">end</span><span class="w">
+
+  </span><span class="n">pipeline</span><span class="w"> </span><span class="ss">:api</span><span class="w"> </span><span class="k" data-group-id="9586855108-5">do</span><span class="w">
+    </span><span class="n">plug</span><span class="w"> </span><span class="ss">:accepts</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9586855108-6">[</span><span class="s">&quot;json&quot;</span><span class="p" data-group-id="9586855108-6">]</span><span class="w">
+  </span><span class="k" data-group-id="9586855108-5">end</span><span class="w">
+
+  </span><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">HelloWeb</span><span class="w"> </span><span class="k" data-group-id="9586855108-7">do</span><span class="w">
+    </span><span class="n">pipe_through</span><span class="w"> </span><span class="ss">:browser</span><span class="w">
+
+    </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:home</span><span class="w">
+  </span><span class="k" data-group-id="9586855108-7">end</span><span class="w">
+
+  </span><span class="c1"># Other scopes may use custom stacks.</span><span class="w">
+  </span><span class="c1"># scope &quot;/api&quot;, HelloWeb do</span><span class="w">
+  </span><span class="c1">#   pipe_through :api</span><span class="w">
+  </span><span class="c1"># end</span><span class="w">
+
+  </span><span class="c1"># ...</span><span class="w">
+</span><span class="k" data-group-id="9586855108-1">end</span></code></pre><p>For now, we'll ignore the pipelines and the use of <code class="inline">scope</code> here and just focus on adding a route. We will discuss those in the <a href="routing.html">Routing guide</a>.</p><p>Let's add a new route to the router that maps a <code class="inline">GET</code> request for <code class="inline">/hello</code> to the <code class="inline">index</code> action of a soon-to-be-created <code class="inline">HelloWeb.HelloController</code> inside the <code class="inline">scope &quot;/&quot; do</code> block of the router:</p><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">HelloWeb</span><span class="w"> </span><span class="k" data-group-id="0799152459-1">do</span><span class="w">
+  </span><span class="n">pipe_through</span><span class="w"> </span><span class="ss">:browser</span><span class="w">
+
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:home</span><span class="w">
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">HelloController</span><span class="p">,</span><span class="w"> </span><span class="ss">:index</span><span class="w">
+</span><span class="k" data-group-id="0799152459-1">end</span></code></pre><h3 id="a-new-controller" class="section-heading"><a href="#a-new-controller" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">A new controller</span></h3><p>Controllers are Elixir modules, and actions are Elixir functions defined in them. The purpose of actions is to gather the data and perform the tasks needed for rendering. Our route specifies that we need a <code class="inline">HelloWeb.HelloController</code> module with an <code class="inline">index/2</code> function.</p><p>To make the <code class="inline">index</code> action happen, let's create a new <code class="inline">lib/hello_web/controllers/hello_controller.ex</code> file, and make it look like the following:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">HelloWeb.HelloController</span><span class="w"> </span><span class="k" data-group-id="7392718180-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">HelloWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:controller</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">index</span><span class="p" data-group-id="7392718180-2">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="c">_params</span><span class="p" data-group-id="7392718180-2">)</span><span class="w"> </span><span class="k" data-group-id="7392718180-3">do</span><span class="w">
+    </span><span class="n">render</span><span class="p" data-group-id="7392718180-4">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="ss">:index</span><span class="p" data-group-id="7392718180-4">)</span><span class="w">
+  </span><span class="k" data-group-id="7392718180-3">end</span><span class="w">
+</span><span class="k" data-group-id="7392718180-1">end</span></code></pre><p>We'll save a discussion of <code class="inline">use HelloWeb, :controller</code> for the <a href="controllers.html">Controllers guide</a>. For now, let's focus on the <code class="inline">index</code> action.</p><p>All controller actions take two arguments. The first is <code class="inline">conn</code>, a struct which holds a ton of data about the request. The second is <code class="inline">params</code>, which are the request parameters. Here, we are not using <code class="inline">params</code>, and we avoid compiler warnings by prefixing it with <code class="inline">_</code>.</p><p>The core of this action is <code class="inline">render(conn, :index)</code>. It tells Phoenix to render the <code class="inline">index</code> template. The modules responsible for rendering are called views. By default, Phoenix views are named after the controller (<code class="inline">HelloController</code>) and format (<code class="inline">HTML</code> in this case), so Phoenix is expecting a <code class="inline">HelloWeb.HelloHTML</code> module to exist and define an <code class="inline">index/1</code> function.</p><h3 id="a-new-view" class="section-heading"><a href="#a-new-view" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">A new view</span></h3><p>Phoenix views act as the presentation layer. For example, we expect the output of rendering <code class="inline">index</code> to be a complete HTML page. To make our lives easier, we often use templates for creating those HTML pages.</p><p>Let's create a new view. Create <code class="inline">lib/hello_web/controllers/hello_html.ex</code> and make it look like this:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">HelloWeb.HelloHTML</span><span class="w"> </span><span class="k" data-group-id="9642691793-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">HelloWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:html</span><span class="w">
+</span><span class="k" data-group-id="9642691793-1">end</span></code></pre><p>To add templates to this view, we can define them as functions in the module or in separate files.</p><p>Let's start by defining a function:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">HelloWeb.HelloHTML</span><span class="w"> </span><span class="k" data-group-id="2572576108-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">HelloWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:html</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">index</span><span class="p" data-group-id="2572576108-2">(</span><span class="n">assigns</span><span class="p" data-group-id="2572576108-2">)</span><span class="w"> </span><span class="k" data-group-id="2572576108-3">do</span><span class="w">
+    </span><span class="sx">~H&quot;&quot;&quot;</span><span class="w">
+</span><span class="n">    Hello!
+</span><span class="w">    </span><span class="sx">&quot;&quot;&quot;</span><span class="w">
+  </span><span class="k" data-group-id="2572576108-3">end</span><span class="w">
+</span><span class="k" data-group-id="2572576108-1">end</span></code></pre><p>We defined a function that receives <code class="inline">assigns</code> as arguments and used <a href="https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2">the <code class="inline">~H</code> sigil</a> to specify the content we want to render. Inside the <code class="inline">~H</code> sigil, we used a templating language called HEEx, which stands for &quot;HTML+EEx&quot;. <a href="https://hexdocs.pm/eex/EEx.html"><code class="inline">EEx</code></a> is a library for embedding Elixir that ships as part of Elixir itself. &quot;HTML+EEx&quot; is a Phoenix extension of EEx that is HTML aware, with support for HTML validation, components, and automatic escaping of values. The latter protects you from security vulnerabilities like Cross-Site Scripting with no extra work on your part. We say that any function that receives <code class="inline">assigns</code> and returns templates to be a <strong>function component</strong>.</p><p>A template file works in the same way. Let's give it a try by defining a template in its own file. First, delete our <code class="inline">def index(assigns)</code> function from above and replace it with an <code class="inline">embed_templates</code> declaration:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">HelloWeb.HelloHTML</span><span class="w"> </span><span class="k" data-group-id="5253740922-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">HelloWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:html</span><span class="w">
+
+  </span><span class="n">embed_templates</span><span class="w"> </span><span class="s">&quot;hello_html/*&quot;</span><span class="w">
+</span><span class="k" data-group-id="5253740922-1">end</span></code></pre><p>Here we are saying we want to embed all <code class="inline">.heex</code> templates found in the sibling <code class="inline">hello_html</code> directory into our module as function components.</p><p>Next, we need to add files to the <code class="inline">lib/hello_web/controllers/hello_html</code> directory. A template file has the following structure: <code class="inline">NAME.FORMAT.TEMPLATING_LANGUAGE</code>. In our case, let's create an <code class="inline">index.html.heex</code> file at <code class="inline">lib/hello_web/controllers/hello_html/index.html.heex</code>:</p><pre><code class="makeup heex" translate="no"><span class="p">&lt;</span><span class="nt">section</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span><span class="n">Hello World, from Phoenix!</span><span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span><span class="w">
+</span><span class="p">&lt;/</span><span class="nt">section</span><span class="p">&gt;</span></code></pre><p>Phoenix will see the template file and compile it into an <code class="inline">index(assigns)</code> function, similar as before. There is no runtime or performance difference between the two styles.</p><p>Also note the controller name (<code class="inline">HelloController</code>) and the view name (<code class="inline">HelloHTML</code>) and their respective files, <code class="inline">hello_controller.ex</code> and <code class="inline">hello_html.ex</code> all follow the same naming convention, and are named after each other. You could name the directory anything you want, as long as you update the <code class="inline">embed_templates</code> setting accordingly, but it's best to follow conventions.</p><pre><code class="makeup console" translate="no"><span class="">lib/hello_web
+</span><span class="">├── controllers
+</span><span class="">│   ├── hello_controller.ex
+</span><span class="">│   ├── hello_html.ex
+</span><span class="">│   ├── hello_html
+</span><span class="">|       ├── index.html.heex   (NEW FILE!)
+</span></code></pre><p>Now that we've got the route, controller, view, and template, we should be able to point our browser at <a href="http://localhost:4000/hello">http://localhost:4000/hello</a> and see our greeting from Phoenix!</p><picture>  <source media="(prefers-color-scheme: dark)" srcset="assets/images/hello-from-phoenix-dark.png" />
+  <source media="(prefers-color-scheme: light)" srcset="assets/images/hello-from-phoenix.png" />
+  <img src="assets/images/hello-from-phoenix.png" alt="Phoenix Greets Us" /></picture><p>In case you stopped the server along the way, the task to restart it is <a href="Mix.Tasks.Phx.Server.html"><code class="inline">mix phx.server</code></a>. If you didn't stop it, everything should update on the fly: Phoenix has hot code reloading!</p><h2 id="layouts" class="section-heading"><a href="#layouts" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Layouts</span></h2><p>Even though our <code class="inline">index.html.heex</code> file consists of only a single <code class="inline">section</code> tag, the page we get is a full HTML document. Our index template is actually rendered into a separate layout: <code class="inline">lib/hello_web/components/layouts/root.html.heex</code>, which contains the basic HTML skeleton of the page. If you open this file, you'll see a line that looks like this at the bottom:</p><pre><code class="makeup heex" translate="no"><span class="p" data-group-id="2894464738-1">{</span><span class="na">@inner_content</span><span class="p" data-group-id="2894464738-1">}</span></code></pre><p>This line injects our template into the layout before the HTML is sent off to the browser. The root layout, as the name implies, is a barebone layout with mostly the <code class="inline">&lt;head&gt;</code> tag and a structure that is shared across <strong>all of your pages</strong>. Richer features, such as sidebar, menus, etc. are part of your application layout, which we will explore in a couple sections below.</p><h2 id="from-endpoint-to-views" class="section-heading"><a href="#from-endpoint-to-views" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">From endpoint to views</span></h2><p>Having built our first page, we're beginning to understand how the request life-cycle is put together. Now let's take a more holistic look at it.</p><p>All HTTP requests start in our application endpoint. You can find it as a module named <code class="inline">HelloWeb.Endpoint</code> in <code class="inline">lib/hello_web/endpoint.ex</code>. Once you open up the endpoint file, you will see that, similar to the router, the endpoint has many calls to <code class="inline">plug</code>. <a href="https://hexdocs.pm/plug/1.18.1/Plug.html"><code class="inline">Plug</code></a> is a library and a specification for stitching web applications together. It is an essential part of how Phoenix handles requests and we will discuss it in detail in the <a href="plug.html">Plug guide</a> coming next.</p><p>For now, it suffices to say that each plug defines a slice of request processing. In the endpoint you will find a skeleton roughly like this:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">HelloWeb.Endpoint</span><span class="w"> </span><span class="k" data-group-id="7336364085-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Phoenix.Endpoint</span><span class="p">,</span><span class="w"> </span><span class="ss">otp_app</span><span class="p">:</span><span class="w"> </span><span class="ss">:hello</span><span class="w">
+
+  </span><span class="n">plug</span><span class="w"> </span><span class="nc">Plug.Static</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="w">
+  </span><span class="n">plug</span><span class="w"> </span><span class="nc">Plug.RequestId</span><span class="w">
+  </span><span class="n">plug</span><span class="w"> </span><span class="nc">Plug.Telemetry</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="w">
+  </span><span class="n">plug</span><span class="w"> </span><span class="nc">Plug.Parsers</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="w">
+  </span><span class="n">plug</span><span class="w"> </span><span class="nc">Plug.MethodOverride</span><span class="w">
+  </span><span class="n">plug</span><span class="w"> </span><span class="nc">Plug.Head</span><span class="w">
+  </span><span class="n">plug</span><span class="w"> </span><span class="nc">Plug.Session</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="w">
+  </span><span class="n">plug</span><span class="w"> </span><span class="nc">HelloWeb.Router</span><span class="w">
+</span><span class="k" data-group-id="7336364085-1">end</span></code></pre><p>Each of these plugs have a specific responsibility that we will learn later. The last plug is precisely the <code class="inline">HelloWeb.Router</code> module. This allows the endpoint to delegate all further request processing to the router. As we now know, its main responsibility is to map verb/path pairs to controllers. The controller then tells a view to render a template.</p><p>At this moment, you may be thinking this can be a lot of steps to simply render a page. However, as our application grows in complexity, we will see that each layer serves a distinct purpose:</p><ul><li><p>endpoint (<a href="Phoenix.Endpoint.html"><code class="inline">Phoenix.Endpoint</code></a>) - the endpoint contains the common and initial path that all requests go through. If you want something to happen on all requests, it goes in the endpoint.</p></li><li><p>router (<a href="Phoenix.Router.html"><code class="inline">Phoenix.Router</code></a>) - the router is responsible for dispatching verb/path pairs to controllers. The router also allows us to scope functionality. For example, some pages in your application may require user authentication, others may not.</p></li><li><p>controller (<a href="Phoenix.Controller.html"><code class="inline">Phoenix.Controller</code></a>) - the job of the controller is to retrieve request information, talk to your business domain, and prepare data for the presentation layer.</p></li><li><p>view - the view handles the structured data from the controller and converts it to a presentation to be shown to users. Views are often named after the content format they are rendering.</p></li></ul><p>Let's do a quick recap on how the last three components work together by adding another page. This time, we will use some additional features, such as layout components and content interpolation.</p><h2 id="another-new-page" class="section-heading"><a href="#another-new-page" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Another new page</span></h2><p>Let's add just a little complexity to our application. We're going to add a new page that will recognize a piece of the URL, label it as a &quot;messenger&quot; and pass it through the controller into the template so our messenger can say hello.</p><p>As we did last time, the first thing we'll do is create a new route.</p><h3 id="another-new-route" class="section-heading"><a href="#another-new-route" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Another new route</span></h3><p>For this exercise, we're going to reuse <code class="inline">HelloController</code> created at the <a href="request_lifecycle.html#a-new-controller">previous step</a> and add a new <code class="inline">show</code> action. We'll add a line just below our last route, like this:</p><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">HelloWeb</span><span class="w"> </span><span class="k" data-group-id="5695750184-1">do</span><span class="w">
+  </span><span class="n">pipe_through</span><span class="w"> </span><span class="ss">:browser</span><span class="w">
+
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:home</span><span class="w">
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">HelloController</span><span class="p">,</span><span class="w"> </span><span class="ss">:index</span><span class="w">
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/hello/:messenger&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">HelloController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="w">
+</span><span class="k" data-group-id="5695750184-1">end</span></code></pre><p>Notice that we use the <code class="inline">:messenger</code> syntax in the path. Phoenix will take whatever value that appears in that position in the URL and convert it into a parameter. For example, if we point the browser at: <code class="inline">http://localhost:4000/hello/Frank</code>, the value of <code class="inline">&quot;messenger&quot;</code> will be <code class="inline">&quot;Frank&quot;</code>.</p><h3 id="another-new-action" class="section-heading"><a href="#another-new-action" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Another new action</span></h3><p>Requests to our new route will be handled by the <code class="inline">HelloWeb.HelloController</code> <code class="inline">show</code> action. We already have the controller at <code class="inline">lib/hello_web/controllers/hello_controller.ex</code>, so all we need to do is edit that controller and add a <code class="inline">show</code> action to it. This time, we'll need to extract the messenger from the parameters so that we can pass it (the messenger) to the template. To do that, we add this show function to the controller:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">show</span><span class="p" data-group-id="0899195444-1">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0899195444-2">%{</span><span class="s">&quot;messenger&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">messenger</span><span class="p" data-group-id="0899195444-2">}</span><span class="p" data-group-id="0899195444-1">)</span><span class="w"> </span><span class="k" data-group-id="0899195444-3">do</span><span class="w">
+  </span><span class="n">render</span><span class="p" data-group-id="0899195444-4">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="p">,</span><span class="w"> </span><span class="ss">messenger</span><span class="p">:</span><span class="w"> </span><span class="n">messenger</span><span class="p" data-group-id="0899195444-4">)</span><span class="w">
+</span><span class="k" data-group-id="0899195444-3">end</span></code></pre><p>Within the body of the <code class="inline">show</code> action, we also pass a third argument to the render function, a key-value pair where <code class="inline">:messenger</code> is the key, and the <code class="inline">messenger</code> variable is passed as the value.</p><p>If the body of the action needs access to the full map of parameters bound to the <code class="inline">params</code> variable, in addition to the bound messenger variable, we could define <code class="inline">show/2</code> like this:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">show</span><span class="p" data-group-id="5603480713-1">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5603480713-2">%{</span><span class="s">&quot;messenger&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">messenger</span><span class="p" data-group-id="5603480713-2">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">params</span><span class="p" data-group-id="5603480713-1">)</span><span class="w"> </span><span class="k" data-group-id="5603480713-3">do</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+</span><span class="k" data-group-id="5603480713-3">end</span></code></pre><p>It's good to remember that the keys of the <code class="inline">params</code> map will always be strings, and that the equals sign does not represent assignment, but is instead a <a href="https://hexdocs.pm/elixir/pattern-matching.html">pattern match</a> assertion.</p><h3 id="another-new-template" class="section-heading"><a href="#another-new-template" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Another new template</span></h3><p>For the last piece of this puzzle, we'll need a new template. Since it is for the <code class="inline">show</code> action of <code class="inline">HelloController</code>, it will go into the <code class="inline">lib/hello_web/controllers/hello_html</code> directory and be called <code class="inline">show.html.heex</code>. It will look surprisingly like our <code class="inline">index.html.heex</code> template, except that we will need to display the name of our messenger. Let's write the new template down and then explain what it does:</p><pre><code class="makeup heex" translate="no"><span class="p">&lt;</span><span class="nc">Layouts</span><span class="o">.</span><span class="n">app</span><span class="w"> </span><span class="na">flash</span><span class="p">=</span><span class="p" data-group-id="0730997856-1">{</span><span class="na">@flash</span><span class="p" data-group-id="0730997856-1">}</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">section</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span><span class="n">Hello World, from </span><span class="p" data-group-id="0730997856-2">{</span><span class="na">@messenger</span><span class="p" data-group-id="0730997856-2">}</span><span class="n">!</span><span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;/</span><span class="nt">section</span><span class="p">&gt;</span><span class="w">
+</span><span class="p">&lt;/</span><span class="nc">Layouts</span><span class="o">.</span><span class="n">app</span><span class="p">&gt;</span></code></pre><p>If you point your browser to <a href="http://localhost:4000/hello/Frank">http://localhost:4000/hello/Frank</a>, you should see a page that looks like this:</p><picture>  <source media="(prefers-color-scheme: dark)" srcset="assets/images/hello-world-from-frank-dark.png" />
+  <source media="(prefers-color-scheme: light)" srcset="assets/images/hello-world-from-frank.png" />
+  <img src="assets/images/hello-world-from-frank.png" alt="Frank Greets Us from Phoenix" /></picture><p>Let's break what the template does into parts. This template has the <code class="inline">.heex</code> extension which stands for HTML + Embedded Elixir. There are three features from HEEx we are using in the template above:</p><ul><li><p>Assigns, such as <code class="inline">@messenger</code> and <code class="inline">@flash</code> - values we pass to the view from the controller are collectively called our &quot;assigns&quot;. We could access our messenger value via <code class="inline">assigns.messenger</code> and <code class="inline">assigns.flash</code>, but Phoenix gives us the much cleaner <code class="inline">@</code> syntax for use in templates.</p></li><li><p>Content interpolation, such as <code class="inline">{@messenger}</code> - any Elixir code that goes between <code class="inline">{...}</code> will be executed, and the resulting value will replace the tag in the HTML output</p></li><li><p>Function component tags, as in <code class="inline">&lt;Layouts.app&gt;</code> - the reason templates are called function components is because we can compose them! In this case, there is an <code class="inline">HelloWeb.Layouts.app</code> function, that defines our application layout, which we invoke with our custom content</p></li></ul><p>Also note how these three features compose: we are passing the <code class="inline">@flash</code> assign as an Elixir value to the <code class="inline">&lt;Layouts.app&gt;</code> component. As we will learn later, flash messages are used to display temporary messages to the user, such as success or error messages. We will learn more about them in the <a href="components.html">Components and HEEx templates</a> guide.</p><p>We are done! Feel free to play around a bit. Whatever you put after <code class="inline">/hello/</code> will appear on the page as your messenger.</p>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="directory_structure.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Directory structure
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="plug.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Plug
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix/1.8.5">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix/1.8.5">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/phoenix/1.8.5/show/guides/request_lifecycle.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+
+              <a href="Phoenix.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

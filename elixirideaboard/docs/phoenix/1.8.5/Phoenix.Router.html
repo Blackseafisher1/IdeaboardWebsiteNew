@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix v1.8.5">
+
+
+    <title>Phoenix.Router — Phoenix v1.8.5</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-209F6654.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.8.5
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="true">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Latest</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="https://hexdocs.pm/?packages=plug%3Alatest%2Cphoenix%3Alatest%2Cphoenix_html%3Alatest%2Cphoenix_live_view%3Alatest%2Cphoenix_pubsub%3Alatest%2Cphoenix_template%3Alatest&q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Latest</span>
+                <span class="help">Search latest versions of Plug, Phoenix, Phoenix.{HTML, LiveView, PubSub, Template}</span>
+              </button>
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="false">
+                <span class="name">Current version</span>
+                <span class="help">Search only this project</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Phoenix.<wbr>Router</span> 
+      <small class="app-vsn" translate="no">(Phoenix v1.8.5)</small>
+
+    </h1>
+
+
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Defines a Phoenix router.</p><p>The router provides a set of macros for generating routes
+that dispatch to specific controllers and actions. Those
+macros are named after HTTP verbs. For example:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyAppWeb.Router</span><span class="w"> </span><span class="k" data-group-id="6439735687-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Phoenix.Router</span><span class="w">
+
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/pages/:page&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="w">
+</span><span class="k" data-group-id="6439735687-1">end</span></code></pre><p>The <a href="#get/3"><code class="inline">get/3</code></a> macro above accepts a request to <code class="inline">/pages/hello</code> and dispatches
+it to <code class="inline">PageController</code>'s <code class="inline">show</code> action with <code class="inline">%{&quot;page&quot; =&gt; &quot;hello&quot;}</code> in
+<code class="inline">params</code>.</p><p>Phoenix's router is extremely efficient, as it relies on Elixir
+pattern matching for matching routes and serving requests.</p><h2 id="module-routing" class="section-heading"><a href="#module-routing" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Routing</span></h2><p><a href="#get/3"><code class="inline">get/3</code></a>, <a href="#post/3"><code class="inline">post/3</code></a>, <a href="#put/3"><code class="inline">put/3</code></a>, and other macros named after HTTP verbs are used
+to create routes.</p><p>The route:</p><pre><code class="makeup elixir" translate="no"><span class="n">get</span><span class="w"> </span><span class="s">&quot;/pages&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:index</span></code></pre><p>matches a <code class="inline">GET</code> request to <code class="inline">/pages</code> and dispatches it to the <code class="inline">index</code> action in
+<code class="inline">PageController</code>.</p><pre><code class="makeup elixir" translate="no"><span class="n">get</span><span class="w"> </span><span class="s">&quot;/pages/:page&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span></code></pre><p>matches <code class="inline">/pages/hello</code> and dispatches to the <code class="inline">show</code> action with
+<code class="inline">%{&quot;page&quot; =&gt; &quot;hello&quot;}</code> in <code class="inline">params</code>.</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">PageController</span><span class="w"> </span><span class="k" data-group-id="5350318643-1">do</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">show</span><span class="p" data-group-id="5350318643-2">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">params</span><span class="p" data-group-id="5350318643-2">)</span><span class="w"> </span><span class="k" data-group-id="5350318643-3">do</span><span class="w">
+    </span><span class="c1"># %{&quot;page&quot; =&gt; &quot;hello&quot;} == params</span><span class="w">
+  </span><span class="k" data-group-id="5350318643-3">end</span><span class="w">
+</span><span class="k" data-group-id="5350318643-1">end</span></code></pre><p>Partial and multiple segments can be matched. For example:</p><pre><code class="makeup elixir" translate="no"><span class="n">get</span><span class="w"> </span><span class="s">&quot;/api/v:version/pages/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span></code></pre><p>matches <code class="inline">/api/v1/pages/2</code> and puts <code class="inline">%{&quot;version&quot; =&gt; &quot;1&quot;, &quot;id&quot; =&gt; &quot;2&quot;}</code> in
+<code class="inline">params</code>. Only the trailing part of a segment can be captured.</p><p>Routes are matched from top to bottom. The second route here:</p><pre><code class="makeup elixir" translate="no"><span class="n">get</span><span class="w"> </span><span class="s">&quot;/pages/:page&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="w">
+</span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/pages/hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:hello</span></code></pre><p>will never match <code class="inline">/pages/hello</code> because <code class="inline">/pages/:page</code> matches that first.</p><p>Routes can use glob-like patterns to match trailing segments.</p><pre><code class="makeup elixir" translate="no"><span class="n">get</span><span class="w"> </span><span class="s">&quot;/pages/*page&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span></code></pre><p>matches <code class="inline">/pages/hello/world</code> and puts the globbed segments in <code class="inline">params[&quot;page&quot;]</code>.</p><pre><code class="makeup elixir" translate="no"><span class="nc">GET</span><span class="w"> </span><span class="o">/</span><span class="n">pages</span><span class="o">/</span><span class="n">hello</span><span class="o">/</span><span class="n">world</span><span class="w">
+</span><span class="p" data-group-id="8056800882-1">%{</span><span class="s">&quot;page&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="8056800882-2">[</span><span class="s">&quot;hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;world&quot;</span><span class="p" data-group-id="8056800882-2">]</span><span class="p" data-group-id="8056800882-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">params</span></code></pre><p>Globs cannot have prefixes nor suffixes, but can be mixed with variables:</p><pre><code class="makeup elixir" translate="no"><span class="n">get</span><span class="w"> </span><span class="s">&quot;/pages/he:page/*rest&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span></code></pre><p>matches</p><pre><code class="makeup elixir" translate="no"><span class="nc">GET</span><span class="w"> </span><span class="o">/</span><span class="n">pages</span><span class="o">/</span><span class="n">hello</span><span class="w">
+</span><span class="p" data-group-id="5932001776-1">%{</span><span class="s">&quot;page&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;llo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;rest&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="5932001776-2">[</span><span class="p" data-group-id="5932001776-2">]</span><span class="p" data-group-id="5932001776-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">params</span><span class="w">
+
+</span><span class="nc">GET</span><span class="w"> </span><span class="o">/</span><span class="n">pages</span><span class="o">/</span><span class="n">hey</span><span class="o">/</span><span class="n">there</span><span class="o">/</span><span class="n">world</span><span class="w">
+</span><span class="p" data-group-id="5932001776-3">%{</span><span class="s">&quot;page&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;y&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;rest&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="5932001776-4">[</span><span class="s">&quot;there&quot;</span><span class="w"> </span><span class="s">&quot;world&quot;</span><span class="p" data-group-id="5932001776-4">]</span><span class="p" data-group-id="5932001776-3">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">params</span></code></pre><section role="note" class="admonition info"><h4 class="admonition-title info">Why the macros?</h4><p>Phoenix does its best to keep the usage of macros low. You may have noticed,
+however, that the <a href="Phoenix.Router.html"><code class="inline">Phoenix.Router</code></a> relies heavily on macros. Why is that?</p><p>We use <code class="inline">get</code>, <code class="inline">post</code>, <code class="inline">put</code>, and <code class="inline">delete</code> to define your routes. We use macros
+for two purposes:</p><ul><li><p>They define the routing engine, used on every request, to choose which
+controller to dispatch the request to. Thanks to macros, Phoenix compiles
+all of your routes to a single case-statement with pattern matching rules,
+which is heavily optimized by the Erlang VM</p></li><li><p>For each route you define, we also define metadata to implement <a href="Phoenix.VerifiedRoutes.html"><code class="inline">Phoenix.VerifiedRoutes</code></a>.
+As we will soon learn, verified routes allows to us to reference any route
+as if it is a plain looking string, except it is verified by the compiler
+to be valid (making it much harder to ship broken links, forms, mails, etc
+to production)</p></li></ul><p>In other words, the router relies on macros to build applications that are
+faster and safer. Also remember that macros in Elixir are compile-time only,
+which gives plenty of stability after the code is compiled. Phoenix also provides
+introspection for all defined routes via <a href="Mix.Tasks.Phx.Routes.html"><code class="inline">mix phx.routes</code></a>.</p></section><h2 id="module-generating-routes" class="section-heading"><a href="#module-generating-routes" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Generating routes</span></h2><p>For generating routes inside your application,  see the <a href="Phoenix.VerifiedRoutes.html"><code class="inline">Phoenix.VerifiedRoutes</code></a>
+documentation for <code class="inline">~p</code> based route generation which is the preferred way to
+generate route paths and URLs with compile-time verification.</p><p>Phoenix also supports generating function helpers, which was the default
+mechanism in Phoenix v1.6 and earlier. We will explore it next.</p><h3 id="module-helpers-deprecated" class="section-heading"><a href="#module-helpers-deprecated" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Helpers (deprecated)</span></h3><p>Phoenix generates a module <code class="inline">Helpers</code> inside your router by default, which contains
+named helpers to help developers generate and keep their routes up to date.
+Helpers can be disabled by passing <code class="inline">helpers: false</code> to <code class="inline">use Phoenix.Router</code>.</p><p>Helpers are automatically generated based on the controller name.
+For example, the route:</p><pre><code class="makeup elixir" translate="no"><span class="n">get</span><span class="w"> </span><span class="s">&quot;/pages/:page&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span></code></pre><p>will generate the following named helper:</p><pre><code class="makeup elixir" translate="no"><span class="nc">MyAppWeb.Router.Helpers</span><span class="o">.</span><span class="n">page_path</span><span class="p" data-group-id="9546167818-1">(</span><span class="n">conn_or_endpoint</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p" data-group-id="9546167818-1">)</span><span class="w">
+</span><span class="s">&quot;/pages/hello&quot;</span><span class="w">
+
+</span><span class="nc">MyAppWeb.Router.Helpers</span><span class="o">.</span><span class="n">page_path</span><span class="p" data-group-id="9546167818-2">(</span><span class="n">conn_or_endpoint</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">some</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query&quot;</span><span class="p" data-group-id="9546167818-2">)</span><span class="w">
+</span><span class="s">&quot;/pages/hello?some=query&quot;</span><span class="w">
+
+</span><span class="nc">MyAppWeb.Router.Helpers</span><span class="o">.</span><span class="n">page_url</span><span class="p" data-group-id="9546167818-3">(</span><span class="n">conn_or_endpoint</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p" data-group-id="9546167818-3">)</span><span class="w">
+</span><span class="s">&quot;http://example.com/pages/hello&quot;</span><span class="w">
+
+</span><span class="nc">MyAppWeb.Router.Helpers</span><span class="o">.</span><span class="n">page_url</span><span class="p" data-group-id="9546167818-4">(</span><span class="n">conn_or_endpoint</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">some</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query&quot;</span><span class="p" data-group-id="9546167818-4">)</span><span class="w">
+</span><span class="s">&quot;http://example.com/pages/hello?some=query&quot;</span></code></pre><p>If the route contains glob-like patterns, parameters for those have to be given as
+list:</p><pre><code class="makeup elixir" translate="no"><span class="nc">MyAppWeb.Router.Helpers</span><span class="o">.</span><span class="n">page_path</span><span class="p" data-group-id="2776319567-1">(</span><span class="n">conn_or_endpoint</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2776319567-2">[</span><span class="s">&quot;hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;world&quot;</span><span class="p" data-group-id="2776319567-2">]</span><span class="p" data-group-id="2776319567-1">)</span><span class="w">
+</span><span class="s">&quot;/pages/hello/world&quot;</span></code></pre><p>The URL generated in the named URL helpers is based on the configuration for
+<code class="inline">:url</code>, <code class="inline">:http</code> and <code class="inline">:https</code>. However, if for some reason you need to manually
+control the URL generation, the url helpers also allow you to pass in a <a href="https://hexdocs.pm/elixir/URI.html"><code class="inline">URI</code></a>
+struct:</p><pre><code class="makeup elixir" translate="no"><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="8930445139-1">%</span><span class="nc" data-group-id="8930445139-1">URI</span><span class="p" data-group-id="8930445139-1">{</span><span class="ss">scheme</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;other.example.com&quot;</span><span class="p" data-group-id="8930445139-1">}</span><span class="w">
+</span><span class="nc">MyAppWeb.Router.Helpers</span><span class="o">.</span><span class="n">page_url</span><span class="p" data-group-id="8930445139-2">(</span><span class="n">uri</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p" data-group-id="8930445139-2">)</span><span class="w">
+</span><span class="s">&quot;https://other.example.com/pages/hello&quot;</span></code></pre><p>The named helper can also be customized with the <code class="inline">:as</code> option. Given
+the route:</p><pre><code class="makeup elixir" translate="no"><span class="n">get</span><span class="w"> </span><span class="s">&quot;/pages/:page&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="p">,</span><span class="w"> </span><span class="ss">as</span><span class="p">:</span><span class="w"> </span><span class="ss">:special_page</span></code></pre><p>the named helper will be:</p><pre><code class="makeup elixir" translate="no"><span class="nc">MyAppWeb.Router.Helpers</span><span class="o">.</span><span class="n">special_page_path</span><span class="p" data-group-id="7865434934-1">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p" data-group-id="7865434934-1">)</span><span class="w">
+</span><span class="s">&quot;/pages/hello&quot;</span></code></pre><h2 id="module-scopes-and-resources" class="section-heading"><a href="#module-scopes-and-resources" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Scopes and Resources</span></h2><p>It is very common in Phoenix applications to namespace all of your
+routes under the application scope:</p><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">MyAppWeb</span><span class="w"> </span><span class="k" data-group-id="5047588157-1">do</span><span class="w">
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/pages/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="w">
+</span><span class="k" data-group-id="5047588157-1">end</span></code></pre><p>The route above will dispatch to <code class="inline">MyAppWeb.PageController</code>. This syntax
+is convenient for developers, since we don't have to repeat <code class="inline">MyAppWeb.</code>
+prefix on all routes</p><p>Like all paths, you can define dynamic segments that will be applied as
+parameters in the controller:</p><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/api/:version&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">MyAppWeb</span><span class="w"> </span><span class="k" data-group-id="1468674409-1">do</span><span class="w">
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/pages/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="w">
+</span><span class="k" data-group-id="1468674409-1">end</span></code></pre><p>For example, the route above will match on the path <code class="inline">&quot;/api/v1/pages/1&quot;</code>
+and in the controller the <code class="inline">params</code> argument will have a map with the
+key <code class="inline">:version</code> with the value <code class="inline">&quot;v1&quot;</code>.</p><p>Phoenix also provides a <a href="#resources/4"><code class="inline">resources/4</code></a> macro that allows developers
+to generate &quot;RESTful&quot; routes to a given resource:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyAppWeb.Router</span><span class="w"> </span><span class="k" data-group-id="7958536373-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Phoenix.Router</span><span class="p">,</span><span class="w"> </span><span class="ss">helpers</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="w">
+
+  </span><span class="n">resources</span><span class="w"> </span><span class="s">&quot;/pages&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">only</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="7958536373-2">[</span><span class="ss">:show</span><span class="p" data-group-id="7958536373-2">]</span><span class="w">
+  </span><span class="n">resources</span><span class="w"> </span><span class="s">&quot;/users&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">UserController</span><span class="p">,</span><span class="w"> </span><span class="ss">except</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="7958536373-3">[</span><span class="ss">:delete</span><span class="p" data-group-id="7958536373-3">]</span><span class="w">
+</span><span class="k" data-group-id="7958536373-1">end</span></code></pre><p>Finally, Phoenix ships with a <a href="Mix.Tasks.Phx.Routes.html"><code class="inline">mix phx.routes</code></a> task that nicely
+formats all routes in a given router. We can use it to verify all
+routes included in the router above:</p><pre><code class="makeup shell" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.routes
+</span><span class="">GET    /pages/:id       PageController.show/2
+</span><span class="">GET    /users           UserController.index/2
+</span><span class="">GET    /users/:id/edit  UserController.edit/2
+</span><span class="">GET    /users/new       UserController.new/2
+</span><span class="">GET    /users/:id       UserController.show/2
+</span><span class="">POST   /users           UserController.create/2
+</span><span class="">PATCH  /users/:id       UserController.update/2
+</span><span class="">PUT    /users/:id       UserController.update/2
+</span></code></pre><p>One can also pass a router explicitly as an argument to the task:</p><pre><code class="makeup shell" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.routes MyAppWeb.Router
+</span></code></pre><p>Check <a href="#scope/2"><code class="inline">scope/2</code></a> and <a href="#resources/4"><code class="inline">resources/4</code></a> for more information.</p><h2 id="module-pipelines-and-plugs" class="section-heading"><a href="#module-pipelines-and-plugs" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Pipelines and plugs</span></h2><p>Once a request arrives at the Phoenix router, it performs
+a series of transformations through pipelines until the
+request is dispatched to a desired route.</p><p>Such transformations are defined via plugs, as defined
+in the <a href="https://github.com/elixir-lang/plug">Plug</a> specification.
+Once a pipeline is defined, it can be piped through per scope.</p><p>For example:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyAppWeb.Router</span><span class="w"> </span><span class="k" data-group-id="3065501459-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Phoenix.Router</span><span class="w">
+
+  </span><span class="n">pipeline</span><span class="w"> </span><span class="ss">:browser</span><span class="w"> </span><span class="k" data-group-id="3065501459-2">do</span><span class="w">
+    </span><span class="n">plug</span><span class="w"> </span><span class="ss">:fetch_session</span><span class="w">
+    </span><span class="n">plug</span><span class="w"> </span><span class="ss">:accepts</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3065501459-3">[</span><span class="s">&quot;html&quot;</span><span class="p" data-group-id="3065501459-3">]</span><span class="w">
+  </span><span class="k" data-group-id="3065501459-2">end</span><span class="w">
+
+  </span><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="w"> </span><span class="k" data-group-id="3065501459-4">do</span><span class="w">
+    </span><span class="n">pipe_through</span><span class="w"> </span><span class="ss">:browser</span><span class="w">
+
+    </span><span class="c1"># browser related routes and resources</span><span class="w">
+  </span><span class="k" data-group-id="3065501459-4">end</span><span class="w">
+</span><span class="k" data-group-id="3065501459-1">end</span></code></pre><p><a href="Phoenix.Router.html"><code class="inline">Phoenix.Router</code></a> imports functions from both <a href="https://hexdocs.pm/plug/1.18.1/Plug.Conn.html"><code class="inline">Plug.Conn</code></a> and <a href="Phoenix.Controller.html"><code class="inline">Phoenix.Controller</code></a>
+to help define plugs. In the example above, <code class="inline">fetch_session/2</code>
+comes from <a href="https://hexdocs.pm/plug/1.18.1/Plug.Conn.html"><code class="inline">Plug.Conn</code></a> while <code class="inline">accepts/2</code> comes from <a href="Phoenix.Controller.html"><code class="inline">Phoenix.Controller</code></a>.</p><p>Note that router pipelines are only invoked after a route is found.
+No plug is invoked in case no matches were found.</p><h2 id="module-learn-more" class="section-heading"><a href="#module-learn-more" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Learn more</span></h2><p>See the <a href="routing.html">Routing</a> guide for more information and examples
+within an actual Phoenix application.</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h2>
+<div class="summary-reflection summary">
+  <h3>
+    <a href="#reflection">Reflection</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#route_info/4" data-no-tooltip="" translate="no">route_info(router, method, path, host)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the compile-time route info and runtime path params for a request.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#scoped_alias/2" data-no-tooltip="" translate="no">scoped_alias(router_module, alias)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the full alias with the current scope's aliased prefix.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#scoped_path/2" data-no-tooltip="" translate="no">scoped_path(router_module, path)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the full path with the current scope's path prefix.</p></div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h3>
+    <a href="#functions">Functions</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#connect/4" data-no-tooltip="" translate="no">connect(path, plug, plug_opts, options \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Generates a route to handle a connect request to the given path.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#delete/4" data-no-tooltip="" translate="no">delete(path, plug, plug_opts, options \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Generates a route to handle a delete request to the given path.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#forward/4" data-no-tooltip="" translate="no">forward(path, plug, plug_opts \\ [], router_opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Forwards a request at the given path to a plug.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#get/4" data-no-tooltip="" translate="no">get(path, plug, plug_opts, options \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Generates a route to handle a get request to the given path.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#head/4" data-no-tooltip="" translate="no">head(path, plug, plug_opts, options \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Generates a route to handle a head request to the given path.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#match/5" data-no-tooltip="" translate="no">match(verb, path, plug, plug_opts, options \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Generates a route match based on an arbitrary HTTP method.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#options/4" data-no-tooltip="" translate="no">options(path, plug, plug_opts, options \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Generates a route to handle a options request to the given path.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#patch/4" data-no-tooltip="" translate="no">patch(path, plug, plug_opts, options \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Generates a route to handle a patch request to the given path.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#pipe_through/1" data-no-tooltip="" translate="no">pipe_through(pipes)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Defines a list of plugs (and pipelines) to send the connection through.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#pipeline/2" data-no-tooltip="" translate="no">pipeline(plug, list)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Defines a plug pipeline.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#plug/2" data-no-tooltip="" translate="no">plug(plug, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Defines a plug inside a pipeline.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#post/4" data-no-tooltip="" translate="no">post(path, plug, plug_opts, options \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Generates a route to handle a post request to the given path.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#put/4" data-no-tooltip="" translate="no">put(path, plug, plug_opts, options \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Generates a route to handle a put request to the given path.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#resources/2" data-no-tooltip="" translate="no">resources(path, controller)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>See <a href="#resources/4"><code class="inline">resources/4</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#resources/3" data-no-tooltip="" translate="no">resources(path, controller, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>See <a href="#resources/4"><code class="inline">resources/4</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#resources/4" data-no-tooltip="" translate="no">resources(path, controller, opts, list)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Defines &quot;RESTful&quot; routes for a resource.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#routes/1" data-no-tooltip="" translate="no">routes(router)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns all routes information from the given router.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#scope/2" data-no-tooltip="" translate="no">scope(options, list)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Defines a scope in which routes can be nested.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#scope/3" data-no-tooltip="" translate="no">scope(path, options, list)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Define a scope with the given path.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#scope/4" data-no-tooltip="" translate="no">scope(path, alias, options, list)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Defines a scope with the given path and alias.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#trace/4" data-no-tooltip="" translate="no">trace(path, plug, plug_opts, options \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Generates a route to handle a trace request to the given path.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="reflection" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#reflection">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Reflection</span>
+    </h2>
+
+    <div class="reflection-list">
+<section class="detail" id="route_info/4">
+
+  <div class="detail-header">
+    <a href="#route_info/4" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">route_info(router, method, path, host)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L1262" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Returns the compile-time route info and runtime path params for a request.</p><p>The <code class="inline">path</code> can be either a string or the <code class="inline">path_info</code> segments.</p><p>A map of metadata is returned with the following keys:</p><ul><li><code class="inline">:log</code> - the configured log level. For example <code class="inline">:debug</code></li><li><code class="inline">:path_params</code> - the map of runtime path params</li><li><code class="inline">:pipe_through</code> - the list of pipelines for the route's scope, for example <code class="inline">[:browser]</code></li><li><code class="inline">:plug</code> - the plug to dispatch the route to, for example <code class="inline">AppWeb.PostController</code></li><li><code class="inline">:plug_opts</code> - the options to pass when calling the plug, for example: <code class="inline">:index</code></li><li><code class="inline">:route</code> - the string route pattern, such as <code class="inline">&quot;/posts/:id&quot;</code></li></ul><h2 id="route_info/4-examples" class="section-heading"><a href="#route_info/4-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Phoenix.Router</span><span class="o">.</span><span class="n">route_info</span><span class="p" data-group-id="4934790413-1">(</span><span class="nc">AppWeb.Router</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/posts/123&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;myhost&quot;</span><span class="p" data-group-id="4934790413-1">)</span><span class="w">
+</span><span class="p" data-group-id="4934790413-2">%{</span><span class="w">
+  </span><span class="ss">log</span><span class="p">:</span><span class="w"> </span><span class="ss">:debug</span><span class="p">,</span><span class="w">
+  </span><span class="ss">path_params</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="4934790413-3">%{</span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;123&quot;</span><span class="p" data-group-id="4934790413-3">}</span><span class="p">,</span><span class="w">
+  </span><span class="ss">pipe_through</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="4934790413-4">[</span><span class="ss">:browser</span><span class="p" data-group-id="4934790413-4">]</span><span class="p">,</span><span class="w">
+  </span><span class="ss">plug</span><span class="p">:</span><span class="w"> </span><span class="nc">AppWeb.PostController</span><span class="p">,</span><span class="w">
+  </span><span class="ss">plug_opts</span><span class="p">:</span><span class="w"> </span><span class="ss">:show</span><span class="p">,</span><span class="w">
+  </span><span class="ss">route</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/posts/:id&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p" data-group-id="4934790413-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Phoenix.Router</span><span class="o">.</span><span class="n">route_info</span><span class="p" data-group-id="4934790413-5">(</span><span class="nc">MyRouter</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/not-exists&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;myhost&quot;</span><span class="p" data-group-id="4934790413-5">)</span><span class="w">
+</span><span class="ss">:error</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="scoped_alias/2">
+
+  <div class="detail-header">
+    <a href="#scoped_alias/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">scoped_alias(router_module, alias)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L1172" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Returns the full alias with the current scope's aliased prefix.</p><p>Useful for applying the same short-hand alias handling to
+other values besides the second argument in route definitions.</p><h2 id="scoped_alias/2-examples" class="section-heading"><a href="#scoped_alias/2-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">MyPrefix</span><span class="w"> </span><span class="k" data-group-id="5825359501-1">do</span><span class="w">
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">ProxyPlug</span><span class="p">,</span><span class="w"> </span><span class="ss">controller</span><span class="p">:</span><span class="w"> </span><span class="n">scoped_alias</span><span class="p" data-group-id="5825359501-2">(</span><span class="bp">__MODULE__</span><span class="p">,</span><span class="w"> </span><span class="nc">MyController</span><span class="p" data-group-id="5825359501-2">)</span><span class="w">
+</span><span class="k" data-group-id="5825359501-1">end</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="scoped_path/2">
+
+  <div class="detail-header">
+    <a href="#scoped_path/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">scoped_path(router_module, path)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L1180" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Returns the full path with the current scope's path prefix.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h2>
+
+    <div class="functions-list">
+<section class="detail" id="connect/4">
+
+    <span id="connect/3"></span>
+
+  <div class="detail-header">
+    <a href="#connect/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">connect(path, plug, plug_opts, options \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L733" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Generates a route to handle a connect request to the given path.</p><pre><code class="makeup elixir" translate="no"><span class="n">connect</span><span class="p" data-group-id="7806420237-1">(</span><span class="s">&quot;/events/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">EventController</span><span class="p">,</span><span class="w"> </span><span class="ss">:action</span><span class="p" data-group-id="7806420237-1">)</span></code></pre><p>See <a href="#match/5"><code class="inline">match/5</code></a> for options.</p>
+  </section>
+</section>
+<section class="detail" id="delete/4">
+
+    <span id="delete/3"></span>
+
+  <div class="detail-header">
+    <a href="#delete/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">delete(path, plug, plug_opts, options \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L733" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Generates a route to handle a delete request to the given path.</p><pre><code class="makeup elixir" translate="no"><span class="n">delete</span><span class="p" data-group-id="6488625942-1">(</span><span class="s">&quot;/events/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">EventController</span><span class="p">,</span><span class="w"> </span><span class="ss">:action</span><span class="p" data-group-id="6488625942-1">)</span></code></pre><p>See <a href="#match/5"><code class="inline">match/5</code></a> for options.</p>
+  </section>
+</section>
+<section class="detail" id="forward/4">
+
+    <span id="forward/2"></span>
+
+    <span id="forward/3"></span>
+
+  <div class="detail-header">
+    <a href="#forward/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">forward(path, plug, plug_opts \\ [], router_opts \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L1216" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Forwards a request at the given path to a plug.</p><p>This is commonly used to forward all subroutes to another Plug.
+For example:</p><pre><code class="makeup elixir" translate="no"><span class="n">forward</span><span class="w"> </span><span class="s">&quot;/admin&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">SomeLib.AdminDashboard</span></code></pre><p>The above will allow <code class="inline">SomeLib.AdminDashboard</code> to handle <code class="inline">/admin</code>,
+<code class="inline">/admin/foo</code>, <code class="inline">/admin/bar/baz</code>, and so on. Furthermore,
+<code class="inline">SomeLib.AdminDashboard</code> does not to be aware of the prefix it
+is mounted in. From its point of view, the routes above are simply
+handled as <code class="inline">/</code>, <code class="inline">/foo</code>, and <code class="inline">/bar/baz</code>.</p><p>A common use case for <code class="inline">forward</code> is for sharing a router between
+applications or even breaking a big router into smaller ones.
+However, in other for route generation to route accordingly, you
+can only forward to a given <a href="Phoenix.Router.html"><code class="inline">Phoenix.Router</code></a> once.</p><p>The router pipelines will be invoked prior to forwarding the
+connection.</p><h2 id="forward/4-examples" class="section-heading"><a href="#forward/4-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">MyApp</span><span class="w"> </span><span class="k" data-group-id="7216122175-1">do</span><span class="w">
+  </span><span class="n">pipe_through</span><span class="w"> </span><span class="p" data-group-id="7216122175-2">[</span><span class="ss">:browser</span><span class="p">,</span><span class="w"> </span><span class="ss">:admin</span><span class="p" data-group-id="7216122175-2">]</span><span class="w">
+
+  </span><span class="n">forward</span><span class="w"> </span><span class="s">&quot;/admin&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">SomeLib.AdminDashboard</span><span class="w">
+  </span><span class="n">forward</span><span class="w"> </span><span class="s">&quot;/api&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">ApiRouter</span><span class="w">
+</span><span class="k" data-group-id="7216122175-1">end</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="get/4">
+
+    <span id="get/3"></span>
+
+  <div class="detail-header">
+    <a href="#get/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get(path, plug, plug_opts, options \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L733" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Generates a route to handle a get request to the given path.</p><pre><code class="makeup elixir" translate="no"><span class="n">get</span><span class="p" data-group-id="9411377792-1">(</span><span class="s">&quot;/events/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">EventController</span><span class="p">,</span><span class="w"> </span><span class="ss">:action</span><span class="p" data-group-id="9411377792-1">)</span></code></pre><p>See <a href="#match/5"><code class="inline">match/5</code></a> for options.</p>
+  </section>
+</section>
+<section class="detail" id="head/4">
+
+    <span id="head/3"></span>
+
+  <div class="detail-header">
+    <a href="#head/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">head(path, plug, plug_opts, options \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L733" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Generates a route to handle a head request to the given path.</p><pre><code class="makeup elixir" translate="no"><span class="n">head</span><span class="p" data-group-id="3847533813-1">(</span><span class="s">&quot;/events/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">EventController</span><span class="p">,</span><span class="w"> </span><span class="ss">:action</span><span class="p" data-group-id="3847533813-1">)</span></code></pre><p>See <a href="#match/5"><code class="inline">match/5</code></a> for options.</p><h2 id="head/4-compatibility-with-plug-head" class="section-heading"><a href="#head/4-compatibility-with-plug-head" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Compatibility with <a href="https://hexdocs.pm/plug/1.18.1/Plug.Head.html"><code class="inline">Plug.Head</code></a></span></h2><p>By default, Phoenix applications include <a href="https://hexdocs.pm/plug/1.18.1/Plug.Head.html"><code class="inline">Plug.Head</code></a> in their endpoint,
+which converts HEAD requests into regular GET requests. Therefore, if
+you intend to use <a href="#head/4"><code class="inline">head/4</code></a> in your router, you need to move <a href="https://hexdocs.pm/plug/1.18.1/Plug.Head.html"><code class="inline">Plug.Head</code></a>
+to inside your router in a way it does not conflict with the paths given
+to <a href="#head/4"><code class="inline">head/4</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="match/5">
+
+    <span id="match/4"></span>
+
+  <div class="detail-header">
+    <a href="#match/5" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">match(verb, path, plug, plug_opts, options \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L709" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Generates a route match based on an arbitrary HTTP method.</p><p>Useful for defining routes not included in the built-in macros.</p><p>The catch-all verb, <code class="inline">:*</code>, may also be used to match all HTTP methods.</p><h2 id="match/5-options" class="section-heading"><a href="#match/5-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h2><ul><li><code class="inline">:as</code> - configures the named helper. If <code class="inline">nil</code>, does not generate
+a helper. Has no effect when using verified routes exclusively</li><li><code class="inline">:alias</code> - configure if the scope alias should be applied to the route.
+Defaults to true, disables scoping if false.</li><li><code class="inline">:log</code> - the level to log the route dispatching under, may be set to false. Defaults to
+<code class="inline">:debug</code>. Route dispatching contains information about how the route is handled (which controller
+action is called, what parameters are available and which pipelines are used) and is separate from
+the plug level logging. To alter the plug log level, please see
+<a href="https://hexdocs.pm/phoenix/Phoenix.Logger.html#module-dynamic-log-level">https://hexdocs.pm/phoenix/Phoenix.Logger.html#module-dynamic-log-level</a>.</li><li><code class="inline">:private</code> - a map of private data to merge into the connection
+when a route matches</li><li><code class="inline">:assigns</code> - a map of data to merge into the connection when a route matches</li><li><code class="inline">:metadata</code> - a map of metadata used by the telemetry events and returned by
+<a href="#route_info/4"><code class="inline">route_info/4</code></a>. The <code class="inline">:mfa</code> field is used by telemetry to print logs and by the
+router to emit compile time checks. Custom fields may be added.</li><li><code class="inline">:warn_on_verify</code> - the boolean for whether matches to this route trigger
+an unmatched route warning for <a href="Phoenix.VerifiedRoutes.html"><code class="inline">Phoenix.VerifiedRoutes</code></a>. It is useful to ignore
+an otherwise catch-all route definition from being matched when verifying routes.
+Defaults <code class="inline">false</code>.</li></ul><h2 id="match/5-examples" class="section-heading"><a href="#match/5-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="n">match</span><span class="p" data-group-id="2184722424-1">(</span><span class="ss">:move</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/events/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">EventController</span><span class="p">,</span><span class="w"> </span><span class="ss">:move</span><span class="p" data-group-id="2184722424-1">)</span><span class="w">
+
+</span><span class="n">match</span><span class="p" data-group-id="2184722424-2">(</span><span class="ss">:*</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/any&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">SomeController</span><span class="p">,</span><span class="w"> </span><span class="ss">:any</span><span class="p" data-group-id="2184722424-2">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="options/4">
+
+    <span id="options/3"></span>
+
+  <div class="detail-header">
+    <a href="#options/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">options(path, plug, plug_opts, options \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L733" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Generates a route to handle a options request to the given path.</p><pre><code class="makeup elixir" translate="no"><span class="n">options</span><span class="p" data-group-id="6168203949-1">(</span><span class="s">&quot;/events/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">EventController</span><span class="p">,</span><span class="w"> </span><span class="ss">:action</span><span class="p" data-group-id="6168203949-1">)</span></code></pre><p>See <a href="#match/5"><code class="inline">match/5</code></a> for options.</p>
+  </section>
+</section>
+<section class="detail" id="patch/4">
+
+    <span id="patch/3"></span>
+
+  <div class="detail-header">
+    <a href="#patch/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">patch(path, plug, plug_opts, options \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L733" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Generates a route to handle a patch request to the given path.</p><pre><code class="makeup elixir" translate="no"><span class="n">patch</span><span class="p" data-group-id="7710978927-1">(</span><span class="s">&quot;/events/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">EventController</span><span class="p">,</span><span class="w"> </span><span class="ss">:action</span><span class="p" data-group-id="7710978927-1">)</span></code></pre><p>See <a href="#match/5"><code class="inline">match/5</code></a> for options.</p>
+  </section>
+</section>
+<section class="detail" id="pipe_through/1">
+
+  <div class="detail-header">
+    <a href="#pipe_through/1" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">pipe_through(pipes)</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L904" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Defines a list of plugs (and pipelines) to send the connection through.</p><p>Plugs are specified using the atom name of any imported 2-arity function
+which takes a <a href="https://hexdocs.pm/plug/1.18.1/Plug.Conn.html"><code class="inline">Plug.Conn</code></a> and options and returns a <a href="https://hexdocs.pm/plug/1.18.1/Plug.Conn.html"><code class="inline">Plug.Conn</code></a>. For
+example, <code class="inline">:require_authenticated_user</code>.</p><p>Pipelines are defined in the router, see <a href="#pipeline/2"><code class="inline">pipeline/2</code></a> for more information.</p><pre><code class="makeup elixir" translate="no"><span class="n">pipe_through</span><span class="w"> </span><span class="p" data-group-id="2390691470-1">[</span><span class="ss">:require_authenticated_user</span><span class="p">,</span><span class="w"> </span><span class="ss">:my_browser_pipeline</span><span class="p" data-group-id="2390691470-1">]</span></code></pre><h2 id="pipe_through/1-multiple-invocations" class="section-heading"><a href="#pipe_through/1-multiple-invocations" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Multiple invocations</span></h2><p><a href="#pipe_through/1"><code class="inline">pipe_through/1</code></a> can be invoked multiple times within the same scope. Each
+invocation appends new plugs and pipelines to run, which are applied to all
+routes <strong>after</strong> the <a href="#pipe_through/1"><code class="inline">pipe_through/1</code></a> invocation. For example:</p><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="w"> </span><span class="k" data-group-id="6327242266-1">do</span><span class="w">
+  </span><span class="n">pipe_through</span><span class="w"> </span><span class="p" data-group-id="6327242266-2">[</span><span class="ss">:browser</span><span class="p" data-group-id="6327242266-2">]</span><span class="w">
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">HomeController</span><span class="p">,</span><span class="w"> </span><span class="ss">:index</span><span class="w">
+
+  </span><span class="n">pipe_through</span><span class="w"> </span><span class="p" data-group-id="6327242266-3">[</span><span class="ss">:require_authenticated_user</span><span class="p" data-group-id="6327242266-3">]</span><span class="w">
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/settings&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">UserController</span><span class="p">,</span><span class="w"> </span><span class="ss">:edit</span><span class="w">
+</span><span class="k" data-group-id="6327242266-1">end</span></code></pre><p>In the example above, <code class="inline">/</code> pipes through <code class="inline">browser</code> only, while <code class="inline">/settings</code> pipes
+through both <code class="inline">browser</code> and <code class="inline">require_authenticated_user</code>. Therefore, to avoid
+confusion, we recommend a single <code class="inline">pipe_through</code> at the top of each scope:</p><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="w"> </span><span class="k" data-group-id="2623089353-1">do</span><span class="w">
+  </span><span class="n">pipe_through</span><span class="w"> </span><span class="p" data-group-id="2623089353-2">[</span><span class="ss">:browser</span><span class="p" data-group-id="2623089353-2">]</span><span class="w">
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">HomeController</span><span class="p">,</span><span class="w"> </span><span class="ss">:index</span><span class="w">
+</span><span class="k" data-group-id="2623089353-1">end</span><span class="w">
+
+</span><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="w"> </span><span class="k" data-group-id="2623089353-3">do</span><span class="w">
+  </span><span class="n">pipe_through</span><span class="w"> </span><span class="p" data-group-id="2623089353-4">[</span><span class="ss">:browser</span><span class="p">,</span><span class="w"> </span><span class="ss">:require_authenticated_user</span><span class="p" data-group-id="2623089353-4">]</span><span class="w">
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/settings&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">UserController</span><span class="p">,</span><span class="w"> </span><span class="ss">:edit</span><span class="w">
+</span><span class="k" data-group-id="2623089353-3">end</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="pipeline/2">
+
+  <div class="detail-header">
+    <a href="#pipeline/2" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">pipeline(plug, list)</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L775" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Defines a plug pipeline.</p><p>Pipelines are defined at the router root and can be used
+from any scope.</p><h2 id="pipeline/2-examples" class="section-heading"><a href="#pipeline/2-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="n">pipeline</span><span class="w"> </span><span class="ss">:api</span><span class="w"> </span><span class="k" data-group-id="0925910309-1">do</span><span class="w">
+  </span><span class="n">plug</span><span class="w"> </span><span class="ss">:token_authentication</span><span class="w">
+  </span><span class="n">plug</span><span class="w"> </span><span class="ss">:dispatch</span><span class="w">
+</span><span class="k" data-group-id="0925910309-1">end</span></code></pre><p>A scope may then use this pipeline as:</p><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="w"> </span><span class="k" data-group-id="9395328210-1">do</span><span class="w">
+  </span><span class="n">pipe_through</span><span class="w"> </span><span class="ss">:api</span><span class="w">
+</span><span class="k" data-group-id="9395328210-1">end</span></code></pre><p>Every time <a href="#pipe_through/1"><code class="inline">pipe_through/1</code></a> is called, the new pipelines
+are appended to the ones previously given.</p>
+  </section>
+</section>
+<section class="detail" id="plug/2">
+
+    <span id="plug/1"></span>
+
+  <div class="detail-header">
+    <a href="#plug/2" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">plug(plug, opts \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L828" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Defines a plug inside a pipeline.</p><p>See <a href="#pipeline/2"><code class="inline">pipeline/2</code></a> for more information.</p>
+  </section>
+</section>
+<section class="detail" id="post/4">
+
+    <span id="post/3"></span>
+
+  <div class="detail-header">
+    <a href="#post/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">post(path, plug, plug_opts, options \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L733" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Generates a route to handle a post request to the given path.</p><pre><code class="makeup elixir" translate="no"><span class="n">post</span><span class="p" data-group-id="5088363308-1">(</span><span class="s">&quot;/events/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">EventController</span><span class="p">,</span><span class="w"> </span><span class="ss">:action</span><span class="p" data-group-id="5088363308-1">)</span></code></pre><p>See <a href="#match/5"><code class="inline">match/5</code></a> for options.</p>
+  </section>
+</section>
+<section class="detail" id="put/4">
+
+    <span id="put/3"></span>
+
+  <div class="detail-header">
+    <a href="#put/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">put(path, plug, plug_opts, options \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L733" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Generates a route to handle a put request to the given path.</p><pre><code class="makeup elixir" translate="no"><span class="n">put</span><span class="p" data-group-id="8804833008-1">(</span><span class="s">&quot;/events/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">EventController</span><span class="p">,</span><span class="w"> </span><span class="ss">:action</span><span class="p" data-group-id="8804833008-1">)</span></code></pre><p>See <a href="#match/5"><code class="inline">match/5</code></a> for options.</p>
+  </section>
+</section>
+<section class="detail" id="resources/2">
+
+  <div class="detail-header">
+    <a href="#resources/2" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">resources(path, controller)</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L1017" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>See <a href="#resources/4"><code class="inline">resources/4</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="resources/3">
+
+  <div class="detail-header">
+    <a href="#resources/3" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">resources(path, controller, opts)</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L1006" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>See <a href="#resources/4"><code class="inline">resources/4</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="resources/4">
+
+  <div class="detail-header">
+    <a href="#resources/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">resources(path, controller, opts, list)</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L999" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Defines &quot;RESTful&quot; routes for a resource.</p><p>The given definition:</p><pre><code class="makeup elixir" translate="no"><span class="n">resources</span><span class="w"> </span><span class="s">&quot;/users&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">UserController</span></code></pre><p>will include routes to the following actions:</p><ul><li><code class="inline">GET /users</code> =&gt; <code class="inline">:index</code></li><li><code class="inline">GET /users/new</code> =&gt; <code class="inline">:new</code></li><li><code class="inline">POST /users</code> =&gt; <code class="inline">:create</code></li><li><code class="inline">GET /users/:id</code> =&gt; <code class="inline">:show</code></li><li><code class="inline">GET /users/:id/edit</code> =&gt; <code class="inline">:edit</code></li><li><code class="inline">PATCH /users/:id</code> =&gt; <code class="inline">:update</code></li><li><code class="inline">PUT /users/:id</code> =&gt; <code class="inline">:update</code></li><li><code class="inline">DELETE /users/:id</code> =&gt; <code class="inline">:delete</code></li></ul><h2 id="resources/4-options" class="section-heading"><a href="#resources/4-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h2><p>This macro accepts a set of options:</p><ul><li><code class="inline">:only</code> - a list of actions to generate routes for, for example: <code class="inline">[:show, :edit]</code></li><li><code class="inline">:except</code> - a list of actions to exclude generated routes from, for example: <code class="inline">[:delete]</code></li><li><code class="inline">:param</code> - the name of the parameter for this resource, defaults to <code class="inline">&quot;id&quot;</code></li><li><code class="inline">:name</code> - the prefix for this resource. This is used for the named helper
+and as the prefix for the parameter in nested resources. The default value
+is automatically derived from the controller name, i.e. <code class="inline">UserController</code> will
+have name <code class="inline">&quot;user&quot;</code></li><li><code class="inline">:as</code> - configures the named helper. If <code class="inline">nil</code>, does not generate
+a helper. Has no effect when using verified routes exclusively</li><li><code class="inline">:singleton</code> - defines routes for a singleton resource that is looked up by
+the client without referencing an ID. Read below for more information</li></ul><h2 id="resources/4-singleton-resources" class="section-heading"><a href="#resources/4-singleton-resources" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Singleton resources</span></h2><p>When a resource needs to be looked up without referencing an ID, because
+it contains only a single entry in the given context, the <code class="inline">:singleton</code>
+option can be used to generate a set of routes that are specific to
+such single resource:</p><ul><li><code class="inline">GET /user</code> =&gt; <code class="inline">:show</code></li><li><code class="inline">GET /user/new</code> =&gt; <code class="inline">:new</code></li><li><code class="inline">POST /user</code> =&gt; <code class="inline">:create</code></li><li><code class="inline">GET /user/edit</code> =&gt; <code class="inline">:edit</code></li><li><code class="inline">PATCH /user</code> =&gt; <code class="inline">:update</code></li><li><code class="inline">PUT /user</code> =&gt; <code class="inline">:update</code></li><li><code class="inline">DELETE /user</code> =&gt; <code class="inline">:delete</code></li></ul><p>Usage example:</p><pre><code class="makeup elixir" translate="no"><span class="n">resources</span><span class="w"> </span><span class="s">&quot;/account&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">AccountController</span><span class="p">,</span><span class="w"> </span><span class="ss">only</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3369558436-1">[</span><span class="ss">:show</span><span class="p" data-group-id="3369558436-1">]</span><span class="p">,</span><span class="w"> </span><span class="ss">singleton</span><span class="p">:</span><span class="w"> </span><span class="no">true</span></code></pre><h2 id="resources/4-nested-resources" class="section-heading"><a href="#resources/4-nested-resources" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Nested Resources</span></h2><p>This macro also supports passing a nested block of route definitions.
+This is helpful for nesting children resources within their parents to
+generate nested routes.</p><p>The given definition:</p><pre><code class="makeup elixir" translate="no"><span class="n">resources</span><span class="w"> </span><span class="s">&quot;/users&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">UserController</span><span class="w"> </span><span class="k" data-group-id="9134925965-1">do</span><span class="w">
+  </span><span class="n">resources</span><span class="w"> </span><span class="s">&quot;/posts&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PostController</span><span class="w">
+</span><span class="k" data-group-id="9134925965-1">end</span></code></pre><p>will include the following routes:</p><pre><code class="makeup console" translate="no"><span class="">user_post_path  GET     /users/:user_id/posts           PostController :index
+</span><span class="">user_post_path  GET     /users/:user_id/posts/:id/edit  PostController :edit
+</span><span class="">user_post_path  GET     /users/:user_id/posts/new       PostController :new
+</span><span class="">user_post_path  GET     /users/:user_id/posts/:id       PostController :show
+</span><span class="">user_post_path  POST    /users/:user_id/posts           PostController :create
+</span><span class="">user_post_path  PATCH   /users/:user_id/posts/:id       PostController :update
+</span><span class="">                PUT     /users/:user_id/posts/:id       PostController :update
+</span><span class="">user_post_path  DELETE  /users/:user_id/posts/:id       PostController :delete
+</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="routes/1">
+
+  <div class="detail-header">
+    <a href="#routes/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">routes(router)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L1228" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Returns all routes information from the given router.</p>
+  </section>
+</section>
+<section class="detail" id="scope/2">
+
+  <div class="detail-header">
+    <a href="#scope/2" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">scope(options, list)</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L1070" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Defines a scope in which routes can be nested.</p><h2 id="scope/2-examples" class="section-heading"><a href="#scope/2-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="ss">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/api/v1&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">alias</span><span class="p">:</span><span class="w"> </span><span class="nc">API.V1</span><span class="w"> </span><span class="k" data-group-id="5497171994-1">do</span><span class="w">
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/pages/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="w">
+</span><span class="k" data-group-id="5497171994-1">end</span></code></pre><p>The generated route above will match on the path <code class="inline">&quot;/api/v1/pages/:id&quot;</code>
+and will dispatch to <code class="inline">:show</code> action in <code class="inline">API.V1.PageController</code>. A named
+helper <code class="inline">api_v1_page_path</code> will also be generated.</p><h2 id="scope/2-options" class="section-heading"><a href="#scope/2-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h2><p>The supported options are:</p><ul><li><code class="inline">:path</code> - a string containing the path scope.</li><li><code class="inline">:as</code> - a string or atom containing the named helper scope. When set to
+false, it resets the nested helper scopes. Has no effect when using verified
+routes exclusively</li><li><code class="inline">:alias</code> - an alias (atom) containing the controller scope. When set to
+false, it resets all nested aliases.</li><li><code class="inline">:host</code> - a string or list of strings containing the host scope, or prefix host scope,
+ie <code class="inline">&quot;foo.bar.com&quot;</code>, <code class="inline">&quot;foo.&quot;</code></li><li><code class="inline">:private</code> - a map of private data to merge into the connection when a route matches</li><li><code class="inline">:assigns</code> - a map of data to merge into the connection when a route matches</li><li><code class="inline">:log</code> - the level to log the route dispatching under, may be set to false. Defaults to
+<code class="inline">:debug</code>. Route dispatching contains information about how the route is handled (which controller
+action is called, what parameters are available and which pipelines are used) and is separate from
+the plug level logging. To alter the plug log level, please see
+<a href="https://hexdocs.pm/phoenix/Phoenix.Logger.html#module-dynamic-log-level">https://hexdocs.pm/phoenix/Phoenix.Logger.html#module-dynamic-log-level</a>.</li></ul>
+  </section>
+</section>
+<section class="detail" id="scope/3">
+
+  <div class="detail-header">
+    <a href="#scope/3" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">scope(path, options, list)</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L1097" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Define a scope with the given path.</p><p>This function is a shortcut for:</p><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="ss">path</span><span class="p">:</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="k" data-group-id="6790199645-1">do</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+</span><span class="k" data-group-id="6790199645-1">end</span></code></pre><h2 id="scope/3-examples" class="section-heading"><a href="#scope/3-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/v1&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;api.&quot;</span><span class="w"> </span><span class="k" data-group-id="4911338138-1">do</span><span class="w">
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/pages/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="w">
+</span><span class="k" data-group-id="4911338138-1">end</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="scope/4">
+
+  <div class="detail-header">
+    <a href="#scope/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">scope(path, alias, options, list)</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L1134" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Defines a scope with the given path and alias.</p><p>This function is a shortcut for:</p><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="ss">path</span><span class="p">:</span><span class="w"> </span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="ss">alias</span><span class="p">:</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="k" data-group-id="4896608193-1">do</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+</span><span class="k" data-group-id="4896608193-1">end</span></code></pre><h2 id="scope/4-examples" class="section-heading"><a href="#scope/4-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/v1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">API.V1</span><span class="p">,</span><span class="w"> </span><span class="ss">host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;api.&quot;</span><span class="w"> </span><span class="k" data-group-id="8196843862-1">do</span><span class="w">
+  </span><span class="n">get</span><span class="w"> </span><span class="s">&quot;/pages/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PageController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="w">
+</span><span class="k" data-group-id="8196843862-1">end</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="trace/4">
+
+    <span id="trace/3"></span>
+
+  <div class="detail-header">
+    <a href="#trace/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">trace(path, plug, plug_opts, options \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/router.ex#L733" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Generates a route to handle a trace request to the given path.</p><pre><code class="makeup elixir" translate="no"><span class="n">trace</span><span class="p" data-group-id="0697907975-1">(</span><span class="s">&quot;/events/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">EventController</span><span class="p">,</span><span class="w"> </span><span class="ss">:action</span><span class="p" data-group-id="0697907975-1">)</span></code></pre><p>See <a href="#match/5"><code class="inline">match/5</code></a> for options.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix/1.8.5">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix/1.8.5">Hex Preview</a>
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+
+              <a href="Phoenix.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

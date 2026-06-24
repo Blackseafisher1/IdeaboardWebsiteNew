@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ideen</title>
+  
+  <link rel="stylesheet" href="/css/ideas.css">
+
+
+  <%- include('../partials/head') %>
+  
+
+  
+  <script>
+    window.ideaLiveVersion = <%= Number(liveVersion || 0) %>;
+  </script>
+  <script src="/js/dist/ideasLive.min.js"></script>
+  
+</head>
+<body data-live-version="<%= Number(liveVersion || 0) %>">
+
+<%- include('../partials/header') %>
+
+<main class="ideas-page">
+  
+  <section class="ideas-header">
+    <div class="hero-box ideas-hero-container">
+      <h1>Ideenboard</h1>
+      <p class="subtitle">Teilen Sie Ihre Visionen und gestalten Sie die Zukunft mit</p>
+      <button class="btn accent" id="openCreateModal">
+        <span class="btn-icon">+</span> Neue Idee
+      </button>
+    </div>
+  </section>
+  
+  <!-- Filters (HTMX Powered) -->
+  <section class="ideas-filters hero-overlap-next" aria-label="Filter und Suche">
+    <form id="filterForm" class="filter-form" onsubmit="event.preventDefault(); return false;">
+    
+    <div class="filter-row search-row">
+      <div class="search-field">
+        <input id="q" name="q" type="text" value="<%= q || '' %>" 
+       placeholder="Suche nach Titel, Autor oder Beschreibung" class="input"
+       aria-label="Suche"
+       hx-get="/ideas"
+      hx-trigger="keyup changed delay:1000ms, search" 
+       hx-target="#ideas-content"
+       hx-swap="outerHTML"
+       hx-push-url="true"
+       hx-indicator="#loading-indicator"
+       hx-vals='{"page":1}'
+       hx-include="#filterForm">
+
+       <button type="button" id="q-clear" class="clear-search" aria-label="Suche löschen" title="Suche löschen"
+        hx-on:click="const q = document.getElementById('q'); q.value=''; htmx.trigger(q, 'search'); q.focus();">
+  ×
+</button>
+
+
+      </div>
+    </div>
+    
+    <div class="filter-row options-row">
+      <select id="category_id" name="category_id" class="input"
+              hx-get="/ideas"
+              hx-target="#ideas-content"
+              hx-swap="outerHTML"
+              hx-push-url="true"
+              hx-indicator="#loading-indicator"
+              hx-vals='{"page":1}'
+              hx-include="#filterForm">
+        <option value="">Alle Kategorien</option>
+        <% (categories || []).forEach(cat => { %>
+          <option value="<%= cat.category_id %>" <%= String(category_id) === String(cat.category_id) ? 'selected' : '' %>><%= cat.name %></option>
+        <% }) %>
+      </select>
+
+      <select id="sort" name="sort" class="input"
+              hx-get="/ideas"
+              hx-target="#ideas-content"
+              hx-swap="outerHTML"
+              hx-push-url="true"
+              hx-indicator="#loading-indicator"
+              hx-vals='{"page":1}'
+              hx-include="#filterForm">
+        <option value="latest"   <%= (sort || '').replace('all_', '') === 'latest' || !sort ? 'selected' : '' %>>Neueste zuerst</option>
+        <option value="oldest"   <%= (sort || '').replace('all_', '') === 'oldest' ? 'selected' : '' %>>Älteste zuerst</option>
+        <option value="likes"    <%= (sort || '').replace('all_', '') === 'likes' ? 'selected' : '' %>>Meiste Likes</option>
+        <option value="comments" <%= (sort || '').replace('all_', '') === 'comments' ? 'selected' : '' %>>Meiste Kommentare</option>
+        <option value="dislikes" <%= (sort || '').replace('all_', '') === 'dislikes' ? 'selected' : '' %>>Meiste Dislikes</option>
+        <option value="score" <%= (sort || '').replace('all_', '') === 'score' ? 'selected' : '' %>>Nur Score</option>
+      </select>
+
+      <select id="owned_only" name="owned_only" class="input"
+              hx-get="/ideas"
+              hx-target="#ideas-content"
+              hx-swap="outerHTML"
+              hx-push-url="true"
+              hx-indicator="#loading-indicator"
+              hx-vals='{"page":1}'
+              hx-include="#filterForm">
+        <option value="false" <%= (typeof owned_only === 'undefined' || owned_only !== 'true') ? 'selected' : '' %>>Alle Ideen</option>
+        <option value="true" <%= (typeof owned_only !== 'undefined' && owned_only === 'true') ? 'selected' : '' %>>Meine Ideen</option>
+      </select>
+
+      <select id="search_scope" name="search_scope" class="input" title="Suchbereich"
+          hx-get="/ideas"
+          hx-target="#ideas-content"
+          hx-swap="outerHTML"
+          hx-push-url="true"
+          hx-indicator="#loading-indicator"
+          hx-vals='{"page":1}'
+          hx-include="#filterForm">
+        <option value="" <%= (!search_scope || search_scope === '') ? 'selected' : '' %>>Titel & Autor (Standard)</option>
+        <option value="desc" <%= (search_scope === 'desc' || search_scope === 'description') ? 'selected' : '' %>>Nur Beschreibung (Filter)</option>
+      </select>
+
+
+
+    
+      <input id="tags" name="tags" type="text" value="<%= tags || '' %>" 
+             placeholder="Tags (Komma-getrennt)" class="input"
+             hx-get="/ideas"
+             hx-trigger="keyup changed delay:1000ms"
+             hx-target="#ideas-content"
+             hx-swap="outerHTML"
+             hx-push-url="true"
+             hx-indicator="#loading-indicator"
+             hx-vals='{"page":1}'
+             hx-include="#filterForm">
+    </div>
+    
+    <span id="loading-indicator" class="htmx-indicator">Suchen...</span>
+    
+  </form>
+</section>
+
+  <!-- Ideas grid -->
+
+  <%- include('_content') %>
+
+  <dialog id="createIdeaModal" aria-modal="true" aria-labelledby="createIdeaTitle">
+    <form method="dialog" class="modal-close">
+      <button class="btn outline" value="cancel">Schließen</button>
+    </form>
+    
+    <form id="createIdeaForm" action="/ideas" method="POST" enctype="multipart/form-data">
+      <h3 id="createIdeaTitle">Neue Idee</h3>
+      
+      <label class="form-label" for="new-title">Titel</label>
+      <input id="new-title" class="input" type="text" name="title" placeholder="Kurzer, prägnanter Titel" required maxlength="50">
+      
+      <label class="form-label" for="new-desc">Beschreibung</label>
+      <textarea id="new-desc" class="input" name="description" rows="4" placeholder="Beschreibe die Idee, Problem und Lösung" required></textarea>
+      
+      <label class="form-label" for="new-cat">Kategorie</label>
+      <select id="new-cat" class="input" name="category_id" required>
+        <% (categories || []).forEach(cat => { %>
+          <option value="<%= cat.category_id %>"><%= cat.name %></option>
+        <% }) %>
+      </select>
+      
+      <label class="form-label" for="new-tags">Tags</label>
+      <input id="new-tags" class="input" type="text" name="tags" placeholder="z. B. ux, performance, kosten">
+      
+      <label class="form-label" for="new-file">Datei (optional)</label>
+      <input id="new-file" class="input" type="file" name="file" accept="*/*">
+      
+      <div class="dialog-actions" style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top:0.6rem;">
+        <button class="btn outline" type="reset">Zurücksetzen</button>
+        <button class="btn" type="submit">Erstellen</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Idea Edit Modal (for owners) -->
+<div id="idea-edit-modal" >
+  <div >
+    <button onclick="closeIdeaEditModal()">×</button>
+    
+    <div id="idea-edit-modal-content">
+      
+    </div>
+  </div>
+</div>
+
+</main>
+
+ <%- include('../partials/footer') %>
+
+<script src="/js/dist/ideasClient.min.js"></script>
+
+</body>
+</html>

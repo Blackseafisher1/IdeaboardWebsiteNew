@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+      .gate-wrap{max-width:420px;margin:6rem auto;padding:2rem;border:1px solid #ddd;border-radius:8px}
+      .gate-wrap h1{margin-top:0}
+      .gate-error{color:#b00020;margin-bottom:1rem}
+      .gate-form input[type=password]{width:100%;padding:.5rem;margin-bottom:.5rem}
+    </style>
+  </head>
+  <body>
+    <main class="gate-wrap">
+      <h1>Zugriffscode</h1>
+      <% if (error) { %>
+        <div class="gate-error"><%= error %></div>
+      <% } else { %>
+        <p>Bitte gib den Zugangscode ein, um die Seite zu betreten.</p>
+      <% } %>
+
+      <form class="gate-form" method="post" action="/gate?<%= 'back=' + encodeURIComponent(back) %>">
+        <input type="password" name="password" placeholder="Zugangscode" autocomplete="off" required>
+        <input type="hidden" name="back" value="<%= back %>">
+        <button type="submit">Senden</button>
+      </form>
+    </main>
+  </body>
+</html>

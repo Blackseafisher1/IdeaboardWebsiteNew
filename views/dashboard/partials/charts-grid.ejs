@@ -1,0 +1,31 @@
+<div class="chart-card">
+  <h3>Beliebteste Kategorien</h3>
+  <div class="chart-container">
+    <% if (stats.popularCategories?.length) { %>
+      <%- include('chart', {stats: {popularCategories: stats.popularCategories}}) %>
+    <% } else { %><p class="no-data">Keine Kategorien vorhanden</p><% } %>
+  </div>
+</div>
+
+<div class="chart-card">
+  <h3>Projekt Fortschritte</h3>
+  <div class="chart-container">
+    <p class="no-data">Keine Projekte vorhanden</p> 
+  </div>
+</div>
+
+<div class="chart-card">
+  <h3>Top Benutzer</h3>
+  <div class="chart-container">
+    <p class="no-data">Keine Top-Benutzer vorhanden</p>
+  </div>
+</div>
+
+<div class="chart-card full-width">
+  <h3>Monatliche Entwicklung</h3>
+  <div class="chart-container">
+    <% if (stats.monthlyData?.length >= 2) { %>
+   
+    <% } else { %><p class="no-data">Nicht genügend Monatsdaten (mind. 2 Monate) vorhanden</p><% } %>
+  </div>
+</div>

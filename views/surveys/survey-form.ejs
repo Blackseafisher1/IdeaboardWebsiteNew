@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title %></title>
+  
+  <link rel="stylesheet" href="/css/survey.css">
+
+
+  <link rel="stylesheet" href="/css/survey-form.css">
+  
+
+  <%- include('../partials/head') %>
+</head>
+
+<body>
+<%- include('../partials/header') %>
+
+<main class="survey-form-page">
+  <section class="survey-form-header">
+  
+    <h1><%= survey.title %></h1>
+    <% if (survey.description) { %>
+      <p class="survey-description"><%= survey.description %></p>
+    <% } %>
+    <!-- NEW: Image for survey -->
+    <% if (survey.image_url) { %>
+      <div class="survey-image-container">
+        <img src="<%= survey.image_url %>" alt="<%= survey.title %>" class="survey-image">
+      </div>
+    <% } %>
+    
+
+    <p class="survey-meta">
+      Erstellt von: <%= survey.creator_name %> | 
+      Erstellt am: <%= new Date(survey.created_at).toLocaleDateString('de-DE') %>
+      <% if (survey.is_private && survey.access_code) { %>
+        | <span class="private-badge">Privat (Code: <%= survey.access_code %>)</span>
+      <% } %>
+    </p>
+  </section>
+
+  <% if (hasVoted) { %>
+    <div class="already-voted">
+      <p>Sie haben bereits an dieser Umfrage teilgenommen.</p>
+      <a href="/surveys/<%= survey.survey_id %>/results" class="btn">Ergebnisse anzeigen</a>
+      <a href="/surveys" class="btn outline">Zurück zu Umfragen</a>
+    </div>
+  <% } else { %>
+    <form action="/surveys/<%= survey.survey_id %>/vote" method="POST" class="survey-form">
+      <% questions.forEach((question, qIndex) => { %>
+        <div class="question">
+          <h3><%= question.question_text %></h3>
+          
+          <!-- NEW: Image for question -->
+          <% if (question.image_url) { %>
+            <div class="question-image-container">
+              <img src="<%= question.image_url %>" alt="<%= question.question_text %>" class="question-image">
+            </div>
+          <% } %>
+          
+          <div class="options">
+            <% question.options.forEach((option, oIndex) => { %>
+              <label class="option">
+                <input type="radio" 
+                       name="question_<%= question.question_id %>" 
+                       value="<%= option.option_id %>" 
+                       required
+                       <%= (oIndex === 0 && qIndex === 0) ? 'autofocus' : '' %>>
+                <div class="option-content">
+                  <% if (option.image_url) { %>
+                    <img src="<%= option.image_url %>" alt="<%= option.option_text %>" class="option-image">
+                  <% } %>
+                  <span class="option-text"><%= option.option_text %></span>
+                </div>
+              </label>
+            <% }); %>
+          </div>
+        </div>
+      <% }); %>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Abstimmung absenden</button>
+        <a href="/surveys" class="btn outline">Abbrechen</a>
+      </div>
+    </form>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

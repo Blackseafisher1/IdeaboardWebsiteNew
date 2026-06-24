@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.37.2">
+    <meta name="project" content="Phoenix v1.7.23">
+
+
+    <title>Routing cheatsheet — Phoenix v1.7.23</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-6X3L5KMG.css" />
+
+    <script defer src="dist/sidebar_items-169F3323.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-6XHBGSGW.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.7.23
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-cheatmd" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Routing cheatsheet</h1>
+
+      <button onclick="window.print()" title="Print Cheatsheet" class="icon-action" rel="print">
+        <i class="ri-printer-line" aria-hidden="true"></i>
+        <span class="sr-only">Print Cheatsheet</span>
+      </button>
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/guides/cheatsheets/router.cheatmd#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+<blockquote><p>Those need to be declared in the correct router module and scope.</p></blockquote><p>A quick reference to the common routing features' syntax. For an exhaustive overview, refer to the <a href="routing.html">routing guides</a>.</p><section class="h2 col-2"><h2 id="routing-declaration" class="col-2 section-heading">
+  <a href="#routing-declaration" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Routing declaration</span>
+</h2>
+<section class="h3"><h3 id="single-route" class="section-heading">
+  <a href="#single-route" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Single route</span>
+</h3>
+<pre><code class="makeup elixir" translate="no"><span class="n">get</span><span class="w"> </span><span class="s">&quot;/users&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">UserController</span><span class="p">,</span><span class="w"> </span><span class="ss">:index</span><span class="w">
+</span><span class="n">patch</span><span class="w"> </span><span class="s">&quot;/users/:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">UserController</span><span class="p">,</span><span class="w"> </span><span class="ss">:update</span></code></pre><pre><code class="makeup elixir" translate="no"><span class="c1"># generated routes</span><span class="w">
+</span><span class="sx">~p&quot;/users&quot;</span><span class="w">
+</span><span class="sx">~p&quot;/users/9&quot;</span><span class="w"> </span><span class="c1"># user_id is 9</span></code></pre><p>Also accepts <code class="inline">put</code>, <code class="inline">patch</code>, <code class="inline">options</code>, <code class="inline">delete</code> and <code class="inline">head</code>.</p></section><section class="h3"><h3 id="resources" class="section-heading">
+  <a href="#resources" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Resources</span>
+</h3>
+<h4>Simple</h4><pre><code class="makeup elixir" translate="no"><span class="n">resources</span><span class="w"> </span><span class="s">&quot;/users&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">UserController</span></code></pre><p>Generates <code class="inline">:index</code>, <code class="inline">:edit</code>, <code class="inline">:new</code>, <code class="inline">:show</code>, <code class="inline">:create</code>, <code class="inline">:update</code> and <code class="inline">:delete</code>.</p><h4>Options</h4><pre><code class="makeup elixir" translate="no"><span class="n">resources</span><span class="w"> </span><span class="s">&quot;/users&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">UserController</span><span class="p">,</span><span class="w"> </span><span class="ss">only</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5825811576-1">[</span><span class="ss">:show</span><span class="p" data-group-id="5825811576-1">]</span><span class="w">
+</span><span class="n">resources</span><span class="w"> </span><span class="s">&quot;/users&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">UserController</span><span class="p">,</span><span class="w"> </span><span class="ss">except</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5825811576-2">[</span><span class="ss">:create</span><span class="p">,</span><span class="w"> </span><span class="ss">:delete</span><span class="p" data-group-id="5825811576-2">]</span><span class="w">
+</span><span class="n">resources</span><span class="w"> </span><span class="s">&quot;/users&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">UserController</span><span class="p">,</span><span class="w"> </span><span class="ss">as</span><span class="p">:</span><span class="w"> </span><span class="ss">:person</span><span class="w"> </span><span class="c1"># ~p&quot;/person&quot;</span></code></pre><h4>Nested</h4><pre><code class="makeup elixir" translate="no"><span class="n">resources</span><span class="w"> </span><span class="s">&quot;/users&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">UserController</span><span class="w"> </span><span class="k" data-group-id="2799821569-1">do</span><span class="w">
+  </span><span class="n">resources</span><span class="w"> </span><span class="s">&quot;/posts&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PostController</span><span class="w">
+</span><span class="k" data-group-id="2799821569-1">end</span></code></pre><pre><code class="makeup elixir" translate="no"><span class="c1"># generated routes</span><span class="w">
+</span><span class="sx">~p&quot;/users/3/posts&quot;</span><span class="w"> </span><span class="c1"># user_id is 3</span><span class="w">
+</span><span class="sx">~p&quot;/users/3/posts/17&quot;</span><span class="w"> </span><span class="c1"># user_id is 3 and post_id = 17</span></code></pre><p>For more info check the <a href="routing-1.html#resources">resources docs.</a></p></section><section class="h3"><h3 id="scopes" class="section-heading">
+  <a href="#scopes" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Scopes</span>
+</h3>
+<h4>Simple</h4><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/admin&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">HelloWeb.Admin</span><span class="w"> </span><span class="k" data-group-id="1328500780-1">do</span><span class="w">
+  </span><span class="n">pipe_through</span><span class="w"> </span><span class="ss">:browser</span><span class="w">
+
+  </span><span class="n">resources</span><span class="w"> </span><span class="s">&quot;/users&quot;</span><span class="p">,</span><span class="w">   </span><span class="nc">UserController</span><span class="w">
+</span><span class="k" data-group-id="1328500780-1">end</span></code></pre><pre><code class="makeup elixir" translate="no"><span class="c1"># generated path helpers</span><span class="w">
+</span><span class="sx">~p&quot;/admin/users&quot;</span></code></pre><h4>Nested</h4><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/api&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">HelloWeb.Api</span><span class="p">,</span><span class="w"> </span><span class="ss">as</span><span class="p">:</span><span class="w"> </span><span class="ss">:api</span><span class="w"> </span><span class="k" data-group-id="5159218942-1">do</span><span class="w">
+  </span><span class="n">pipe_through</span><span class="w"> </span><span class="ss">:api</span><span class="w">
+
+  </span><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/v1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">V1</span><span class="p">,</span><span class="w"> </span><span class="ss">as</span><span class="p">:</span><span class="w"> </span><span class="ss">:v1</span><span class="w"> </span><span class="k" data-group-id="5159218942-2">do</span><span class="w">
+    </span><span class="n">resources</span><span class="w"> </span><span class="s">&quot;/users&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">UserController</span><span class="w">
+  </span><span class="k" data-group-id="5159218942-2">end</span><span class="w">
+</span><span class="k" data-group-id="5159218942-1">end</span></code></pre><pre><code class="makeup elixir" translate="no"><span class="c1"># generated path helpers</span><span class="w">
+</span><span class="sx">~p&quot;/api/v1/users&quot;</span></code></pre><p>For more info check the <a href="routing.html#scoped-routes">scoped routes</a> docs.</p></section></section>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="heroku.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Deploying on Heroku
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="custom_error_pages.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Custom Error Pages
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/phoenix/1.7.23" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/phoenix/1.7.23">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/phoenix/1.7.23/show/guides/cheatsheets/router.cheatmd">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="Phoenix.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.37.2) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

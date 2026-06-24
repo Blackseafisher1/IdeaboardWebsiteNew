@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benutzer suchen</title>
+
+    
+    <%- include('../partials/head') %>
+    <link rel="stylesheet" href="/css/dms.css">
+</head>
+<body class="chat-page dm-search">
+    <%- include('../partials/header', { activePage: 'chat' }) %>
+    <main class="container chat-page-container">
+        <div class="chat-container dm-index-container">
+            <div class="back-link">
+                <a href="/dms" class="dm-search-back-link">← Zurück</a>
+            </div>
+            <h1 class="dm-search-title">Benutzer suchen</h1>
+            <div class="dms-search">
+                <form action="/dms/search" method="get" class="dms-search-form"
+                      hx-get="/dms/search" hx-target=".user-list" hx-swap="outerHTML"
+                      hx-push-url="true">
+                    <input type="search" name="q" class="search-box" placeholder="Benutzername..." 
+                           value="<%= searchQuery %>" autocomplete="off"
+                           hx-get="/dms/search" hx-target=".user-list" hx-swap="outerHTML"
+                          hx-trigger="keyup changed delay:1000ms, search">
+                    <button type="button" class="message-btn clear-btn" aria-label="Clear search" onclick="(function(){const f=document.querySelector('.dms-search-form'); const i=f.querySelector('input[name=\'q\']'); i.value=''; if (window.htmx && typeof htmx.trigger === 'function') { htmx.trigger(i,'keyup'); } else { i.dispatchEvent(new Event('input')); }})();">X</button>
+                </form>
+
+            </div>
+
+            <div class="user-list-container dm-search-user-list-container">
+                <%- include('./partials/user_list', { users: users, allLoaded: (typeof allLoaded !== 'undefined' ? allLoaded : false), searchQuery: searchQuery }) %>
+            </div>
+            <% if (!allLoaded) { %>
+    <div class="user-list-actions">
+        <button class="message-btn load-more-btn"
+                hx-get="/dms/search?all=1<% if (searchQuery) { %>&q=<%= encodeURIComponent(searchQuery) %><% } %>"
+                hx-target=".user-list"
+                hx-swap="outerHTML">
+            Alle Laden
+        </button>
+    </div>
+<% } %>
+
+
+    </main>
+
+
+     <%- include('../partials/footer') %>
+</body>
+</html>

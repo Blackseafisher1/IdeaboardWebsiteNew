@@ -1,0 +1,11 @@
+<!-- _list.ejs -->
+<% (ideas || []).forEach(idea => { %>
+  <%- include('_idea-card', { 
+      idea: idea, 
+      user: user, 
+      categories: categories, 
+      expanded: false 
+  }) %>
+<% }) %>
+
+

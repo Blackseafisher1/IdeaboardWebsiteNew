@@ -1,0 +1,22 @@
+<div id="ideas-content">
+  <section class="ideas-grid" aria-live="polite">
+    <% if (!ideas || ideas.length === 0) { %>
+      <p class="muted ideas-empty-state">Keine Ergebnisse gefunden.</p>
+    <% } else { %>
+      <!-- Include der Liste (Page 1) -->
+      <%- include('_list') %>
+    <% } %>
+  </section>
+</div>
+
+<!-- Load more button placed outside #ideas-content to avoid removal by HTMX swaps -->
+<% if (typeof renderLoadMoreButton === 'undefined' || renderLoadMoreButton) { %>
+  <div style="text-align:center; margin:2rem 0;">
+    <% if (ideas && ideas.length > 0) { %>
+      <button id="load-more-chunk" class="btn accent" style="display: block; margin:auto;"
+        onclick="loadMoreChunk(this)"
+        data-page="<%= nextPage || 2 %>"
+        data-url="/ideas/chunk">Mehr laden</button>
+    <% } %>
+  </div>
+<% } %>

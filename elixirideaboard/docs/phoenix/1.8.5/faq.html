@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix v1.8.5">
+
+
+    <title>6. FAQ — Phoenix v1.8.5</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-209F6654.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.8.5
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="true">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Latest</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="https://hexdocs.pm/?packages=plug%3Alatest%2Cphoenix%3Alatest%2Cphoenix_html%3Alatest%2Cphoenix_live_view%3Alatest%2Cphoenix_pubsub%3Alatest%2Cphoenix_template%3Alatest&q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Latest</span>
+                <span class="help">Search latest versions of Plug, Phoenix, Phoenix.{HTML, LiveView, PubSub, Template}</span>
+              </button>
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="false">
+                <span class="name">Current version</span>
+                <span class="help">Search only this project</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>6. FAQ</h1>
+
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/guides/data_modelling/faq.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p>Here we list frequently asked questions about contexts.</p><h2 id="when-to-use-code-generators" class="section-heading"><a href="#when-to-use-code-generators" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">When to use code generators?</span></h2><p>In this guide, we have used code generators for schemas, contexts, controllers, and more. If you are happy to move forward with Phoenix defaults, feel free to rely on generators to scaffold large parts of your application. When using Phoenix generators, the main question you need to answer is: does this new functionality (with its schema, table, and fields) belong to one of the existing contexts or a new one?</p><p>This way, Phoenix generators guide you to use contexts to group related functionality, instead of having several dozens of schemas laying around without any structure. And remember: if you're stuck when trying to come up with a context name, you can simply use the plural form of the resource you're creating.</p><h2 id="how-do-i-structure-code-inside-contexts" class="section-heading"><a href="#how-do-i-structure-code-inside-contexts" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">How do I structure code inside contexts?</span></h2><p>You may wonder how to organize the code inside contexts. For example, should you define a module for changesets (such as ProductChangesets) and another module for queries (such as ProductQueries)?</p><p>One important benefit of contexts is that this decision does not matter much. The context is your public API, the other modules are private. Contexts isolate these modules into small groups so the surface area of your application is the context and not <em>all of your code</em>.</p><p>So while you and your team could establish patterns for organizing these private modules, it is also our opinion that it is completely fine for them to be different. The major focus should be on how the contexts are defined and how they interact with each other (and with your web application).</p><p>Think about it as a well-kept neighbourhood. Your contexts are houses, you want to keep them well-preserved, well-connected, etc. Inside the houses, they may all be a little bit different, and that's fine.</p><h2 id="returning-ecto-structures-from-context-apis" class="section-heading"><a href="#returning-ecto-structures-from-context-apis" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Returning Ecto structures from context APIs</span></h2><p>As we explored the context API, you might have wondered:</p><blockquote><p>If one of the goals of our context is to encapsulate Ecto Repo access, why does <code class="inline">create_user/1</code> return an <a href="https://hexdocs.pm/ecto/3.13.2/Ecto.Changeset.html"><code class="inline">Ecto.Changeset</code></a> struct when we fail to create a user?</p></blockquote><p>Although Changesets are part of Ecto, they are not tied to the database, and they can be used to map data from and to any source, which makes it a general and useful data structure for tracking field changes, perform validations, and generate error messages.</p><p>For those reasons, <code class="inline">%Ecto.Changeset{}</code> is a good choice to model the data changes between your contexts and your web layer - regardless if you are talking to an API or the database.</p><p>Finally, note that your controllers and views are not hardcoded to work exclusively with Ecto either. Instead, Phoenix defines protocols such as <a href="Phoenix.Param.html"><code class="inline">Phoenix.Param</code></a> and <a href="https://hexdocs.pm/phoenix_html/4.2.1/Phoenix.HTML.FormData.html"><code class="inline">Phoenix.HTML.FormData</code></a>, which allow any library to extend how Phoenix generates URL parameters or renders forms. Conveniently for us, the <code class="inline">phoenix_ecto</code> project implements those protocols, but you could as well bring your own data structures and implement them yourself.</p>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="more_examples.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+5. Bringing It Home
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="authn_authz.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Introduction to Auth
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix/1.8.5">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix/1.8.5">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/phoenix/1.8.5/show/guides/data_modelling/faq.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+
+              <a href="Phoenix.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: public/js/surveysClient.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: public/js/surveysClient.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Client-Logik für Surveys/Projects Seite (Filter, Infinite Scroll, URL-Sync).
+ * @module public/js/surveysClient
+ */
+  // Surveys page
+/**
+ * DOMContentLoaded-Initialisierung: synchronisiert URL-Parameter mit UI-Feldern (Status, Type, Search).
+ * @returns {void}
+ */
+(function() {
+  const surveyInput = document.getElementById('surveySearchInput');
+  if (surveyInput) {
+    surveyInput.value = '';
+    const type = document.getElementById('currentType')?.value || 'all';
+    htmx.ajax('GET', `/surveys?type=${encodeURIComponent(type)}&amp;search=&amp;page=1`, {
+      target: '#surveysList',
+      swap: 'innerHTML'
+    });
+    return;
+  }
+
+  // Projects page (legacy)
+  const projectInput = document.getElementById('projectSearchInput');
+  if (projectInput) {
+    projectInput.value = '';
+    const status = document.getElementById('currentStatus')?.value || 'all';
+    htmx.ajax('GET', `/projects/fragment?status=${encodeURIComponent(status)}&amp;search=&amp;page=1`, {
+      target: '#projectsList',
+      swap: 'innerHTML'
+    });
+    return;
+  }
+
+  // Fallback: generische Eingabe mit Klasse `.input` zurücksetzen
+  const generic = document.querySelector('input.input[type="text"]');
+  if (generic) generic.value = '';
+})();
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  // URL Params → UI
+  const urlParams = new URLSearchParams(window.location.search);
+  const status = urlParams.get('status') || 'all';
+  const search = urlParams.get('search') || '';
+
+  // Surveys: type param
+  
+  const type = urlParams.get('type') || 'all';
+
+  document.getElementById('currentStatus')?.setAttribute('value', status);
+  document.getElementById('projectSearchInput')?.setAttribute('value', search);
+
+  document.getElementById('currentType')?.setAttribute('value', type);
+
+  // Active Filter Button
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    if (btn.dataset.status !== undefined) btn.classList.toggle('active', btn.dataset.status === status);
+    if (btn.dataset.type !== undefined) btn.classList.toggle('active', btn.dataset.type === type);
+  });
+
+  // Filter Buttons (reset to page 1)
+  // Project filter buttons (existing behavior)
+  document.querySelectorAll('.filter-btn[data-status]').forEach(button => {
+    button.addEventListener('click', function() {
+      
+      const newStatus = this.dataset.status || 'all';
+/**
+ * Klick-Handler für Status-Filter: setzt aktiven Button, aktualisiert `currentStatus` und lädt Fragment per HTMX.
+ * @returns {void}
+ */
+   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+   this.classList.add('active');
+      document.getElementById('currentStatus').value = newStatus;
+      const currentSearch = document.getElementById('projectSearchInput')?.value || '';
+      htmx.ajax('GET', `/projects/fragment?status=${newStatus}&amp;search=${encodeURIComponent(currentSearch)}&amp;page=1`, {
+        target: '#projectsList', 
+        swap: 'innerHTML'
+      });
+    });
+  });
+
+  // No client-side interception for survey filter buttons — HTMX handles requests via button attributes.
+
+  // Sicherstellen, dass angeklickter Survey-Filter den aktiven Zustand zeigt
+  document.querySelectorAll('.filter-btn[data-type]').forEach(btn => {
+    btn.addEventListener('click', function() {
+/**
+ * Klick-Handler für Survey-Type-Filter: entfernt aktive Markierung von allen Type-Buttons und markiert den aktuellen.
+ * @returns {void}
+ */
+   document.querySelectorAll('.filter-btn[data-type]').forEach(b => b.classList.remove('active'));
+   this.classList.add('active');
+    });
+  });
+
+  // Prevent form submit via Enter key in the surveys search form
+  const searchForm = document.getElementById('searchForm');
+  if (searchForm) {
+    searchForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+    });
+  }
+
+  const surveyInput = document.getElementById('surveySearchInput');
+  if (surveyInput) {
+    surveyInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') e.preventDefault();
+    });
+  }
+});
+
+// URL sync after HTMX (like Surveys)
+document.body.addEventListener('htmx:afterRequest', function(event) {
+  // Sync URL for Projects
+  if (event.target.id === 'projectsList' || event.target.closest('#projectsList')) {
+    const status = document.getElementById('currentStatus')?.value || 'all';
+    const search = document.getElementById('projectSearchInput')?.value || '';
+
+    const url = new URL(window.location);
+    url.searchParams.set('status', status);
+    if (search) url.searchParams.set('search', search);
+    else url.searchParams.delete('search');
+
+    try {
+      const reqUrl = new URL(event.detail.xhr.responseURL);
+      const page = reqUrl.searchParams.get('page');
+      if (page &amp;&amp; page !== '1') url.searchParams.set('page', page);
+      else url.searchParams.delete('page');
+    } catch (_) {
+      url.searchParams.delete('page');
+    }
+
+    window.history.replaceState({}, '', url);
+  }
+
+  // Sync URL for Surveys
+  if (event.target.id === 'surveysList' || event.target.closest('#surveysList')) {
+    const type = document.getElementById('currentType')?.value || 'all';
+    const search = document.getElementById('surveySearchInput')?.value || '';
+
+    const url = new URL(window.location);
+    url.searchParams.set('type', type);
+    if (search) url.searchParams.set('search', search);
+    else url.searchParams.delete('search');
+
+    // Server-seitigen `HX-Push`-Header bevorzugen, wenn vorhanden (verhindert, dass `/fragment` in die History gelangt)
+    try {
+      const hxPush = event.detail.xhr &amp;&amp; event.detail.xhr.getResponseHeader &amp;&amp; event.detail.xhr.getResponseHeader('HX-Push');
+      if (hxPush) {
+        window.history.replaceState({}, '', hxPush);
+        return;
+      }
+
+      const reqUrl = new URL(event.detail.xhr.responseURL);
+      const page = reqUrl.searchParams.get('page');
+      if (page &amp;&amp; page !== '1') url.searchParams.set('page', page);
+      else url.searchParams.delete('page');
+    } catch (_) {
+      url.searchParams.delete('page');
+    }
+
+    window.history.replaceState({}, '', url);
+  }
+});
+
+
+// Simple inactivity-based polling control for HTMX polling
+(function() {
+  const INACTIVITY_TIMEOUT = 120000; // 2 minutes
+  let timeoutId = null;
+  
+  function setupInactivityStop(containerId) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+
+    // Ursprüngliches `hx-trigger` speichern
+    if (!el.dataset.originalHxTrigger) el.dataset.originalHxTrigger = el.getAttribute('hx-trigger') || '';
+
+    
+    function disablePolling() {
+      const orig = el.dataset.originalHxTrigger || '';
+      
+      const newTrig = orig.split(',').map(s => s.trim()).filter(t => !t.startsWith('every')).join(', ');
+      el.setAttribute('hx-trigger', newTrig || 'load');
+      if (window.htmx) htmx.process(el);
+    }
+
+    
+    function enablePolling() {
+      
+      const orig = el.dataset.originalHxTrigger || '';
+      el.setAttribute('hx-trigger', orig);
+      if (window.htmx) htmx.process(el);
+    }
+
+/**
+ * resetTimer steuert UI-Interaktionen im Frontend (DOM-Manipulation, Event-Handler).
+ *
+ * @returns {*} Beschreibung des Rückgabewerts
+ * @function resetTimer
+ */
+    function resetTimer() {
+      // reset HTMX 'every' timer by removing and re-adding the 'every' part
+      try {
+        disablePolling();
+/**
+ * Kurzer Re-Enable-Timeout innerhalb des Polling-Reset: aktiviert Polling wieder nach 50ms.
+ * @returns {void}
+ */
+   setTimeout(() => { enablePolling &amp;&amp; enablePolling(); }, 50);
+      } catch (e) {}
+
+      if (timeoutId) clearTimeout(timeoutId);
+/**
+ * Startet den Inaktivitäts-Timer, der nach `INACTIVITY_TIMEOUT` das Polling deaktiviert.
+ * @returns {void}
+ */
+   timeoutId = setTimeout(() => { disablePolling(); }, INACTIVITY_TIMEOUT);
+    }
+
+/**
+ * Bindet User-Aktivitäts-Listener (mousemove/keydown/click/touchstart), die den Inaktivitäts-Timer zurücksetzen.
+ * @returns {void}
+ */
+   ['mousemove','keydown','click','touchstart'].forEach(ev => window.addEventListener(ev, resetTimer, { passive: true }));
+/**
+ * Visibility-Change-Handler: pausiert Polling, wenn die Seite verborgen ist; reaktiviert bei Sichtbarkeit.
+ * @returns {void}
+ */
+   document.addEventListener('visibilitychange', () => { if (document.hidden) { if (timeoutId) clearTimeout(timeoutId); disablePolling(); } else resetTimer(); });
+    window.addEventListener('focus', resetTimer);
+    document.addEventListener('htmx:afterRequest', resetTimer);
+
+    document.addEventListener('DOMContentLoaded', resetTimer);
+  }
+
+  setupInactivityStop('surveysList');
+})();
+
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

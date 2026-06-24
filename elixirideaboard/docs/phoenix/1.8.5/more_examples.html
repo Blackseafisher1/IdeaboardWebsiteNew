@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix v1.8.5">
+
+
+    <title>5. Bringing It Home — Phoenix v1.8.5</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-209F6654.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.8.5
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="true">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Latest</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="https://hexdocs.pm/?packages=plug%3Alatest%2Cphoenix%3Alatest%2Cphoenix_html%3Alatest%2Cphoenix_live_view%3Alatest%2Cphoenix_pubsub%3Alatest%2Cphoenix_template%3Alatest&q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Latest</span>
+                <span class="help">Search latest versions of Plug, Phoenix, Phoenix.{HTML, LiveView, PubSub, Template}</span>
+              </button>
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="false">
+                <span class="name">Current version</span>
+                <span class="help">Search only this project</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>5. Bringing It Home</h1>
+
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/guides/data_modelling/more_examples.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p>With our <code class="inline">Catalog</code> and <code class="inline">ShoppingCart</code> contexts, we're seeing first-hand how our well-considered modules and function names are yielding clear and maintainable code. Our last order of business is to allow the user to initiate the checkout process. We won't go as far as integrating payment processing or order fulfillment, but we'll get you started in that direction. This will be a great opportunity to put what we have learned so far in practice.</p><p>Like before, we need to decide where code for completing an order should live. Is it part of the catalog? Clearly not, but what about the shopping cart? Shopping carts are related to orders – after all, the user has to add items in order to purchase any products – but should the order checkout process be grouped here?</p><p>If we stop and consider the order process, we'll see that orders involve related, but distinctly different data from the cart contents. Also, business rules around the checkout process are much different than carting. For example, we may allow a user to add a back-ordered item to their cart, but we could not allow an order with no inventory to be completed. Additionally, we need to capture point-in-time product information when an order is completed, such as the price of the items <em>at payment transaction time</em>. This is essential because a product price may change in the future, but the line items in our order must always record and display what we charged at time of purchase. For these reasons, we can start to see that ordering can stand on its own with its own data concerns and business rules.</p><p>Naming wise, <code class="inline">Orders</code> clearly defines our context, so let's get started by again taking advantage of the context generators. Note that the <code class="inline">user</code> scope generated by <a href="Mix.Tasks.Phx.Gen.Auth.html"><code class="inline">mix phx.gen.auth</code></a> is marked as default scope (in your <code class="inline">config/config.exs</code>), therefore we don't need to specify it in our command. There can be different scopes in an application, in which case the <code class="inline">--scope</code> option can be used when running the generators. Run the following command in your console:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.gen.context Orders Order orders total_price:decimal
+</span><span class="">
+</span><span class="">* creating lib/hello/orders/order.ex
+</span><span class="">* creating priv/repo/migrations/20250209214612_create_orders.exs
+</span><span class="">* creating lib/hello/orders.ex
+</span><span class="">* injecting lib/hello/orders.ex
+</span><span class="">* creating test/hello/orders_test.exs
+</span><span class="">* injecting test/hello/orders_test.exs
+</span><span class="">* creating test/support/fixtures/orders_fixtures.ex
+</span><span class="">* injecting test/support/fixtures/orders_fixtures.ex
+</span><span class="">
+</span><span class="">Remember to update your repository by running migrations:
+</span><span class="">
+</span><span class="">    $ mix ecto.migrate
+</span></code></pre><p>We generated an <code class="inline">Orders</code> context. The order is automatically scoped to the current user and added a <code class="inline">total_price</code> column. With our starting point in place, let's open up the newly created migration in <code class="inline">priv/repo/migrations/*_create_orders.exs</code> and make the following changes:</p><pre><code class="makeup diff" translate="no"><span class="n">  def change do
+</span><span class="n">    create table(:orders) do
+</span><span class="gd">-</span><span class="gd">     add :total_price, :decimal
+</span><span class="gi">+</span><span class="gi">     add :total_price, :decimal, precision: 15, scale: 6, null: false
+</span><span class="n">      add :user_id, references(:users, type: :id, on_delete: :delete_all)
+</span><span class="w">
+</span><span class="n">      timestamps(type: :utc_datetime)
+</span><span class="n">    end
+</span><span class="n">  end</span></code></pre><p>Like we did previously, we gave appropriate precision and scale options for our decimal column which will allow us to store currency without precision loss. We also added a not-null constraint to enforce all orders to have a price.</p><p>The orders table alone doesn't hold much information, but we know we'll need to store point-in-time product price information of all the items in the order. For that, we'll add an additional struct for this context named <code class="inline">LineItem</code>. Line items will capture the price of the product <em>at payment transaction time</em>. Please run the following command:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">mix phx.gen.context Orders LineItem order_line_items \
+</span><span class="">price:decimal quantity:integer \
+</span><span class="">order_id:references:orders product_id:references:products --no-scope
+</span><span class="">
+</span><span class="">You are generating into an existing context.
+</span><span class="">...
+</span><span class="">Would you like to proceed? [Yn] y
+</span><span class="">* creating lib/hello/orders/line_item.ex
+</span><span class="">* creating priv/repo/migrations/20250209215050_create_order_line_items.exs
+</span><span class="">* injecting lib/hello/orders.ex
+</span><span class="">* injecting test/hello/orders_test.exs
+</span><span class="">* injecting test/support/fixtures/orders_fixtures.ex
+</span><span class="">
+</span><span class="">Remember to update your repository by running migrations:
+</span><span class="">
+</span><span class="">    $ mix ecto.migrate
+</span></code></pre><p>We used the <code class="inline">phx.gen.context</code> command to generate the <code class="inline">LineItem</code> Ecto schema and inject supporting functions into our orders context. Like before, let's modify the migration in <code class="inline">priv/repo/migrations/*_create_order_line_items.exs</code> and make the following decimal field changes:</p><pre><code class="makeup diff" translate="no"><span class="n">  def change do
+</span><span class="n">    create table(:order_line_items) do
+</span><span class="gd">-</span><span class="gd">     add :price, :decimal
+</span><span class="gi">+</span><span class="gi">     add :price, :decimal, precision: 15, scale: 6, null: false
+</span><span class="n">      add :quantity, :integer
+</span><span class="n">      add :order_id, references(:orders, on_delete: :nothing)
+</span><span class="n">      add :product_id, references(:products, on_delete: :nothing)
+</span><span class="w">
+</span><span class="n">      timestamps(type: :utc_datetime)
+</span><span class="n">    end
+</span><span class="w">
+</span><span class="n">    create index(:order_line_items, [:order_id])
+</span><span class="n">    create index(:order_line_items, [:product_id])
+</span><span class="n">  end</span></code></pre><p>With our migration in place, let's wire up our orders and line items associations in <code class="inline">lib/hello/orders/order.ex</code>:</p><pre><code class="makeup diff" translate="no"><span class="n">  schema &quot;orders&quot; do
+</span><span class="n">    field :total_price, :decimal
+</span><span class="gd">-</span><span class="gd">   field :user_id, :id
+</span><span class="w">
+</span><span class="gi">+</span><span class="gi">   belongs_to :user, Hello.Accounts.User
+</span><span class="gi">+</span><span class="gi">   has_many :line_items, Hello.Orders.LineItem
+</span><span class="gi">+</span><span class="gi">   has_many :products, through: [:line_items, :product]
+</span><span class="w">
+</span><span class="n">    timestamps(type: :utc_datetime)
+</span><span class="n">  end</span></code></pre><p>We used <code class="inline">has_many :line_items</code> to associate orders and line items, just like we've seen before. Next, we used the <code class="inline">:through</code> feature of <code class="inline">has_many</code>, which allows us to instruct ecto how to associate resources across another relationship. In this case, we can associate products of an order by finding all products through associated line items. Next, let's wire up the association in the other direction in <code class="inline">lib/hello/orders/line_item.ex</code>:</p><pre><code class="makeup diff" translate="no"><span class="n">  schema &quot;order_line_items&quot; do
+</span><span class="n">    field :price, :decimal
+</span><span class="n">    field :quantity, :integer
+</span><span class="gd">-</span><span class="gd">   field :order_id, :id
+</span><span class="gd">-</span><span class="gd">   field :product_id, :id
+</span><span class="w">
+</span><span class="gi">+</span><span class="gi">   belongs_to :order, Hello.Orders.Order
+</span><span class="gi">+</span><span class="gi">   belongs_to :product, Hello.Catalog.Product
+</span><span class="w">
+</span><span class="n">    timestamps(type: :utc_datetime)
+</span><span class="n">  end</span></code></pre><p>We used <code class="inline">belongs_to</code> to associate line items to orders and products. With our associations in place, we can start integrating the web interface into our order process. Open up your router <code class="inline">lib/hello_web/router.ex</code> and add the following line:</p><pre><code class="makeup diff" translate="no"><span class="n">  scope &quot;/&quot;, HelloWeb do
+</span><span class="n">    pipe_through [:browser, :require_authenticated_user]
+</span><span class="w">
+</span><span class="n">    resources &quot;/cart_items&quot;, CartItemController, only: [:create, :delete]
+</span><span class="w">
+</span><span class="n">    get &quot;/cart&quot;, CartController, :show
+</span><span class="n">    put &quot;/cart&quot;, CartController, :update
+</span><span class="w">
+</span><span class="gi">+</span><span class="gi">   resources &quot;/orders&quot;, OrderController, only: [:create, :show]
+</span><span class="n">  end</span></code></pre><p>We wired up <code class="inline">create</code> and <code class="inline">show</code> routes for our generated <code class="inline">OrderController</code>, since these are the only actions we need at the moment. With our routes in place, we can now migrate up:</p><pre><code class="makeup console" translate="no"><span class="gp unselectable">$ </span><span class="">mix ecto.migrate
+</span><span class="">
+</span><span class="">17:14:37.715 [info] == Running 20250209214612 Hello.Repo.Migrations.CreateOrders.change/0 forward
+</span><span class="">
+</span><span class="">17:14:37.720 [info] create table orders
+</span><span class="">
+</span><span class="">17:14:37.755 [info] == Migrated 20250209214612 in 0.0s
+</span><span class="">
+</span><span class="">17:14:37.784 [info] == Running 20250209215050 Hello.Repo.Migrations.CreateOrderLineItems.change/0 forward
+</span><span class="">
+</span><span class="">17:14:37.785 [info] create table order_line_items
+</span><span class="">
+</span><span class="">17:14:37.795 [info] create index order_line_items_order_id_index
+</span><span class="">
+</span><span class="">17:14:37.796 [info] create index order_line_items_product_id_index
+</span><span class="">
+</span><span class="">17:14:37.798 [info] == Migrated 20250209215050 in 0.0s
+</span></code></pre><p>Before we render information about our orders, we need to ensure our order data is fully populated and can be looked up by a current user. Open up your orders context in <code class="inline">lib/hello/orders.ex</code> and adjust your <code class="inline">get_order!/2</code> to include a preload:</p><pre><code class="makeup diff" translate="no"><span class="n">   def get_order!(%Scope{} = scope, id) do
+</span><span class="gd">-</span><span class="gd">    Repo.get_by!(Order, id: id, user_id: scope.user.id)
+</span><span class="gi">+</span><span class="gi">    Order
+</span><span class="gi">+</span><span class="gi">    |&gt; Repo.get_by!(id: id, user_id: scope.user.id)
+</span><span class="gi">+</span><span class="gi">    |&gt; Repo.preload([line_items: [:product]])
+</span><span class="n">   end</span></code></pre><p>To complete an order, our cart page can issue a POST to the <code class="inline">OrderController.create</code> action, but we need to implement the operations and logic to actually complete an order. Like before, we'll start at the web interface. Create a new file at <code class="inline">lib/hello_web/controllers/order_controller.ex</code> and key this in:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">HelloWeb.OrderController</span><span class="w"> </span><span class="k" data-group-id="7427555356-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">HelloWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:controller</span><span class="w">
+
+  </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Hello.Orders</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">create</span><span class="p" data-group-id="7427555356-2">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p" data-group-id="7427555356-2">)</span><span class="w"> </span><span class="k" data-group-id="7427555356-3">do</span><span class="w">
+    </span><span class="k">case</span><span class="w"> </span><span class="nc">Orders</span><span class="o">.</span><span class="n">complete_order</span><span class="p" data-group-id="7427555356-4">(</span><span class="n">conn</span><span class="o">.</span><span class="n">assigns</span><span class="o">.</span><span class="n">current_scope</span><span class="p">,</span><span class="w"> </span><span class="n">conn</span><span class="o">.</span><span class="n">assigns</span><span class="o">.</span><span class="n">cart</span><span class="p" data-group-id="7427555356-4">)</span><span class="w"> </span><span class="k" data-group-id="7427555356-5">do</span><span class="w">
+      </span><span class="p" data-group-id="7427555356-6">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p" data-group-id="7427555356-6">}</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+        </span><span class="n">conn</span><span class="w">
+        </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">put_flash</span><span class="p" data-group-id="7427555356-7">(</span><span class="ss">:info</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Order created successfully.&quot;</span><span class="p" data-group-id="7427555356-7">)</span><span class="w">
+        </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">redirect</span><span class="p" data-group-id="7427555356-8">(</span><span class="ss">to</span><span class="p">:</span><span class="w"> </span><span class="sx">~p&quot;/orders/</span><span class="si" data-group-id="7427555356-9">#{</span><span class="n">order</span><span class="si" data-group-id="7427555356-9">}</span><span class="sx">&quot;</span><span class="p" data-group-id="7427555356-8">)</span><span class="w">
+
+      </span><span class="p" data-group-id="7427555356-10">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="c">_reason</span><span class="p" data-group-id="7427555356-10">}</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+        </span><span class="n">conn</span><span class="w">
+        </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">put_flash</span><span class="p" data-group-id="7427555356-11">(</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;There was an error processing your order&quot;</span><span class="p" data-group-id="7427555356-11">)</span><span class="w">
+        </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">redirect</span><span class="p" data-group-id="7427555356-12">(</span><span class="ss">to</span><span class="p">:</span><span class="w"> </span><span class="sx">~p&quot;/cart&quot;</span><span class="p" data-group-id="7427555356-12">)</span><span class="w">
+    </span><span class="k" data-group-id="7427555356-5">end</span><span class="w">
+  </span><span class="k" data-group-id="7427555356-3">end</span><span class="w">
+</span><span class="k" data-group-id="7427555356-1">end</span></code></pre><p>We wrote the <code class="inline">create</code> action to call an as-yet-implemented <code class="inline">Orders.complete_order/2</code> function. Our code is technically &quot;creating&quot; an order, but it's important to step back and consider the naming of your interfaces. The act of <em>completing</em> an order is extremely important in our system. Money changes hands in a transaction, physical goods could be automatically shipped, etc. Such an operation deserves a better, more obvious function name, such as <code class="inline">complete_order</code>. If the order is completed successfully we redirect to the show page, otherwise a flash error is shown as we redirect back to the cart page.</p><p>Here is also a good opportunity to highlight that contexts can naturally work with data defined by other contexts too. This will be especially common with data that is used throughout the application, such as the cart here (but it can also be the current user or the current project, and so forth, depending on your project).</p><p>Now we can implement our <code class="inline">Orders.complete_order/2</code> function. To complete an order, our job will require a few operations:</p><ol><li>A new order record must be persisted with the total price of the order</li><li>All items in the cart must be transformed into new order line items records
+with quantity and point-in-time product price information</li><li>After successful order insert (and eventual payment), items must be pruned
+from the cart</li></ol><p>From our requirements alone, we can start to see why a generic <code class="inline">create_order</code> function doesn't cut it. Let's implement this new function in <code class="inline">lib/hello/orders.ex</code>:</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Hello.Orders.LineItem</span><span class="w">
+  </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Hello.ShoppingCart</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">complete_order</span><span class="p" data-group-id="9566348523-1">(</span><span class="p" data-group-id="9566348523-2">%</span><span class="nc" data-group-id="9566348523-2">Scope</span><span class="p" data-group-id="9566348523-2">{</span><span class="p" data-group-id="9566348523-2">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9566348523-3">%</span><span class="nc" data-group-id="9566348523-3">ShoppingCart.Cart</span><span class="p" data-group-id="9566348523-3">{</span><span class="p" data-group-id="9566348523-3">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cart</span><span class="p" data-group-id="9566348523-1">)</span><span class="w"> </span><span class="k" data-group-id="9566348523-4">do</span><span class="w">
+    </span><span class="no">true</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cart</span><span class="o">.</span><span class="n">user_id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">scope</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="w">
+
+    </span><span class="n">line_items</span><span class="w"> </span><span class="o">=</span><span class="w">
+      </span><span class="nc">Enum</span><span class="o">.</span><span class="n">map</span><span class="p" data-group-id="9566348523-5">(</span><span class="n">cart</span><span class="o">.</span><span class="n">items</span><span class="p">,</span><span class="w"> </span><span class="k" data-group-id="9566348523-6">fn</span><span class="w"> </span><span class="n">item</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+        </span><span class="p" data-group-id="9566348523-7">%{</span><span class="w">
+          </span><span class="ss">product_id</span><span class="p">:</span><span class="w"> </span><span class="n">item</span><span class="o">.</span><span class="n">product_id</span><span class="p">,</span><span class="w">
+          </span><span class="ss">price</span><span class="p">:</span><span class="w"> </span><span class="n">item</span><span class="o">.</span><span class="n">product</span><span class="o">.</span><span class="n">price</span><span class="p">,</span><span class="w">
+          </span><span class="ss">quantity</span><span class="p">:</span><span class="w"> </span><span class="n">item</span><span class="o">.</span><span class="n">quantity</span><span class="w">
+        </span><span class="p" data-group-id="9566348523-7">}</span><span class="w">
+      </span><span class="k" data-group-id="9566348523-6">end</span><span class="p" data-group-id="9566348523-5">)</span><span class="w">
+
+    </span><span class="n">order_changeset</span><span class="w"> </span><span class="o">=</span><span class="w">
+      </span><span class="nc">Ecto.Changeset</span><span class="o">.</span><span class="n">change</span><span class="p" data-group-id="9566348523-8">(</span><span class="p" data-group-id="9566348523-9">%</span><span class="nc" data-group-id="9566348523-9">Order</span><span class="p" data-group-id="9566348523-9">{</span><span class="p" data-group-id="9566348523-9">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9566348523-10">%{</span><span class="w">
+        </span><span class="ss">user_id</span><span class="p">:</span><span class="w"> </span><span class="n">scope</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span><span class="w">
+        </span><span class="ss">total_price</span><span class="p">:</span><span class="w"> </span><span class="nc">ShoppingCart</span><span class="o">.</span><span class="n">total_cart_price</span><span class="p" data-group-id="9566348523-11">(</span><span class="n">cart</span><span class="p" data-group-id="9566348523-11">)</span><span class="p">,</span><span class="w">
+        </span><span class="ss">line_items</span><span class="p">:</span><span class="w"> </span><span class="n">line_items</span><span class="w">
+      </span><span class="p" data-group-id="9566348523-10">}</span><span class="p" data-group-id="9566348523-8">)</span><span class="w">
+
+    </span><span class="nc">Repo</span><span class="o">.</span><span class="n">transact</span><span class="p" data-group-id="9566348523-12">(</span><span class="k" data-group-id="9566348523-13">fn</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+      </span><span class="k">with</span><span class="w"> </span><span class="p" data-group-id="9566348523-14">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p" data-group-id="9566348523-14">}</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nc">Repo</span><span class="o">.</span><span class="n">insert</span><span class="p" data-group-id="9566348523-15">(</span><span class="n">order_changeset</span><span class="p" data-group-id="9566348523-15">)</span><span class="p">,</span><span class="w">
+           </span><span class="p" data-group-id="9566348523-16">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="c">_cart</span><span class="p" data-group-id="9566348523-16">}</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nc">ShoppingCart</span><span class="o">.</span><span class="n">prune_cart_items</span><span class="p" data-group-id="9566348523-17">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">cart</span><span class="p" data-group-id="9566348523-17">)</span><span class="w"> </span><span class="k" data-group-id="9566348523-18">do</span><span class="w">
+        </span><span class="p" data-group-id="9566348523-19">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p" data-group-id="9566348523-19">}</span><span class="w">
+      </span><span class="k" data-group-id="9566348523-18">end</span><span class="w">
+    </span><span class="k" data-group-id="9566348523-13">end</span><span class="p" data-group-id="9566348523-12">)</span><span class="w">
+    </span><span class="o">|&gt;</span><span class="w"> </span><span class="k">case</span><span class="w"> </span><span class="k" data-group-id="9566348523-20">do</span><span class="w">
+      </span><span class="p" data-group-id="9566348523-21">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p" data-group-id="9566348523-21">}</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+        </span><span class="n">broadcast_order</span><span class="p" data-group-id="9566348523-22">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9566348523-23">{</span><span class="ss">:created</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p" data-group-id="9566348523-23">}</span><span class="p" data-group-id="9566348523-22">)</span><span class="w">
+        </span><span class="p" data-group-id="9566348523-24">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p" data-group-id="9566348523-24">}</span><span class="w">
+  
+      </span><span class="p" data-group-id="9566348523-25">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="n">reason</span><span class="p" data-group-id="9566348523-25">}</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+        </span><span class="p" data-group-id="9566348523-26">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="n">reason</span><span class="p" data-group-id="9566348523-26">}</span><span class="w">
+    </span><span class="k" data-group-id="9566348523-20">end</span><span class="w">
+  </span><span class="k" data-group-id="9566348523-4">end</span></code></pre><p>We started by mapping the <code class="inline">%ShoppingCart.CartItem{}</code>'s in our shopping cart into a map of order line items structs. The job of the order line item record is to capture the price of the product <em>at payment transaction time</em>, so we reference the product's price here. Next, we create a bare order changeset with <a href="https://hexdocs.pm/ecto/3.13.2/Ecto.Changeset.html#change/2"><code class="inline">Ecto.Changeset.change/2</code></a> and associate our user UUID, set our total price calculation, and place our order line items in the changeset. With a fresh order changeset ready to be inserted, we now make use of <code class="inline">Repo.transact/2</code> to execute our operations in a database transaction. We start by inserting the order, followed by a step that prunes all items from the user’s cart. The function wrapped inside <code class="inline">Repo.transact/2</code> must either return <code class="inline">{:ok, result}</code> or error, which halts and rolls back the transaction. Running the transaction will execute these operations in sequence, and we return the result to the caller once completed.</p><p>To close out our order completion, we need to implement the <code class="inline">ShoppingCart.prune_cart_items/1</code> function in <code class="inline">lib/hello/shopping_cart.ex</code>:</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="nf">prune_cart_items</span><span class="p" data-group-id="5019896698-1">(</span><span class="p" data-group-id="5019896698-2">%</span><span class="nc" data-group-id="5019896698-2">Scope</span><span class="p" data-group-id="5019896698-2">{</span><span class="p" data-group-id="5019896698-2">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5019896698-3">%</span><span class="nc" data-group-id="5019896698-3">Cart</span><span class="p" data-group-id="5019896698-3">{</span><span class="p" data-group-id="5019896698-3">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cart</span><span class="p" data-group-id="5019896698-1">)</span><span class="w"> </span><span class="k" data-group-id="5019896698-4">do</span><span class="w">
+    </span><span class="p" data-group-id="5019896698-5">{</span><span class="bp">_</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p" data-group-id="5019896698-5">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Repo</span><span class="o">.</span><span class="n">delete_all</span><span class="p" data-group-id="5019896698-6">(</span><span class="n">from</span><span class="p" data-group-id="5019896698-7">(</span><span class="n">i</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nc">CartItem</span><span class="p">,</span><span class="w"> </span><span class="ss">where</span><span class="p">:</span><span class="w"> </span><span class="n">i</span><span class="o">.</span><span class="n">cart_id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="o">^</span><span class="n">cart</span><span class="o">.</span><span class="n">id</span><span class="p" data-group-id="5019896698-7">)</span><span class="p" data-group-id="5019896698-6">)</span><span class="w">
+    </span><span class="p" data-group-id="5019896698-8">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">get_cart</span><span class="p" data-group-id="5019896698-9">(</span><span class="n">scope</span><span class="p" data-group-id="5019896698-9">)</span><span class="p" data-group-id="5019896698-8">}</span><span class="w">
+  </span><span class="k" data-group-id="5019896698-4">end</span></code></pre><p>Our new function accepts the cart struct and issues a <code class="inline">Repo.delete_all</code> which accepts a query of all items for the provided cart. We return a success result by simply reloading the pruned cart to the caller. With our context complete, we now need to show the user their completed order. Head back to your order controller and add the <code class="inline">show/2</code> action:</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="nf">show</span><span class="p" data-group-id="0387580574-1">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0387580574-2">%{</span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">id</span><span class="p" data-group-id="0387580574-2">}</span><span class="p" data-group-id="0387580574-1">)</span><span class="w"> </span><span class="k" data-group-id="0387580574-3">do</span><span class="w">
+    </span><span class="n">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Orders</span><span class="o">.</span><span class="n">get_order!</span><span class="p" data-group-id="0387580574-4">(</span><span class="n">conn</span><span class="o">.</span><span class="n">assigns</span><span class="o">.</span><span class="n">current_scope</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p" data-group-id="0387580574-4">)</span><span class="w">
+    </span><span class="n">render</span><span class="p" data-group-id="0387580574-5">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="p">,</span><span class="w"> </span><span class="ss">order</span><span class="p">:</span><span class="w"> </span><span class="n">order</span><span class="p" data-group-id="0387580574-5">)</span><span class="w">
+  </span><span class="k" data-group-id="0387580574-3">end</span></code></pre><p>We added the show action to pass our <code class="inline">conn.assigns.current_scope</code> to <code class="inline">get_order!</code> which authorizes orders to be viewable only by the owner of the order. Next, we can implement the view and template. Create a new view file at <code class="inline">lib/hello_web/controllers/order_html.ex</code> with the following content:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">HelloWeb.OrderHTML</span><span class="w"> </span><span class="k" data-group-id="6638463247-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">HelloWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:html</span><span class="w">
+
+  </span><span class="n">embed_templates</span><span class="w"> </span><span class="s">&quot;order_html/*&quot;</span><span class="w">
+</span><span class="k" data-group-id="6638463247-1">end</span></code></pre><p>Next we can create the template at <code class="inline">lib/hello_web/controllers/order_html/show.html.heex</code>:</p><pre><code class="makeup heex" translate="no"><span class="p">&lt;</span><span class="nc">Layouts</span><span class="o">.</span><span class="n">app</span><span class="w"> </span><span class="na">flash</span><span class="p">=</span><span class="p" data-group-id="5580651828-1">{</span><span class="na">@flash</span><span class="p" data-group-id="5580651828-1">}</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nf">.header</span><span class="p">&gt;</span><span class="w">
+</span><span class="n">    Thank you for your order!
+</span><span class="w">    </span><span class="p">&lt;</span><span class="ss">:subtitle</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">      </span><span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span><span class="n">Email: </span><span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span><span class="p" data-group-id="5580651828-2">{</span><span class="na">@current_scope</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p" data-group-id="5580651828-2">}</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;/</span><span class="ss">:subtitle</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;/</span><span class="nf">.header</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nf">.table</span><span class="w"> </span><span class="na">id</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">i</span><span class="s2">t</span><span class="s2">e</span><span class="s2">m</span><span class="s2">s</span><span class="p">&quot;</span><span class="w"> </span><span class="na">rows</span><span class="p">=</span><span class="p" data-group-id="5580651828-3">{</span><span class="na">@order</span><span class="o">.</span><span class="n">line_items</span><span class="p" data-group-id="5580651828-3">}</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="ss">:col</span><span class="w"> </span><span class="na">:let</span><span class="p">=</span><span class="p" data-group-id="5580651828-4">{</span><span class="n">item</span><span class="p" data-group-id="5580651828-4">}</span><span class="w"> </span><span class="na">label</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">Title</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="p" data-group-id="5580651828-5">{</span><span class="n">item</span><span class="o">.</span><span class="n">product</span><span class="o">.</span><span class="n">title</span><span class="p" data-group-id="5580651828-5">}</span><span class="p">&lt;/</span><span class="ss">:col</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="ss">:col</span><span class="w"> </span><span class="na">:let</span><span class="p">=</span><span class="p" data-group-id="5580651828-6">{</span><span class="n">item</span><span class="p" data-group-id="5580651828-6">}</span><span class="w"> </span><span class="na">label</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">Quantity</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="p" data-group-id="5580651828-7">{</span><span class="n">item</span><span class="o">.</span><span class="n">quantity</span><span class="p" data-group-id="5580651828-7">}</span><span class="p">&lt;/</span><span class="ss">:col</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="ss">:col</span><span class="w"> </span><span class="na">:let</span><span class="p">=</span><span class="p" data-group-id="5580651828-8">{</span><span class="n">item</span><span class="p" data-group-id="5580651828-8">}</span><span class="w"> </span><span class="na">label</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">Price</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">      </span><span class="p" data-group-id="5580651828-9">{</span><span class="nc">HelloWeb.CartHTML</span><span class="o">.</span><span class="n">currency_to_str</span><span class="p" data-group-id="5580651828-ex-1">(</span><span class="n">item</span><span class="o">.</span><span class="n">price</span><span class="p" data-group-id="5580651828-ex-1">)</span><span class="p" data-group-id="5580651828-9">}</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;/</span><span class="ss">:col</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;/</span><span class="nf">.table</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span><span class="n">Total price:</span><span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p" data-group-id="5580651828-10">{</span><span class="nc">HelloWeb.CartHTML</span><span class="o">.</span><span class="n">currency_to_str</span><span class="p" data-group-id="5580651828-ex-2">(</span><span class="na">@order</span><span class="o">.</span><span class="n">total_price</span><span class="p" data-group-id="5580651828-ex-2">)</span><span class="p" data-group-id="5580651828-10">}</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nf">.button</span><span class="w"> </span><span class="na">navigate</span><span class="p">=</span><span class="p" data-group-id="5580651828-11">{</span><span class="sx">~p&quot;/products&quot;</span><span class="p" data-group-id="5580651828-11">}</span><span class="p">&gt;</span><span class="n">Back to products</span><span class="p">&lt;/</span><span class="nf">.button</span><span class="p">&gt;</span><span class="w">
+</span><span class="p">&lt;/</span><span class="nc">Layouts</span><span class="o">.</span><span class="n">app</span><span class="p">&gt;</span></code></pre><p>To show our completed order, we displayed the order's user, followed by the line item listing with product title, quantity, and the price we &quot;transacted&quot; when completing the order, along with the total price.</p><p>Our last addition will be to add the &quot;complete order&quot; button to our cart page to allow completing an order. Add the following button to the &lt;.header&gt; of the cart show template in <code class="inline">lib/hello_web/controllers/cart_html/show.html.heex</code>:</p><pre><code class="makeup diff" translate="no"><span class="n">  &lt;.header&gt;
+</span><span class="n">    My Cart
+</span><span class="gi">+</span><span class="gi">   &lt;:actions&gt;
+</span><span class="gi">+</span><span class="gi">     &lt;.button href={~p&quot;/orders&quot;} method=&quot;post&quot;&gt;
+</span><span class="gi">+</span><span class="gi">       Complete order
+</span><span class="gi">+</span><span class="gi">     &lt;/.button&gt;
+</span><span class="gi">+</span><span class="gi">   &lt;/:actions&gt;
+</span><span class="n">  &lt;/.header&gt;</span></code></pre><p>We added a link with <code class="inline">method=&quot;post&quot;</code> to send a POST request to our <code class="inline">OrderController.create</code> action. If we head back to our cart page at <a href="http://localhost:4000/cart"><code class="inline">http://localhost:4000/cart</code></a> and complete an order, we'll be greeted by our rendered template:</p><pre><code class="text">Thank you for your order!
+
+User uuid: 08964c7c-908c-4a55-bcd3-9811ad8b0b9d
+Title                   Quantity Price
+Metaprogramming Elixir  2        $15.00
+
+Total price: $30.00</code></pre><p>We haven't added payments, but we can already see how our <code class="inline">ShoppingCart</code> and <code class="inline">Orders</code> context splitting is driving us towards a maintainable solution. With our cart items separated from our order line items, we are well equipped in the future to add payment transactions, cart price detection, and more.</p><p>Great work!</p>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="cross_context_boundaries.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+4. Cross-context Boundaries
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="faq.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+6. FAQ
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix/1.8.5">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix/1.8.5">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/phoenix/1.8.5/show/guides/data_modelling/more_examples.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+
+              <a href="Phoenix.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.39.1">
+    <meta name="project" content="gettext v1.0.2">
+
+
+    <title>Gettext.Plural — gettext v1.0.2</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-ZFNMEJKT.css" />
+
+    <script defer src="dist/sidebar_items-6A5253D5.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-HBZYRXZS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="Gettext.html" class="sidebar-projectName" translate="no">
+gettext
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.0.2
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-behaviour" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of gettext</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Gettext.Plural</span> <small>behaviour</small>
+      <small class="app-vsn" translate="no">(gettext v1.0.2)</small>
+
+    </h1>
+
+      <a href="https://github.com/elixir-gettext/gettext/blob/v1.0.2/lib/gettext/plural.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Behaviour and default implementation for finding plural forms in given
+locales.</p><p>This module both defines the <a href="Gettext.Plural.html"><code class="inline">Gettext.Plural</code></a> behaviour and provides a default
+implementation for it.</p><h2 id="module-plural-forms" class="section-heading"><a href="#module-plural-forms" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Plural Forms</span></h2><blockquote><p>For a given language, there is a grammatical rule on how to change words
+depending on the number qualifying the word. Different languages can have
+different rules.
+<a href="https://udn.realityripple.com/docs/Mozilla/Localization/Localization_and_Plurals">[source]</a></p></blockquote><p>Such grammatical rules define a number of <strong>plural forms</strong>. For example,
+English has two plural forms: one for when there is just one element (the
+<em>singular</em>) and another one for when there are zero or more than one elements
+(the <em>plural</em>). There are languages which only have one plural form and there
+are languages which have more than two.</p><p>In GNU Gettext (and in Gettext for Elixir), plural forms are represented by
+increasing 0-indexed integers. For example, in English <code class="inline">0</code> means singular and
+<code class="inline">1</code> means plural.</p><p>The goal of this module is to determine, given a locale:</p><ul><li><p>how many plural forms exist in that locale (<a href="#nplurals/1"><code class="inline">nplurals/1</code></a>);</p></li><li><p>to what plural form a given number of elements belongs to in that locale
+(<a href="#plural/2"><code class="inline">plural/2</code></a>).</p></li></ul><h2 id="module-default-implementation" class="section-heading"><a href="#module-default-implementation" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Default Implementation</span></h2><p><a href="Gettext.Plural.html"><code class="inline">Gettext.Plural</code></a> provides a default implementation of a plural module. Most
+common languages used on Earth should be covered by this default implementation. If
+custom pluralization rules are needed (for example, to add additional
+languages) a different plural module can be specified when creating a Gettext
+backend. For example, pluralization rules for the Elvish language could be
+added as follows:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Plural</span><span class="w"> </span><span class="k" data-group-id="6748850358-1">do</span><span class="w">
+  </span><span class="na">@behaviour</span><span class="w"> </span><span class="nc">Gettext.Plural</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">nplurals</span><span class="p" data-group-id="6748850358-2">(</span><span class="s">&quot;elv&quot;</span><span class="p" data-group-id="6748850358-2">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">plural</span><span class="p" data-group-id="6748850358-3">(</span><span class="s">&quot;elv&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p" data-group-id="6748850358-3">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">plural</span><span class="p" data-group-id="6748850358-4">(</span><span class="s">&quot;elv&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="6748850358-4">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">plural</span><span class="p" data-group-id="6748850358-5">(</span><span class="s">&quot;elv&quot;</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p" data-group-id="6748850358-5">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+
+  </span><span class="c1"># Fall back to Gettext.Plural</span><span class="w">
+  </span><span class="kd">defdelegate</span><span class="w"> </span><span class="n">nplurals</span><span class="p" data-group-id="6748850358-6">(</span><span class="n">locale</span><span class="p" data-group-id="6748850358-6">)</span><span class="p">,</span><span class="w"> </span><span class="ss">to</span><span class="p">:</span><span class="w"> </span><span class="nc">Gettext.Plural</span><span class="w">
+  </span><span class="kd">defdelegate</span><span class="w"> </span><span class="n">plural</span><span class="p" data-group-id="6748850358-7">(</span><span class="n">locale</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p" data-group-id="6748850358-7">)</span><span class="p">,</span><span class="w"> </span><span class="ss">to</span><span class="p">:</span><span class="w"> </span><span class="nc">Gettext.Plural</span><span class="w">
+</span><span class="k" data-group-id="6748850358-1">end</span></code></pre><p>The mathematical expressions used in this module to determine the plural form
+of a given number of elements are taken from <a href="http://localization-guide.readthedocs.org/en/latest/l10n/pluralforms.html#f2">this
+page</a>
+as well as from <a href="https://udn.realityripple.com/docs/Mozilla/Localization/Localization_and_Plurals">Mozilla's guide on &quot;Localization and
+plurals&quot;</a>.</p><h2 id="module-changing-implementations" class="section-heading"><a href="#module-changing-implementations" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Changing Implementations</span></h2><p>Once you have defined your custom plural forms module, you can use it
+in two ways. You can set it for all Gettext backends in your
+configuration:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># For example, in config/config.exs</span><span class="w">
+</span><span class="n">config</span><span class="w"> </span><span class="ss">:gettext</span><span class="p">,</span><span class="w"> </span><span class="ss">:plural_forms</span><span class="p">,</span><span class="w"> </span><span class="nc">MyApp.Plural</span></code></pre><p>or you can set it for each specific backend when you call <code class="inline">use Gettext</code>:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Gettext</span><span class="w"> </span><span class="k" data-group-id="3189940981-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Gettext.Backend</span><span class="p">,</span><span class="w">
+    </span><span class="ss">otp_app</span><span class="p">:</span><span class="w"> </span><span class="ss">:my_app</span><span class="p">,</span><span class="w">
+    </span><span class="ss">plural_forms</span><span class="p">:</span><span class="w"> </span><span class="nc">MyApp.Plural</span><span class="w">
+</span><span class="k" data-group-id="3189940981-1">end</span></code></pre><section role="note" class="admonition warning"><h4 class="admonition-title warning">Compile-time Configuration</h4><p>Set <code class="inline">:plural_forms</code> in your <code class="inline">config/config.exs</code> and
+not in <code class="inline">config/runtime.exs</code>, as Gettext reads this option when
+compiling your backends.</p></section><p>Task such as <a href="Mix.Tasks.Gettext.Merge.html"><code class="inline">mix gettext.merge</code></a> use the plural
+backend configured under the <code class="inline">:gettext</code> application, so in general
+the global configuration approach is preferred.</p><p>Some tasks also allow the number of plural forms to be given
+explicitly, for example:</p><pre><code class="makeup elixir" translate="no"><span class="n">mix</span><span class="w"> </span><span class="n">gettext</span><span class="o">.</span><span class="n">merge</span><span class="w"> </span><span class="n">priv</span><span class="o">/</span><span class="n">gettext</span><span class="w"> </span><span class="o">--</span><span class="n">locale</span><span class="o">=</span><span class="n">gsw_CH</span><span class="w"> </span><span class="o">--</span><span class="n">plural</span><span class="o">-</span><span class="n">forms</span><span class="o">=</span><span class="mi">2</span></code></pre><h2 id="module-unknown-locales" class="section-heading"><a href="#module-unknown-locales" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Unknown Locales</span></h2><p>Trying to call <a href="Gettext.Plural.html"><code class="inline">Gettext.Plural</code></a> functions with unknown locales will result in
+a <a href="Gettext.Plural.UnknownLocaleError.html"><code class="inline">Gettext.Plural.UnknownLocaleError</code></a> exception.</p><h2 id="module-language-and-territory" class="section-heading"><a href="#module-language-and-territory" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Language and Territory</span></h2><p>Often, a locale is composed as a language and territory pair, such as
+<code class="inline">en_US</code>. The default implementation for <a href="Gettext.Plural.html"><code class="inline">Gettext.Plural</code></a> handles <code class="inline">xx_YY</code> by
+forwarding it to <code class="inline">xx</code> (except for <em>just Brazilian Portuguese</em>, <code class="inline">pt_BR</code>, which
+is not forwarded to <code class="inline">pt</code> as pluralization rules differ slightly). We treat the
+underscore as a separator according to
+<a href="https://en.wikipedia.org/wiki/ISO/IEC_15897">ISO 15897</a>. Sometimes, a dash <code class="inline">-</code> is
+used as a separator (for example <a href="https://en.wikipedia.org/wiki/IETF_language_tag">BCP47</a>
+locales use this as in <code class="inline">en-US</code>): this is <em>not forwarded</em> to <code class="inline">en</code> in the default
+<a href="Gettext.Plural.html"><code class="inline">Gettext.Plural</code></a> (and it will raise an <a href="Gettext.Plural.UnknownLocaleError.html"><code class="inline">Gettext.Plural.UnknownLocaleError</code></a> exception
+if there are no messages for <code class="inline">en-US</code>). We recommend defining a custom plural forms
+module that replaces <code class="inline">-</code> with <code class="inline">_</code> if needed.</p><h2 id="module-examples" class="section-heading"><a href="#module-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><p>An example of the plural form of a given number of elements in the Polish
+language:</p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Gettext.Plural</span><span class="o">.</span><span class="n">plural</span><span class="p" data-group-id="8847791135-1">(</span><span class="s">&quot;pl&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="8847791135-1">)</span><span class="w">
+</span><span class="mi">0</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Gettext.Plural</span><span class="o">.</span><span class="n">plural</span><span class="p" data-group-id="8847791135-2">(</span><span class="s">&quot;pl&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="8847791135-2">)</span><span class="w">
+</span><span class="mi">1</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Gettext.Plural</span><span class="o">.</span><span class="n">plural</span><span class="p" data-group-id="8847791135-3">(</span><span class="s">&quot;pl&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p" data-group-id="8847791135-3">)</span><span class="w">
+</span><span class="mi">2</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Gettext.Plural</span><span class="o">.</span><span class="n">plural</span><span class="p" data-group-id="8847791135-4">(</span><span class="s">&quot;pl&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">112</span><span class="p" data-group-id="8847791135-4">)</span><span class="w">
+</span><span class="mi">2</span></code></pre><p>As expected, <a href="#nplurals/1"><code class="inline">nplurals/1</code></a> returns the possible number of plural forms:</p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Gettext.Plural</span><span class="o">.</span><span class="n">nplurals</span><span class="p" data-group-id="1637695658-1">(</span><span class="s">&quot;pl&quot;</span><span class="p" data-group-id="1637695658-1">)</span><span class="w">
+</span><span class="mi">3</span></code></pre>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:locale/0" data-no-tooltip="" translate="no">locale()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>A locale passed to <a><code class="inline">plural/2</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:plural_info/0" data-no-tooltip="" translate="no">plural_info()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The term that the optional <a><code class="inline">init/1</code></a> callback returns.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:pluralization_context/0" data-no-tooltip="" translate="no">pluralization_context()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The context passed to the optional <a><code class="inline">init/1</code></a> callback.</p></div>
+
+    </div>
+
+</div>
+<div class="summary-callbacks summary">
+  <h2>
+    <a href="#callbacks">Callbacks</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:init/1" data-no-tooltip="" translate="no">init(pluralization_context)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Should initialize the context for <a><code class="inline">nplurals/1</code></a> and <a><code class="inline">plural/2</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:nplurals/1" data-no-tooltip="" translate="no">nplurals(plural_info)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Should return the number of possible plural forms in the given <code class="inline">locale</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:plural/2" data-no-tooltip="" translate="no">plural(plural_info, count)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Should return the plural form in the given <code class="inline">locale</code> for the given <code class="inline">count</code> of
+elements.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:plural_forms_header/1" data-no-tooltip="" translate="no">plural_forms_header(locale)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Should return the value of the <code class="inline">Plural-Forms</code> header for the given <code class="inline">locale</code>,
+if present.</p></div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#nplurals/1" data-no-tooltip="" translate="no">nplurals(locale)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Default implementation of the <a><code class="inline">nplurals/1</code></a> callback.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#plural/2" data-no-tooltip="" translate="no">plural(locale, count)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Default implementation of the <a><code class="inline">plural/2</code></a> callback.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#plural_forms_header/1" data-no-tooltip="" translate="no">plural_forms_header(locale)</a>
+
+      </div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+
+    <div class="types-list">
+<section class="detail" id="t:locale/0">
+
+  <div class="detail-header">
+    <a href="#t:locale/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">locale()</h1>
+
+        <span class="note">(since 0.22.0)</span>
+
+
+        <a href="https://github.com/elixir-gettext/gettext/blob/v1.0.2/lib/gettext/plural.ex#L142" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> locale() :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+<p>A locale passed to <a href="#c:plural/2"><code class="inline">plural/2</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="t:plural_info/0">
+
+  <div class="detail-header">
+    <a href="#t:plural_info/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">plural_info()</h1>
+
+        <span class="note">(since 0.22.0)</span>
+
+
+        <a href="https://github.com/elixir-gettext/gettext/blob/v1.0.2/lib/gettext/plural.ex#L160" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> plural_info() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()</pre>
+
+      </div>
+
+<p>The term that the optional <a href="#c:init/1"><code class="inline">init/1</code></a> callback returns.</p>
+  </section>
+</section>
+<section class="detail" id="t:pluralization_context/0">
+
+  <div class="detail-header">
+    <a href="#t:pluralization_context/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">pluralization_context()</h1>
+
+        <span class="note">(since 0.22.0)</span>
+
+
+        <a href="https://github.com/elixir-gettext/gettext/blob/v1.0.2/lib/gettext/plural.ex#L151" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> pluralization_context() :: %{
+  :locale =&gt; <a href="#t:locale/0">locale</a>(),
+  optional(:plural_forms_header) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
+}</pre>
+
+      </div>
+
+<p>The context passed to the optional <a href="#c:init/1"><code class="inline">init/1</code></a> callback.</p><p>If <code class="inline">:plural_forms_header</code> is present, it contains the contents
+of the <code class="inline">Plural-Forms</code> Gettext header.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="callbacks" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#callbacks">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Callbacks</span>
+    </h1>
+
+    <div class="callbacks-list">
+<section class="detail" id="c:init/1">
+
+  <div class="detail-header">
+    <a href="#c:init/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">init(pluralization_context)</h1>
+
+        <span class="note">(since 0.22.0)</span>
+
+        <span class="note">(optional)</span>
+
+
+        <a href="https://github.com/elixir-gettext/gettext/blob/v1.0.2/lib/gettext/plural.ex#L197" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> init(<a href="#t:pluralization_context/0">pluralization_context</a>()) :: <a href="#t:plural_info/0">plural_info</a>()</pre>
+
+      </div>
+
+<p>Should initialize the context for <a href="#c:nplurals/1"><code class="inline">nplurals/1</code></a> and <a href="#c:plural/2"><code class="inline">plural/2</code></a>.</p><p>This callback should perform all preparations for the provided locale, which
+is part of the pluralization context (see <a href="#t:pluralization_context/0"><code class="inline">pluralization_context/0</code></a>). For
+example, you can use this callback to parse the <code class="inline">Plural-Forms</code> header and
+determine pluralization rules for the locale.</p><p>If defined, Gettext calls this callback <em>once</em> at compile time. If not defined,
+the returned <code class="inline">plural_info</code> will be equals to the locale found in
+<code class="inline">pluralization_context</code>.</p><h2 id="c:init/1-examples" class="section-heading"><a href="#c:init/1-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Plural</span><span class="w"> </span><span class="k" data-group-id="0347147399-1">do</span><span class="w">
+  </span><span class="na">@behaviour</span><span class="w"> </span><span class="nc">Gettext.Plural</span><span class="w">
+
+  </span><span class="na">@impl</span><span class="w"> </span><span class="no">true</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">init</span><span class="p" data-group-id="0347147399-2">(</span><span class="p" data-group-id="0347147399-3">%{</span><span class="ss">locale</span><span class="p">:</span><span class="w"> </span><span class="c">_locale</span><span class="p">,</span><span class="w"> </span><span class="ss">plural_forms_header</span><span class="p">:</span><span class="w"> </span><span class="n">header</span><span class="p" data-group-id="0347147399-3">}</span><span class="p" data-group-id="0347147399-2">)</span><span class="w"> </span><span class="k" data-group-id="0347147399-4">do</span><span class="w">
+    </span><span class="p" data-group-id="0347147399-5">{</span><span class="n">nplurals</span><span class="p">,</span><span class="w"> </span><span class="n">rule</span><span class="p" data-group-id="0347147399-5">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parse_plural_forms_header</span><span class="p" data-group-id="0347147399-6">(</span><span class="n">header</span><span class="p" data-group-id="0347147399-6">)</span><span class="w">
+
+    </span><span class="c1"># This is what other callbacks can use to determine the plural.</span><span class="w">
+    </span><span class="p" data-group-id="0347147399-7">{</span><span class="n">nplurals</span><span class="p">,</span><span class="w"> </span><span class="n">rule</span><span class="p" data-group-id="0347147399-7">}</span><span class="w">
+  </span><span class="k" data-group-id="0347147399-4">end</span><span class="w">
+
+  </span><span class="na">@impl</span><span class="w"> </span><span class="no">true</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">nplurals</span><span class="p" data-group-id="0347147399-8">(</span><span class="p" data-group-id="0347147399-9">{</span><span class="c">_locale</span><span class="p">,</span><span class="w"> </span><span class="n">nplurals</span><span class="p">,</span><span class="w"> </span><span class="c">_rule</span><span class="p" data-group-id="0347147399-9">}</span><span class="p" data-group-id="0347147399-8">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="n">nplurals</span><span class="w">
+
+  </span><span class="c1"># ...</span><span class="w">
+</span><span class="k" data-group-id="0347147399-1">end</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="c:nplurals/1">
+
+  <div class="detail-header">
+    <a href="#c:nplurals/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">nplurals(plural_info)</h1>
+
+
+        <a href="https://github.com/elixir-gettext/gettext/blob/v1.0.2/lib/gettext/plural.ex#L202" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> nplurals(<a href="#t:plural_info/0">plural_info</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()</pre>
+
+      </div>
+
+<p>Should return the number of possible plural forms in the given <code class="inline">locale</code>.</p>
+  </section>
+</section>
+<section class="detail" id="c:plural/2">
+
+  <div class="detail-header">
+    <a href="#c:plural/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">plural(plural_info, count)</h1>
+
+
+        <a href="https://github.com/elixir-gettext/gettext/blob/v1.0.2/lib/gettext/plural.ex#L208" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> plural(<a href="#t:plural_info/0">plural_info</a>(), count :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>()) :: plural_form :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()</pre>
+
+      </div>
+
+<p>Should return the plural form in the given <code class="inline">locale</code> for the given <code class="inline">count</code> of
+elements.</p>
+  </section>
+</section>
+<section class="detail" id="c:plural_forms_header/1">
+
+  <div class="detail-header">
+    <a href="#c:plural_forms_header/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">plural_forms_header(locale)</h1>
+
+        <span class="note">(since 0.22.0)</span>
+
+        <span class="note">(optional)</span>
+
+
+        <a href="https://github.com/elixir-gettext/gettext/blob/v1.0.2/lib/gettext/plural.ex#L223" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> plural_forms_header(<a href="#t:locale/0">locale</a>()) :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil</pre>
+
+      </div>
+
+<p>Should return the value of the <code class="inline">Plural-Forms</code> header for the given <code class="inline">locale</code>,
+if present.</p><p>If the value of the <code class="inline">Plural-Forms</code> header is unavailable for any reason, this
+function should return <code class="inline">nil</code>.</p><p>This callback is optional. If it's not defined, the fallback returns:</p><pre><code class="makeup elixir" translate="no"><span class="s">&quot;nplurals={nplurals};&quot;</span></code></pre>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+
+    <div class="functions-list">
+<section class="detail" id="nplurals/1">
+
+  <div class="detail-header">
+    <a href="#nplurals/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">nplurals(locale)</h1>
+
+
+        <a href="https://github.com/elixir-gettext/gettext/blob/v1.0.2/lib/gettext/plural.ex#L305" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Default implementation of the <a href="#c:nplurals/1"><code class="inline">nplurals/1</code></a> callback.</p>
+  </section>
+</section>
+<section class="detail" id="plural/2">
+
+  <div class="detail-header">
+    <a href="#plural/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">plural(locale, count)</h1>
+
+
+        <a href="https://github.com/elixir-gettext/gettext/blob/v1.0.2/lib/gettext/plural.ex#L328" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Default implementation of the <a href="#c:plural/2"><code class="inline">plural/2</code></a> callback.</p>
+  </section>
+</section>
+<section class="detail" id="plural_forms_header/1">
+
+  <div class="detail-header">
+    <a href="#plural_forms_header/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">plural_forms_header(locale)</h1>
+
+
+        <a href="https://github.com/elixir-gettext/gettext/blob/v1.0.2/lib/gettext/plural.ex#L347" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/gettext/1.0.2" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/gettext/1.0.2">Hex Preview</a>
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="gettext.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.39.1) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

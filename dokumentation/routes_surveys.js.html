@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: routes/surveys.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: routes/surveys.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Umfragen-Routen: Erstellen, Liste, Abstimmungen, Ergebnisse und Zugangscode-Handling.
+ * Beinhaltet HTMX-unterstützte Partials und serverseitige Zugriffskontrollen via `surveyService`.
+ * @module routes/surveys
+ */
+
+const express = require('express');
+const router = express.Router();
+const asyncHandler = require('../lib/asyncHandler');
+const surveyService = require('../lib/services/surveyService');
+const { errorHtml } = require('../lib/http');
+const { isAdmin: hasAdminRole, normalizeUser } = require('../lib/roleHelpers');
+
+// Auth Guard - centralized
+const { isLoggedIn } = require('./middleware');
+
+router.use(isLoggedIn);
+const htmxDetector = require('../lib/htmxDetector');
+router.use(htmxDetector.middleware);
+
+
+// POST /surveys/:id/delete - delete survey (HTMX aware)
+/**
+ * POST /:id/delete-survey
+ * Löscht eine Umfrage. Berücksichtigt Berechtigungen des Nutzers/Admins.
+ * @name POST /:id/delete-survey
+ * @function
+ * @inner
+ */
+router.post('/:id/delete-survey', asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const userId = req.session.user.id;
+  const userRole = req.session.user.role;
+
+  try {
+    const result = await surveyService.deleteSurvey(id, userId, userRole);
+    
+    if (!result.success) {
+      if (result.error === 'NOT_FOUND') {
+        if (req.isHtmx) {
+            return res.status(404).send('');
+          }
+        req.session.flash = { type: 'error', message: 'Umfrage nicht gefunden' };
+        return res.redirect('/surveys');
+      }
+      
+      if (result.error === 'FORBIDDEN') {
+        if (req.isHtmx) {
+          return res.status(403).send('&lt;div class="error">Keine Berechtigung&lt;/div>');
+        }
+        return res.status(403).send(errorHtml('Keine Berechtigung zum Löschen dieser Umfrage'));
+      }
+    }
+
+    // Falls kein HTMX, zur Hauptseite weiterleiten
+    if (!req.isHtmx) {
+      return res.redirect('/surveys');
+    }
+    
+    // For HTMX: 200 OK with empty content to remove element
+    return res.status(200).send('');
+    
+  } catch (error) {
+    console.error('Fehler beim Löschen der Umfrage:', error);
+
+    if (req.isHtmx) {
+      return res.status(500).send('&lt;div class="error">Fehler beim Löschen&lt;/div>');
+    }
+
+    req.session.flash = { 
+      type: 'error', 
+      message: 'Fehler beim Löschen der Umfrage' 
+    };
+    res.redirect('/surveys');
+  }
+}));
+
+
+// GET /surveys - Main page (Shell, Liste via HTMX)
+/**
+ * GET /
+ * Hauptseite für Umfragen. Zeigt Filter und die Liste der Umfragen an.
+ * @name GET /
+ * @function
+ * @inner
+ */
+router.get('/', asyncHandler(async (req, res) => {
+  const type = req.query.type || 'all';
+  const search = req.query.search || '';
+  const page = parseInt(req.query.page, 10) || 1;
+
+  // Wenn HTMX die Hauptseite angefragt hat, gib nur die Liste (Partial) zurück
+    if (req.isHtmx) {
+    return await renderSurveysList(req, res);
+  }
+
+  const templateUser = normalizeUser({ ...req.session.user, user_id: req.session.user.id });
+
+  return res.render('surveys/survey', {
+    title: 'Umfragen',
+    user: templateUser,
+    currentType: type,
+    search,
+    currentPage: page
+  });
+}));
+
+// Umfragen-Liste rendern (Partial) - extrahiert, damit sowohl / als auch /fragment es nutzen können
+async function renderSurveysList(req, res) {
+  if (!req.session?.user) {
+    return res.status(200).send('&lt;div class="no-surveys">&lt;p>Bitte neu einloggen&lt;/p>&lt;/div>');
+  }
+
+  const userId = req.session.user.id;
+  const userRole = req.session.user.role;
+
+  // Robustly handle duplicate query params (arrays)
+  const typeRaw = req.query.type ?? 'all';
+  const searchRaw = req.query.search ?? '';
+  const pageRaw = req.query.page ?? '1';
+
+  const type = Array.isArray(typeRaw) ? String(typeRaw[typeRaw.length - 1]) : String(typeRaw);
+  const search = Array.isArray(searchRaw) ? String(searchRaw[searchRaw.length - 1]) : String(searchRaw);
+  let currentPage = parseInt(Array.isArray(pageRaw) ? pageRaw[pageRaw.length - 1] : String(pageRaw), 10) || 1;
+
+  const limit = 10;
+  const offset = (currentPage - 1) * limit;
+
+  const { surveys, totalPages, totalCount } = await surveyService.fetchSurveys({
+    userId,
+    userRole,
+    type,
+    search,
+    limit,
+    offset
+  });
+
+  const templateUser = normalizeUser({ ...req.session.user, user_id: req.session.user.id });
+
+  const hasNext = currentPage &lt; totalPages;
+  // If this was an HTMX request, instruct HTMX to push the clean `/surveys?...` URL
+  if (req.isHtmx) {
+    const pushUrl = `/surveys?type=${encodeURIComponent(type)}&amp;search=${encodeURIComponent(search)}&amp;page=${currentPage}`;
+    res.set('HX-Push', pushUrl);
+  }
+
+  return res.render('surveys/partials/surveys-list', {
+    surveys,
+    user: templateUser,
+    currentType: type,
+    search,
+    currentPage,
+    totalPages,
+    totalResults: totalCount,
+    hasPrevPage: currentPage > 1,
+    hasNextPage: hasNext,
+    prevPage: currentPage > 1 ? currentPage - 1 : null,
+    nextPage: hasNext ? currentPage + 1 : null
+  });
+}
+
+// Keep /fragment for backward compatibility
+/**
+ * GET /fragment
+ * Liefert das Listen-Fragment der Umfragen via HTMX für Infinite Scroll oder Filter.
+ * @name GET /fragment
+ * @function
+ * @inner
+ */
+router.get('/fragment', asyncHandler(async (req, res) => {
+  return await renderSurveysList(req, res);
+}));
+
+
+
+
+
+
+// POST /surveys - Create new survey (updated with images &amp; role logic)
+/**
+ * POST /
+ * Erstellt eine neue Umfrage mit Fragen und Optionen.
+ * @name POST /
+ * @function
+ * @inner
+ */
+router.post('/', asyncHandler(async (req, res) => {
+  if (!surveyService.canUserCreateSurvey(req.session.user)) {
+    return res.status(403).send(req.isHtmx ? 'Zugriff verweigert - Keine Berechtigung zum Erstellen von Umfragen' : errorHtml('Zugriff verweigert - Keine Berechtigung zum Erstellen von Umfragen'));
+  }
+
+  const userId = req.session.user.id;
+  const userRole = req.session.user.role;
+  const { title, description, surveyImage, questions } = req.body;
+  const isPrivateForm = req.body.isPrivate;
+
+  if (!title || !title.trim()) {
+    return res.status(400).send(req.isHtmx ? 'Titel ist erforderlich' : errorHtml('Titel ist erforderlich'));
+  }
+
+  const { accessCode, isPrivate } = await surveyService.createSurvey(userId, userRole, {
+    title,
+    description,
+    surveyImage,
+    questions,
+    isPrivateForm
+  });
+
+  // Erfolgsmeldung inkl. Zugangscode für private Umfragen erstellen
+  let successMessage = `Umfrage "${title.trim()}" erfolgreich erstellt!`;
+  
+  if (isPrivate) {
+    successMessage += ` Zugangscode: ${accessCode}`;
+    if (!hasAdminRole(userRole)) {
+      successMessage += ' (automatisch privat für Nicht-Admins)';
+    }
+  } else {
+    successMessage += ' (öffentlich für alle)';
+  }
+
+  req.session.flash = { 
+    type: 'success', 
+    message: successMessage
+  };
+  
+  res.redirect('/surveys');
+}));
+
+// GET /surveys/new - Show create form
+/**
+ * GET /new
+ * Zeigt das Formular zum Erstellen einer neuen Umfrage an.
+ * @name GET /new
+ * @function
+ * @inner
+ */
+router.get('/new', asyncHandler(async (req, res) => {
+  if (!surveyService.canUserCreateSurvey(req.session.user)) {
+    return res.status(403).send(req.isHtmx ? 'Zugriff verweigert - Keine Berechtigung zum Erstellen von Umfragen' : errorHtml('Zugriff verweigert - Keine Berechtigung zum Erstellen von Umfragen'));
+  }
+
+  res.render('surveys/create-survey', {
+    user: normalizeUser(req.session.user),
+    title: 'Neue Umfrage erstellen'
+  });
+}));
+
+// POST /surveys/private - validate access code
+/**
+ * POST /private
+ * Validiert den Zugangscode für eine private Umfrage.
+ * @name POST /private
+ * @function
+ * @inner
+ */
+router.post('/private', asyncHandler(async (req, res) => {
+  const { code, surveyId } = req.body;
+  
+  if (!code) {
+    return res.render('surveys/private-access', {
+      user: normalizeUser(req.session.user),
+      title: 'Private Umfrage',
+      surveyId: surveyId || '',
+      error: 'Zugangscode ist erforderlich'
+    });
+  }
+
+  const userId = req.session.user.id;
+  const result = await surveyService.validatePrivateAccess(code, surveyId, userId);
+  
+  if (result.success) {
+    res.redirect(`/surveys/${result.surveyId}`);
+  } else {
+    return res.render('surveys/private-access', {
+      user: normalizeUser(req.session.user),
+      title: 'Private Umfrage',
+      surveyId: surveyId || '',
+      error: result.error
+    });
+  }
+}));
+
+// POST /surveys/:id/vote - Submit vote (updated with survey_access)
+/**
+ * POST /:id/vote
+ * Speichert die Antworten eines Nutzers für eine bestimmte Umfrage.
+ * @name POST /:id/vote
+ * @function
+ * @inner
+ */
+router.post('/:id/vote', asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const userId = req.session.user.id;
+  const userRole = req.session.user.role;
+
+  // Zugriffsprüfung über den Service
+  const access = await surveyService.checkSurveyAccess(id, userId, userRole);
+  if (!access.allowed) {
+    if (access.error === 'NOT_FOUND') return res.status(404).send(req.isHtmx ? 'Umfrage nicht gefunden' : errorHtml('Umfrage nicht gefunden'));
+    return res.status(403).send(req.isHtmx ? 'Sie haben keine Berechtigung für diese Umfrage. Bitte geben Sie zuerst den Zugangscode ein.' : errorHtml('Sie haben keine Berechtigung für diese Umfrage. Bitte geben Sie zuerst den Zugangscode ein.'));
+  }
+
+  const survey = await surveyService.getSurveyWithQuestions(id, userId);
+  if (!survey) return res.status(404).send(req.isHtmx ? 'Umfrage nicht gefunden' : errorHtml('Umfrage nicht gefunden'));
+
+  if (survey.hasVoted) {
+    return res.status(400).send(req.isHtmx ? 'Sie haben bereits an dieser Umfrage teilgenommen' : errorHtml('Sie haben bereits an dieser Umfrage teilgenommen'));
+  }
+
+  const responses = [];
+  let hatFehlendeAntwort = false;
+  // Prüfe jede Frage auf eine Antwort; sammle Option-Ids und markiere fehlende Antworten
+  survey.questions.forEach(question => {
+    const answer = req.body[`question_${question.question_id}`];
+    if (!answer) {
+      hatFehlendeAntwort = true;
+      return;
+    }
+    responses.push({
+      questionId: question.question_id,
+      optionId: parseInt(answer)
+    });
+  });
+
+  if (hatFehlendeAntwort) {
+    return res.status(400).send(req.isHtmx ? 'Bitte beantworten Sie alle Fragen' : errorHtml('Bitte beantworten Sie alle Fragen'));
+  }
+
+  const result = await surveyService.submitVote(id, userId, responses);
+  if (!result.success) {
+    if (result.error === 'ALREADY_VOTED') return res.status(400).send(req.isHtmx ? 'Sie haben bereits an dieser Umfrage teilgenommen' : errorHtml('Sie haben bereits an dieser Umfrage teilgenommen'));
+    if (result.error === 'NOT_FOUND') return res.status(404).send(req.isHtmx ? 'Umfrage nicht gefunden' : errorHtml('Umfrage nicht gefunden'));
+    return res.status(500).send(req.isHtmx ? 'Fehler beim Speichern der Stimme' : errorHtml('Fehler beim Speichern der Stimme'));
+  }
+  
+  res.redirect(`/surveys/${id}/results`);
+}));
+
+// GET /surveys/:id/results - show survey results
+/**
+ * GET /:id/results
+ * Zeigt die Ergebnisse einer Umfrage (Diagramme/Statistiken).
+ * @name GET /:id/results
+ * @function
+ * @inner
+ */
+router.get('/:id/results', asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const userId = req.session.user.id;
+  const userRole = req.session.user.role;
+
+  const access = await surveyService.checkSurveyAccess(id, userId, userRole);
+  if (!access.allowed) {
+    if (access.error === 'NOT_FOUND') return res.status(404).send(req.isHtmx ? 'Umfrage nicht gefunden' : errorHtml('Umfrage nicht gefunden'));
+    return res.status(403).send(req.isHtmx ? 'Sie haben keine Berechtigung für diese Ergebnisse' : errorHtml('Sie haben keine Berechtigung für diese Ergebnisse'));
+  }
+
+  const result = await surveyService.getSurveyResults(id, userId);
+  if (!result) return res.status(404).send(req.isHtmx ? 'Umfrage nicht gefunden' : errorHtml('Umfrage nicht gefunden'));
+
+  const { survey, questions } = result;
+  const isOwner = survey.user_id === userId;
+  const isAdmin = hasAdminRole(userRole);
+  const canEdit = isOwner || isAdmin;
+
+  res.render('surveys/survey-results', {
+    survey,
+    questions,
+    user: normalizeUser(req.session.user),
+    title: `Ergebnisse: ${survey.title}`,
+    hasVoted: survey.hasVoted,
+    canEdit,
+    isOwner,
+    accessCode: survey.access_code
+  });
+}));
+
+// GET /surveys/:id - show survey details (with images)
+/**
+ * GET /:id
+ * Zeigt die Detailseite einer Umfrage oder das Abstimmungsformular an.
+ * @name GET /:id
+ * @function
+ * @inner
+ */
+router.get('/:id', asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const userId = req.session.user.id;
+  const userRole = req.session.user.role;
+
+  const access = await surveyService.checkSurveyAccess(id, userId, userRole);
+  if (!access.allowed) {
+    if (access.error === 'NOT_FOUND') return res.status(404).send(req.isHtmx ? 'Umfrage nicht gefunden' : errorHtml('Umfrage nicht gefunden'));
+    return res.render('surveys/private-access', {
+      user: normalizeUser(req.session.user),
+      title: 'Private Umfrage',
+      surveyId: id,
+      error: null
+    });
+  }
+
+  const survey = await surveyService.getSurveyWithQuestions(id, userId);
+  
+  if (!survey) {
+    return res.status(404).send(req.isHtmx ? 'Umfrage nicht gefunden' : errorHtml('Umfrage nicht gefunden'));
+  }
+
+  // Prüfen, ob der Benutzer bereits abgestimmt hat
+  if (survey.hasVoted) {
+    return res.redirect(`/surveys/${id}/results`);
+  }
+
+  res.render('surveys/survey-form', {
+    survey,
+    questions: survey.questions,
+    user: normalizeUser(req.session.user),
+    title: survey.title,
+    hasVoted: false
+  });
+}));
+
+
+module.exports = router;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

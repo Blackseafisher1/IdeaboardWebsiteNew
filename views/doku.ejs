@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Projektdokumentation &ndash; Digitales Ideenboard &lpar;IdeaboardWebsite&rpar;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="projektdokumentation--digitales-ideenboard-ideaboardwebsite">Projektdokumentation – Digitales Ideenboard (IdeaboardWebsite)</h1>
+<blockquote>
+<p>Sprache: Deutsch | Stand: 2026-02-27</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Code-Dokumentation (JSDoc):</strong> Eine detaillierte Dokumentation der Klassen, Methoden und API-Strukturen wurde bereits mittels JSDoc generiert und befindet sich im Ordner <code>dokumentation/</code>. Sie kann jederzeit durch den Befehl <code>npm run doc:gen</code> (bzw. <code>bun doc:gen</code>) aktualisiert werden, um die neuesten Code-Kommentare einzubinden.</p>
+</blockquote>
+<hr>
+<h2 id="1-installations---start-anleitung-quickstart">1. Installations- &amp; Start-Anleitung (Quickstart)</h2>
+<p>In diesem Kapitel erfahren Sie, wie Sie das Projekt auf Ihrem System einrichten. Wir unterscheiden zwischen zwei Haupt-Szenarien.</p>
+<h3 id="11-voraussetzungen-prerequisites">1.1 Voraussetzungen (Prerequisites)</h3>
+<p>Bevor Sie beginnen, müssen folgende Komponenten installiert sein:</p>
+<ul>
+<li><strong>Runtime:</strong> <a href="https://nodejs.org/">Node.js</a> (v20+) oder <a href="https://bun.sh/">Bun</a> (gleichwertig unterstützt).</li>
+<li><strong>Datenbank:</strong> <a href="https://mariadb.org/">MariaDB</a> (v12.1) oder MySQL.
+<ul>
+<li><strong>Konfiguration:</strong> Nutzen Sie die optimierten Einstellungen aus <a href="config/mariaConf_my.ini(win)_oder_my.cnf(unix)/">config/mariaConf_my.ini(win)_oder_my.cnf(unix)/</a>.</li>
+<li><strong>Tuning-Hinweis:</strong> Passen Sie die Arbeitsspeicher-Buffer in der <code>my.ini</code> / <code>my.cnf</code> unbedingt an Ihren Host an.
+<ul>
+<li><code>innodb_buffer_pool_size</code>: Setzen Sie dies auf ca. 50-75% Ihres RAMs (z.B. <code>12G</code> bei 16GB RAM), um die Datenbank-Performance zu maximieren.</li>
+<li><code>aria_pagecache_buffer_size</code>: Aria wird nur noch für interne temporäre Tabellen und die monatlichen Statistiken genutzt. Ein Wert von <code>512M</code> bis <code>1G</code> ist hier völlig ausreichend.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Redis (Empfohlen):</strong> Für Live-Updates und Performance. Am einfachsten via Docker:<pre><code class="language-bash">docker compose up -d redis
+</code></pre>
+</li>
+<li><strong>Reverse Proxy (Optional):</strong> <a href="https://caddyserver.com/download">Caddy</a> für lokale HTTPS-Entwicklung und Multi-Core Betrieb.</li>
+</ul>
+<hr>
+<h3 id="12-szenario-a-einfacher-single-process-entwicklung">1.2 Szenario A: Einfacher Single-Process (Entwicklung)</h3>
+<p>Ideal für die schnelle lokale Entwicklung. Da nun alle Vorbereitungen (Geheimschlüssel-Generierung und Datenbank-Migrationen) in die Start-Befehle integriert sind, ist der Start extrem einfach.</p>
+<ol>
+<li>
+<p><strong>Abhängigkeiten installieren:</strong></p>
+<pre><code class="language-bash">npm install  <span class="hljs-comment"># oder: bun install</span>
+</code></pre>
+</li>
+<li>
+<p><strong>Konfiguration (.env):</strong> Erstellen Sie eine <code>.env</code> Datei (Basis: <code>.env.example</code>).</p>
+<pre><code class="language-dotenv">PORT=3000
+TRUST_PROXIES=0  # WICHTIG: 0 bei direktem Zugriff ohne Proxy
+# SESSION_SECRET wird automatisch generiert, falls nicht gesetzt
+DB_HOST=localhost
+REDIS_URL=redis://127.0.0.1:6379
+</code></pre>
+</li>
+<li>
+<p><strong>Starten:</strong>
+Wählen Sie Ihren bevorzugten Befehl (alle integrieren Migrationen &amp; Secret-Gen):</p>
+<pre><code class="language-bash">npm run devStart   <span class="hljs-comment"># Node.js + Nodemon (Watch-Mode)</span>
+npm run bunStart   <span class="hljs-comment"># Bun (Watch-Mode)</span>
+npm start         <span class="hljs-comment"># Standard Node.js Start (Produktion/Einfach)</span>
+</code></pre>
+<ul>
+<li><strong>Ergebnis:</strong> Die Website ist unter <code>http://localhost:3000</code> erreichbar.</li>
+</ul>
+</li>
+<li>
+<p><strong>Datenbank-Import (Optional):</strong>
+Wenn Sie direkt mit einem fertigen Datensatz (inkl. Testdaten) starten möchten, können Sie die bereitgestellte <a href="backup.sql">backup.sql</a> importieren:</p>
+<pre><code class="language-bash">mysql -u [user] -p ideaboard &lt; backup.sql
+</code></pre>
+<p><em>Hinweis:</em> Der normale Start (<code>npm run devStart</code>) führt automatisch alle nötigen Migrationen für eine leere Datenbank aus.</p>
+</li>
+</ol>
+<hr>
+<h3 id="13-szenario-b-multi-process-mit-caddy--https-produktionprofessional">1.3 Szenario B: Multi-Process mit Caddy &amp; HTTPS (Produktion/Professional)</h3>
+<p>Dieses Setup nutzt Caddy für TLS-Terminierung (HTTPS), HTTP/3 und erlaubt den Betrieb mehrerer Kerne via PM2.</p>
+<ol>
+<li><strong>PM2 Installation:</strong><pre><code class="language-bash">npm install -g pm2
+</code></pre>
+</li>
+<li><strong>Konfiguration (.env):</strong><pre><code class="language-dotenv">PORT=3000        # Interner Port der Node-Instanzen
+TRUST_PROXIES=1  # WICHTIG: 1 aktiviert Proxy-Vertrauen (X-Forwarded-For)
+SESSION_SECRET=Ihre_Sichere_Zeichenfolge
+# Redis ist hier ZWINGEND für die Kommunikation zwischen den Prozessen (SSE Sync)
+REDIS_URL=redis://127.0.0.1:6379 
+</code></pre>
+</li>
+<li><strong>Caddy starten (Lokale HTTPS-Zertifikate):</strong>
+Nutzen Sie die <a href="Caddyfile.local">Caddyfile.local</a> für automatisches HTTPS auf localhost (<code>tls internal</code>).<pre><code class="language-bash">caddy run --config Caddyfile.<span class="hljs-built_in">local</span>
+</code></pre>
+<em>Hinweis:</em> Bestätigen Sie die Installation des lokalen CA-Zertifikats, wenn Ihr OS danach fragt. Dies ermöglicht eine verschlüsselte Verbindung via <code>https://localhost</code>.</li>
+<li><strong>Cluster-Start via PM2:</strong>
+Wählen Sie je nach gewünschter Runtime:
+<ul>
+<li><strong>Node.js Cluster-Mode (empfohlen):</strong> Verteilt die Last auf alle CPU-Kerne.<pre><code class="language-bash">pm2 start ecosystem.config.js --<span class="hljs-built_in">env</span> production --only <span class="hljs-string">&quot;Ideaboard-Node&quot;</span>
+</code></pre>
+</li>
+<li><strong>Bun Fork-Mode:</strong> Nutzt die Bun-Laufzeit für maximale Performance.<pre><code class="language-bash">pm2 start ecosystem.config.js --<span class="hljs-built_in">env</span> production --only <span class="hljs-string">&quot;Ideaboard-Bun&quot;</span>
+</code></pre>
+</li>
+<li><strong>Vorteil:</strong> TLS-Terminierung durch Caddy sorgt für sichere Cookies (<code>Secure</code>, <code>SameSite=None</code>), während Redis die Live-Updates zwischen allen Instanzen synchronisiert.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="2-benutzerhandbuch-detaillierte-bedienungsanleitung">2. Benutzerhandbuch (Detaillierte Bedienungsanleitung)</h2>
+<p>Hier erhalten Sie eine umfassende Übersicht über die Funktionen und die Bedienung der einzelnen Module des Ideenboards.</p>
+<blockquote>
+<p><strong>Tipp für Tester:</strong> Um die <strong>Live-Synchronisation</strong> (SSE) und die <strong>Echtzeit-Chats</strong> optimal zu erleben, öffnen Sie die Anwendung gleichzeitig mit <strong>zwei verschiedenen Benutzern</strong> in unterschiedlichen Browsern (z. B. Chrome und Firefox) oder einem Inkognito-Fenster. Sie können so in Echtzeit sehen, wie Nachrichten, Likes und Emoji-Reaktionen sofort auf der anderen Seite erscheinen.</p>
+<p><em>Hinweis zum Verhalten:</em> Während die Ideen-Liste (<code>/ideas</code>) und die Chats (<code>/dms</code>, <code>/groups</code>) hocheffizientes SSE-Streaming für echte Live-Updates nutzen, verwenden andere Bereiche (wie das Dashboard oder die Projektliste) bewusst klassisches HTMX-Polling oder laden nur bei Interaktion nach. Dies ist architektonisch so gewollt, da Echtzeit-Funktionen dort eine geringere Priorität haben und dieser Ansatz die Entwicklung deutlich vereinfacht und den Code schlank hält.</p>
+</blockquote>
+<h3 id="21-authentifizierung--kontoverwaltung">2.1 Authentifizierung &amp; Kontoverwaltung</h3>
+<ul>
+<li><strong>Anmeldung &amp; Registrierung:</strong>
+<ul>
+<li>Nutzen Sie das Formular auf der Startseite. Über den „Registrieren“-Tab erstellen Sie ein neues Konto.</li>
+<li>Passwörter werden mittels <strong>Argon2id</strong> sicher verschlüsselt. Nach der Registrierung erhalten Sie automatisch die Rolle „Mitarbeiter“.</li>
+</ul>
+</li>
+<li><strong>Mein Konto (Profil):</strong>
+<ul>
+<li><strong>Benutzername:</strong> Ändern Sie Ihren Anzeigenamen jederzeit (wirkt sich sofort auf alle Ihre Ideen/Kommentare aus).</li>
+<li><strong>Gamification:</strong> Verfolgen Sie Ihre Engagement-Punkte. Punkte werden für das Erstellen von Ideen, Erhalten von Likes und aktive Teilnahme vergeben.</li>
+<li><strong>Passwort:</strong> Aktualisieren Sie Ihr Passwort regelmäßig unter Angabe des alten Passworts zur Verifizierung.</li>
+</ul>
+</li>
+</ul>
+<h3 id="22-das-interaktive-ideen-board-ideas">2.2 Das interaktive Ideen-Board (<code>/ideas</code>)</h3>
+<p>Das Herzstück der Anwendung zur Erfassung und Förderung von Innovationen.</p>
+<ul>
+<li><strong>Ideen einreichen:</strong>
+<ul>
+<li>Verwenden Sie den schwebenden „+“-Button. Jede Idee benötigt einen Titel, eine detaillierte Beschreibung und eine Kategorie.</li>
+<li><strong>Verschlagwortung:</strong> Fügen Sie Tags hinzu, um die Auffindbarkeit zu erhöhen.</li>
+<li><strong>Dateianhänge:</strong> Laden Sie Bilder oder Dokumente (bis 25 MB) hoch. Diese werden serverseitig sicher verarbeitet.</li>
+</ul>
+</li>
+<li><strong>Bewertungssystem (Likes/Dislikes):</strong>
+<ul>
+<li>Sie verfügen über <strong>3 Likes pro Woche</strong>. Ein Like kann gegen ein Dislike getauscht (XOR) oder zurückgenommen werden.</li>
+<li>Die „Top 3 Ideen der Woche“ werden basierend auf der Netto-Bewertung im Dashboard hervorgehoben.</li>
+</ul>
+</li>
+<li><strong>Kommunikation:</strong>
+<ul>
+<li><strong>Kommentare:</strong> Schreiben Sie Feedback (max. 200 Zeichen). Kommentare können selbst geliked werden.</li>
+<li><strong>Emoji-Reaktionen:</strong> Halten Sie die Maus über einen Kommentar (oder tippen Sie darauf), um das Emoji-Menü zu öffnen. Die Reaktionen werden in Echtzeit für alle Nutzer aktualisiert.</li>
+</ul>
+</li>
+<li><strong>Suche &amp; Navigation:</strong>
+<ul>
+<li>Die <strong>Ideen-Suche</strong> nutzt eine hocheffiziente SQL-Fulltext-Engine (MariaDB <code>ideas_search</code> Aria-Tabelle) für maximale Performance bei großen Datenmengen.</li>
+<li>Für überschaubare Datenmengen (z. B. Projekte, Nutzer-Suche) wird <strong>Fuse.js</strong> für Tippfehler-Toleranz (Fuzzy) eingesetzt, da dies hier die Entwicklung vereinfacht und schlank hält.</li>
+<li>Nutzen Sie den <strong>Deep-Link-Support</strong>: Jede Karten-ID kann direkt über die URL angesteuert werden (z. B. <code>/ideas#idea-123</code>).</li>
+<li><strong>Idee → Projekt (Konvertierung):</strong> Vielversprechende Ideen können durch Admins und Projektleiter direkt in ein Projekt umgewandelt werden. Das Projektformular wird mit Titel und Beschreibung der Idee vorausgefüllt und die Idee erhält nach erfolgreicher Konvertierung automatisch den Status <strong>„Umgesetzt“</strong>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="23-projektverwaltung--team-kollaboration-projects">2.3 Projektverwaltung &amp; Team-Kollaboration (<code>/projects</code>)</h3>
+<ul>
+<li><strong>Projekt-Monitoring:</strong>
+<ul>
+<li>Verfolgen Sie Projekte durch die Phasen <strong>Konzeption</strong>, <strong>Umsetzung</strong> und <strong>Abgeschlossen</strong>.</li>
+<li>Der Fortschrittsbalken visualisiert den realen Fertigstellungsgrad.</li>
+</ul>
+</li>
+<li><strong>Team-Management:</strong>
+<ul>
+<li>Als Admin oder Projektleiter können Sie Mitglieder hinzufügen oder entfernen.</li>
+</ul>
+</li>
+<li><strong>Rollen beim Erstellen:</strong> Admins können beim Erstellen eines Projekts beliebige Ansprechpartner (Contact Person) zuweisen. Projektleiter, die ein Projekt anlegen, werden automatisch als Ansprechpartner gesetzt.</li>
+<li><strong>Gruppenchat-Integration:</strong> Für jedes Projekt wird ein Gruppenchat angelegt; die Projekt-Ansprechpartner werden automatisch zum Besitzer (Owner) des zugehörigen Gruppenchats.
+*   Klicken Sie auf ein Team-Mitglied, um sofort einen <strong>privaten Chat (DM)</strong> zu starten.</li>
+</ul>
+<h3 id="24-messaging-zentrale-dms-groups">2.4 Messaging-Zentrale (<code>/dms</code>, <code>/groups</code>)</h3>
+<ul>
+<li>
+<p><strong>Direktnachrichten (DMs):</strong> Private 1:1 Kommunikation mit Ende-zu-Ende-ähnlicher Zustellungsgeschwindigkeit via SSE.</p>
+</li>
+<li>
+<p><strong>Gruppenchats:</strong> Automatisch erstellte Räume pro Projekt oder manuell angelegte Gruppen.</p>
+</li>
+<li>
+<p><strong>HTMX-Streaming-Technologie:</strong> Nachrichten werden mittels Server-Sent Events (SSE) in Echtzeit gestreamt und via HTMX nahtlos in die Oberfläche eingefügt.</p>
+</li>
+<li>
+<p><strong>Präsenz-Anzeige:</strong> Sehen Sie via Online-Punkt, welche Kollegen aktuell erreichbar sind.</p>
+</li>
+<li>
+<p><strong>Admin View-Only (Sicht ohne Mitgliedschaft):</strong> Admins können Gruppen auch dann einsehen, wenn sie nicht Mitglied sind; in diesem Fall erhalten sie eine reine Leseansicht (keine Schreibrechte). Admin-Viewers werden zudem nicht in die Online-/Präsenz-Liste gezählt, um Präsenzstatistiken korrekt zu halten.</p>
+</li>
+</ul>
+<h3 id="25-analyse-dashboard-dashboard">2.5 Analyse-Dashboard (<code>/dashboard</code>)</h3>
+<ul>
+<li><strong>Live-Statistiken:</strong> Ein dynamisches Dashboard, das Widgets (Metriken, Top-Nutzer, Trends) mittels HTMX asynchron nachlädt.</li>
+<li><strong>Zeitliche Auswertung:</strong> Balkendiagramme zeigen die Ideen-Entwicklung der letzten 6 Monate.</li>
+<li><strong>Top-Kategorien:</strong> Eine prozentuale Verteilung zeigt, in welchen Bereichen die meisten Innovationen entstehen.</li>
+</ul>
+<h3 id="26-umfragen--meinungsbild-surveys">2.6 Umfragen &amp; Meinungsbild (<code>/surveys</code>)</h3>
+<ul>
+<li><strong>Teilnahme:</strong> Stimmen Sie in anonymisierten Umfragen ab.</li>
+<li><strong>Sicherheits-Codes:</strong> Private Umfragen sind durch einen Zugangscode geschützt, der vom Ersteller verteilt wird.</li>
+<li><strong>Echtzeit-Auswertung:</strong> Die Ergebnisse werden sofort nach der Stimmabgabe als Balkendiagramm visualisiert.</li>
+</ul>
+<h3 id="27-administration--moderation-adminpage">2.7 Administration &amp; Moderation (<code>/adminPage</code>)</h3>
+<ul>
+<li><strong>Rollen-Hierarchie:</strong> Zuweisung von Berechtigungen (Mitarbeiter, Projektleiter, Admin).</li>
+<li><strong>Sperren &amp; Löschen:</strong> Revisionssicheres Entfernen von Inhalten oder Deaktivieren von Konten bei Verstößen.</li>
+<li><strong>Audit-Logs:</strong> Ein lückenloses Protokoll aller administrativen Änderungen (wer hat wann was geändert).</li>
+</ul>
+<hr>
+<h2 id="3-systemarchitektur--seiten-struktur">3. Systemarchitektur &amp; Seiten-Struktur</h2>
+<p>Hier finden Sie die Zuordnung von Frontend-Interaktionen (JS) zu Backend-Logik (Routes/Services).</p>
+<h3 id="31-ideen-verwaltung-ideas">3.1 Ideen-Verwaltung (<code>/ideas</code>)</h3>
+<ul>
+<li><strong>Routes:</strong> <a href="routes/ideas.js">routes/ideas.js</a>, <a href="routes/comments.js">routes/comments.js</a>, <a href="routes/comments-likes.js">routes/comments-likes.js</a></li>
+<li><strong>Backend-Services (Auswahl):</strong>
+<ul>
+<li><a href="lib/services/ideasService.js">ideasService.js</a>: CRUD, Filterung, Versionierung.</li>
+<li><a href="lib/services/ideasCommentsService.js">ideasCommentsService.js</a>: Verwaltung der Diskussionsstränge.</li>
+<li><a href="lib/services/ideasSearchService.js">ideasSearchService.js</a>: Hybrid-Suche (SQL + Fuse.js).</li>
+<li><a href="lib/services/ideasStatsService.js">ideasStatsService.js</a>: Performance-optimierte Zähler.</li>
+<li><a href="lib/services/reactionsService.js">reactionsService.js</a>: Verarbeitet Emojis (Whitelist-basiert).</li>
+<li><a href="lib/services/ideasEnrichmentService.js">ideasEnrichmentService.js</a>: Anreicherung der Ideen-Daten für die Anzeige.</li>
+</ul>
+</li>
+<li><strong>Frontend-JS:</strong>
+<ul>
+<li><a href="public/js/ideasClient.js">ideasClient.js</a>: Zentrales UI-Skript für Modals &amp; Listenaktionen.</li>
+<li><a href="public/js/ideasLive.js">ideasLive.js</a>: SSE-Sync für Live-Updates.</li>
+<li><a href="public/js/commentsClient.js">commentsClient.js</a>: Steuerung der Kommentar-Sektion.</li>
+</ul>
+</li>
+</ul>
+<h3 id="32-projekte--teams-projects">3.2 Projekte &amp; Teams (<code>/projects</code>)</h3>
+<ul>
+<li><strong>Route:</strong> <a href="routes/projects.js">routes/projects.js</a></li>
+<li><strong>Backend-Services:</strong>
+<ul>
+<li><a href="lib/services/projectService.js">projectService.js</a>: Verwaltung von Zeitplänen und Status.</li>
+</ul>
+</li>
+<li><strong>Frontend-JS:</strong>
+<ul>
+<li><a href="public/js/projectsClient.js">projectsClient.js</a>: Team-Mitgliederverwaltung.</li>
+</ul>
+</li>
+</ul>
+<h3 id="33-direktnachrichten--gruppenchats-dms-groups">3.3 Direktnachrichten &amp; Gruppenchats (<code>/dms</code>, <code>/groups</code>)</h3>
+<ul>
+<li><strong>Routes:</strong> <a href="routes/dms.js">routes/dms.js</a>, <a href="routes/groups.js">routes/groups.js</a></li>
+<li><strong>Backend-Services (Messaging):</strong>
+<ul>
+<li><a href="lib/services/dmMessagingService.js">dmMessagingService.js</a>: Nachrichtenfluss für 1:1 Chats.</li>
+<li><a href="lib/services/groupService.js">groupService.js</a>: Management von Gruppenchats und Projekt-Integration.</li>
+<li><a href="lib/services/dmFilesService.js">dmFilesService.js</a> &amp; <a href="lib/services/ideasFilesService.js">ideasFilesService.js</a>: Dateiübertragung in Chats.</li>
+</ul>
+</li>
+<li><strong>Backend-Services (Präsenz):</strong>
+<ul>
+<li><a href="lib/services/dmPresenceService.js">dmPresenceService.js</a>: Online-Status für DMs.</li>
+<li><a href="lib/services/groupPresenceService.js">groupPresenceService.js</a>: Echtzeit-Mitgliederliste in Gruppen.</li>
+</ul>
+</li>
+<li><strong>Frontend-JS:</strong></li>
+<li><a href="public/js/chatClient.js">chatClient.js</a>: Zentraler Controller für die Chat-Oberfläche, inklusive Modals für Edit/Delete.
+<ul>
+<li><a href="public/js/dmLive.js">dmLive.js</a> &amp; <a href="public/js/groupLive.js">groupLive.js</a>: SSE-Integration für HTMX-Streaming.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Native Messaging Experience:</strong>
+Das System nutzt einen hocheffizienten Streaming-Mechanismus für DMs und Gruppenchats.</p>
+<ol>
+<li><strong>SSE-Fragments:</strong> Neue Nachrichten werden als vorgerenderte HTML-Fragmente direkt vom Server gepusht und via HTMX (<code>beforeend</code>) in den Chat-Verlauf eingefügt.</li>
+<li><strong>Echtzeit-Marker:</strong> Über spezielle <code>marker</code>-Events via SSE werden bestehende Nachrichten im Client gezielt aktualisiert (z. B. bei Edits oder Deletes).</li>
+<li><strong>Cross-Instanz Sync:</strong> Dank Redis-Pub/Sub werden Nachrichten auch in Multi-Core Umgebungen (PM2) zuverlässig an alle verbundenen Instanzen verteilt.</li>
+</ol>
+<h3 id="34-dashboard--statistiken-dashboard">3.4 Dashboard &amp; Statistiken (<code>/dashboard</code>)</h3>
+<ul>
+<li><strong>Route:</strong> <a href="routes/dashboard.js">routes/dashboard.js</a></li>
+<li><strong>Backend-Services:</strong>
+<ul>
+<li><a href="lib/services/dashboardService.js">dashboardService.js</a>: Datenaggregation für Diagramme.</li>
+</ul>
+</li>
+<li><strong>Frontend-JS:</strong>
+<ul>
+<li>HTMX-basierte Widgets (Lazy Loading).</li>
+</ul>
+</li>
+</ul>
+<h3 id="35-benutzer--authentifizierung-users">3.5 Benutzer &amp; Authentifizierung (<code>/users</code>)</h3>
+<ul>
+<li><strong>Route:</strong> <a href="routes/users.js">routes/users.js</a></li>
+<li><strong>Backend-Services:</strong>
+<ul>
+<li><a href="lib/services/authService.js">authService.js</a>: Argon2 Hashing &amp; Session-Management.</li>
+<li><a href="lib/services/userService.js">userService.js</a>: Profil- &amp; Kontenverwaltung.</li>
+<li><a href="lib/services/pointsService.js">pointsService.js</a>: Belohnungssystem &amp; Leaderboards.</li>
+</ul>
+</li>
+<li><strong>Frontend-JS:</strong>
+<ul>
+<li><a href="public/js/auth-flip.js">auth-flip.js</a>: UI für den Wechsel zwischen Login &amp; Registrierung.</li>
+</ul>
+</li>
+</ul>
+<h3 id="36-administratoren-werkzeuge-adminpage">3.6 Administratoren-Werkzeuge (<code>/adminPage</code>)</h3>
+<ul>
+<li><strong>Route:</strong> <a href="routes/adminPage.js">routes/adminPage.js</a></li>
+<li><strong>Backend-Services:</strong>
+<ul>
+<li><a href="lib/services/adminService.js">adminService.js</a>: Protokollierung, Rollenedits &amp; Nutzerverwaltung.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="4-zentrale-komponenten--helper-infrastruktur">4. Zentrale Komponenten &amp; Helper-Infrastruktur</h2>
+<h3 id="41-ux---design-helper-frontend">4.1 UX- &amp; Design-Helper (Frontend)</h3>
+<p>Um eine reibungslose Benutzererfahrung (UX) zu gewährleisten, kommen folgende Skripte zum Einsatz:</p>
+<ul>
+<li><a href="public/js/early-theme-blur.js">early-theme-blur.js</a>: Verhindert das Flackern (FOUC) beim Laden der Seite durch frühzeitiges Anwenden von Theme-Vorgaben.</li>
+<li><a href="public/js/blur-toggle.js">blur-toggle.js</a>: Hilfsfunktionen für visuelle Effekte (Fokus/Unschärfe-Wechsel).</li>
+<li><a href="public/js/index.js">index.js</a>: Zentrale Logik für globale UI-Events (z.B. Hamburger-Menü), siehe Abschnitt 3.9.</li>
+</ul>
+<h3 id="42-datenbank--abfragen">4.2 Datenbank &amp; Abfragen</h3>
+<ul>
+<li><a href="lib/dbHelpers.js">dbHelpers.js</a>: Transaktionssicherheit, automatische Retries bei Deadlocks und standardisierte Query-Wrapper.</li>
+<li><a href="lib/sqlFragmentBuilder.js">sqlFragmentBuilder.js</a>: Tool zur sicheren, dynamischen Zusammensetzung von SQL-Queries, um Parameter-Mismatches und Injektionen zu verhindern.</li>
+<li><a href="lib/queries/ideaQueries.js">queries/ideaQueries.js</a>: Zentrale SQL-Definitionen für Ideen (wiederverwendbar in Services).</li>
+</ul>
+<h3 id="43-echtzeit--kommunikation">4.3 Echtzeit &amp; Kommunikation</h3>
+<ul>
+<li><a href="lib/liveUpdates.js">liveUpdates.js</a>: Kern des SSE-Systems. Verwaltet Versionierung von Änderungen und Waiter-Promises für Clients.</li>
+<li><a href="lib/redis.js">redis.js</a>: Konfiguration für Redis Pub/Sub. <strong>Essenziell im Cluster-Betrieb</strong>, damit Prozess A weiß, wenn Prozess B eine Änderung am Datenbestand vorgenommen hat.</li>
+<li><a href="lib/htmxDetector.js">htmxDetector.js</a>: Middleware zur Identifizierung von HTMX-Requests (um z.B. nur Partials zu rendern).</li>
+<li><a href="lib/http.js">http.js</a> &amp; <a href="lib/timing.js">timing.js</a>: Hilfsmittel für HTTP-Fehlercodes und Performance-Messungen.</li>
+</ul>
+<h3 id="44-sicherheit--speicher">4.4 Sicherheit &amp; Speicher</h3>
+<ul>
+<li><a href="lib/mariadb-session-store.js">mariadb-session-store.js</a>: Eigene Implementierung zur Sitzungsspeicherung in MariaDB. Ersetzt speicherintensive In-Memory-Lösungen und ermöglicht Server-Neustarts ohne Logout der User.</li>
+<li><a href="lib/keyManager.js">keyManager.js</a>: Sicherer Schlüsselmanager für die Dateiverschlüsselung im Verzeichnis <a href="data/uploads/">data/uploads/</a>.</li>
+<li><a href="lib/upload_quarantine.js">upload_quarantine.js</a>: Vorläufige Isolierung von Dateien während der Verarbeitung/Verschlüsselung.</li>
+</ul>
+<h3 id="45-ui--template-helper">4.5 UI &amp; Template Helper</h3>
+<ul>
+<li><a href="lib/viewHelpers.js">viewHelpers.js</a>: Funktionen für EJS-Templates (z.B. Datumsformatierung, Icon-Mapping, Role-Checks).</li>
+</ul>
+<hr>
+<h2 id="5-session-verwaltung--cookie-sicherheit">5. Session-Verwaltung &amp; Cookie-Sicherheit</h2>
+<p>Wir nutzen eine maßgeschneiderte Lösung zur Sitzungsspeicherung (<a href="lib/mariadb-session-store.js">lib/mariadb-session-store.js</a>), um Persistenz über Server-Neustarts hinweg zu gewährleisten.</p>
+<p><strong>Cookie-Sicherheit:</strong>
+In <code>server.js</code> wird die Cookie-Konfiguration dynamisch basierend auf <code>TRUST_PROXIES</code> gesetzt:</p>
+<ul>
+<li><strong>Bei <code>TRUST_PROXIES=0</code> (Single Process):</strong> Cookies nutzen <code>SameSite: 'Lax'</code> und benötigen kein HTTPS.</li>
+<li><strong>Bei <code>TRUST_PROXIES=1</code> (Proxy/Caddy):</strong> Cookies nutzen <code>Secure: true</code> und <code>SameSite: 'None'</code>. Dies ist zwingend für den Betrieb hinter einem Reverse Proxy und für Cross-Site-Szenarien notwendig.</li>
+</ul>
+<h3 id="51-technischer-unterbau-sql--performance">5.1 Technischer Unterbau (SQL &amp; Performance)</h3>
+<p>Um die Fehleranfälligkeit bei komplexen, dynamischen Abfragen zu minimieren, wird das Modul <code>lib/sqlFragmentBuilder.js</code> eingesetzt:</p>
+<ul>
+<li>
+<p><strong>add(sql, params)</strong>: Fügt ein SQL-Fragment und seine Parameter gleichzeitig hinzu.</p>
+</li>
+<li>
+<p><strong>buildWithLimitOffset()</strong>: Erzeugt die finale Abfrage mit korrekt angehängten LIMIT/OFFSET Parametern.</p>
+</li>
+<li>
+<p><strong>Vorteil</strong>: Verhindert das manuelle Zählen von Platzhaltern (<code>?</code>) und garantiert, dass die Parameter-Reihenfolge immer exakt mit dem SQL übereinstimmt.</p>
+</li>
+<li>
+<p>UI-Entscheidung: Wenn <code>q</code> leer → kein Search (klassischer SQL-Listenpfad). Wenn <code>q</code> nicht leer und <code>global=on</code> → Fulltext-Only (<code>executeFulltextSearch</code>). Wenn <code>q</code> nicht leer und <code>global</code> nicht gesetzt → Hybrid-Fuzzy (<code>executeHybridFuzzySearch</code>).</p>
+</li>
+<li>
+<p>Gatekeeper: <code>category_id</code> und <code>tags</code> werden als Vorfilter angewendet. Diese Basis-Filter werden in der Fulltext-CTE als <code>s.</code>-präfixierte Bedingungen eingesetzt, damit Index-Prefiltering effektiv ist.</p>
+</li>
+</ul>
+<p>Kernbestandteile:</p>
+<ol>
+<li>
+<p><code>buildBaseFilters</code></p>
+<ul>
+<li>Liefert <code>baseWhere</code> (SQL-Teilsätze) und <code>baseParams</code> (Array). Bei Prefiltering auf <code>ideas_search</code> werden Spalten mit <code>s.</code> statt <code>i.</code> referenziert.</li>
+</ul>
+</li>
+<li>
+<p>Fulltext-Pfad — <code>executeFulltextSearch</code></p>
+<ul>
+<li>Ziel: möglichst viel Relevanz-Scoring in SQL (MATCH ... AGAINST) berechnen und nach <code>combinedScore</code> sortieren.</li>
+<li>Aufbau: CTE <code>candidate_ids</code> (MATCH NATURAL / BOOLEAN, WHERE (MATCH BOOLEAN AND <baseWhere>) LIMIT <code>MAX_INNER_LIMIT</code>), danach JOIN auf <code>ideas</code>/<code>users</code> mit zusätzlichen Boost-Ausdrücken und <code>ORDER BY combinedScore DESC</code> + <code>LIMIT ? OFFSET ?</code>.</li>
+<li>Parameterregeln: <code>baseParams</code> werden genau einmal in der CTE-WHERE eingebracht; die letzten zwei Parameter sind immer numerische <code>LIMIT</code> und <code>OFFSET</code> (vor Ausführung gezwungen/konvertiert zu Zahlen). Kein doppeltes Anhängen von <code>baseParams</code> am Ende.</li>
+<li>Fallbacks: Sehr kurze oder nur-numerische Queries können auf einen LIKE-basierten Pfad umschalten.</li>
+</ul>
+</li>
+<li>
+<p>Hybrid-Fuzzy-Pfad — <code>executeHybridFuzzySearch</code></p>
+<ul>
+<li>Prefilter per <code>ideas_search</code> (s.*) mit Kategorie/Tag-Filtern → begrenzter Kandidatenpool (<code>PREFILTER_PAGE_SIZE</code>).</li>
+<li>Vollzeilen für Kandidaten laden, dann Fuse.js lokal ausführen (gewichtete Keys: Title hoch, Description mittel, Author niedrig).</li>
+<li>Kombiniertes <code>combinedScore</code> aus Fuse-Score + Exact/Phrase-Boosts, danach Truncation auf <code>MAX_FUZZY_RESULTS</code>.</li>
+</ul>
+</li>
+<li>
+<p>Autor-Merge &amp; Beschreibungsspezialfälle</p>
+<ul>
+<li>Nach Suchlauf wird eine Autor-Token-Abfrage ausgeführt, um Author-Matches ggf. einzumischen.</li>
+<li><code>search_scope</code> steuert Feldauswahl (<code>title</code>, <code>author</code>, <code>description</code>/<code>desc</code>/<code>full</code>). <code>descriptionMode</code> aktiviert ergänzende CTE-Logik für umfangreiche Description-Scoring.</li>
+</ul>
+</li>
+<li>
+<p>Debugging &amp; Robustheit</p>
+<ul>
+<li>Aktivierbar via <code>debug_search=1</code> oder <code>SEARCH_DEBUG=1</code> (nur für Diagnose): gibt <code>placeholder-&gt;param</code>-Mapping, <code>params</code>-Array und <code>sqlPreview</code> aus.</li>
+<li>Vor Ausführung wird geprüft, ob Platzhalteranzahl und <code>params.length</code> stimmen; bei Abweichung schlägt die Abfrage fehl (fail-fast) oder es wird ein diag. Reconciliation-Mechanismus genutzt.</li>
+<li>LIMIT/OFFSET werden vor Bindung numerisch erzwungen, um Syntaxfehler durch Strings zu vermeiden.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="6-betriebs-handbuch">6. Betriebs-Handbuch</h2>
+<p>Dieser Abschnitt behandelt fortgeschrittene Themen wie Echtzeit-Zustände, Caching und manuelle Eingriffe.</p>
+<ol start="5">
+<li>Migrationen &amp; Seed</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-comment"># Schema (Baseline + neue Migrationen)</span>
+npm run migrate
+
+<span class="hljs-comment"># optional: Testdaten einfügen</span>
+npm run seed
+</code></pre>
+<ol start="6">
+<li>Starten (Entwicklung)</li>
+</ol>
+<pre><code class="language-bash"><span class="hljs-comment"># empfohlener Entwicklermodus (schreibt secret, startet nodemon)</span>
+npm run devStart
+
+<span class="hljs-comment"># Produktionsstart</span>
+npm start
+</code></pre>
+<ol start="7">
+<li>Troubleshooting / Hinweise</li>
+</ol>
+<ul>
+<li>Wenn die DB nicht automatisch erstellt wird: prüfen Sie <code>config/db.js</code> (Privileges, Host).</li>
+<li>Nutzen Sie die Lockdatei, wenn Sie exakt dieselben Abhängigkeiten wie in der Testumgebung benötigen.</li>
+<li>Für langsame Migrationen/Memory‑Intensive Tasks können die Node‑Flags in den NPM‑Scripten angepasst werden (siehe <code>package.json</code> <code>migrate</code> script).</li>
+</ul>
+<p>Wenn Sie möchten, übernehme ich nun das Erzeugen einer <code>.env.example</code> Datei und ergänze in <code>DOKUMENTATION.md</code> einen ausführlicheren Abschnitt mit cURL-Beispielen und Debug-Flags (Search Debug, Fuse-Debug).</p>
+<h3 id="61-projekte">6.1 Projekte</h3>
+<ul>
+<li><strong>Seite:</strong> <code>/projects</code></li>
+<li>Status + Fortschritt (Progress)</li>
+<li>Kontakt zum Ansprechpartner</li>
+<li><strong>Team-Verwaltung</strong></li>
+</ul>
+<ol>
+<li>Admins erstellen Projekte über &quot;Projekt anlegen&quot; mit Name, Beschreibung und Fortschritt (0–100%).</li>
+<li>Der Status (Konzeption/Umsetzung/Abgeschlossen) wird visuell durch Badges dargestellt.</li>
+<li>Klicken Sie auf den Namen des Ansprechpartners, um direkt Kontakt aufzunehmen.</li>
+<li>Über den Button <strong>&quot;Team&quot;</strong> öffnet sich eine Übersicht aller Projektbeteiligten.
+<ul>
+<li>Projektleiter und Admins können hier neue Mitglieder suchen und hinzufügen.</li>
+<li>Mitglieder können per Klick auf ihren Namen direkt per DM kontaktiert werden.</li>
+<li>Berechtigte Nutzer können Mitglieder aus dem Team entfernen.</li>
+</ul>
+</li>
+</ol>
+<h3 id="62-umfragen">6.2 Umfragen</h3>
+<ul>
+<li><strong>Seite:</strong> <code>/surveys</code></li>
+<li>Teilnahme / Auswertung (je nach View)</li>
+</ul>
+<ol>
+<li>Wählen Sie eine Umfrage aus der Liste (Filter: Öffentlich/Privat).</li>
+<li>Bei privaten Umfragen: Geben Sie den Zugangscode ein.</li>
+<li>Stimmen Sie ab (alle Fragen sind Pflichtfelder).</li>
+<li>Sehen Sie sich anschließend die Ergebnisse im Balkendiagramm an.</li>
+</ol>
+<h3 id="63-dashboard--statistiken">6.3 Dashboard / Statistiken</h3>
+<ul>
+<li><strong>Seite:</strong> <code>/dashboard</code></li>
+<li>Kennzahlen + Charts, Top-Ideen</li>
+</ul>
+<h3 id="64--dashboard--lazy-loading--widget-details">6.4 # Dashboard – Lazy Loading &amp; Widget-Details</h3>
+<p>Das Dashboard wurde so überarbeitet, dass Widgets (Metriken, Top‑Ideen, Projekt‑Statistiken, Monats‑Statistiken, Kategorien, Top‑Benutzer) lazy via HTMX nachgeladen werden. Dadurch reduziert sich die initiale Seitenladezeit und nur sichtbare/angefragte Teile werden serverseitig gerendert.</p>
+<ul>
+<li>
+<p>Endpoints (Backend, <code>routes/dashboard.js</code>):</p>
+<ul>
+<li><code>GET /widgets/metrics</code> – kleine KPI‑Karte (Ideen, neue Ideen, aktive Projekte)</li>
+<li><code>GET /widgets/top-ideas</code> – gerenderte Liste der Top‑Ideen</li>
+<li><code>GET /widgets/project-stats</code> – Projektstatus (Statusgruppe, Anzahl, durchschnittlicher Fortschritt)</li>
+<li><code>GET /widgets/monthly-stats</code> – Monatszahlen (letzte 6 Monate)</li>
+<li><code>GET /widgets/charts</code> – kompletter Charts‑Block (ersetzt die alte monolithische Render‑Route)</li>
+<li><code>GET /widgets/top-users</code> – Top‑Benutzer (Ideen, Likes)</li>
+</ul>
+</li>
+<li>
+<p>Frontend / Verhalten:</p>
+<ul>
+<li>Die Hauptseite <code>/dashboard</code> enthält HTMX‑Platzhalter, die beim Sichtbarwerden oder per Benutzeraktion die jeweiligen Widgets vom Server nachladen.</li>
+<li>Idee‑Erstellung/Löschung verwendet HTMX/Fetch‑Partial‑Flows: der Server liefert bei HTMX‑Requests direkt die gerenderte Partial‑HTML (oder JSON bei Lösch‑ACK), sodass die Seite nicht komplett neu geladen werden muss.</li>
+<li>Live‑Updates (SSE) bleiben aktiv, Clients nutzen jedoch lokale Echo‑Unterdrückung, damit eigene Aktionen nicht doppelt angezeigt werden.</li>
+</ul>
+</li>
+<li>
+<p>Monatsbalken (Design‑Hinweis):</p>
+<ul>
+<li>Monatsbalken werden nur angezeigt, wenn mehr als ein Monat Daten vorliegt (&gt;= 2 Monate). Bei zu wenigen Monaten erscheint ein kurzer Hinweistext.</li>
+<li>Balkenhöhen werden relativ zur größten Monats‑Summe im betrachteten Zeitraum skaliert (linear). Bei stark schiefen Verteilungen (z. B. Testdaten mit 200k Einträgen) kann alternativ eine nichtlineare Skalierung (<code>sqrt</code> oder <code>log</code>) konfiguriert werden; diese Option ist dokumentiert und kann bei Bedarf aktiviert.</li>
+</ul>
+</li>
+<li>
+<p>Projekt‑Status (Design‑Hinweis):</p>
+<ul>
+<li>Projektstatus werden als horizontale Balken dargestellt; die Prozentzahl und die Projektanzahl werden unterhalb des Balken angezeigt, Balkenfüllung entspricht dem gerundeten <code>avg_progress</code>-Wert (0–100%).</li>
+</ul>
+</li>
+<li>
+<p>Backend‑Änderungen / Hinweise für Entwickler:</p>
+<ul>
+<li>DB‑Layer: <code>config/db.js</code> verwendet nun ausschließlich den <code>mariadb</code>-Treiber; bei Start wird die MariaDB‑Version geprüft (empfohlen &gt;= 12.1).</li>
+<li><code>normalizeQueryResult</code> wandelt <code>BigInt</code> → <code>Number</code> und gängige SQL‑Datetime‑Strings → <code>Date</code>, damit EJS‑Templates zuverlässig mit numerischen/Datumstypen arbeiten.</li>
+<li>Reduzierte COUNT(*)‑Abfragen: Ausgewählte Zähler (<code>tag_count</code>, <code>file_count</code>) werden in der Tabelle <code>ideas</code> gehalten und serverseitig pfleglich aktualisiert, um teure Aggregationen zu vermeiden.</li>
+</ul>
+</li>
+</ul>
+<p>Widgets werden serverseitig in <code>routes/dashboard.js</code> zusammengestellt; die Partials liegen in <code>views/dashboard/partials/</code>. Die Client‑Integration für HTMX‑Platzhalter befindet sich in <code>views/dashboard/dashboard.ejs</code>.</p>
+<h3 id="65-kurzbedienung-je-hauptseite">6.5 Kurzbedienung je Hauptseite</h3>
+<ul>
+<li><strong>Ideen (/ideas):</strong> Suchen, Filtern, Erstellen (+), Interagieren (Like/Kommentar).
+<ul>
+<li><em>Tipp:</em> Im Bearbeitungs-Modal können Tags durch langes Gedrückthalten (0.7s) gelöscht werden.</li>
+</ul>
+</li>
+<li><strong>Projekte (/projects):</strong> Status prüfen, Kontakt aufnehmen. Admins &amp; Projektleiter: Team-Management (Mitglieder suchen/hinzufügen).</li>
+<li><strong>Umfragen (/surveys):</strong> Teilnehmen, Ergebnisse prüfen.</li>
+<li><strong>DMs (/dms):</strong> Nachrichtenzentrale. Neue Chats starten oder antworten.</li>
+<li><strong>Dashboard (/dashboard):</strong> Nur Lesezugriff für Statistiken.</li>
+<li><strong>Admin (/adminPage):</strong> Benutzerrollen verwalten, Nutzer löschen.</li>
+<li><strong>Auth (/users/auth):</strong> Login/Registrierung.</li>
+</ul>
+<hr>
+<h3 id="66-mobile-menü--header-verhalten">6.6 Mobile Menü / Header-Verhalten</h3>
+<p>Kurzbeschreibung:</p>
+<ul>
+<li>In der mobilen Ansicht (Viewport-Breite &lt;= 1024px) wird das Hauptmenü (<code>#main-nav</code>) temporär in den <code>body</code> verschoben und als Schiebemenü dargestellt, damit Effekte wie <code>backdrop-filter</code> im Header nicht die Positionierung von <code>position: fixed</code> Elementen (z. B. dem Hamburger) beeinflussen.</li>
+<li>Beim Wechsel zurück zur Desktop-Ansicht (Viewport-Breite &gt; 1024px) werden die Elemente wieder in ihre ursprüngliche Position im Header verschoben und eventuelle Anpassungen an <code>tabindex</code> und <code>aria-hidden</code>, die für die mobile Zugänglichkeit gesetzt wurden, werden zurückgesetzt.</li>
+</ul>
+<p>Wichtige Dateien:</p>
+<ul>
+<li>Frontend-Änderung: <code>public/js/index.js</code> — Funktionen <code>moveElementsToBody()</code>, <code>moveElementsBack()</code>, <code>sanitizeNavFocusableElements()</code> und die neue Funktion <code>restoreNavFocusableElements()</code> steuern das Verhalten.</li>
+</ul>
+<p>Kurzanleitung zum Testen:</p>
+<ol>
+<li>Öffnen Sie die Seite in einem Browser und verkleinern Sie das Fenster auf &lt;= 1024px Breite.</li>
+<li>Öffnen Sie das Menü (Hamburger). Die Navigation sollte als Schiebemenü erscheinen und die Overlay-Schicht sichtbar sein.</li>
+<li>Vergrößern Sie das Fenster auf &gt; 1024px Breite während das Menü geöffnet oder kurz nach dem Schließen ist.</li>
+<li>Erwartetes Ergebnis: Die Hauptnavigation befindet sich wieder im Header (<code>.header-right</code>) und alle Links sind sichtbar und per Tab erreichbar. <code>document.getElementById('main-nav').getAttribute('aria-hidden')</code> sollte auf <code>false</code> stehen.</li>
+</ol>
+<h2 id="7-system-architekturübersicht">7. System-/Architekturübersicht</h2>
+<h3 id="71-überblick">7.1 Überblick</h3>
+<ul>
+<li><strong>Frontend:</strong> Server-rendered EJS (Views) + CSS/JS</li>
+<li><strong>Backend:</strong> Node.js/Bun + Express Router</li>
+<li><strong>Datenhaltung:</strong> MariaDB 12.1 (mySQL compatible)</li>
+</ul>
+<h3 id="72-projektstruktur-wichtigste-dateien">7.2 Projektstruktur (wichtigste Dateien)</h3>
+<ul>
+<li><code>server.js</code> – Express App, Middleware, Routen, Start</li>
+<li><code>config/db.js</code> – DB Pool + Auto-Create DB</li>
+<li><code>migrations/</code> + <code>migrate.js</code> – SQL-Migrationen (0000 Baseline + Versionierung via <code>schema_migrations</code>)</li>
+<li><code>routes/</code> – Feature-Router (Ideas, Users, Projects, Surveys, Dashboard, Admin, DMs)</li>
+<li><code>views/</code> – EJS Templates</li>
+<li><code>public/</code> – CSS/JS/Uploads</li>
+<li><code>lib/liveUpdates.js</code> – SSE Live-Update‑Mechanik</li>
+<li><strong>Trigger &amp; Events:</strong> Automatisierte Synchronisation des Suchindex (<code>ideas_search</code>) via MariaDB Events und Trigger.</li>
+</ul>
+<h3 id="73--live-update-system-sse">7.3 # Live-Update-System (SSE)</h3>
+<p>Dieses System liefert inkrementelle Aktualisierungen für die Ideen-Liste und das Direktnachrichtensystem (DMs). Der primäre Push‑Mechanismus sind Server‑Sent Events (SSE); Clients verbinden sich über <code>text/event-stream</code> und erhalten inkrementelle Änderungen.</p>
+<p>Kernkomponenten:</p>
+<ul>
+<li><strong>Server‑State Manager (<code>lib/liveUpdates.js</code>)</strong>: Versioniert Änderungen, hält wartende Streams/Waiter und verteilt Änderungen an angemeldete SSE‑Clients.</li>
+<li><strong>Routen/Endpoints (<code>routes/ideas.js</code>, <code>routes/dms.js</code>)</strong>: Stellen SSE‑Endpoints bereit (Server‑Sent Events) für Ideen‑ und DM‑Updates.</li>
+<li><strong>Client‑Handler (<code>public/js/ideasLive.js</code>, <code>public/js/dmLive.js</code>)</strong>: Verwalten die SSE‑Verbindung, Deduplizierung und gezielte DOM‑Updates.</li>
+</ul>
+<p>Wesentliche Prinzipien:</p>
+<ul>
+<li><strong>Gezielte Partials:</strong> Nur betroffene Partials (Stats, Kommentare, einzelne Karten, neue Messages) werden aktualisiert, nicht die gesamte Seite.</li>
+<li><strong>Deduplizierung:</strong> Clients prüfen vor dem Einfügen, ob ein Element bereits im DOM vorhanden ist. Das verhindert doppelte Einträge bei konkurrierenden Updates oder HTMX‑Swaps.</li>
+<li><strong>Cooldown‑Schutz:</strong> Lokale Aktionen (z. B. Like) setzen kurzzeitig eine Sperre (<code>localActionCooldowns</code>), damit das SSE‑Echo der eigenen Aktion nicht zu sichtbarem Flackern führt.</li>
+<li><strong>Heartbeats:</strong> Der Server sendet in konfigurierbaren Intervallen (Standard: 15s) Ping‑Kommentare, damit Proxies Verbindungen nicht vorzeitig schließen.</li>
+</ul>
+<p>Operationalisierung (Kurzreferenz):</p>
+<ul>
+<li><code>liveUpdates.recordChange(ideaId, action, payload)</code> — erhöht Version, protokolliert Änderung, benachrichtigt SSE‑Clients.</li>
+<li><code>liveUpdates.waitForChanges(sinceVersion, timeoutMs)</code> — interne Waiter‑Promise für Änderungen (genutzt zur Verteilung über SSE).</li>
+<li><code>GET /ideas/updates</code> — SSE Endpoint (<code>Accept: text/event-stream</code>) liefert <code>version</code> + <code>changes</code> als Event‑Stream.</li>
+<li><code>GET /dms/chat-updates/:conversationId</code> — SSE Endpoint für einzelne Konversationen; sendet HTML‑Partials plus <code>lastReadId</code>.</li>
+</ul>
+<p>Hinweise zur Fehlerbehandlung:</p>
+<ul>
+<li>Bei Verbindungsproblemen reconnectet der Client mit exponentiellem Backoff; es existiert kein Long‑Polling‑Fallback.</li>
+<li>Race‑Conditions werden durch eine Kombination aus Cooldown, Deduplizierung und gezielten HTMX‑Partial‑Refreshes vermieden.</li>
+</ul>
+<h3 id="74-datenmodell-tabellen--auszug">7.4 Datenmodell (Tabellen – Auszug)</h3>
+<p><img src="file:///c:\Users\ege\Documents\finIdeenboard\IdeaboardWebsite\DB.png" alt="000016.png"></p>
+<ul>
+<li><code>users</code> (user_id, username, email, password_hash, role_id, created_at)</li>
+<li><code>roles</code> (role_id, name, description)</li>
+<li><code>ideas</code> (idea_id, user_id, category_id, title, description, created_at, updated_at, like_count, dislike_count, comment_count, status, tag_count, file_count)</li>
+<li><code>ideas_search</code> (idea_id, title, description, author, updated_at) – Aria-Engine für Fulltext-Suche</li>
+<li><code>categories</code> (category_id, name)</li>
+<li><code>idea_tags</code> (tag_id, name)</li>
+<li><code>idea_tag_links</code> (idea_id, tag_id)</li>
+<li><code>idea_files</code> (file_id, idea_id, file_path, original_name, uploaded_at)</li>
+<li><code>likes</code> (like_id, idea_id, user_id, created_at)</li>
+<li><code>dislikes</code> (dislike_id, idea_id, user_id, created_at)</li>
+<li><code>comments</code> (comment_id, idea_id, user_id, text, like_count, created_at)</li>
+<li><code>comment_likes</code> (like_id, comment_id, user_id, created_at)</li>
+<li><code>comment_reactions</code> (reaction_id, comment_id, user_id, emoji, created_at)</li>
+<li><code>projects</code> (project_id, name, description, status, progress, contact_person_id, created_at)</li>
+<li><code>project_teams</code> (project_id, user_id, role, joined_at)</li>
+<li><code>surveys</code> (survey_id, title, description, image_url, is_private, access_code, created_at, user_id)</li>
+<li><code>survey_questions</code> (question_id, survey_id, question_text, image_url)</li>
+<li><code>survey_options</code> (option_id, question_id, option_text, image_url)</li>
+<li><code>survey_responses</code> (response_id, survey_id, question_id, option_id, user_id, created_at)</li>
+<li><code>survey_access</code> (access_id, user_id, survey_id, granted_at)</li>
+<li><code>stats_cache</code> (stat_id, period_start, period_end, new_ideas, most_popular_category, top_idea_id, created_at)</li>
+<li><code>dm_conversations</code> (conversation_id, user1_id, user2_id, created_at, updated_at)</li>
+<li><code>dm_messages</code> (message_id, conversation_id, sender_id, message, is_read, created_at)</li>
+<li><code>admin_actions_log</code> (log_id, actor_id, target_user_id, action, details, created_at)</li>
+<li><code>user_points</code> (user_id, current_points, pending_delta)</li>
+<li><code>schema_migrations</code> (id, name, applied_at)</li>
+</ul>
+<h3 id="75-css-architektur">7.5 CSS-Architektur</h3>
+<ul>
+<li><strong>Basis-Theme:</strong> <code>public/css/style.css</code> definiert Farbvariablen (Light/Dark), Buttons, Header/Footer, Navigation, globale Form-Styles, Auth-/Account-Grundlayout sowie Utilities. Alle Seiten erben hier Theme-Variablen (<code>--bg</code>, <code>--text</code>, <code>--primary</code>, <code>--accent</code>).</li>
+<li><strong>Header-Layout:</strong> Der Header ist als <code>sticky</code> (oder <code>fixed</code> je nach Konfiguration) implementiert, um eine konsistente Navigation zu ermöglichen. In Version 1.1.0 wurde das Layout optimiert, um unerwünschte Abstände (Margins) zu vermeiden, die den Seiteninhalt verschieben könnten.</li>
+<li><strong>Seitenspezifisch:</strong> Pro Seite Layout-/Styling-Dateien, z.B. <code>auth.css</code>, <code>account.css</code>, <code>adminPage.css</code>, <code>dashboard.css</code>, <code>ideas.css</code>, <code>projects.css</code>, <code>dms.css</code>, <code>survey*.css</code>. Diese ergänzen Layout-Grids, Tabellen, Karten oder Spezialfarben, lassen aber die Grund-Theme-Variablen unangetastet.</li>
+<li><strong>Prinzip:</strong> Globale Farb-/Typo-Definitionen in <code>style.css</code> + modulare Page-Styles; so bleiben Light/Dark konsistent, während jede Seite eigenes Layout bekommt.</li>
+</ul>
+<h3 id="76-skalierbarkeit--performance-architektur">7.6 Skalierbarkeit &amp; Performance-Architektur</h3>
+<p>Um das System für zehntausende Ideen und Nutzer zu rüsten, wurden spezifische Architektur-Entscheidungen getroffen:</p>
+<ol>
+<li><strong>Hybride Such-Engine &amp; Aria-Index:</strong>
+<ul>
+<li><strong>Aria-Suchtabelle:</strong> Die Anwendung nutzt eine dedizierte Aria-Tabelle (<code>ideas_search</code>), die speziell für Fulltext-Suchen optimiert ist. Aria bietet im Vergleich zu InnoDB oft schnellere Lesezugriffe bei Fulltext-Indizes.</li>
+<li><strong>Echtzeit-Synchronisation:</strong> Ein MariaDB-Event (<code>ideas_search_upsert</code>) spiegelt Änderungen jede Sekunde in den Suchindex. Ein <code>AFTER DELETE</code>-Trigger garantiert, dass Löschungen sofort wirksam werden.</li>
+<li><strong>Fuzzy-Modus (begrenzter Kandidatenpool):</strong> Nutzt <code>Fuse.js</code> im Arbeitsspeicher für Tippfehler-Toleranz; der Kandidatenpool wird über DB‑Prefilter (<code>PREFILTER_PAGE_SIZE</code>) begrenzt.</li>
+<li><strong>Fulltext-Modus (skalierbar):</strong> Für große Mengen verwendet die Anwendung MariaDB FULLTEXT‑Indizes auf der Aria-Tabelle mit gewichteter SQL‑Auswertung (<code>combinedScore</code>).</li>
+</ul>
+</li>
+<li><strong>Prefiltering &amp; Suchraum‑Capping:</strong>
+<ul>
+<li>Statt eines starren, großen Fixlimits setzt das System auf gesteuerte Prefilter‑Größen: <code>PREFILTER_PAGE_SIZE</code> (2500) und <code>MAX_INNER_LIMIT</code> (1000) begrenzen die Menge, die in den Speicher geladen wird, während <code>SQL_ONLY_THRESHOLD</code> (20000) die Entscheidung für SQL‑Only vs. Hybrid beeinflusst.</li>
+<li>Die Sortier‑Optionen können mit dem <strong>Global-Toggle</strong> kombiniert werden. Wenn der Toggle aktiviert ist, wird ein vollständiger Scan der Datenbank durchgeführt (Präfix <code>all_</code> im Backend); standardmäßig nutzen diese Optionen den SQL Fulltext‑Pfad. Fuse.js wird bei aktivem Global-Toggle nicht standardmäßig verwendet, um Speicherüberläufe zu vermeiden (kann per <code>force_fuzzy=1</code>/<code>debug_fuse=1</code> erzwungen werden).</li>
+</ul>
+</li>
+<li><strong>Gewichtetes Ranking:</strong>
+<ul>
+<li>Die Relevanz wird durch mathematische Gewichtung berechnet: <code>Titel (15) &gt; Autor (5) &gt; Beschreibung (1)</code>.</li>
+<li>In SQL wird hierfür eine Kombination aus <code>NATURAL LANGUAGE MODE</code> (für exakte Treffer) und <code>BOOLEAN MODE</code> (für Präfix-Suche) verwendet.</li>
+</ul>
+</li>
+<li><strong>Batch-Enrichment:</strong>
+<ul>
+<li>Anstatt für jede Idee einzeln Tags, Likes und Dateien abzufragen (N+1 Problem), werden alle Daten für die sichtbare Seite (50 Items) in einem einzigen Batch-Query geladen und im Speicher zugeordnet.</li>
+</ul>
+</li>
+<li><strong>Lazy Loading von Kommentaren:</strong>
+<ul>
+<li>Kommentare werden erst beim Expandieren einer Karte via HTMX nachgeladen. Dies reduziert die initiale Datenlast pro Seitenaufruf um bis zu 90%.</li>
+</ul>
+</li>
+</ol>
+<h3 id="77-architektur-philosophie-server-first--single-source-of-truth">7.7 Architektur-Philosophie: Server-first &amp; Single Source of Truth</h3>
+<p>Die Anwendung folgt einem bewusst server-zentrierten Architekturprinzip: Die Daten und die Geschäftslogik leben eindeutig auf dem Server (Datenbank + Express‑Router). Die UI wird primär serverseitig gerendert (EJS) und mit gezielten, progressiven Client‑Erweiterungen (HTMX, kleine Vanilla‑JS‑Skripte) ergänzt.</p>
+<p>Kurz gefasst:</p>
+<ul>
+<li><strong>Single Source of Truth:</strong> Alle Zustandsentscheidungen (Autorisierung, Validierung, Punktevergabe, Ranking, Zähler) werden auf dem Server getroffen. Clients fordern gerendertes HTML oder kleine JSON‑Payloads an; sie halten keine eigene, langlebige Kopie des System‑Zustands.</li>
+<li><strong>Progressive Enhancement mit HTMX:</strong> Statt einer monolithischen SPA werden kleine, gezielte HTMX‑Requests genutzt, um Partials nachzuladen oder Aktionen (Like, Comment, Partial /chunk) durchzuführen. Dadurch entfallen viele Synchronisationsprobleme, die bei clientseitigen State‑Stores (Redux/MobX) auftreten.</li>
+</ul>
+<p>Vorteile dieser Philosophie:</p>
+<ul>
+<li><strong>Konsistenz &amp; Sicherheit:</strong> Business‑Rules sind zentral implementiert; keine Duplikate von Validierungs- oder Autorisierungslogik auf dem Client.</li>
+<li><strong>Einfachere Tests &amp; Debugging:</strong> Templates + Server‑Logs bieten klar nachvollziehbare Abläufe; SSE/long‑polling zeigt Änderungen am Server direkt im Client.</li>
+<li><strong>Geringere Wartungskosten:</strong> Keine umfangreiche JS‑Build‑Toolchain oder globale Client‑State‑Synchronisation notwendig; geringere Gefahr von „second source of truth“-Bugs.</li>
+</ul>
+<hr>
+<h2 id="8-installation--inbetriebnahme-lokal">8. Installation / Inbetriebnahme (lokal)</h2>
+<h3 id="81-voraussetzungen">8.1 Voraussetzungen</h3>
+<ul>
+<li><strong>Node.js:</strong> &gt;= 18 (empfohlen: LTS) – dies ist die Standardlaufzeit.</li>
+<li><strong>npm:</strong> passend zur Node-Version.</li>
+<li><strong>Bun:</strong> optional; nutzt dieselben Skripte wie npm (siehe Kapitel 5.4).</li>
+<li><strong>MariaDB:</strong> Version 12.1; Download: <a href="https://mariadb.org/download/?t=mariadb&amp;m=12.1">https://mariadb.org/download/?t=mariadb&amp;m=12.1</a> (Installer für Windows, macOS, Linux vorhanden).</li>
+<li><strong>Dependencies (Stand 2026-01-11):</strong> <code>@faker-js/faker@10.2.0</code>, <code>argon2@0.44.0</code>, <code>body-parser@2.2.2</code>, <code>dotenv@16.0.0</code>, <code>ejs@3.1.10</code>, <code>express@5.2.1</code>, <code>express-rate-limit@^8.3.1</code>, <code>express-session@1.18.2</code>, <code>fuse.js@7.1.0</code>, <code>ioredis@5.9.2</code>, <code>mariadb@3.4.5</code>, <code>multer@^2.1.1</code>, <code>pm2@^6.0.14</code>, <code>uuid@13.0.0</code>; DevDependencies: <code>esbuild@^0.27.3</code>, <code>jsdoc@4.0.5</code>, <code>nodemon@3.1.14</code>.</li>
+</ul>
+<p>Hinweis zur Umgebung: Die Anwendung liest Datenbankverbindungsinformationen aus Umgebungsvariablen (<code>DB_HOST</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code>, <code>DB_NAME</code>). Erstellen Sie vor dem Start eine <code>.env</code>-Datei (siehe <code>.env.example</code>) oder exportieren Sie die Variablen in Ihrer Shell. Wenn Sie <code>bun</code> zum Starten verwenden, lädt die Anwendung die <code>.env</code> automatisch, weil <code>dotenv</code> beim Start geladen wird.</p>
+<h3 id="82-datenbank-einrichten">8.2 Datenbank einrichten</h3>
+<ol>
+<li>
+<p>MariaDB starten (Port 3306 frei halten).</p>
+</li>
+<li>
+<p>Optional ENV Variablen setzen (Shell oder <code>.env</code>):</p>
+<ul>
+<li><code>DB_HOST</code> (default: <code>localhost</code>)</li>
+<li><code>DB_USER</code> (default: <code>root</code>)</li>
+<li><code>DB_PASSWORD</code> (default: <code>&quot;&quot;</code>)</li>
+<li><code>DB_NAME</code> (default: <code>ideaboard</code>)</li>
+</ul>
+<p><em>Hinweis:</em> Die Anwendung nutzt intelligente Fallbacks. Wenn keine Umgebungsvariablen definiert sind, wird automatisch versucht, eine Verbindung zu <code>localhost</code> als <code>root</code> ohne Passwort herzustellen. Dies erleichtert die Inbetriebnahme in Standard-XAMPP-Umgebungen.</p>
+</li>
+<li>
+<p>Datenbank &amp; Schema:</p>
+<ul>
+<li>DB wird automatisch erstellt (<code>config/db.js</code>)</li>
+<li>Schema/Seeding über den SQL-Migrationsrunner: <code>npm run migrate</code> oder <code>bun run migrate</code> (liest <code>migrations/*.sql</code>, Baseline <code>0000_baseline.sql</code>, protokolliert in <code>schema_migrations</code>).</li>
+<li><strong>Wichtig:</strong> Stellen Sie sicher, dass der MariaDB Event-Scheduler aktiviert ist (<code>SET GLOBAL event_scheduler = ON;</code>), damit die Such-Synchronisation funktioniert.</li>
+</ul>
+</li>
+</ol>
+<h3 id="83-1-mariadb-installieren-kurzcheck">8.3 .1 MariaDB installieren (Kurzcheck)</h3>
+<p>Für lokale Tests oder Entwicklungsmaschinen installieren Sie MariaDB 12.1 über die offizielle Seite: <a href="https://mariadb.org/download/?t=mariadb&amp;m=12.1">https://mariadb.org/download/?t=mariadb&amp;m=12.1</a>. Auf Windows steht ein Installer bereit. Für die Jury empfiehlt sich die native Installation.</p>
+<p>Oder installieren Sie nativ (Windows/macOS/Linux) und starten den Server. Anschließend per CLI (mysql) eine Datenbank und einen Benutzer anlegen:</p>
+<pre><code class="language-sql"><span class="hljs-comment">-- im mysql-Client ausführen:</span>
+<span class="hljs-keyword">CREATE</span> DATABASE ideaboard;
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">USER</span> <span class="hljs-string">&#x27;ideaboard&#x27;</span>@<span class="hljs-string">&#x27;localhost&#x27;</span> IDENTIFIED <span class="hljs-keyword">BY</span> <span class="hljs-string">&#x27;securepassword&#x27;</span>;
+<span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">ALL</span> PRIVILEGES <span class="hljs-keyword">ON</span> ideaboard.<span class="hljs-operator">*</span> <span class="hljs-keyword">TO</span> <span class="hljs-string">&#x27;ideaboard&#x27;</span>@<span class="hljs-string">&#x27;localhost&#x27;</span>;
+FLUSH PRIVILEGES;
+<span class="hljs-keyword">SET</span> <span class="hljs-keyword">GLOBAL</span> event_scheduler <span class="hljs-operator">=</span> <span class="hljs-keyword">ON</span>;
+</code></pre>
+<p>Tragen Sie die Zugangsdaten in <code>.env</code> ein (siehe <code>.env.example</code>) bevor Sie Migrationen ausführen.</p>
+<h3 id="84-app-starten">8.4 App starten</h3>
+<ol start="0">
+<li>
+<p>Node installieren:</p>
+<ul>
+<li><a href="https://nodejs.org/en/download">https://nodejs.org/en/download</a></li>
+</ul>
+</li>
+<li>
+<p>Dependencies:</p>
+<pre><code class="language-bash">npm install
+<span class="hljs-comment"># nur wenn nicht vorhanden. Sonst könnten Versionen sich änderen.</span>
+</code></pre>
+<blockquote>
+<p>Hinweis: Die im ZIP enthaltenen <code>node_modules</code> entsprechen dem zuletzt getesteten Setup. Bei einer erneuten Ausführung von <code>npm install</code> können neuere, semver-kompatible Versionen installiert werden, die ggf. abweichendes Laufzeitverhalten zeigen. Um eine bestimmte Umgebung zu reproduzieren, nutze fixe Versionsangaben in <code>package.json</code> oder die Lockdatei <code>bun.lock</code>/<code>package-lock.json</code>.</p>
+</blockquote>
+</li>
+<li>
+<p>Datenbank initialisieren (erstellt automatisch die <code>ideaboard</code> DB beim ersten Start):</p>
+<pre><code class="language-bash">npm run devStart
+<span class="hljs-comment"># Server kurz starten lassen (DB wird erstellt), dann mit Ctrl+C stoppen</span>
+</code></pre>
+</li>
+<li>
+<p>Schema aufbauen (Baseline + neue Migrationen):</p>
+<pre><code class="language-bash">npm run migrate
+</code></pre>
+</li>
+<li>
+<p>Start (Entwicklungsmodus mit Auto-Reload):</p>
+<p>Abhängig von Ihrer Laufzeit wählen Sie eines der folgenden Start-Workflows:</p>
+<p>Dependencies installieren:</p>
+<pre><code class="language-bash"><span class="hljs-comment"># mit npm (Node.js)</span>
+npm install
+
+<span class="hljs-comment"># oder mit Bun</span>
+bun install
+</code></pre>
+<p>Datenbank-Migrationen / Seeding:</p>
+<pre><code class="language-bash"><span class="hljs-comment"># Migrationen ausführen</span>
+npm run migrate
+<span class="hljs-comment"># oder mit Bun</span>
+bun run migrate
+
+<span class="hljs-comment"># optional: Testdaten einfügen</span>
+npm run seed
+<span class="hljs-comment"># oder</span>
+bun run seed
+</code></pre>
+<p>Entwicklung starten:</p>
+<pre><code class="language-bash"><span class="hljs-comment"># Node mit nodemon (empfohlen für Node-Entwicklung)</span>
+npm run devStart
+
+<span class="hljs-comment"># Bun: verwendet das vorhandene package.json script `bunStart`</span>
+bun run bunStart
+
+<span class="hljs-comment"># Produktion / einfacher Start (Node)</span>
+npm start
+</code></pre>
+</li>
+<li>
+<p>Browser:</p>
+<ul>
+<li><a href="http://localhost:3000">http://localhost:3000</a></li>
+</ul>
+</li>
+</ol>
+<!-- Hinweis: Index-warmup scripts were removed from the recommended workflow. If you previously used warmup scripts, they are deprecated and not required for normal operation. -->
+<h3 id="85-alternative-bun-optionale-laufzeit">8.5 Alternative: Bun (optionale Laufzeit)</h3>
+<ol>
+<li>
+<p>Bun installieren:</p>
+<ul>
+<li>PowerShell: <code>irm bun.sh/install.ps1 | iex</code></li>
+<li>Linux/macOS: <code>curl -fsSL https://bun.sh/install | bash</code></li>
+<li>Universell per npm: <code>npm install -g bun</code> (falls der Installer gesperrt ist)</li>
+</ul>
+</li>
+<li>
+<p>Abhängigkeiten: <code>bun install</code> (liest <code>package.json</code>, erzeugt <code>bun.lockb</code>; auch nutzen, wenn eine ZIP node_modules enthält).</p>
+</li>
+<li>
+<p>Datenbank initialisieren &amp; Schema:</p>
+<pre><code class="language-bash">bun run migrate
+</code></pre>
+</li>
+<li>
+<p>Start:</p>
+<pre><code class="language-bash">bun run bunStart
+<span class="hljs-comment"># Nutzt bun --watch für sehr schnelle Reloads</span>
+</code></pre>
+</li>
+</ol>
+<hr>
+<h2 id="9-sicherheit-authentifizierung--rollen">9. Sicherheit, Authentifizierung &amp; Rollen</h2>
+<ul>
+<li><strong>Sessions &amp; Auth:</strong> <code>express-session</code>; Login/Registrierung in <code>routes/users.js</code>. Login-Attempts werden per eigenem Store mit gestaffelten Sperrzeiten (30 Min / 2h / 24h) begrenzt.</li>
+<li><strong>Passwörter:</strong> <code>argon2id</code> Hash (Argon2 parameters used: memoryCost=65536 KB = 64 MB, timeCost=3, parallelism=1).</li>
+<li><strong>Rollenmodell:</strong> Tabellen <code>roles</code> + <code>users.role_id</code>; Mapping im Login (<code>role_id → Admin/Projektleiter/Mitarbeiter</code>). Guards: <code>isLoggedIn</code> prüft Session, <code>isAdmin</code> erzwingt Admin-Zugriff.</li>
+<li><strong>Default-Admin + Setup:</strong> Beim Start wird ein Default-Admin (ENV: <code>DEFAULT_ADMIN_USERNAME/EMAIL/PASSWORD</code>) angelegt, falls noch keiner existiert. Meldet sich der Default-Admin mit dem Default-Passwort an, wird er auf <code>/users/admin-setup</code> zum Passwortwechsel gezwungen.</li>
+<li><strong>Rate Limits &amp; Input-Checks:</strong> Login-Sperren, Kommentar-Länge (&lt;=200), Emoji-Whitelist, Wochen-Like-Limit (3 Likes/Dislikes).</li>
+<li><strong>Uploads:</strong> <code>multer</code> (max 25MB) speichert in <code>public/uploads</code>, Pfade in <code>idea_files</code>.</li>
+</ul>
+<hr>
+<h2 id="10-benutzerseiten-basis-auth-account-admin">10. Benutzerseiten (Basis: Auth, Account, Admin)</h2>
+<h3 id="101-auth-seite-loginregistrierung">10.1 Auth-Seite (Login/Registrierung)</h3>
+<ul>
+<li>
+<p><strong>Routen:</strong> <code>GET /users/auth</code> (Login-View, Redirect bei aktiver Session), <code>POST /users/auth</code> (Login inkl. Attempt-Sperren), <code>POST /users/register</code> (legt User an, Standardrolle „Mitarbeiter“).</p>
+</li>
+<li>
+<p><strong>Admin-Setup (Default-Admin):</strong> <code>GET /users/admin-setup</code> und <code>POST /users/admin-setup</code> — wird verwendet, wenn ein Default-Admin sich mit dem Standard-Passwort anmeldet und zum Passwortwechsel gezwungen wird (geschützt durch <code>isLoggedIn</code> + <code>isAdmin</code>).</p>
+</li>
+<li>
+<p><strong>View:</strong> <code>views/users/auth.ejs</code> (Flip-Card für Login/Registrierung). <strong>CSS:</strong> Basis in <code>style.css</code>; zusätzlich existiert <code>auth.css</code> für dediziertes Auth-Layout. <strong>Client-JS/HTMX:</strong> nicht genutzt; klassischer Form-POST.</p>
+</li>
+<li>
+<p><strong>Global JS:</strong> <code>index.js</code> (Theme toggle, menu handling, auth flip card).</p>
+</li>
+<li>
+<p><strong>Validierung/Fehler:</strong> falsches Passwort/Konto → Fehlermeldung; Sperrhinweis bei zu vielen Fehlversuchen (HTTP 429, Render der Auth-View).</p>
+</li>
+</ul>
+<h3 id="102-account-seite">10.2 Account-Seite</h3>
+<ul>
+<li>
+<p><strong>Routen:</strong> <code>GET /users/account</code> (Session-Pflicht), <code>POST /users/account/update-username</code>, <code>POST /users/account/update-password</code>, <code>GET /users/logout</code>.</p>
+</li>
+<li>
+<p><strong>View:</strong> <code>views/users/account.ejs</code> (zeigt Username/Rolle, Engagement-Punkte, Formulare für Name/Passwort, Logout-Link; Admins sehen Button „Zur Admin Seite&quot;)</p>
+</li>
+<li>
+<p><strong>CSS:</strong> <code>style.css</code> + <code>account.css</code> (Layout/Grids für Konto). <strong>Client-JS:</strong> keiner.</p>
+</li>
+<li>
+<p><strong>Berechtigungen:</strong> nur eingeloggte Nutzer; Passwortwechsel prüft das bestehende Passwort serverseitig.</p>
+</li>
+<li>
+<p><strong>Lazy-Punkte-Endpoint:</strong> <code>GET /users/points</code> – liefert <code>text/plain</code> mit <code>current_points + pending_delta</code> (z. B. &quot;50 (+5)&quot;) und committtet <code>pending_delta</code> asynchron nach dem Lesen (lazy-commit). Die Response ist bewusst <code>no-store</code> gecached, damit die UI immer den Pending-Wert sieht.</p>
+</li>
+</ul>
+<h3 id="103--verwendete-services-libservices">10.3 # Verwendete Services (<code>lib/services</code>)</h3>
+<ul>
+<li><code>lib/services/authService.js</code> — Auth/Register/Login Hilfen (Login, Registrierung, Session-Checks).</li>
+<li><code>lib/services/userService.js</code> — Benutzerverwaltung &amp; Suche (Profil-Updates, Suche, Account-Aktionen).</li>
+<li><code>lib/services/pointsService.js</code> — Gamification / Punkte-Logik (Berechnung / lazy-Endpoints für Punkte).</li>
+</ul>
+<h3 id="104-admin-seite-benutzerverwaltung">10.4 Admin-Seite (Benutzerverwaltung)</h3>
+<ul>
+<li><strong>Routen (geschützt):</strong> <code>GET /adminPage</code> (Liste Nutzer + Rollen), <code>POST /adminPage/change-role</code> (setzt Rolle, schützt Hauptadmin ID=1), <code>POST /adminPage/delete-user</code> (löscht Nutzer, nicht Hauptadmin).</li>
+<li><strong>Middleware:</strong> <code>isLoggedIn</code> + <code>isAdmin</code> in <code>routes/adminPage.js</code> erzwingen gültige Session und Rolle „Admin“.</li>
+<li><strong>View:</strong> <code>views/adminPage/adminPage.ejs</code> (Tabelle mit Rollen-Dropdown + Lösch-Button). <strong>CSS:</strong> <code>style.css</code> + <code>adminPage.css</code> (Tabellenlayout, Tags, mobile Cards). <strong>Client-JS/HTMX:</strong> nicht im Einsatz; klassische Form-Posts.</li>
+<li><strong>DB:</strong> liest <code>users</code> + <code>roles</code>, schreibt <code>users.role_id</code> bzw. löscht Nutzer.</li>
+<li><strong>Audit-Logging:</strong> Änderungen über die Admin-Seite werden in <code>admin_actions_log</code> protokolliert (actor_id, target_user_id, action, details, created_at). Einsehbar über <code>/adminPage/logs</code>.</li>
+<li><strong>Manuelle Punktevergabe:</strong> <code>POST /adminPage/manual-points</code> erlaubt Admins die Zuordnung von <code>-50..+50</code> Punkten an Nutzer (schreibt in <code>user_points.pending_delta</code>) und wird im <code>admin_actions_log</code> protokolliert.</li>
+</ul>
+<h3 id="105--verwendete-services-libservices">10.5 # Verwendete Services (<code>lib/services</code>)</h3>
+<ul>
+<li><code>lib/services/adminService.js</code> — Admin-Funktionalitäten (Rollenwechsel, Logs, Admin-spezifische Aktionen).</li>
+<li><code>lib/services/userService.js</code> — Benutzerverwaltung &amp; Suche (Löschen, Rollen-Änderung, Lookup).</li>
+<li><code>lib/services/pointsService.js</code> — Gamification / Punkte-Logik (manuelle Punktevergabe, Pending-Deltas).</li>
+</ul>
+<hr>
+<h2 id="11-seite-ideen-ideas--kernfunktion">11. Seite: Ideen (/ideas) – Kernfunktion</h2>
+<ul>
+<li>
+<p><strong>Zweck/User-Story:</strong> Ideen erfassen, filtern, liken/disliken (je 3/Woche, XOR), kommentieren (&lt;=200), mit Emojis reagieren, Dateien anhängen, alles mit Live-Updates (SSE / Server-Sent Events).</p>
+</li>
+<li>
+<p><strong>Haupt-View &amp; Assets:</strong> <code>views/ideas/ideas.ejs</code> (bindet <code>_list</code>, Create-Dialog, Edit-Modal-Container); <strong>CSS:</strong> <code>style.css</code> + <code>ideas.css</code> (+ <code>modal.css</code>); <strong>JS:</strong> <code>ideasClient.js</code> (Expand/Hash, Modal, Emoji-Popover, Scroll-Persist, Einzelkarte laden), <code>ideas-filter.js</code> (Debounce-Filter), <code>ideasLive.js</code> (SSE + Smart-Refresh). <strong>HTMX:</strong> Filter-Form, Infinite Scroll, Stats/Comments/Edits/Status/Tags/Files.</p>
+<ul>
+<li><code>ideasClient.js</code>: Verwaltet Karten expandieren/zuklappen, Hash-Navigation, Modal-Verwaltung, Emoji-Popovers, Scroll-Persistenz.</li>
+<li><code>ideas-filter.js</code>: Debounced Suche/Tags-Eingabe, triggert HTMX-Submits. <strong>HTMX:</strong> Filter-Form, Infinite Scroll, Stats/Comments/Edits/Status/Tags/Files.</li>
+<li><code>ideasLive.js</code>: Verwaltet SSE‑Verbindungen für Live‑Updates, intelligentes Refresh von Karten/Kommentaren/Stats inkl. Race‑Condition‑Schutz.</li>
+</ul>
+</li>
+<li>
+<p><strong>Zentrale Helper (serverseitig, routes/ideas.js):</strong></p>
+<ul>
+<li><code>loadCommentsWithReactions(ideaId, userId)</code>: holt Kommentare inkl. Likes-Status, Reaction-Aggregate (top 3, total) + userReaction.</li>
+<li><code>renderIdeaCard(ideaId, userId, categories)</code>: baut komplette Card-Daten (Counts, Tags, Files, Comments, remainingLikes/Dislikes, isOwner) für Partials.</li>
+<li><code>liveUpdates</code> (lib): <code>recordChange</code> (protokolliert Änderungen mit Version), <code>registerSSEWaiter</code> (für persistente SSE‑Streams), <code>waitForChanges</code> (interne Waiter für SSE‑Dispatch).</li>
+</ul>
+</li>
+<li>
+<p><strong>Routenüberblick (Auszug, inkl. Partials/HTMX):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Methode/Route</th>
+<th>Zweck</th>
+<th>View/Partial</th>
+<th>Besonderheiten</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET <code>/ideas</code></td>
+<td>Hauptseite, Filter (q, category_id, tags, page), Paginate 50</td>
+<td><code>ideas.ejs</code> / <code>_list</code></td>
+<td>Fuse.js Suche, Tag-Filter, Counts, Files, remainingLikes/Dislikes</td>
+</tr>
+<tr>
+<td>GET <code>/ideas/chunk</code></td>
+<td>Schnelle Pagination für große Mengen; JSON-API (siehe <code>partial_json=1</code>)</td>
+<td>JSON / <code>ideas/_list</code> (bei <code>partial_json=1</code> enthält <code>html</code>)</td>
+<td>Nutzt Prefilter/Hybrid-Search, liefert <code>html</code>, <code>nextPage</code>, <code>total</code> und fuzzy-Metadaten</td>
+</tr>
+<tr>
+<td>GET <code>/ideas/partial</code></td>
+<td>Refresh/Infinite Scroll</td>
+<td><code>_list.ejs</code></td>
+<td>gleiche Filterlogik wie oben</td>
+</tr>
+<tr>
+<td>GET <code>/ideas/:id/card</code></td>
+<td>Einzelkarte für Refresh/Deep-Link</td>
+<td><code>_list.ejs</code> (1 Card)</td>
+<td>nutzt <code>renderIdeaCard</code></td>
+</tr>
+<tr>
+<td>NOTE: <code>/ideas/latest-card</code> removed. Use <code>/ideas/:id/card</code> with the specific <code>idea_id</code> for live inserts.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GET <code>/ideas/:id/stats</code></td>
+<td>Nur Stats</td>
+<td><code>_idea-stats.ejs</code></td>
+<td>HX-Target in Card</td>
+</tr>
+<tr>
+<td>GET <code>/ideas/:id/comments</code></td>
+<td>Kommentar-Refresh</td>
+<td><code>_comments-section.ejs</code></td>
+<td>HX-Trigger <code>refresh_comments_&lt;id&gt;</code></td>
+</tr>
+<tr>
+<td>GET <code>/ideas/updates?since</code></td>
+<td>SSE</td>
+<td>JSON / Stream</td>
+<td><code>liveUpdates.registerSSEWaiter</code></td>
+</tr>
+<tr>
+<td>POST <code>/ideas</code></td>
+<td>Idee anlegen</td>
+<td>Redirect</td>
+<td>Tags+Files, 25MB Limit</td>
+</tr>
+<tr>
+<td>POST <code>/ideas/:id/edit</code></td>
+<td>Titel/Beschr./Kategorie ändern</td>
+<td><code>_idea-card</code></td>
+<td>only Owner</td>
+</tr>
+<tr>
+<td>POST <code>/ideas/:id/tags</code></td>
+<td>Tags setzen/ergänzen</td>
+<td><code>_idea-card</code></td>
+<td>de-dupliziert via UPSERT</td>
+</tr>
+<tr>
+<td>POST <code>/ideas/:id/files</code></td>
+<td>Datei hinzufügen</td>
+<td><code>_idea-card</code></td>
+<td>only Owner, 25MB</td>
+</tr>
+<tr>
+<td>POST <code>/ideas/:id/delete</code></td>
+<td>Idee löschen</td>
+<td>Redirect</td>
+<td>Owner oder Admin</td>
+</tr>
+<tr>
+<td>POST <code>/ideas/:id/status</code></td>
+<td>Status ändern</td>
+<td><code>_idea-card</code></td>
+<td>nur Admin, nicht eigene Idee</td>
+</tr>
+<tr>
+<td>POST <code>/ideas/:id/comments</code></td>
+<td>Kommentar anlegen</td>
+<td><code>_comments-section</code></td>
+<td>&lt;=200 Zeichen</td>
+</tr>
+<tr>
+<td>POST <code>/ideas/eigen/:commentId/react</code></td>
+<td>Emoji auf Kommentar</td>
+<td><code>_comments-section</code></td>
+<td>Whitelist Emojis, toggelt/ändert</td>
+</tr>
+<tr>
+<td>POST <code>/ideas/eigen/:id/like?idea_id=...</code></td>
+<td>Kommentar-Like (comments-likes.js)</td>
+<td><code>_comments-section</code></td>
+<td>Transaktion, Session commentLikes</td>
+</tr>
+<tr>
+<td>POST <code>/ideas/:id/like</code></td>
+<td>Idee liken</td>
+<td><code>_idea-stats</code></td>
+<td>XOR zu Dislike, Wochenlimit 3, HX-Trigger</td>
+</tr>
+<tr>
+<td>POST <code>/ideas/:id/dislike</code></td>
+<td>Idee disliken</td>
+<td><code>_idea-stats</code></td>
+<td>XOR zu Like, Wochenlimit 3</td>
+</tr>
+<tr>
+<td>GET <code>/ideas/:id/modal</code></td>
+<td>Edit-Modal laden</td>
+<td><code>_idea-modal.ejs</code></td>
+<td>Owner oder Admin (nicht Owner für Status)</td>
+</tr>
+<tr>
+<td>GET <code>/ideas/updates</code></td>
+<td>SSE Endpoint</td>
+<td>Stream / JSON</td>
+<td>liefert <code>version</code> + <code>changes</code></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p><strong>Templates/Partials (views/ideas):</strong> <code>ideas.ejs</code> (Filter, Modal), <code>_list</code> (Karten + intersect-Loader), <code>_idea-card</code> (Tags, Files, Stats, expand -&gt; Comments), <code>_idea-stats</code> (Like/Dislike XOR, Limit-Fehler), <code>_comments-section</code> + <code>_comment-item</code> (Emoji-Popover, Kommentar-Like, DM-Link), <code>_idea-modal</code> (Edit/Tags/Files, Admin-Status, Delete).</p>
+</li>
+</ul>
+<h3 id="111-verwendete-services-libservices">11.1 Verwendete Services (<code>lib/services</code>)</h3>
+<p>Die folgenden Services werden speziell von der Ideas-Route genutzt (nur kurze Nennung, nicht inhaltlich erklärt):</p>
+<ul>
+<li>
+<p><code>lib/services/ideasService.js</code> — Kern-Business-Logik für Ideen (create/edit/delete, orchestriert Tags/Files/Points).</p>
+</li>
+<li>
+<p><code>lib/services/ideasCommentsService.js</code> — Kommentar-Handling (create/list/react) — direkt in <code>routes/comments.js</code> und <code>routes/comments-likes.js</code> verwendet.</p>
+</li>
+<li>
+<p><code>lib/services/ideasFilesService.js</code> — Datei-Uploads / Datei-Management für Ideen.</p>
+</li>
+<li>
+<p><code>lib/services/ideasSearchService.js</code> — Suchpipeline (SqlFragmentBuilder + Fuse.js) für <code>/ideas</code> Suche.</p>
+</li>
+<li>
+<p><code>lib/services/ideasStatsService.js</code> — Statistische Helfer / Wochenlimits (z. B. verbleibende Likes).</p>
+</li>
+<li>
+<p><code>lib/services/ideasTagsService.js</code> — Tag-Management (intern von <code>ideasService</code> verwendet).</p>
+</li>
+<li>
+<p><code>lib/services/ideasEnrichmentService.js</code> — Enrichment / Normalisierung (intern genutzt beim Batch-Enrich).</p>
+</li>
+<li>
+<p><code>lib/services/reactionsService.js</code> — Reactions / Emoji-Whitelist Helper.</p>
+<ul>
+<li><strong>Client-Logik/UX:</strong> <code>ideasClient</code> hält Expanded-Card, Hash-Deep-Link, lädt Einzelkarte wenn nicht sichtbar; Emoji-Popover wird für Positionierung zu <code>&lt;body&gt;</code> geportalt; Scroll-Persist für Comments; HTMX-Intercept markiert lokale Aktionen (<code>window.localActionCooldowns</code>) um Doppel-Refresh/Race-Conditions zu vermeiden. <code>ideasLive</code> unterscheidet Aktionen (<code>new_idea</code>, <code>comment_added/reacted</code>, <code>idea_edited/file_uploaded/tags_updated/status_changed</code>, <code>idea_liked/disliked</code>, <code>idea_deleted</code>) und aktualisiert gezielt (Card/Comments/Stats) via SSE. <code>ideas-filter</code> triggert HTMX-Submit mit Debounce (q 300ms, tags 600ms); Such-Pipeline: SQL (optional category), danach Tag-Filter, danach Fuse.js (Titel/Beschreibung/Author) für feingranulare Treffer.</li>
+<li><strong>Load More &amp; HTMX reliability:</strong> The <code>/ideas/chunk</code> flow was changed to return JSON (<code>{ html, nextCursor, hasMore }</code>) when requested with <code>partial_json=1</code>. The client <code>loadMoreChunk()</code> performs the DOM insertion itself (filters <code>nodeType === 1</code>), silently skips inserting cards if a <code>.idea-card[data-id]</code> already exists, and then calls <code>htmx.process(node)</code> for each inserted node with a small delay. This prevents duplicate <code>id</code> collisions and makes HTMX swaps and targets reliable even under concurrent updates or noisy test data.</li>
+<li><strong>Tag- &amp; Datei-UX (Kurz):</strong>
+<ul>
+<li>Mehrere Tags können in einem Schritt angelegt werden (Komma-separiert im Tags-Feld).</li>
+<li>Tags lassen sich im Edit-Modal per Long-Press (ca. 0.5s) löschen: das Tag zeigt eine kurze Skalierung/Hintergrund-Animation und das Modal wird danach neu geladen, sodass das Tag in der UI verschwindet.</li>
+<li>Dateien zeigen im Edit-Modal einen kleinen &quot;✕&quot;-Button zum Entfernen; Löschen erfordert eine Bestätigung und das Modal wird nach erfolgreichem Entfernen neu geladen. Datei-Uploads sind weiterhin ein Datei-Submit pro Formular (kein Multi-File-Submit).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<p><strong>Filter- &amp; Sort-Pipeline:</strong> Das HTMX-Formular auf <code>/ideas</code> bietet optimierte Steuerungen (Freitextsuche <code>q</code>, Kategorie, Tags, Sortierung). <code>ideas-filter.js</code> handhabt Debounce-Timer (300ms Suche, 600ms Tags).</p>
+<ul>
+<li>
+<p><strong>Such-Logik:</strong> Die Suche verwendet eine hybride Strategie. Nach den Pre‑Filtern wird die Anzahl der Treffer ermittelt und gegen eine Schwelle (<code>SQL_ONLY_THRESHOLD</code>, 20000) geprüft. Bei großen Mengen (&gt;= Schwelle) wird der SQL Fulltext‑Pfad verwendet; bei kleineren Mengen läuft — abhängig von der gewählten Sortierung — die Fuse.js‑basierte Fuzzy‑Strategie (Fuse wird nur bei deaktiviertem Global-Toggle standardmäßig aktiviert). <code>force_fuzzy=1</code> oder <code>debug_fuse=1</code> erzwingen den Fuse‑Pfad.</p>
+</li>
+<li>
+<p><strong>Prefilter‑Ranking für Fuse:</strong> Im Hybrid-Modus werden zuerst Kategorie/Tag-Filter angewendet; anschließend wählt das System die ersten <code>PREFILTER_PAGE_SIZE</code> Kandidaten (Standard: <strong>2500</strong>) gemäß der gewählten Sortierung. <code>Fuse.js</code> läuft ausschließlich auf dieser begrenzten Kandidatenmenge, um Tippfehler‑Toleranz zu liefern, während RAM/CPU‑Nutzung deterministisch begrenzt bleibt. Bei sehr großen Treffermengen (&gt;= <code>SQL_ONLY_THRESHOLD</code>) greift der SQL‑Only‑Pfad.</p>
+</li>
+<li>
+<p><strong>Fuse‑Dominanz &amp; Tuning:</strong> Fuse‑Scores werden mit einem Multiplikator (<code>FUSE_MULTIPLIER</code>) in die kombinierte Rangfolge eingespeist, sodass Fuse die Feintuning‑Entscheidung dominieren kann. Der Standardwert kann über die Umgebungsvariable <code>FUSE_MULTIPLIER</code> angepasst werden, z. B. <code>FUSE_MULTIPLIER=200000 node server.js</code>.</p>
+</li>
+<li>
+<p><strong>Performance‑Capping / Prefiltering:</strong> Anstelle eines starren Limits verwendet das System gesteuerte Prefilter‑Größen: <code>PREFILTER_PAGE_SIZE</code> (2500) und <code>MAX_INNER_LIMIT</code> (1000) begrenzen die Menge, die in den Speicher geladen wird, während <code>SQL_ONLY_THRESHOLD</code> (20000) die Entscheidung für SQL‑Only vs. Hybrid beeinflusst.</p>
+</li>
+<li>
+<p><strong>Sortierung:</strong> Unterstützt <code>latest</code>, <code>all_latest</code> (ohne 9999er Limit), <code>oldest</code>, <code>likes</code>, <code>comments</code> und <code>dislikes</code>. Validierung erfolgt gegen eine <code>SORT_WHITELIST</code>.</p>
+</li>
+<li>
+<p><strong>Beispiel-Request &amp; Parameter:</strong> <code>GET /ideas?q=Suchbegriff&amp;category_id=3&amp;sort=likes&amp;page=1&amp;per_page=50</code> — Parameter:</p>
+<ul>
+<li><code>q</code>: Freitextsuche (Toleranz / Fuzzy je nach gewähltem Pfad)</li>
+<li><code>category_id</code>: Kategorie-Filter (optional; reduziert die Prefilter-Menge)</li>
+<li><code>sort</code>: einer von <code>latest|all_latest|oldest|likes|comments|dislikes</code></li>
+<li><code>page</code> / <code>per_page</code>: Pagination (Standard: 50; <code>PREFILTER_PAGE_SIZE</code> steuert interne Fuse-Last)</li>
+<li><code>force_fuzzy=1</code>: erzwingt Fuse.js-Pfad (auch wenn Schwelle überschritten)</li>
+<li><code>debug_fuse=1</code>: aktiviert Fuse-Debug-Informationen (nur zu Diagnosezwecken)</li>
+<li>Hinweis: Liegt die Anzahl der Treffer nach Pre-Filtern &gt;= <code>SQL_ONLY_THRESHOLD</code> (20000), verwendet der Server den SQL Fulltext‑Pfad; andernfalls wird Fuse.js für Fuzzy‑Treffer genutzt (Ausnahme: <code>all_latest</code> verwendet standardmäßig SQL Fulltext, außer <code>force_fuzzy</code> wird gesetzt).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Lazy Comments:</strong> Die globale Suche lädt nur Ideen-Metadaten (inklusive Tags, Counts, Dateien, Statistiken), nicht aber Kommentare. Erst wenn die Kommentarsektion einer Karte auf <code>GET /ideas/:id/comments</code> anliegt, ruft der Server <code>loadCommentsWithReactions</code> auf, aggregiert Likes und Emojis und liefert <code>_comments-section.ejs</code>. Dadurch bleibt die Filter-/Sortier-Performance hoch, da Kommentare nur bei Bedarf (z. B. durch den User beim Öffnen einer Idee) geladen und nur dann zusätzliche Datenbank-Queries ausgeführt werden.</p>
+</li>
+<li>
+<p><strong>Daten &amp; Regeln:</strong> Tabellen <code>ideas</code>, <code>idea_tags</code>, <code>idea_tag_links</code>, <code>idea_files</code>, <code>likes</code>, <code>dislikes</code>, <code>comments</code>, <code>comment_likes</code>, <code>comment_reactions</code>, <code>categories</code>, <code>users</code>.</p>
+<ul>
+<li>Likes/Dislikes sind gegenseitig exklusiv (XOR) und je Nutzer 3/Woche (rollierendes Fenster, serverseitig geprüft).</li>
+<li>Implementation (Like‑Limit): Der Server zählt die Likes aus der Tabelle <code>likes</code> mit einer rolling‑7‑day Abfrage, z. B. <code>SELECT COUNT(*) AS cnt FROM likes WHERE user_id = ? AND created_at &gt;= DATE_SUB(NOW(), INTERVAL 7 DAY)</code> und verhindert Inserts bei Erreichen des Limits.</li>
+<li>Kommentare: maximale Länge 200 Zeichen (serverseitig validiert).</li>
+<li>Emoji‑Reaktionen: werden gegen eine serverseitige Whitelist geprüft, nur zugelassene Emojis werden in <code>comment_reactions</code> gespeichert.</li>
+<li>Upload: maximal 25MB pro Datei (multer), Pfade in <code>idea_files</code>.</li>
+</ul>
+<ul>
+<li><strong>Redundante Zähler:</strong> Die <code>ideas</code>-Tabelle enthält zusätzliche Spalten <code>tag_count</code> und <code>file_count</code> (INT DEFAULT 0), die häufige COUNT(*)-Abfragen vermeiden sollen. Bei bestehenden Datenbanken sind ALTER + Backfill nötig (siehe Migration <code>migrations/0000_baseline.sql</code>).</li>
+</ul>
+</li>
+<li>
+<p><strong>Rollen/Berechtigungen &amp; UI:</strong> <code>router.use(isLoggedIn)</code> → nur eingeloggte. Inhalte bearbeiten (Titel/Beschreibung/Tags/Files) nur Owner; Admin darf Status ändern (nicht bei eigener Idee) und darf löschen, aber keine inhaltliche Bearbeitung. Status-Badge im Card-Header wird dem Owner gezeigt; im Edit-Modal sieht der Admin das Status-Feld, Owner nicht. Delete: Admin oder Owner. Kommentare/Likes/Dislikes/Reactions nur eingeloggte. Idee anlegen: jeder eingeloggte.</p>
+</li>
+<li>
+<p><strong>DM/Feedback-Links:</strong> In <code>_idea-card</code> sehen Admins bei fremden Ideen einen „Feedback geben“-Link (öffnet DM-Suche mit Author-Namen vorbelegt); in <code>_comment-item</code> hat jeder Kommentar einen DM-Link zum Kommentierenden. Emoji-Popover bietet Reaktionswahl (Whitelist) direkt am Kommentar.</p>
+</li>
+<li>
+<p><strong>Edge Cases &amp; Fehler:</strong> Kommentar leer/zu lang → 400; Like/Dislike-Limit → Stats-Partial mit Fehlermeldung; Idee/Kommentar nicht gefunden → 404; unberechtigt → 403; Status-Change blockiert für eigene Idee des Admins; Upload fehlt → 400. Verbindungsabbrüche → Reconnect/Backoff.</p>
+</li>
+<li>
+<p><strong>CSS &amp; Screens:</strong> <code>ideas.css</code> für Grid, Karten (expanded full-width), Animationen, Popover, Modals; nutzt Theme-Variablen aus <code>style.css</code>. Screenshots: Filter+Liste, Infinite-Scroll-Trigger, expandierte Idee mit Comments/Emoji/Like-Limit, Edit-Modal (Owner/Admin), Admin-Status-Form, Create-Dialog.</p>
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+<h2 id="9-seite-projekte-projects">9. Seite: Projekte (/projects)</h2>
+</li>
+<li>
+<p><strong>Zweck/User-Story:</strong> Projekte mit Status (Konzeption/Umsetzung/Abgeschlossen), Fortschritt, Ansprechpartner und Kontaktmöglichkeiten verwalten; Admin kann anlegen, Admin/zugewiesener Projektleiter bearbeiten/löschen.</p>
+</li>
+<li>
+<p><strong>Haupt-View:</strong> <code>views/projects/projects.ejs</code>. <strong>CSS:</strong> <code>style.css</code> + <code>projects.css</code>. <strong>Client-JS:</strong> <code>public/js/projectsClient.js</code> (Modal-Handling, clearSearch). <strong>HTMX:</strong> Fragment-System mit Server-seitiger Suche/Filterung + Infinite Scroll.</p>
+<ul>
+<li><strong>HTMX Fragment-System:</strong> Die Projektliste wird über <code>/projects/fragment</code> geladen. Dies ermöglicht eine nahtlose Integration von Suche und Filterung ohne Seiten-Reload.</li>
+<li><strong>Server-seitige Suche/Filter:</strong> Nutzt Fuse.js auf dem Server für unscharfe Suche in Projektnamen und Ansprechpartnern. Filterung nach Status (Konzeption/Umsetzung/Abgeschlossen) erfolgt ebenfalls serverseitig.</li>
+<li><strong>Infinite Scroll:</strong> Projekte werden beim Scrollen automatisch nachgeladen (<code>hx-trigger=&quot;intersect once&quot;</code>), sofern weitere Seiten existieren.</li>
+<li><strong>URL-State-Sync:</strong> Filter, Suche und Seite werden in der URL gespiegelt (<code>hx-push-url=&quot;true&quot;</code>), was die Nutzung der Browser-Back/Forward-Buttons ermöglicht.</li>
+</ul>
+</li>
+<li>
+<p><strong>Routen (routes/projects.js):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Zweck</th>
+<th>Response</th>
+<th>Templates/Logik</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /projects</code></td>
+<td>Hauptseite, lädt Kontakt-Optionen, prüft <code>canCreate</code></td>
+<td>HTML full</td>
+<td><code>projects.ejs</code>; Auth-Pflicht</td>
+</tr>
+<tr>
+<td><code>GET /projects/fragment</code></td>
+<td>Gefilterte/paginierte Kartenliste (Status, Suche)</td>
+<td>HTML Partial</td>
+<td><code>_list.ejs</code>; Fuse.js Suche; Infinite Scroll Logik</td>
+</tr>
+<tr>
+<td><code>GET /projects/users/search</code></td>
+<td>Nutzersuche (für Team-Modal)</td>
+<td>JSON</td>
+<td>Limitiert auf 10 Treffer; nutzt LIKE/echte Suche</td>
+</tr>
+<tr>
+<td><code>POST /projects</code></td>
+<td>Projekt erstellen (nur Admin)</td>
+<td>Redirect</td>
+<td>Validiert Ansprechpartner; progress clamp 0–100</td>
+</tr>
+<tr>
+<td><code>POST /projects/:id/edit</code></td>
+<td>Projekt bearbeiten</td>
+<td>Redirect</td>
+<td>Admin oder zuständiger PL</td>
+</tr>
+<tr>
+<td><code>POST /projects/:id/delete</code></td>
+<td>Projekt löschen</td>
+<td>Redirect</td>
+<td>Admin oder zuständiger PL</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p><strong>Templates/Partials:</strong></p>
+<ul>
+<li><code>projects.ejs</code>: Header, Filter-Bar (Status-Buttons + Suche), Container <code>#projectsList</code> mit <code>hx-trigger=&quot;load&quot;</code>.</li>
+<li><code>_list.ejs</code>: Rendert Projektkarten und den Infinite-Scroll-Trigger am Ende der Liste.</li>
+</ul>
+</li>
+<li>
+<p><strong>Rollen/Berechtigungen:</strong> Auth-Pflicht; Admin: create/edit/delete; Projektleiter: edit/delete nur eigene Projekte; Mitarbeiter: read-only.</p>
+</li>
+<li>
+<p><strong>Team-API (Kurz):</strong> <code>GET /projects/:id/team</code> (JSON), <code>POST /projects/:id/team/add</code> (add user), <code>POST /projects/:id/team/remove/:userId</code> (remove user). Frontend nutzt diese Endpunkte für das Team‑Modal und Realtime-Suchen.</p>
+</li>
+</ul>
+<h3 id="112--verwendete-services-libservices">11.2 # Verwendete Services (<code>lib/services</code>)</h3>
+<ul>
+<li><code>lib/services/projectService.js</code> — Projekt-CRUD &amp; Team-Management (Erstellen, Team-API, Edit/Delete-Logik).</li>
+<li><code>lib/services/categoriesService.js</code> — Kategorie-CRUD / Lookup (Status/Kategorien-Lookups in Filtern und Filter-Pipelines).</li>
+</ul>
+<hr>
+<h2 id="12-seite-umfragen-surveys">12. Seite: Umfragen (/surveys)</h2>
+<ul>
+<li>
+<p><strong>Zweck/User-Story:</strong> Mitarbeitende nehmen an öffentlichen oder privaten Umfragen teil; Admins/Projektleiter erstellen neue Umfragen. Private Umfragen werden über Zugangscode geteilt.</p>
+</li>
+<li>
+<p><strong>Haupt-View:</strong> <code>views/surveys/survey.ejs</code>. <strong>CSS:</strong> <code>survey.css</code>. <strong>Client-JS:</strong> <code>public/js/surveysClient.js</code> (clearSearch, URL-Sync). <strong>HTMX:</strong> Fragment-System mit Server-seitiger Suche/Filterung + Pagination.</p>
+<ul>
+<li><strong>HTMX Fragment-System:</strong> Die Umfragenliste wird über <code>/surveys/fragment</code> geladen.</li>
+<li><strong>Server-seitige Suche/Filter:</strong> Nutzt Fuse.js auf dem Server für unscharfe Suche in Titeln, Beschreibungen und Erstellern. Filterung nach Typ (Öffentlich/Privat/Meine).</li>
+<li><strong>Pagination:</strong> Klassische Pagination mit 10 Umfragen pro Seite. Behält Such- und Filterzustand bei.</li>
+<li><strong>URL-State-Sync:</strong> Volle Unterstützung für Browser-Historie und Back/Forward-Buttons.</li>
+</ul>
+</li>
+<li>
+<p><strong>Routen (routes/surveys.js):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Zweck</th>
+<th>Validierung / Besonderheiten</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /surveys</code></td>
+<td>Hauptseite mit Filter/Suche</td>
+<td>Auth-Pflicht; Shell für HTMX-Liste</td>
+</tr>
+<tr>
+<td><code>GET /surveys/fragment</code></td>
+<td>Filter/Suche/Pagination (HTMX)</td>
+<td>Fuse.js Suche; Pagination 10/Page</td>
+</tr>
+<tr>
+<td><code>GET /surveys/new</code></td>
+<td>Formular zum Anlegen</td>
+<td>Nur Admin/Projektleiter</td>
+</tr>
+<tr>
+<td><code>POST /surveys</code></td>
+<td>Umfrage erstellen</td>
+<td>Admin wählt öffentlich/privat; PL immer privat</td>
+</tr>
+<tr>
+<td><code>POST /surveys/:id/delete-survey</code></td>
+<td>Löschen (HTMX)</td>
+<td>Nur Owner oder Admin; entfernt Karte via HTMX</td>
+</tr>
+<tr>
+<td><code>POST /surveys/private</code></td>
+<td>Zugangscode prüfen / gewähren</td>
+<td>schreibt in <code>survey_access</code> und redirect</td>
+</tr>
+<tr>
+<td><code>POST /surveys/private</code></td>
+<td>Zugangscode prüfen</td>
+<td>Speichert Zugriff in <code>survey_access</code></td>
+</tr>
+<tr>
+<td><code>GET /surveys/:id</code></td>
+<td>Detail &amp; Teilnahmeformular</td>
+<td>Zugriffskontrolle (Code/Owner/Admin)</td>
+</tr>
+<tr>
+<td><code>POST /surveys/:id/vote</code></td>
+<td>Stimmen speichern</td>
+<td>Einmalige Teilnahme; Punkte-System (+2/+3)</td>
+</tr>
+<tr>
+<td><code>GET /surveys/:id/results</code></td>
+<td>Ergebnisansicht</td>
+<td>Balkendiagramme; eigene Stimme markiert</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p><strong>Rollen/Berechtigungen:</strong> Auth-Pflicht. Erstellen: Admin + Projektleiter (PL immer privat). Lesen: Öffentlich für alle; Privat nur mit Code/Berechtigung. Löschen: Admin oder Owner.</p>
+</li>
+</ul>
+<h3 id="121--verwendete-services-libservices">12.1 # Verwendete Services (<code>lib/services</code>)</h3>
+<ul>
+<li><code>lib/services/surveyService.js</code> — Umfrage-Logik (Erstellen, Teilnahme, Private-Access Checks, Ergebnisse).</li>
+<li><code>lib/services/pointsService.js</code> — Gamification / Punkte-Logik (Punktevergabe für Teilnahme, z. B. +2/+3).</li>
+</ul>
+<hr>
+<h2 id="13-seite-dms-dms">13. Seite: DMs (/dms)</h2>
+<ul>
+<li>
+<p><strong>Zweck/User-Story:</strong> 1:1-Nachrichten zwischen eingeloggten Nutzern; Posteingang mit letzter Nachricht/Unread-Anzahl, Suche, Chat mit <strong>SSE (Server-Sent Events)</strong> inkl. Lesebestätigung.</p>
+</li>
+<li>
+<p><strong>Haupt-Views &amp; Assets:</strong> Posteingang <code>views/dms/index.ejs</code>, Suche <code>views/dms/search.ejs</code>, Chat <code>views/dms/chat.ejs</code>; Partials <code>views/dms/partials/message_list.ejs</code> (Initial-Render) + <code>views/dms/partials/message_items.ejs</code> (Batch neuer Messages); Styles <code>public/css/dms.css</code> + <code>style.css</code>; JS <code>public/js/chatClient.js</code> (Scroll/Helpers) + <code>public/js/dmLive.js</code> (SSE).</p>
+<ul>
+<li><code>chatClient.js</code>: Verwaltet Auto-Scroll, Message-Container-Helpers, letzte Message-ID-Verfolgung, Deduplizierung von Nachrichten.</li>
+<li><code>dmLive.js</code>: Verwaltet die SSE‑Verbindung für neue Nachrichten und Lesebestätigungen.</li>
+</ul>
+</li>
+<li>
+<p><strong>Routen (routes/dms.js):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Zweck</th>
+<th>Validierung / Besonderheiten</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /dms</code></td>
+<td>Posteingang mit Conversations, letztem Text, <code>unread_count</code></td>
+<td>Auth-Pflicht (router.use); sortiert nach <code>updated_at</code></td>
+</tr>
+<tr>
+<td><code>GET /dms/search</code></td>
+<td>Nutzersuche (max 10) + letztes Message-Snippet/Zeit</td>
+<td>Auth-Pflicht; LIKE auf username; blendet den angemeldeten Nutzer aus</td>
+</tr>
+<tr>
+<td><code>GET /dms/chat/:userId</code></td>
+<td>Einzelchat aufrufen/erstellen</td>
+<td>Auth-Pflicht; erstellt Conversation falls keine existiert; markiert ungelesene Messages als gelesen (triggert Read-Receipt)</td>
+</tr>
+<tr>
+<td><code>GET /dms/chat-updates/:conversationId?afterId=…&amp;readAfterId=…</code></td>
+<td><strong>SSE</strong>: liefert neue Messages + Read-Receipts</td>
+<td>Stream (SSE); weckt Waiters bei neuen Daten</td>
+</tr>
+<tr>
+<td><code>POST /dms/send</code></td>
+<td>Nachricht senden</td>
+<td>gibt nur das HTML der neu gesendeten Message zurück; weckt SSE Waiters</td>
+</tr>
+<tr>
+<td><code>GET /dms/chat-content/:conversationId</code></td>
+<td>Liefert die komplette Chat-History (Partial-HTML)</td>
+<td><code>dms/partials/message_list</code> (HTML Partial)</td>
+</tr>
+<tr>
+<td><code>GET /dms/message-read-status/:messageId</code></td>
+<td>Poll-Endpoint für Read-Status (HTMX)</td>
+<td>Gibt kleines HTML-Snippet mit ✓/✓✓ zurück für den Sender</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<h3 id="131--verwendete-services-libservices">13.1 # Verwendete Services (<code>lib/services</code>)</h3>
+<ul>
+<li><code>lib/services/dmPresenceService.js</code> — DM-Präsenz / Online-Status (Anzeige, Last-Seen, Präsenz-API).</li>
+<li><code>lib/services/dmMessagingService.js</code> — DM-Messaging-Logik (Konversationen, Senden, Pagination, Read-Receipts).</li>
+<li><code>lib/services/dmFilesService.js</code> — Datei-Handling für DMs (Upload/Links/Previews).</li>
+<li><code>lib/services/userService.js</code> — Benutzerlookup &amp; Suche (Nutzer-Suche im Posteingang / Mention-Resolution).</li>
+</ul>
+<ul>
+<li>
+<p><strong>Inkrementelle Updates:</strong> Statt kompletter History werden neue Messages als HTML-Partial (<code>message_items.ejs</code>) an den Container angehängt.</p>
+</li>
+<li>
+<p><strong>File- &amp; Image-Support (neu):</strong> Der Chat unterstützt Dateianhänge und Bilder mit folgenden Details:</p>
+<ul>
+<li>
+<p><strong>Upload-Handling:</strong> <code>multer</code> speichert Dateien in <code>public/uploads</code>. Die Route <code>POST /dms/send</code> nutzt <code>upload.array('file', 5)</code> (max. 5 Anhänge pro Nachricht) und validiert Dateigrößen/-typen serverseitig.</p>
+</li>
+<li>
+<p><strong>Client-Integration:</strong> <code>views/dms/chat.ejs</code> enthält ein verstecktes <code>&lt;input type=&quot;file&quot; id=&quot;chatFileInput&quot; multiple&gt;</code>; Drag&amp;Drop und Klick-Interaktion werden durch <code>public/js/chatDragnDrop.js</code> gesteuert und zeigen eine Vorschau im Container <code>#chatUploadPreview</code>.</p>
+</li>
+<li>
+<p><strong>Image-Handling:</strong> Bilder werden als Inline-Preview (<code>&lt;img class=&quot;chat-image js-open-image-modal&quot; ...&gt;</code>) in <code>views/dms/partials/message_items.ejs</code> gerendert; ein Klick öffnet die volle Bildansicht (modal) mittels kleiner JS-Handler (<code>js-open-image-modal</code>). Nicht-Bild-Dateien werden als Datei-Links mit Icon/Größe dargestellt.</p>
+</li>
+<li>
+<p><strong>Partial-Render:</strong> Der Server liefert die neue Message als HTML-Partial (Partial <code>message_items</code>) zurück, sodass HTMX / Client den Chat ohne Full-Reload aktualisieren kann.</p>
+</li>
+<li>
+<p><strong>Mobile: Sichtbarer Mini-Upload-Button :</strong> Für mobile Nutzer wurde ein kleiner, klickbarer Upload-Button ergänzt, der die bereits vorhandene Upload-Logik verwendet:</p>
+<ul>
+<li>Template: <code>views/dms/chat.ejs</code> enthält jetzt einen sichtbaren Button <code>#chatFileButton</code> (Klasse <code>mini-file-btn</code>), der den versteckten Input <code>#chatFileInput</code> auslöst.</li>
+<li>Preview: Ausgewählte Dateinamen werden im Element <code>#chatUploadPreview</code> angezeigt; die Form verwendet weiterhin <code>hx-encoding=&quot;multipart/form-data&quot;</code>, sodass HTMX den Upload wie gewohnt als FormData behandelt.</li>
+<li>Server: Die Route <code>POST /dms/send</code> verarbeitet Dateien mit <code>multer</code> (<code>upload.array('file', 5)</code>) — keine serverseitigen Änderungen am Upload-Handling sind erforderlich.</li>
+<li>Styling: Optionales CSS-Feintuning kann in <code>public/css/dms.css</code> unter <code>.mini-file-btn</code> vorgenommen werden.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Lesebestätigung (✓/✓✓):</strong> Wenn der Empfänger Messages liest, wird <code>is_read</code> gesetzt und der Sender bekommt per SSE die <code>lastReadId</code>, die clientseitig die Ticks aktualisiert.</p>
+</li>
+</ul>
+<h3 id="132--moderation-ratelimit--retention-chat">13.2 # Moderation, Rate‑Limit &amp; Retention (Chat)</h3>
+<ul>
+<li><strong>Rate‑Limiting:</strong> Es wird empfohlen, <code>POST /dms/send</code> mit einem Rate‑Limit zu schützen (z. B. <code>express-rate-limit</code>) — typischer Startwert: <code>20</code> Nachrichten pro Minute pro User/IP. Falls nicht konfiguriert, bitte in <code>server.js</code> oder in <code>routes/dms.js</code> eine Middleware hinzufügen.</li>
+<li><strong>Upload‑Prüfung:</strong> Alle Uploads durch <code>lib/upload_quarantine.js</code> validieren (MIME‑Typ, Max‑Size 25MB). Bei Bedarf zusätzliche Virenscan‑Pipeline integrieren.</li>
+<li><strong>Retention / DSGVO:</strong> Standard-Retention für Chat‑Logs: <strong>90 Tage</strong> (empfohlen). In der Produktion kann dies per ENV <code>CHAT_RETENTION_DAYS</code> konfiguriert; alte Einträge sollten periodisch per Scheduled Job (MariaDB Event oder Cron) anonymisiert oder gelöscht werden.</li>
+</ul>
+<p>Diese Maßnahmen sind der Datenschutz‑ und Missbrauchsprävention geschuldet und sollten kurz in der Einreichdokumentation erwähnt werden.</p>
+<ul>
+<li>
+<p><strong>Fehlerfälle / UX:</strong> Bei SSE-Fehlern reconnectet der Client mit exponentiellem Backoff; Auto-Scroll nur wenn User nahe am Ende ist; Deduplizierung verhindert doppelte Nachrichten bei HTMX-Swaps.</p>
+</li>
+<li>
+<p><strong>Live-DMs mit SSE:</strong> Chat nutzt SSE für Echtzeit-Nachrichten und Read-Receipts; der Posteingang pollt per HTMX in kurzen Abständen, um <code>unread_count</code>-Badges und letzte Nachrichtenstatus ohne manuelles Reload zu aktualisieren.</p>
+</li>
+</ul>
+<hr>
+<h2 id="14-seite-dashboard-dashboard">14. Seite: Dashboard (/dashboard)</h2>
+<ul>
+<li>
+<p><strong>Zweck/User-Story:</strong> Zentrale Übersichtsseite mit Statistiken, Top-Ideen der Woche, Projektstatus, aktive Nutzer und beliebte Kategorien für schnelle Einblicke.</p>
+</li>
+<li>
+<p><strong>Haupt-View:</strong> <code>views/dashboard/dashboard.ejs</code>. <strong>CSS:</strong> <code>style.css</code> + <code>dashboard.css</code>.</p>
+</li>
+<li>
+<p><strong>Client-JS / HTMX:</strong> Es gibt keine dedizierten, großen Dashboard-JavaScript-Bundles; statische Teile werden serverseitig gerendert. Widgets werden jedoch lazy via HTMX‑Platzhalter nachgeladen (siehe <code>views/dashboard/partials/</code> und <code>routes/dashboard.js</code>).</p>
+</li>
+<li>
+<p><strong>Routen (routes/dashboard.js):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Zweck</th>
+<th>Antwort / gerenderte Template (Code)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /dashboard</code></td>
+<td>Hauptseite (Shell)</td>
+<td><code>views/dashboard/dashboard.ejs</code> (full HTML)</td>
+</tr>
+<tr>
+<td><code>GET /dashboard/widgets/metrics</code></td>
+<td>KPI‑Widget (neue Ideen, aktive User, Kategorien)</td>
+<td><code>dashboard/partials/metrics</code> (partial: views/dashboard/partials/metrics.ejs)</td>
+</tr>
+<tr>
+<td><code>GET /dashboard/widgets/new-ideas-number</code></td>
+<td>Liefert nur die Zahl neuer Ideen (Text)</td>
+<td>plain text (no template)</td>
+</tr>
+<tr>
+<td><code>GET /dashboard/widgets/top-ideas</code></td>
+<td>Top‑Ideen (Top‑3 der Woche)</td>
+<td><code>dashboard/partials/top-ideas</code> (partial: views/dashboard/partials/top-ideas.ejs)</td>
+</tr>
+<tr>
+<td><code>GET /dashboard/widgets/charts</code></td>
+<td>Charts / Grid (Monats-, Kategorien-, Projekt- und Nutzer‑Statistiken)</td>
+<td><code>dashboard/widgets/charts-grid</code> (views/dashboard/widgets/charts-grid.ejs)</td>
+</tr>
+<tr>
+<td><code>GET /dashboard/:id/card</code></td>
+<td>Einzelkarte (z. B. Link von Top‑Idee)</td>
+<td><code>partials/idea-card</code> (Code: res.render('partials/idea-card'), expected partial)</td>
+</tr>
+<tr>
+<td><code>GET /dashboard/widgets/project-stats</code></td>
+<td>Projekt‑Status Widget</td>
+<td><code>dashboard/partials/project-stats</code> (code) — see note below</td>
+</tr>
+<tr>
+<td><code>GET /dashboard/widgets/monthly-stats</code></td>
+<td>Monatsstatistiken Widget</td>
+<td><code>dashboard/partials/monthly-stats</code> (code) — see note below</td>
+</tr>
+<tr>
+<td><code>GET /dashboard/widgets/top-users</code></td>
+<td>Top‑Benutzer Widget</td>
+<td><code>dashboard/partials/top-users</code> (code) — see note below</td>
+</tr>
+</tbody>
+</table>
+<p>Hinweis: Die obigen Routen spiegeln die Route-Definitionen in <code>routes/dashboard.js</code> wider; die genannten Templates werden an den im Code verwendeten Pfaden gerendert.</p>
+</li>
+<li>
+<p><strong>Templates/Partials:</strong> <code>dashboard.ejs</code> (Grid-Layout mit Karten für Stats, Charts, Top-Ideen-Liste mit Links zu <code>/ideas/:id/card</code>).</p>
+</li>
+<li>
+<p><strong>Client-Logik:</strong> Keine; statische Seite.</p>
+</li>
+<li>
+<p><strong>DB-Touchpoints:</strong> Queries für neue Ideen (30 Tage), beliebte Kategorien, Top-Ideen (7 Tage), monatliche Stats, Projekt-Status, Top-Nutzer, aktive Nutzer (7 Tage).</p>
+</li>
+<li>
+<p><strong>Rollen/Berechtigungen:</strong> Auth-Pflicht; alle eingeloggten Nutzer.</p>
+</li>
+<li>
+<p><strong>Edge Cases:</strong> Leere Daten → Placeholder-Texte.</p>
+</li>
+</ul>
+<h3 id="141--verwendete-services-libservices">14.1 # Verwendete Services (<code>lib/services</code>)</h3>
+<ul>
+<li><code>lib/services/dashboardService.js</code> — Dashboard-Widget-Queries (KPI-Zahlen, Top-Ideen, Top-User, Monatsstatistiken).</li>
+</ul>
+<hr>
+<h2 id="15-verwendete-komponenten--versionsnummern">15. Verwendete Komponenten + Versionsnummern</h2>
+<h3 id="151-laufzeitumgebungen--infrastruktur">15.1 Laufzeitumgebungen &amp; Infrastruktur</h3>
+<ul>
+<li>Node.js: <strong>24.11.0</strong> (empfohlen für Entwicklung mit <code>npm run devStart</code>).</li>
+<li>Bun: <strong>1.3.5+1e86cebd7</strong> (kompatible Alternative für <code>bun run devStart</code>/<code>bun run migrate</code>).</li>
+<li>npm: <strong>11.6.1</strong> (Package-Manager für Node.js-Skripte, insbesondere beim Deployment).</li>
+<li>MariaDB (Server): <strong>12.1</strong> (empfohlen; Download: <a href="https://mariadb.org/download/?t=mariadb&amp;m=12.1">https://mariadb.org/download/?t=mariadb&amp;m=12.1</a>). Verwenden Sie die offizielle MariaDB-Distribution 12.1 für beste Kompatibilität und Performance.</li>
+</ul>
+<h3 id="152-npm-packages">15.2 NPM-Packages</h3>
+<p>Die folgenden Pakete bilden das Runtime-Gerüst (Dependencies) bzw. den Entwicklungs-Workflow (DevDependencies).</p>
+<h3 id="153--1321-dependencies">15.3 # 13.2.1 Dependencies</h3>
+<p>Die Liste unten entspricht den Abhängigkeiten in <code>package.json</code> (Stand Entwicklungszweig).</p>
+<ul>
+<li><code>@faker-js/faker</code>: 10.2.0</li>
+<li><code>argon2</code>: 0.44.0</li>
+<li><code>body-parser</code>: 2.2.2</li>
+<li><code>dotenv</code>: 16.0.0</li>
+<li><code>ejs</code>: 3.1.10</li>
+<li><code>express</code>: 5.2.1</li>
+<li><code>express-rate-limit</code>: ^8.3.1</li>
+<li><code>express-session</code>: 1.18.2</li>
+<li><code>fuse.js</code>: 7.1.0</li>
+<li><code>ioredis</code>: 5.9.2</li>
+<li><code>mariadb</code>: 3.4.5</li>
+<li><code>multer</code>: ^2.1.1</li>
+<li><code>pm2</code>: ^6.0.14</li>
+<li><code>uuid</code>: 13.0.0</li>
+</ul>
+<h3 id="154--1322-devdependencies">15.4 # 13.2.2 DevDependencies</h3>
+<ul>
+<li><code>node-fetch</code>: ^3.3.2</li>
+<li><code>nodemon</code>: ^3.1.11</li>
+</ul>
+<ul>
+<li>mariadb: <strong>3.4.5</strong></li>
+<li>method-override: <strong>3.0.0</strong></li>
+<li>multer: <strong>2.0.2</strong></li>
+<li>uuid: <strong>13.0.0</strong></li>
+</ul>
+<p>Bitte beachten: Die folgenden Versionen entsprechen aktuell <code>package.json</code> im Projektroot (Stand jetzt):</p>
+<ul>
+<li>
+<p>Dependencies (exakt aus <code>package.json</code>):</p>
+<ul>
+<li><code>@faker-js/faker</code>: 10.2.0</li>
+<li><code>argon2</code>: 0.44.0</li>
+<li><code>body-parser</code>: 2.2.2</li>
+<li><code>dotenv</code>: 16.0.0</li>
+<li><code>ejs</code>: 3.1.10</li>
+<li><code>express</code>: 5.2.1</li>
+<li><code>express-rate-limit</code>: ^8.3.1</li>
+<li><code>express-session</code>: 1.18.2</li>
+<li><code>fuse.js</code>: 7.1.0</li>
+<li><code>ioredis</code>: 5.9.2</li>
+<li><code>mariadb</code>: 3.4.5</li>
+<li><code>multer</code>: ^2.1.1</li>
+<li><code>pm2</code>: ^6.0.14</li>
+<li><code>uuid</code>: 13.0.0</li>
+</ul>
+</li>
+<li>
+<p>DevDependencies (exakt aus <code>package.json</code>):</p>
+<ul>
+<li><code>esbuild</code>: ^0.27.3</li>
+<li><code>jsdoc</code>: 4.0.5</li>
+<li><code>nodemon</code>: 3.1.14</li>
+</ul>
+</li>
+</ul>
+<p>Hinweis: Das Projekt verwendet ausschließlich den <code>mariadb</code>-Treiber für Node.js und Bun; <code>mysql2</code> wurde aus den Dependencies entfernt.</p>
+<h3 id="155--1322-devdependencies">15.5 # 13.2.2 DevDependencies</h3>
+<ul>
+<li>node-fetch: <strong>3.3.2</strong></li>
+<li>nodemon: <strong>3.1.11</strong></li>
+</ul>
+<hr>
+<h3 id="156-15-gamification--punkte">15.6 15. Gamification &amp; Punkte</h3>
+<p>Das effiziente Punkte-System fördert Engagement durch eine skalierbare, datenbankoptimierte Architektur mit nur einer Zeile pro Benutzer.</p>
+<ul>
+<li><strong>Architektur:</strong> Tabelle <code>user_points</code> (user_id, current_points, pending_delta) – <strong>effizient und skalierbar</strong>, da keine History-Tabelle benötigt wird. Punkte werden bei Aktionen in <code>pending_delta</code> akkumuliert und erst beim Logout zu <code>current_points</code> committed (Lazy-Commit-System).</li>
+<li><strong>Berechnung (Endpoint <code>/users/points</code>):</strong> Zeigt <code>current_points + pending_delta</code> in der UI (z.B. &quot;50 (+5)&quot;) – <strong>schnell und transparent</strong>.</li>
+<li><strong>Punkte-Regeln (alle in pending_delta geschrieben):</strong>
+<ul>
+<li>Idee erstellen: +5 (plus +1 pro Tag/Datei wenn sie im gleichen Request angelegt wurden)</li>
+<li>Kommentar schreiben: +1</li>
+<li>Like auf Kommentar: +1 für Kommentierenden, -1 beim Unlike</li>
+<li>Idee liken: +5 für Autor, -5 beim Unlike</li>
+<li>Idee disliken: -1 für Autor, +1 beim Undislike</li>
+<li>Datei zu Idee hochladen: +1</li>
+<li>Tags zu Idee hinzufügen: +1</li>
+<li>Survey erstellen: +5</li>
+<li>Survey teilnehmen: +2 für Teilnehmer</li>
+<li>Survey löschen: -5 (ohne Teilnehmer) oder +2 pro Teilnehmer (mit Teilnehmern)</li>
+<li>Idee löschen: +10 (akzeptiert), -2 (in Prüfung), -3 (abgelehnt), 0 (neu)
+<ul>
+<li>Beim Löschen wird die ursprüngliche +5-Erstellungsbelohnung immer rückgängig gemacht; nur bei sehr jungen <code>status = 'neu'</code> Ideen ohne Likes/Dislikes und innerhalb von <code>POINTS_AUTO_REVERT_WINDOW_HOURS</code> werden zusätzlich für Tags/Dateien gutschriebene Punkte revertiert. Die Lösch-Route läuft in einer Transaktion (<code>SELECT ... FOR UPDATE</code>), damit <code>user_points</code> und die Idee konsistent abgebaut werden.</li>
+</ul>
+</li>
+<li>Ansprechpartner eines Projekts werden: +10</li>
+<li>Ansprechpartner eines Projekts entlassen werden: -5</li>
+<li>Projekt löschen (abgeschlossen): +15 für Ansprechpartner</li>
+<li>Manuelle Punktevergabe durch Admin: ±50 (mit Grund)</li>
+</ul>
+</li>
+<li><strong>Migration:</strong> <code>0002_user_points.sql</code> erstellt die <code>user_points</code> Tabelle; keine History mehr für optimale Performance.</li>
+</ul>
+<p><strong>Service:</strong> <code>lib/services/pointsService.js</code> — Verwaltung der Punkte-Logik und lazy-commit Mechaniken (genutzt von <code>/users/points</code> und Admin-Endpoints).</p>
+<h2 id="16-helpers--core-lib-dateien-nicht-services">16. Helpers &amp; Core <code>lib</code> Dateien (nicht-Services)</h2>
+<p>Kurze Liste der zentralen Helper / Core-Module in <code>lib/</code>, die nicht als Feature-Services unter <code>lib/services/</code> liegen:</p>
+<ul>
+<li><code>lib/http.js</code> — allgemeine HTTP-Utilities.</li>
+<li><code>lib/htmxDetector.js</code> — HTMX-Request-Detection &amp; Partial-Helpers.</li>
+<li><code>lib/sqlFragmentBuilder.js</code> — sicherer SQL-Fragment-Builder (wichtig für Search).</li>
+<li><code>lib/upload_quarantine.js</code> — Upload-Quarantine / Validierung vor Persistenz.</li>
+<li><code>lib/viewHelpers.js</code> — Template-Rendering-Utilities (<code>userRender</code> etc.).</li>
+<li><code>lib/asyncHandler.js</code> — async handler wrapper für Express.</li>
+<li><code>lib/dbHelpers.js</code> — kleine DB-Hilfsfunktionen.</li>
+<li><code>lib/timing.js</code> — Request-Timing &amp; Logging.</li>
+<li><code>lib/keyManager.js</code> — Key / Secret helpers.</li>
+<li><code>lib/mariadb-session-store.js</code> — MariaDB Session Store (eingebunden in <code>server.js</code>).</li>
+<li><code>lib/redis.js</code> — Redis client wrapper (optional, für live sync/presence).</li>
+<li><code>lib/liveUpdates.js</code> — SSE Coordinator (Brücke zwischen Routes &amp; Redis/publish).</li>
+</ul>
+<p>Hinweis: Details zum Live-Update-System sind in Abschnitt 4.2 integriert.
+Die detaillierte technische Beschreibung des Live-Update-Systems wurde in Abschnitt 4.2 integriert; der hier wiederholte Text wurde entfernt, um Dopplungen zu vermeiden.</p>
+<h2 id="17-screenshots">17. Screenshots</h2>
+<blockquote>
+<p>IN der pdf  funktionierne die bilder nicht jedoch kann man sie einfahc sperat anschauen im projekt root oder in doku bilder</p>
+</blockquote>
+<ul>
+<li>Auth</li>
+</ul>
+<p><img src="file:///c:\Users\ege\Documents\finIdeenboard\IdeaboardWebsite\000003.png" alt="000003.png"></p>
+<ul>
+<li>Konto:</li>
+</ul>
+<p><img src="file:///c:\Users\ege\Documents\finIdeenboard\IdeaboardWebsite\000004.png" alt="000004.png"></p>
+<ul>
+<li>Start seite:</li>
+</ul>
+<p><img src="file:///c:\Users\ege\Documents\finIdeenboard\IdeaboardWebsite\000005.png" alt="000005.png"></p>
+<ul>
+<li>Ideen Seite:</li>
+</ul>
+<p><img src="file:///c:\Users\ege\Documents\finIdeenboard\IdeaboardWebsite\000006.png" alt="000006.png"></p>
+<p><img src="file:///c:\Users\ege\Documents\finIdeenboard\IdeaboardWebsite\000007.png" alt="000007.png"></p>
+<ul>
+<li>Umfragen:</li>
+</ul>
+<p><img src="file:///c:\Users\ege\Documents\finIdeenboard\IdeaboardWebsite\000008.png" alt="000008.png"></p>
+<p><img src="file:///c:\Users\ege\Documents\finIdeenboard\IdeaboardWebsite\000009.png" alt="000009.png"></p>
+<p><img src="file:///c:\Users\ege\Documents\finIdeenboard\IdeaboardWebsite\000010.png" alt="000010.png"></p>
+<p><img src="file:///c:\Users\ege\Documents\finIdeenboard\IdeaboardWebsite\000021.png" alt="000020.png"></p>
+<ul>
+<li>extra Mobile bilder:</li>
+</ul>
+<p><img src="file:///c:\Users\ege\Documents\finIdeenboard\IdeaboardWebsite\000022.png" alt="000008.png"></p>
+<p><img src="file:///c:\Users\ege\Documents\finIdeenboard\IdeaboardWebsite\000025.png" alt="000009.png"></p>
+<p><img src="file:///c:\Users\ege\Documents\finIdeenboard\IdeaboardWebsite\000026.png" alt="000010.png"></p>
+<p><img src="file:///c:\Users\ege\Documents\finIdeenboard\IdeaboardWebsite\000027.png" alt="000020.png"></p>
+
+            
+            
+        </body>
+        </html>

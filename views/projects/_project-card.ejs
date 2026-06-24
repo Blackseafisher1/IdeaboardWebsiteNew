@@ -1,0 +1,115 @@
+<article class="project-card" 
+         id="project-<%= project.project_id %>" 
+         data-status="<%= project.status %>" 
+         data-contact-id="<%= project.contact_person_id %>"
+         data-contact-name="<%= project.contact_person_name || '' %>"
+         data-team='<%- JSON.stringify(project.team || []).replace(/'/g, "&#39;") %>'
+         data-can-manage-team="<%= !!project.canManageTeam %>">
+  
+  <header class="project-header">
+    <div class="project-title-section">
+      <h3 class="project-title"><%= project.name %></h3>
+      <div class="project-meta">
+        <span class="project-status status-<%= project.status.toLowerCase().replace(' ', '-') %>">
+          <%= project.status %>
+        </span>
+        <span class="project-date">
+          Erstellt: <%= new Date(project.created_at).toLocaleDateString('de-DE') %>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <div class="project-content">
+    <p class="project-desc">
+      <%= project.description || 'Keine Beschreibung verfügbar' %>
+    </p>
+
+    <div class="project-progress-section">
+      <div class="progress-header">
+        <span class="progress-label">Fortschritt</span>
+        <span class="progress-value"><%= project.progress %>%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: <%= project.progress %>%" 
+             data-progress="<%= project.progress %>"></div>
+      </div>
+    </div>
+
+    <div class="project-stats">
+      <div class="stat">
+        <span class="stat-icon">📊</span>
+        <div class="stat-info">
+          <span class="stat-value"><%= project.progress %>%</span>
+          <span class="stat-label">Fortschritt</span>
+        </div>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">📅</span>
+        <div class="stat-info">
+          <% const created = new Date(project.created_at);
+             const daysAgo = Math.floor((new Date() - created) / (1000 * 60 * 60 * 24)); %>
+          <span class="stat-value"><%= daysAgo %></span>
+          <span class="stat-label">Tage</span>
+        </div>
+      </div>
+    </div>
+
+    <footer class="project-footer">
+      <div class="project-contact">
+        <div class="contact-header">
+          <span class="contact-label">Ansprechpartner</span>
+          <% if (project.contact_email && !(user && String(user.id) === String(project.contact_person_id))) { %>
+              <span style="float: right;">
+                <a href="mailto:<%= project.contact_email %>" class="contact-email" title="E-Mail senden" >
+                  📧 E-Mail
+                </a>
+                <% if (project.contact_person_id) { %>
+                  <a href="/dms/direct/<%= project.contact_person_id %>" 
+                     class="contact-email" 
+                     title="Direktnachricht senden" 
+                     style="margin-left: 5px;">
+                    💬 DM an <%= project.contact_person_name %>
+                  </a>
+                <% } %>
+              </span>
+          <% } %>
+        </div>
+        <div class="contact-person">
+          <span class="contact-avatar">👤</span>
+          <span class="contact-name"><%= project.contact_person_name || 'Nicht zugewiesen' %></span>
+        </div>
+      </div>
+      <div class="project-actions">
+        <button class="btn outline view-team" data-id="<%= project.project_id %>" data-name="<%= project.name %>">
+          Team
+        </button>
+        <% 
+            const isUserInTeam = project.team && project.team.some(m => String(m.user_id) === String(user.id));
+          const isAdmin = authz.isAdmin(user);
+            const isContact = user && (String(project.contact_person_id) === String(user.id));
+            
+            if (project.group_id && (isAdmin || isContact || isUserInTeam)) { 
+        %>
+          <a href="/groups/chat/<%= project.group_id %>" class="btn outline" style="text-decoration: none;">
+            💬 Chat
+          </a>
+        <% } %>
+        <% if (authz.isAdmin(user) || (authz.isProjectLead(user) && String(user.id) === String(project.contact_person_id))) { %>
+          <button class="btn outline edit-project" data-id="<%= project.project_id %>">
+            Bearbeiten
+          </button>
+          <button class="btn danger delete-project"
+                  hx-post="/projects/<%= project.project_id %>/delete"
+                  hx-target="#project-<%= project.project_id %>"
+                  hx-swap="outerHTML"
+                  hx-confirm="Wirklich löschen?">
+            Löschen
+          </button>
+        <% } else { %>
+          <span class="muted">Keine Bearbeitungsrechte</span>
+        <% } %>
+      </div>
+    </footer>
+  </div>
+</article>

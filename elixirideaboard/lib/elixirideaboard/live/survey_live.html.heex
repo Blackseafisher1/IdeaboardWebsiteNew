@@ -1,0 +1,49 @@
+<div class="surveys-page">
+  <h1>Umfragen</h1>
+  <%= if @page == :index do %>
+    <a href="/surveys/new" class="btn accent">Neue Umfrage</a>
+    <div class="surveys-list">
+      <%= for s <- @surveys do %>
+        <a href={"/surveys/#{s.survey_id}"} class="survey-item">
+          <h3><%= s.title %></h3>
+          <p><%= s.description %></p>
+          <span class="muted">von <%= s.creator_username %></span>
+        </a>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= if @page == :show && @survey do %>
+    <div class="survey-detail">
+      <h2><%= @survey.survey.title %></h2>
+      <p><%= @survey.survey.description %></p>
+
+      <%= for q <- @survey.questions do %>
+        <div class="survey-question">
+          <h4><%= q.text %></h4>
+          <%= for opt <- q.options do %>
+            <label class="survey-option">
+              <input type="radio" name={"q_#{q.question_id}"} value={opt.option_id} />
+              <%= opt.text %>
+            </label>
+          <% end %>
+        </div>
+      <% end %>
+
+      <button class="btn" phx-click="submit-survey">Absenden</button>
+    </div>
+  <% end %>
+
+  <%= if @page == :new do %>
+    <div class="survey-create">
+      <h2>Neue Umfrage</h2>
+      <form phx-submit="create">
+        <label>Titel</label>
+        <input type="text" name="title" class="input" required />
+        <label>Beschreibung</label>
+        <textarea name="description" class="input"></textarea>
+        <button class="btn" type="submit">Erstellen</button>
+      </form>
+    </div>
+  <% end %>
+</div>

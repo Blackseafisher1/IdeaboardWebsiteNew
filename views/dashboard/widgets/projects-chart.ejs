@@ -1,0 +1,22 @@
+<div class="chart-card">
+  <h3>Beliebteste Projekte</h3>
+  <div class="chart-container">
+    <% if (stats.popularProjects && stats.popularProjects.length) { %>
+      <% stats.popularProjects.forEach(function(p){ %>
+        <div class="bar-chart-item">
+          <div class="bar-header">
+            <span class="category-icon">📁</span>
+            <span class="category-name"><strong><%= p.name || p.title || 'Projekt' %></strong></span>
+            <span class="category-count"><%= Number(p.count||0) %></span>
+          </div>
+          <div class="bar-track-container">
+            <div class="bar-track"><div class="bar-fill" style="width:<%= Number(p.percentage||0) %>%"></div></div>
+            <span class="bar-percentage"><%= Number(p.percentage||0) %>%</span>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p class="no-data">Keine Projekte vorhanden</p>
+    <% } %>
+  </div>
+</div>

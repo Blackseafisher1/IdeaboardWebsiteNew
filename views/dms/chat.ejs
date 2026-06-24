@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat mit <%= otherUser.username %></title>
+  
+    <%- include('../partials/head') %>
+    <link rel="stylesheet" href="/css/dms.css">
+
+
+ 
+
+
+    <script>
+        window.currentUserId = <%= currentUserId %>;
+        window.currentConversationId = <%= conversation.conversation_id %>;
+        window.otherUserId = <%= otherUser.user_id %>;
+    </script>
+</head>
+<body class="chat-page">
+    <%- include('../partials/header', { activePage: 'chat' }) %>
+    
+    <main class="container chat-page-container">
+        <div class="chat-container">
+            <div class="chat-header">
+                <button class="back-button" onclick="window.location.href='/dms'">←</button>
+                <div class="user-avatar"><%= otherUser.username.charAt(0).toUpperCase() %></div>
+                <div class="user-info">
+                    <h2><%= otherUser.username %></h2>
+                    <p id="connectionStatus">Offline</p>
+                </div>
+            </div>
+            
+            <div class="chat-messages" 
+                 id="messagesContainer"
+                 data-last-id="<%= messages.length > 0 ? messages[messages.length - 1].message_id : 0 %>">
+                
+                <% if (messages.length === 20) { %>
+                    <div class="load-more-container" 
+                         hx-get="/dms/chat/<%= conversation.conversation_id %>/history?beforeId=<%= messages[0].message_id %>" 
+                         hx-trigger="load-history, click" 
+                         hx-swap="outerHTML">
+                        <span class="load-more-text">Ältere Nachrichten laden</span>
+                        <div class="loading-spinner" style="display:none">...</div>
+                    </div>
+                <% } %>
+
+                <%- include('partials/message_list', { messages: messages, currentUserId: currentUserId }) %>
+            </div>
+            
+           
+
+            <!-- Kleiner Balken über dem Input -->
+<div id="chatUploadPreview" class="chat-upload-preview" hidden></div>
+
+<div class="chat-input" id="chatInputBar">
+    <form id="messageForm"
+          hx-post="/dms/send"
+          hx-target="#messagesContainer"
+          hx-swap="beforeend"
+          hx-encoding="multipart/form-data"
+          hx-on::after-request="this.reset();">
+    <input type="hidden" name="conversation_id" value="<%= conversation.conversation_id %>">
+
+        <!-- Verstecktes File-Input, wird von Drag&Drop / Klick gefüllt -->
+        <input type="file" id="chatFileInput" name="file" style="display:none" multiple>
+
+        <!-- Sichtbarer Mini-Upload-Button für mobile neben Senden -->
+        <button type="button" id="chatFileButton" class="mini-file-btn" title="Datei anhängen">📎</button>
+
+        <input type="text"
+                     name="message"
+                     placeholder="Nachricht eingeben oder Datei hier droppen..."
+                     autocomplete="off">
+          <button type="submit" id="messageSendBtn">Senden</button>
+  </form>
+</div>
+
+
+
+  
+</div>
+
+
+        </div>
+    </main>
+     <%- include('../partials/footer') %>
+   
+    <script src="/js/dist/chatClient.min.js"></script>
+    <script src="/js/dist/dmLive.min.js"></script>
+    <script src="/js/dist/chatDragnDrop.min.js"></script>
+</body>
+</html>

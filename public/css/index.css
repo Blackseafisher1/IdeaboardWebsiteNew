@@ -1,0 +1,312 @@
+/* --- Hero Abschnitt --- */
+
+
+.body, html{
+   overflow-x: hidden;
+}
+
+.hero {
+  position: relative;
+  width: 100%;
+  /* Begrenzt die Höhe Responsiv, aber groß genug für Video-Impact */
+  height: clamp(450px, 80vh, 900px);
+  overflow: hidden;
+  /* Wichtig: Hintergrundfarbe setzen, falls Video lädt */
+  background-color: var(--bg); 
+}
+
+/* Fix fuer deckend Mode: sicherstellen video stays sichtbar und Loeschen auf landing Seite */
+html.no-blur .hero,
+html.no-blur .hero-overlay,
+html.no-blur .hero::after {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Overlay im deckenden Modus dezent reduzieren, damit Text lesbar bleibt, ohne das Video zu blockieren */
+html.no-blur .hero-overlay {
+  background: radial-gradient(
+    circle at center,
+    color-mix(in srgb, var(--bg) 0%, transparent) 20%,    
+    color-mix(in srgb, var(--bg) 40%, transparent) 100%  
+  ) !important;
+}
+
+/* verringert unten fade fuer deckend Mode */
+html.no-blur .hero::after {
+  height: 30vh !important;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--bg) 0%, transparent) 0%,
+    var(--bg) 100%
+  ) !important;
+}
+
+/* Video im Hintergrund */
+.hero-video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0; /* Basis-Level */
+}
+
+
+/* Overlay für Text & Abdunklung des Videos */
+.hero-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: var(--text);
+  /* Responsiv vertical Padding und balanced horizontal Padding */
+  padding: clamp(0.75rem, 4%, 2.5rem);
+  padding-inline: clamp(1rem, 4%, 3rem);
+  z-index: 2; /* Über Video */
+
+  /* Kombinierter Verlauf: Vignette + generelle Abdunklung */
+  background: 
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--bg) 30%, transparent) 0%,   
+      color-mix(in srgb, var(--bg) 0%, transparent) 40%,    
+      color-mix(in srgb, var(--bg) 20%, transparent) 70%,  
+      color-mix(in srgb, var(--bg) 60%, transparent) 100%    
+    ),
+    radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--bg) 0%, transparent) 40%,    
+      color-mix(in srgb, var(--bg) 50%, transparent) 100%  
+    );
+  pointer-events: none;
+}
+
+/* Interaktive Elemente im Overlay wieder aktivieren */
+.hero-overlay h1,
+.hero-overlay p,
+.hero-overlay .btn {
+  pointer-events: auto;
+  position: relative;
+  z-index: 10;
+}
+
+.hero-overlay h1 {
+  font-size: clamp(1.8rem, 6vw, 3.5rem);
+  margin-bottom: 1rem;
+  color: var(--accent);
+}
+
+.hero-overlay p {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  margin-bottom: 2rem;
+}
+
+/* sicherstellen Hero Overlay Inhalt is perfectly zentriert und never overflows
+ - limit inneren Breite, zentrieren children, und erzwingen safe word-Umbruch */
+.hero-overlay > * {
+  box-sizing: border-box;
+  max-width: min(1100px, 95%);
+  margin: 0 auto;
+}
+
+/* behalten Buttons kompakt instead of stretching full Breite */
+.hero-overlay .btn {
+  display: inline-block;
+  width: auto;
+  max-width: 320px;
+  white-space: nowrap;
+  margin: 0.5rem auto; /* behalten Buttons zentriert und balanced */
+}
+
+/* --- DER WICHTIGE ÜBERGANG (FADE OUT) --- */
+
+/* 1. Der Haupt-Verlauf am Boden der Hero-Sektion */
+/* --- 1. DER EXTREME FADE --- */
+.hero::after {
+  content: "";
+  position: absolute;
+  bottom: -5px; /* Kleiner Überlapp nach unten, um "Ritzer" zu vermeiden */
+  left: 0;
+  width: 100%;
+  
+  /* Deckt die unteren 75% des Videos ab = sehr weicher Verlauf */
+  height: 75vh; 
+  
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--bg) 0%, transparent) 0%,      /* Oben transparent */
+    color-mix(in srgb, var(--bg) 10%, transparent) 20%,   /* Langsamer Start */
+    color-mix(in srgb, var(--bg) 50%, transparent) 50%,   /* Mitte: Video noch sichtbar, aber dunkel */
+    color-mix(in srgb, var(--bg) 90%, transparent) 85%,   /* Unten: Fast komplett Farbe */
+    var(--bg) 100%                  /* Harter Abschluss in Hintergrundfarbe */
+  );
+  
+  z-index: 1; /* Über dem Video */
+  pointer-events: none;
+}
+
+
+/* --- Buttons --- */
+/* visuell Button Stile verschoben zu public/css/style.css (zentralisiert).
+ Seite-spezifisch Layout/placement bleibt here wenn needed. */
+
+/* --- FEATURES Abschnitt --- */
+.features {
+  position: relative;
+  max-width: 1200px; /* Begrenzte Breite für bessere Lesbarkeit */
+  margin: 0 auto;    /* Zentriert den Container */
+  margin-top: -2rem; /* Zieht die Sektion leicht in den Hero-Bereich rein */
+  padding: clamp(2rem, 8vh, 4rem) clamp(1.5rem, 4%, 4rem); /* dynamic vertical & balanced horizontal Padding */
+  display: flex;
+  flex-direction: column;
+  gap: 6rem;
+  z-index: 0; /* Über dem Hero-Fade liegen */
+}
+
+/* optional: Ein Verlauf OBEN in der Features Sektion */
+.features::before {
+  /* full-bleed Hintergrund behind .features while keeping inneren Inhalt
+ constrained by existing max-Breite rules (no Layout changes) */
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  height: 100%;
+  background: var(--bg);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4rem;
+}
+
+.feature.reverse {
+  flex-direction: row-reverse;
+}
+
+.feature-text {
+  flex: 1;
+  color: var(--text);
+}
+
+.feature-text h2 {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  color: var(--accent);
+}
+
+.feature-text p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.feature-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.feature-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px; 
+  box-shadow: 0 10px 30px color-mix(in srgb, black 30%, var(--accent) 40%);
+  transition: all 0.3s ease;
+}
+
+.feature-image img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 30px color-mix(in srgb, black 10%, var(--accent) 60%);
+}
+
+
+@media (max-width: 768px) {
+  .features {
+    margin-top: 0;
+    gap: 4rem;
+  }
+
+  .feature, 
+  .feature.reverse {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
+  
+  .feature-image img {
+    max-width: 100%;
+  }
+}
+
+/* Extra safeguard fuer very schmalen Bildschirmen so Text never touches edges */
+@media (max-width: 420px) {
+  .hero-overlay {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .hero-overlay > * {
+    max-width: calc(100% - 2rem);
+  }
+}
+
+/* Extra tiny-Bildschirm tweaks fuer perfect centering und spacing */
+@media (max-width: 480px) {
+  .hero-overlay {
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding-inline: 1rem;
+  }
+
+  .hero-overlay > * {
+    display: block;
+    margin: 0.35rem auto;
+    max-width: calc(100% - 2rem);
+    padding-inline: 0.25rem;
+    box-sizing: border-box;
+  }
+
+  .hero-overlay h1 {
+    line-height: 1.12;
+    margin-bottom: 0.35rem;
+    text-align: center;
+  }
+
+  .hero-overlay p {
+    line-height: 1.35;
+    margin-bottom: 0.6rem;
+    text-align: center;
+  }
+
+  .hero-overlay .btn {
+    max-width: 260px;
+    width: auto;
+    white-space: nowrap;
+    text-align: center;
+  }
+}
+
+/* Landing-Seite: Margin zwischen Features und Footer entfernen, Padding beibehalten */
+body.hero-under-header .features {
+  margin-bottom: 0 !important;
+}
+
+body.hero-under-header footer,
+body.hero-under-header .site-footer {
+  margin-top: 0 !important;
+  padding-top: 0.5rem; /* behalten einigen internal Padding so Footer Inhalt isn't cramped */
+}

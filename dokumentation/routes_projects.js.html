@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: routes/projects.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: routes/projects.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Projekt-Routen: Auflistung, Erstellung, Team-Management und HTMX-Fragmente.
+ * Nutzt `ProjectService` für Geschäftslogik; alle JSDoc-Kommentare sind auf Deutsch.
+ * @module routes/projects
+ */
+
+const express = require('express');
+const router = express.Router();
+const ProjectService = require('../lib/services/projectService');
+const asyncHandler = require('../lib/asyncHandler');
+const { isLoggedIn } = require('./middleware');
+const { errorHtml } = require('../lib/http');
+
+// Auth Guard - Schütze alle Routen
+router.use(isLoggedIn);
+const htmxDetector = require('../lib/htmxDetector');
+router.use(htmxDetector.middleware);
+
+// --- Helper Functions ---
+
+/**
+ * Gemeinsame Logik zum Rendern des Projekt-Fragmentes (für HTMX).
+ * @async
+ */
+async function renderProjectsFragment(req, res) {
+    const page = parseInt(req.query.page, 10) || 1;
+    const { status, search, userOnly } = req.query;
+
+    const result = await ProjectService.getProjectsList(req.session.user, {
+        page,
+        status: status || 'all',
+        search: search || '',
+        userOnly: userOnly || false
+    });
+
+    return res.render('projects/_list', {
+        ...result,
+        user: req.session.user
+    });
+}
+
+// --- Routes ---
+
+// GET /projects - Hauptseite
+/**
+ * GET /
+ * Hauptseite der Projekte. Lädt die Projektliste und Filteroptionen.
+ * Unterstützt HTMX-Partial-Requests für die Liste.
+ * @name GET /
+ * @function
+ * @inner
+ */
+router.get('/', asyncHandler(async (req, res) => {
+    // Wenn HTMX anfragt, gib nur das Fragment zurück
+    if (req.isHtmx) {
+        return await renderProjectsFragment(req, res);
+    }
+
+    // Query params for initial state
+    const status = req.query.status || 'all';
+    const search = req.query.search || '';
+    const userOnly = req.query.userOnly === 'on' || req.query.userOnly === 'true';
+    const page = parseInt(req.query.page, 10) || 1;
+
+    const contactOptions = await ProjectService.getContactOptions(req.session.user);
+
+    res.render('projects/projects', {
+        title: 'Projekte',
+        user: req.session.user,
+        users: contactOptions,
+        canCreate: ProjectService.canUserCreateProject(req.session.user),
+        currentStatus: status,
+        currentSearch: search,
+        isUserOnly: userOnly,
+        currentPage: page
+    });
+}));
+
+// GET /projects/fragment - HTMX + Infinite Scroll
+/**
+ * GET /fragment
+ * Liefert das Projekt-Listen-Fragment für Infinite Scroll oder Filter-Updates via HTMX.
+ * @name GET /fragment
+ * @function
+ * @inner
+ */
+router.get('/fragment', asyncHandler(async (req, res) => {
+    return await renderProjectsFragment(req, res);
+}));
+
+// GET /projects/contact-search - Ansprechpartner-Suche für Create-Modal
+router.get('/contact-search', asyncHandler(async (req, res) => {
+    if (!ProjectService.canUserCreateProject(req.session.user)) {
+        return res.status(403).json([]);
+    }
+    const users = await ProjectService.searchContactCandidates(req.query.q);
+    return res.json(users);
+}));
+
+// POST /projects - Projekt erstellen (nur Admin)
+/**
+ * POST /
+ * Erstellt ein neues Projekt. Nur für berechtigte Nutzer (Admins).
+ * @name POST /
+ * @function
+ * @inner
+ */
+router.post('/', asyncHandler(async (req, res) => {
+    try {
+        await ProjectService.createProject(req.session.user, req.body, {
+            autoPromoteContact: req.body.autoPromoteContact !== 'off' &amp;&amp; req.body.autoPromoteContact !== 'false'
+        });
+        res.redirect('/projects');
+    } catch (err) {
+        if (err.message.startsWith('FORBIDDEN')) {
+            return res.status(403).send(errorHtml(err.message.replace('FORBIDDEN: ', '')));
+        }
+        if (err.message.startsWith('BAD_REQUEST')) {
+            return res.status(400).send(errorHtml(err.message.replace('BAD_REQUEST: ', '')));
+        }
+        throw err;
+    }
+}));
+
+// POST /projects/:id/edit - Projekt aktualisieren
+/**
+ * POST /:id/edit
+ * Aktualisiert Projektdaten wie Status, Priorität oder Meta-Infos.
+ * @name POST /:id/edit
+ * @function
+ * @inner
+ */
+router.post('/:id/edit', asyncHandler(async (req, res) => {
+    try {
+        await ProjectService.updateProject(req.session.user, req.params.id, req.body);
+        res.redirect('/projects');
+    } catch (err) {
+        if (err.message.startsWith('NOT_FOUND')) {
+            return res.status(404).send(errorHtml('Projekt nicht gefunden'));
+        }
+        if (err.message.startsWith('FORBIDDEN')) {
+            return res.status(403).send(errorHtml('Zugriff verweigert'));
+        }
+        if (err.message.startsWith('BAD_REQUEST')) {
+            return res.status(400).send(errorHtml(err.message.replace('BAD_REQUEST: ', '')));
+        }
+        throw err;
+    }
+}));
+
+// POST /projects/:id/delete - Projekt löschen
+/**
+ * POST /:id/delete
+ * Löscht ein Projekt. Unterstützt HTMX für UI-Updates ohne Reload.
+ * @name POST /:id/delete
+ * @function
+ * @inner
+ */
+router.post('/:id/delete', asyncHandler(async (req, res) => {
+    try {
+        await ProjectService.deleteProject(req.session.user, req.params.id);
+
+        // If this was an HTMX request, return an empty body
+        if (req.isHtmx) {
+            return res.status(200).send('');
+        }
+        res.redirect('/projects');
+    } catch (err) {
+        if (err.message.startsWith('NOT_FOUND')) {
+            return res.status(404).send(req.isHtmx ? 'Projekt nicht gefunden' : errorHtml('Projekt nicht gefunden'));
+        }
+        if (err.message.startsWith('FORBIDDEN')) {
+            return res.status(403).send(req.isHtmx ? 'Zugriff verweigert' : errorHtml('Zugriff verweigert'));
+        }
+        throw err;
+    }
+}));
+
+// --- Team Management Routes ---
+
+// GET /projects/:id/team - Members list
+/**
+ * GET /:id/team
+ * Liefert eine Liste aller Teammitglieder für ein bestimmtes Projekt als JSON.
+ * @name GET /:id/team
+ * @function
+ * @inner
+ */
+router.get('/:id/team', asyncHandler(async (req, res) => {
+    try {
+        const result = await ProjectService.getProjectTeam(req.session.user, req.params.id);
+        res.json(result);
+    } catch (err) {
+        if (err.message.startsWith('NOT_FOUND')) {
+            return res.status(404).send(req.isHtmx ? 'Projekt nicht gefunden' : errorHtml('Projekt nicht gefunden'));
+        }
+        throw err;
+    }
+}));
+
+// GET /projects/users/search - User search for team
+/**
+ * GET /users/search
+ * Sucht nach Benutzern für das Hinzufügen zum Projektteam.
+ * @name GET /users/search
+ * @function
+ * @inner
+ */
+router.get('/users/search', asyncHandler(async (req, res) => {
+    const users = await ProjectService.searchUsers(req.query.q);
+    res.json(users);
+}));
+
+// POST /projects/:id/team/add - Add member
+/**
+ * POST /:id/team/add
+ * Fügt einem Projekt ein neues Teammitglied mit spezifischer Rolle hinzu.
+ * @name POST /:id/team/add
+ * @function
+ * @inner
+ */
+router.post('/:id/team/add', asyncHandler(async (req, res) => {
+    const { userId, role } = req.body;
+    try {
+        await ProjectService.addTeamMember(req.session.user, req.params.id, userId, role);
+        res.json({ success: true });
+    } catch (err) {
+        if (err.message.startsWith('NOT_FOUND')) {
+            return res.status(404).send(req.isHtmx ? 'Projekt nicht gefunden' : errorHtml('Projekt nicht gefunden'));
+        }
+        if (err.message.startsWith('FORBIDDEN')) {
+            return res.status(403).send(req.isHtmx ? 'Zugriff verweigert' : errorHtml('Zugriff verweigert'));
+        }
+        throw err;
+    }
+}));
+
+// POST /projects/:id/team/remove/:userId - Remove member
+/**
+ * POST /:id/team/remove/:userId
+ * Entfernt ein Mitglied aus dem Projektteam.
+ * @name POST /:id/team/remove/:userId
+ * @function
+ * @inner
+ */
+router.post('/:id/team/remove/:userId', asyncHandler(async (req, res) => {
+    try {
+        await ProjectService.removeTeamMember(req.session.user, req.params.id, req.params.userId);
+        res.json({ success: true });
+    } catch (err) {
+        if (err.message.startsWith('NOT_FOUND')) {
+            return res.status(404).send(req.isHtmx ? 'Projekt nicht gefunden' : errorHtml('Projekt nicht gefunden'));
+        }
+        if (err.message.startsWith('FORBIDDEN')) {
+            // Sende spezifische Fehlermeldung, falls vorhanden (z. B. Ansprechpartner-Schutz)
+            const msg = err.message.replace('FORBIDDEN: ', '') || 'Zugriff verweigert';
+            return res.status(403).send(req.isHtmx ? msg : errorHtml(msg));
+        }
+        throw err;
+    }
+}));
+
+module.exports = router;
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

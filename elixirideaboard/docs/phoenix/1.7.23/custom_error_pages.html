@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.37.2">
+    <meta name="project" content="Phoenix v1.7.23">
+
+
+    <title>Custom Error Pages — Phoenix v1.7.23</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-6X3L5KMG.css" />
+
+    <script defer src="dist/sidebar_items-169F3323.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-6XHBGSGW.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.7.23
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Custom Error Pages</h1>
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/guides/howto/custom_error_pages.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+<p>New Phoenix projects have two error views called <code class="inline">ErrorHTML</code> and <code class="inline">ErrorJSON</code>, which live in <code class="inline">lib/hello_web/controllers/</code>. The purpose of these views is to handle errors in a general way for each format, from one centralized location.</p><h2 id="the-error-views" class="section-heading">
+  <a href="#the-error-views" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">The Error Views</span>
+</h2>
+<p>For new applications, the <code class="inline">ErrorHTML</code> and <code class="inline">ErrorJSON</code> views looks like this:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">HelloWeb.ErrorHTML</span><span class="w"> </span><span class="k" data-group-id="8834915145-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">HelloWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:html</span><span class="w">
+
+  </span><span class="c1"># If you want to customize your error pages,</span><span class="w">
+  </span><span class="c1"># uncomment the embed_templates/1 call below</span><span class="w">
+  </span><span class="c1"># and add pages to the error directory:</span><span class="w">
+  </span><span class="c1">#</span><span class="w">
+  </span><span class="c1">#   * lib/&lt;%= @lib_web_name %&gt;/controllers/error_html/404.html.heex</span><span class="w">
+  </span><span class="c1">#   * lib/&lt;%= @lib_web_name %&gt;/controllers/error_html/500.html.heex</span><span class="w">
+  </span><span class="c1">#</span><span class="w">
+  </span><span class="c1"># embed_templates &quot;error_html/*&quot;</span><span class="w">
+
+  </span><span class="c1"># The default is to render a plain text page based on</span><span class="w">
+  </span><span class="c1"># the template name. For example, &quot;404.html&quot; becomes</span><span class="w">
+  </span><span class="c1"># &quot;Not Found&quot;.</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">render</span><span class="p" data-group-id="8834915145-2">(</span><span class="n">template</span><span class="p">,</span><span class="w"> </span><span class="c">_assigns</span><span class="p" data-group-id="8834915145-2">)</span><span class="w"> </span><span class="k" data-group-id="8834915145-3">do</span><span class="w">
+    </span><span class="nc">Phoenix.Controller</span><span class="o">.</span><span class="n">status_message_from_template</span><span class="p" data-group-id="8834915145-4">(</span><span class="n">template</span><span class="p" data-group-id="8834915145-4">)</span><span class="w">
+  </span><span class="k" data-group-id="8834915145-3">end</span><span class="w">
+</span><span class="k" data-group-id="8834915145-1">end</span><span class="w">
+
+</span><span class="kd">defmodule</span><span class="w"> </span><span class="nc">HelloWeb.ErrorJSON</span><span class="w"> </span><span class="k" data-group-id="8834915145-5">do</span><span class="w">
+  </span><span class="c1"># If you want to customize a particular status code,</span><span class="w">
+  </span><span class="c1"># you may add your own clauses, such as:</span><span class="w">
+  </span><span class="c1">#</span><span class="w">
+  </span><span class="c1"># def render(&quot;500.json&quot;, _assigns) do</span><span class="w">
+  </span><span class="c1">#   %{errors: %{detail: &quot;Internal Server Error&quot;}}</span><span class="w">
+  </span><span class="c1"># end</span><span class="w">
+
+  </span><span class="c1"># By default, Phoenix returns the status message from</span><span class="w">
+  </span><span class="c1"># the template name. For example, &quot;404.json&quot; becomes</span><span class="w">
+  </span><span class="c1"># &quot;Not Found&quot;.</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">render</span><span class="p" data-group-id="8834915145-6">(</span><span class="n">template</span><span class="p">,</span><span class="w"> </span><span class="c">_assigns</span><span class="p" data-group-id="8834915145-6">)</span><span class="w"> </span><span class="k" data-group-id="8834915145-7">do</span><span class="w">
+    </span><span class="p" data-group-id="8834915145-8">%{</span><span class="ss">errors</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8834915145-9">%{</span><span class="ss">detail</span><span class="p">:</span><span class="w"> </span><span class="nc">Phoenix.Controller</span><span class="o">.</span><span class="n">status_message_from_template</span><span class="p" data-group-id="8834915145-10">(</span><span class="n">template</span><span class="p" data-group-id="8834915145-10">)</span><span class="p" data-group-id="8834915145-9">}</span><span class="p" data-group-id="8834915145-8">}</span><span class="w">
+  </span><span class="k" data-group-id="8834915145-7">end</span><span class="w">
+</span><span class="k" data-group-id="8834915145-5">end</span></code></pre><p>Before we dive into this, let's see what the rendered <code class="inline">404 Not Found</code> message looks like in a browser. In the development environment, Phoenix will debug errors by default, showing us a very informative debugging page. What we want here, however, is to see what page the application would serve in production. In order to do that, we need to set <code class="inline">debug_errors: false</code> in <code class="inline">config/dev.exs</code>.</p><pre><code class="makeup elixir" translate="no"><span class="kn">import</span><span class="w"> </span><span class="nc">Config</span><span class="w">
+
+</span><span class="n">config</span><span class="w"> </span><span class="ss">:hello</span><span class="p">,</span><span class="w"> </span><span class="nc">HelloWeb.Endpoint</span><span class="p">,</span><span class="w">
+  </span><span class="ss">http</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="7623757915-1">[</span><span class="ss">port</span><span class="p">:</span><span class="w"> </span><span class="mi">4000</span><span class="p" data-group-id="7623757915-1">]</span><span class="p">,</span><span class="w">
+  </span><span class="ss">debug_errors</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p">,</span><span class="w">
+  </span><span class="ss">code_reloader</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
+  </span><span class="o">.</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="o">.</span></code></pre><p>After modifying our config file, we need to restart our server in order for this change to take effect. After restarting the server, let's go to <a href="http://localhost:4000/such/a/wrong/path">http://localhost:4000/such/a/wrong/path</a> for a running local application and see what we get.</p><p>Ok, that's not very exciting. We get the bare string &quot;Not Found&quot;, displayed without any markup or styling.</p><p>The first question is, where does that error string come from? The answer is right in <code class="inline">ErrorHTML</code>.</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">render</span><span class="p" data-group-id="4393908038-1">(</span><span class="n">template</span><span class="p">,</span><span class="w"> </span><span class="c">_assigns</span><span class="p" data-group-id="4393908038-1">)</span><span class="w"> </span><span class="k" data-group-id="4393908038-2">do</span><span class="w">
+  </span><span class="nc">Phoenix.Controller</span><span class="o">.</span><span class="n">status_message_from_template</span><span class="p" data-group-id="4393908038-3">(</span><span class="n">template</span><span class="p" data-group-id="4393908038-3">)</span><span class="w">
+</span><span class="k" data-group-id="4393908038-2">end</span></code></pre><p>Great, so we have this <code class="inline">render/2</code> function that takes a template and an <code class="inline">assigns</code> map, which we ignore. When you call <code class="inline">render(conn, :some_template)</code> from the controller, Phoenix first looks for a <code class="inline">some_template/1</code> function on the view module. If no function exists, it falls back to calling <code class="inline">render/2</code> with the template and format name, such as <code class="inline">&quot;some_template.html&quot;</code>.</p><p>In other words, to provide custom error pages, we could simply define a proper <code class="inline">render/2</code> function clause in <code class="inline">HelloWeb.ErrorHTML</code>.</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="kd">def</span><span class="w"> </span><span class="nf">render</span><span class="p" data-group-id="7584735255-1">(</span><span class="s">&quot;404.html&quot;</span><span class="p">,</span><span class="w"> </span><span class="c">_assigns</span><span class="p" data-group-id="7584735255-1">)</span><span class="w"> </span><span class="k" data-group-id="7584735255-2">do</span><span class="w">
+    </span><span class="s">&quot;Page Not Found&quot;</span><span class="w">
+  </span><span class="k" data-group-id="7584735255-2">end</span></code></pre><p>But we can do even better.</p><p>Phoenix generates an <code class="inline">ErrorHTML</code> for us, but it doesn't give us a <code class="inline">lib/hello_web/controllers/error_html</code> directory. Let's create one now. Inside our new directory, let's add a template named <code class="inline">404.html.heex</code> and give it some markup – a mixture of our application layout and a new <code class="inline">&lt;div&gt;</code> with our message to the user.</p><pre><code class="makeup heex" translate="no"><span class="p">&lt;!</span><span class="kt">DOCTYPE</span><span class="w"> </span><span class="kc">html</span><span class="p">&gt;</span><span class="w">
+</span><span class="p">&lt;</span><span class="nt">html</span><span class="w"> </span><span class="ni">lang</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">en</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nt">meta</span><span class="w"> </span><span class="ni">charset</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">utf-8</span><span class="p">&quot;</span><span class="p">/&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nt">meta</span><span class="w"> </span><span class="ni">name</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">viewport</span><span class="p">&quot;</span><span class="w"> </span><span class="ni">content</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">width=device-width, initial-scale=1</span><span class="p">&quot;</span><span class="p">/&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span><span class="n">Welcome to Phoenix!</span><span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nt">link</span><span class="w"> </span><span class="ni">rel</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">stylesheet</span><span class="p">&quot;</span><span class="w"> </span><span class="ni">href</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">/assets/app.css</span><span class="p">&quot;</span><span class="p">/&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nt">script</span><span class="w"> </span><span class="ni">defer</span><span class="w"> </span><span class="ni">type</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">text/javascript</span><span class="p">&quot;</span><span class="w"> </span><span class="ni">src</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">/assets/app.js</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nt">header</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">      </span><span class="p">&lt;</span><span class="nt">section</span><span class="w"> </span><span class="ni">class</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">container</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">        </span><span class="p">&lt;</span><span class="nt">nav</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">          </span><span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">            </span><span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span><span class="p">&lt;</span><span class="nt">a</span><span class="w"> </span><span class="ni">href</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">https://hexdocs.pm/phoenix/overview.html</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="n">Get Started</span><span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span><span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">          </span><span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">        </span><span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">        </span><span class="p">&lt;</span><span class="nt">a</span><span class="w"> </span><span class="ni">href</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">https://phoenixframework.org/</span><span class="p">&quot;</span><span class="w"> </span><span class="ni">class</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">phx-logo</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">          </span><span class="p">&lt;</span><span class="nt">img</span><span class="w"> </span><span class="ni">src</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">/images/logo.svg</span><span class="p">&quot;</span><span class="w"> </span><span class="ni">alt</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">Phoenix Framework Logo</span><span class="p">&quot;</span><span class="p">/&gt;</span><span class="w">
+</span><span class="w">        </span><span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">      </span><span class="p">&lt;/</span><span class="nt">section</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;</span><span class="nt">main</span><span class="w"> </span><span class="ni">class</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">container</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">      </span><span class="p">&lt;</span><span class="nt">section</span><span class="w"> </span><span class="ni">class</span><span class="p">=</span><span class="p">&quot;</span><span class="s2">phx-hero</span><span class="p">&quot;</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">        </span><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="n">Sorry, the page you are looking for does not exist.</span><span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">      </span><span class="p">&lt;/</span><span class="nt">section</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">    </span><span class="p">&lt;/</span><span class="nt">main</span><span class="p">&gt;</span><span class="w">
+</span><span class="w">  </span><span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span><span class="w">
+</span><span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre><p>After you define the template file, remember to remove the equivalent <code class="inline">render/2</code> clause for that template, as otherwise the function overrides the template. Let's do so for the 404.html clause we have previously introduced in <code class="inline">lib/hello_web/controllers/error_html.ex</code>. We also need to tell Phoenix to embed our templates into the module:</p><pre><code class="makeup diff" translate="no"><span class="gi">+</span><span class="gi"> embed_templates &quot;error_html/*&quot;
+</span><span class="w">
+</span><span class="gd">-</span><span class="gd"> def render(&quot;404.html&quot;, _assigns) do
+</span><span class="gd">-</span><span class="gd">  &quot;Page Not Found&quot;
+</span><span class="gd">-</span><span class="gd"> end</span></code></pre><p>Now, when we go back to <a href="http://localhost:4000/such/a/wrong/path">http://localhost:4000/such/a/wrong/path</a>, we should see a much nicer error page. It is worth noting that we did not render our <code class="inline">404.html.heex</code> template through our application layout, even though we want our error page to have the look and feel of the rest of our site. This is to avoid circular errors. For example, what happens if our application failed due to an error in the layout? Attempting to render the layout again will just trigger another error. So ideally we want to minimize the amount of dependencies and logic in our error templates, sharing only what is necessary.</p><h2 id="custom-exceptions" class="section-heading">
+  <a href="#custom-exceptions" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Custom exceptions</span>
+</h2>
+<p>Elixir provides a macro called <a href="https://hexdocs.pm/elixir/Kernel.html#defexception/1"><code class="inline">defexception/1</code></a> for defining custom exceptions. Exceptions are represented as structs, and structs need to be defined inside of modules.</p><p>In order to create a custom exception, we need to define a new module. Conventionally, this will have &quot;Error&quot; in the name. Inside that module, we need to define a new exception with <a href="https://hexdocs.pm/elixir/Kernel.html#defexception/1"><code class="inline">defexception/1</code></a>, the file <code class="inline">lib/hello_web.ex</code> seems like a good place for it.</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">HelloWeb.SomethingNotFoundError</span><span class="w"> </span><span class="k" data-group-id="1711593152-1">do</span><span class="w">
+  </span><span class="kd">defexception</span><span class="w"> </span><span class="p" data-group-id="1711593152-2">[</span><span class="ss">:message</span><span class="p" data-group-id="1711593152-2">]</span><span class="w">
+</span><span class="k" data-group-id="1711593152-1">end</span></code></pre><p>You can raise your new exception like this:</p><pre><code class="makeup elixir" translate="no"><span class="k">raise</span><span class="w"> </span><span class="nc">HelloWeb.SomethingNotFoundError</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;oops&quot;</span></code></pre><p>By default, Plug and Phoenix will treat all exceptions as 500 errors. However, Plug provides a protocol called <a href="https://hexdocs.pm/plug/1.15.3/Plug.Exception.html"><code class="inline">Plug.Exception</code></a> where we are able to customize the status and add actions that exception structs can return on the debug error page.</p><p>If we wanted to supply a status of 404 for an <code class="inline">HelloWeb.SomethingNotFoundError</code> error, we could do it by defining an implementation for the <a href="https://hexdocs.pm/plug/1.15.3/Plug.Exception.html"><code class="inline">Plug.Exception</code></a> protocol like this, in <code class="inline">lib/hello_web.ex</code>:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defimpl</span><span class="w"> </span><span class="nc">Plug.Exception</span><span class="p">,</span><span class="w"> </span><span class="ss">for</span><span class="p">:</span><span class="w"> </span><span class="nc">HelloWeb.SomethingNotFoundError</span><span class="w"> </span><span class="k" data-group-id="7598428836-1">do</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">status</span><span class="p" data-group-id="7598428836-2">(</span><span class="c">_exception</span><span class="p" data-group-id="7598428836-2">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="mi">404</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">actions</span><span class="p" data-group-id="7598428836-3">(</span><span class="c">_exception</span><span class="p" data-group-id="7598428836-3">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="7598428836-4">[</span><span class="p" data-group-id="7598428836-4">]</span><span class="w">
+</span><span class="k" data-group-id="7598428836-1">end</span></code></pre><p>Alternatively, you could define a <code class="inline">plug_status</code> field directly in the exception struct:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">HelloWeb.SomethingNotFoundError</span><span class="w"> </span><span class="k" data-group-id="7866783685-1">do</span><span class="w">
+  </span><span class="kd">defexception</span><span class="w"> </span><span class="p" data-group-id="7866783685-2">[</span><span class="ss">:message</span><span class="p">,</span><span class="w"> </span><span class="ss">plug_status</span><span class="p">:</span><span class="w"> </span><span class="mi">404</span><span class="p" data-group-id="7866783685-2">]</span><span class="w">
+</span><span class="k" data-group-id="7866783685-1">end</span></code></pre><p>However, implementing the <a href="https://hexdocs.pm/plug/1.15.3/Plug.Exception.html"><code class="inline">Plug.Exception</code></a> protocol by hand can be convenient in certain occasions, such as when providing actionable errors.</p><h2 id="actionable-errors" class="section-heading">
+  <a href="#actionable-errors" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Actionable errors</span>
+</h2>
+<p>Exception actions are functions that can be triggered from the error page, and they're basically a list of maps defining a <code class="inline">label</code> and a <code class="inline">handler</code> to be executed. As an example, Phoenix will display an error if you have pending migrations and will provide a button on the error page to perform the pending migrations.</p><p>When <code class="inline">debug_errors</code> is <code class="inline">true</code>, they are rendered in the error page as a collection of buttons and follow the format of:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="3574203993-1">[</span><span class="w">
+  </span><span class="p" data-group-id="3574203993-2">%{</span><span class="w">
+    </span><span class="ss">label</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">t</span><span class="p" data-group-id="3574203993-3">(</span><span class="p" data-group-id="3574203993-3">)</span><span class="p">,</span><span class="w">
+    </span><span class="ss">handler</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3574203993-4">{</span><span class="n">module</span><span class="p" data-group-id="3574203993-5">(</span><span class="p" data-group-id="3574203993-5">)</span><span class="p">,</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="o">::</span><span class="w"> </span><span class="n">atom</span><span class="p" data-group-id="3574203993-6">(</span><span class="p" data-group-id="3574203993-6">)</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">::</span><span class="w"> </span><span class="p" data-group-id="3574203993-7">[</span><span class="p" data-group-id="3574203993-7">]</span><span class="p" data-group-id="3574203993-4">}</span><span class="w">
+  </span><span class="p" data-group-id="3574203993-2">}</span><span class="w">
+</span><span class="p" data-group-id="3574203993-1">]</span></code></pre><p>If we wanted to return some actions for an <code class="inline">HelloWeb.SomethingNotFoundError</code> we would implement <a href="https://hexdocs.pm/plug/1.15.3/Plug.Exception.html"><code class="inline">Plug.Exception</code></a> like this:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defimpl</span><span class="w"> </span><span class="nc">Plug.Exception</span><span class="p">,</span><span class="w"> </span><span class="ss">for</span><span class="p">:</span><span class="w"> </span><span class="nc">HelloWeb.SomethingNotFoundError</span><span class="w"> </span><span class="k" data-group-id="3855187934-1">do</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">status</span><span class="p" data-group-id="3855187934-2">(</span><span class="c">_exception</span><span class="p" data-group-id="3855187934-2">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="mi">404</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">actions</span><span class="p" data-group-id="3855187934-3">(</span><span class="c">_exception</span><span class="p" data-group-id="3855187934-3">)</span><span class="w"> </span><span class="k" data-group-id="3855187934-4">do</span><span class="w">
+    </span><span class="p" data-group-id="3855187934-5">[</span><span class="w">
+      </span><span class="p" data-group-id="3855187934-6">%{</span><span class="w">
+        </span><span class="ss">label</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Run seeds&quot;</span><span class="p">,</span><span class="w">
+        </span><span class="ss">handler</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3855187934-7">{</span><span class="nc">Code</span><span class="p">,</span><span class="w"> </span><span class="ss">:eval_file</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3855187934-8">[</span><span class="s">&quot;priv/repo/seeds.exs&quot;</span><span class="p" data-group-id="3855187934-8">]</span><span class="p" data-group-id="3855187934-7">}</span><span class="w">
+      </span><span class="p" data-group-id="3855187934-6">}</span><span class="w">
+    </span><span class="p" data-group-id="3855187934-5">]</span><span class="w">
+  </span><span class="k" data-group-id="3855187934-4">end</span><span class="w">
+</span><span class="k" data-group-id="3855187934-1">end</span></code></pre>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="router.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Routing cheatsheet
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="file_uploads.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+File Uploads
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/phoenix/1.7.23" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/phoenix/1.7.23">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/phoenix/1.7.23/show/guides/howto/custom_error_pages.md">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="Phoenix.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.37.2) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

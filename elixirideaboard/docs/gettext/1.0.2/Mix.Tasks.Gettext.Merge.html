@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.39.1">
+    <meta name="project" content="gettext v1.0.2">
+
+
+    <title>mix gettext.merge — gettext v1.0.2</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-ZFNMEJKT.css" />
+
+    <script defer src="dist/sidebar_items-6A5253D5.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-HBZYRXZS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="Gettext.html" class="sidebar-projectName" translate="no">
+gettext
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.0.2
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-task" id="main" data-type="tasks">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of gettext</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">mix gettext.merge</span> 
+      <small class="app-vsn" translate="no">(gettext v1.0.2)</small>
+
+    </h1>
+
+      <a href="https://github.com/elixir-gettext/gettext/blob/v1.0.2/lib/mix/tasks/gettext.merge.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Merges PO/POT files with PO files.</p><p>This task is used when messages in the source code change: when they do,
+<a href="Mix.Tasks.Gettext.Extract.html"><code class="inline">mix gettext.extract</code></a> is usually used to extract the new messages to POT
+files. At this point, developers or translators can use this task to &quot;sync&quot;
+the newly-updated POT files with the existing locale-specific PO files. All
+the metadata for each message (like position in the source code, comments,
+and so on) is taken from the newly-updated POT file; the only things taken
+from the PO file are the actual translated strings.</p><h4>Fuzzy Matching</h4><p>Messages in the updated PO/POT file that have an exact match (a
+message with the same <code class="inline">msgid</code>) in the old PO file are merged as described
+above. When a message in the updated PO/POT files has no match in the old
+PO file, Gettext attemps a <strong>fuzzy match</strong> for that message. For example, imagine
+we have this POT file:</p><pre><code class="makeup elixir" translate="no"><span class="n">msgid</span><span class="w"> </span><span class="s">&quot;hello, world!&quot;</span><span class="w">
+</span><span class="n">msgstr</span><span class="w"> </span><span class="s">&quot;&quot;</span></code></pre><p>and we merge it with this PO file:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># No exclamation point here in the msgid</span><span class="w">
+</span><span class="n">msgid</span><span class="w"> </span><span class="s">&quot;hello, world&quot;</span><span class="w">
+</span><span class="n">msgstr</span><span class="w"> </span><span class="s">&quot;ciao, mondo&quot;</span></code></pre><p>Since the two messages are similar, Gettext takes the <code class="inline">msgstr</code> from the
+existing message over to the new message, which it however
+marks as <em>fuzzy</em>:</p><pre><code class="makeup elixir" translate="no"><span class="c1">#, fuzzy</span><span class="w">
+</span><span class="n">msgid</span><span class="w"> </span><span class="s">&quot;hello, world!&quot;</span><span class="w">
+</span><span class="n">msgstr</span><span class="w"> </span><span class="s">&quot;ciao, mondo&quot;</span></code></pre><p>Generally, a <code class="inline">fuzzy</code> flag calls for review from a translator.</p><p>Fuzzy matching can be configured (for example, the threshold for message
+similarity can be tweaked) or disabled entirely. Look at the
+<a href="#module-options">&quot;Options&quot; section</a>.</p><h2 id="module-usage" class="section-heading"><a href="#module-usage" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Usage</span></h2><pre><code class="makeup bash" translate="no"><span class="">mix gettext.merge OLD_FILE UPDATED_FILE [OPTIONS]
+</span><span class="">mix gettext.merge DIR [OPTIONS]
+</span></code></pre><p>If two files are given as arguments, <code class="inline">OLD_FILE</code> must be a <code class="inline">.po</code> file and
+<code class="inline">UPDATE_FILE</code> must be a <code class="inline">.po</code>/<code class="inline">.pot</code> file. The first one is the old PO file,
+while the second one is the last generated one. They are merged and written
+over the first file. For example:</p><pre><code class="makeup bash" translate="no"><span class="">mix gettext.merge priv/gettext/en/LC_MESSAGES/default.po priv/gettext/default.pot
+</span></code></pre><p>If only one argument is given, then that argument must be a directory
+containing Gettext messages (with <code class="inline">.pot</code> files at the root level alongside
+locale directories - this is usually a &quot;backend&quot; directory used by a Gettext
+backend, see <a href="Gettext.Backend.html"><code class="inline">Gettext.Backend</code></a>). For example:</p><pre><code class="makeup bash" translate="no"><span class="">mix gettext.merge priv/gettext
+</span></code></pre><p>If the <code class="inline">--locale LOCALE</code> option is given, then only the PO files in
+<code class="inline">&lt;DIR&gt;/&lt;LOCALE&gt;/LC_MESSAGES</code> will be merged with the POT files in <code class="inline">DIR</code>. If no
+options are given, then all the PO files for all locales under <code class="inline">DIR</code> are
+merged with the POT files in <code class="inline">DIR</code>.</p><h2 id="module-plural-forms" class="section-heading"><a href="#module-plural-forms" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Plural Forms</span></h2><p>By default, Gettext will determine the number of plural forms for newly-generated messages
+by checking the value of <code class="inline">nplurals</code> in the <code class="inline">Plural-Forms</code> header in the existing <code class="inline">.po</code> file. If
+a <code class="inline">.po</code> file doesn't already exist and Gettext is creating a new one or if the <code class="inline">Plural-Forms</code>
+header is not in the <code class="inline">.po</code> file, Gettext will use the number of plural forms that
+the plural module (see <a href="Gettext.Plural.html"><code class="inline">Gettext.Plural</code></a>) returns for the locale of the file being created.
+The content of the <code class="inline">Plural-Forms</code> header can be forced through the <code class="inline">--plural-forms-header</code>
+option (see below).</p><h2 id="module-options" class="section-heading"><a href="#module-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h2><ul><li><p><code class="inline">--locale</code> - a string representing a locale. If this is provided, then only the PO
+files in <code class="inline">&lt;DIR&gt;/&lt;LOCALE&gt;/LC_MESSAGES</code> will be merged with the POT files in <code class="inline">DIR</code>. This
+option can only be given when a single argument is passed to the task
+(a directory).</p></li><li><p><code class="inline">--no-fuzzy</code> - don't perform fuzzy matching when merging files.</p></li><li><p><code class="inline">--fuzzy-threshold</code> - a float between <code class="inline">0</code> and <code class="inline">1</code> which represents the
+minimum Jaro distance needed for two messages to be considered a fuzzy
+match. Overrides the global <code class="inline">:fuzzy_threshold</code> option (see the docs for
+<a href="Gettext.html"><code class="inline">Gettext</code></a> for more information on this option).</p></li><li><p><code class="inline">--plural-forms</code> - (<strong>deprecated in v0.22.0</strong>) an integer strictly greater than <code class="inline">0</code>.
+If this is passed, new messages in the target PO files will have this number of empty
+plural forms. This is deprecated in favor of passing the <code class="inline">--plural-forms-header</code>,
+which contains the whole plural-forms specification. See the &quot;Plural forms&quot; section above.</p></li><li><p><code class="inline">--plural-forms-header</code> - the content of the <code class="inline">Plural-Forms</code> header as a string.
+If this is passed, new messages in the target PO files will use this content
+to determine the number of plurals. See the <a href="#module-plural-forms">&quot;Plural Forms&quot; section</a>.</p></li><li><p><code class="inline">--on-obsolete</code> - controls what happens when <strong>obsolete</strong> messages are found.
+If <code class="inline">mark_as_obsolete</code>, messages are kept and marked as obsolete.
+If <code class="inline">delete</code>, obsolete messages are deleted. Defaults to <code class="inline">delete</code>.</p></li><li><p><code class="inline">--store-previous-message-on-fuzzy-match</code> - controls if the previous
+messages are recorded on fuzzy matches. Is off by default.</p></li></ul>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#locale_dir/2" data-no-tooltip="" translate="no">locale_dir(pot_dir, locale)</a>
+
+      </div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+
+    <div class="functions-list">
+<section class="detail" id="locale_dir/2">
+
+  <div class="detail-header">
+    <a href="#locale_dir/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">locale_dir(pot_dir, locale)</h1>
+
+
+        <a href="https://github.com/elixir-gettext/gettext/blob/v1.0.2/lib/mix/tasks/gettext.merge.ex#L199" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/gettext/1.0.2" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/gettext/1.0.2">Hex Preview</a>
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="gettext.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.39.1) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title %></title>
+  
+  <link rel="stylesheet" href="/css/survey.css">
+  <link rel="stylesheet" href="/css/survey-results.css">
+  <%- include('../partials/head') %>
+</head>
+
+<body>
+<%- include('../partials/header') %>
+
+<main class="survey-results-page">
+  <section class="results-header"> 
+    <h1><%= survey.title %></h1>
+    <% if (survey.description) { %>
+      <p class="survey-description"><%= survey.description %></p>
+    <% } %>
+    
+    <div class="results-meta">
+      <div class="meta-item">
+        <span class="meta-label">Erstellt von:</span>
+        <span class="meta-value"><%= survey.creator_name %></span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Gesamte Teilnehmer:</span>
+        <span class="meta-value"><%= questions[0]?.total_voters || 0 %></span>
+      </div>
+      <% if (survey.is_private && survey.access_code) { %>
+        <div class="meta-item">
+          <span class="meta-label">Zugangscode:</span>
+          <span class="meta-value access-code" onclick="copyToClipboard('<%= survey.access_code %>')">
+            <%= survey.access_code %>
+            <span class="copy-hint">(Klicken zum Kopieren)</span>
+          </span>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <% if (!hasVoted && !isOwner) { %>
+    <div class="not-voted">
+      <p>Sie haben noch nicht an dieser Umfrage teilgenommen.</p>
+      <a href="/surveys/<%= survey.survey_id %>" class="btn btn-primary">Jetzt teilnehmen</a>
+    </div>
+  <% } %>
+
+  <section class="results-content">
+    <% questions.forEach((question, qIndex) => { %>
+      <div class="question-results">
+        <h3><%= question.question_text %></h3>
+        
+        <!-- User's vote indicator -->
+        <% if (hasVoted && question.user_vote) { %>
+          <div class="user-vote-indicator">
+            <span class="user-vote-label">Ihre Auswahl:</span>
+            <span class="user-vote-value"><%= question.user_vote.option_text %></span>
+          </div>
+        <% } %>
+        
+        <% if (question.total_votes === 0) { %>
+          <p class="no-votes">Noch keine Stimmen für diese Frage.</p>
+        <% } else { %>
+          <div class="results-visualization">
+            <!-- Horizontal bar chart only -->
+            <div class="bar-chart-horizontal">
+              <% question.options.forEach(option => { %>
+                <div class="bar-item">
+                  <div class="bar-label">
+                    <span class="option-text"><%= option.option_text %></span>
+                  </div>
+                  <div class="bar-container">
+                    <!-- Red marker for user's vote -->
+                    <% if (option.isUserVote) { %>
+                      <div class="user-vote-marker" 
+                           style="left: <%= option.percentage %>%"></div>
+                    <% } %>
+                    
+                    <div class="bar-fill" style="width: <%= option.percentage %>%">
+                      <span class="bar-value"><%= option.percentage %>%</span>
+                    </div>
+                    <span class="bar-count"><%= option.votes %> Stimmen</span>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+            
+            <!-- Summary statistics -->
+            <div class="results-summary">
+              <div class="summary-item">
+                <span class="summary-label">Gesamtstimmen:</span>
+                <span class="summary-value"><%= question.total_votes %></span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Beste Wahl:</span>
+                <span class="summary-value">
+                  <% 
+                    const bestOption = question.options.reduce((prev, current) => 
+                      (prev.votes > current.votes) ? prev : current
+                    );
+                  %>
+                  <%= bestOption.option_text %> (<%= bestOption.percentage %>%)
+                </span>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    <% }); %>
+  </section>
+
+  <section class="results-actions">
+    <a href="/surveys" class="btn btn-secondary">Zurück zu Umfragen</a>
+    <% if (isOwner || canEdit) { %>
+      <form action="/surveys/<%= survey.survey_id %>/delete-survey" method="POST"
+        onsubmit="return confirm('Sind Sie sicher, dass Sie diese Umfrage löschen möchten?');" style="display: inline;">
+        <button type="submit" class="btn btn-danger">
+          Umfrage löschen
+        </button>
+      </form>
+      <% } %>
+  </section>
+  </main>
+
+<%- include('../partials/footer') %>
+
+</body>
+
+<script>
+  
+function copyToClipboard(text) {
+    // Methode 1: Modernes Clipboard API
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+            console.log('Text kopiert: ' + text);
+            // Optional: Erfolgsmeldung anzeigen
+            alert('Kopiert: ' + text);
+        }).catch(err => {
+            console.error('Fehler beim Kopieren: ', err);
+            // Fallback-Methode verwenden
+            fallbackCopyTextToClipboard(text);
+        });
+    } else {
+        // Fallback für ältere Browser
+        fallbackCopyTextToClipboard(text);
+    }
+}
+</script>
+</html>

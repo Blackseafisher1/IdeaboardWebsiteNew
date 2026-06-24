@@ -1,0 +1,50 @@
+<div class="chart-card full-width">
+  <h3>Monatliche Entwicklung</h3>
+  <div class="line-chart-container">
+    <div id="monthlyLatestBar" hx-get="/dashboard/widgets/monthly-latest-bar" hx-trigger="load, every 5s" hx-swap="innerHTML">
+      <% if (stats.monthlyStats && stats.monthlyStats.length) { %>
+        <% const latest = (stats.monthlyStats || []).slice().sort((a,b)=>b.month.localeCompare(a.month))[0]; %>
+        <div class="single-month-bar">
+          <div class="bar-header">
+            <span class="month-label"><%= latest.month %></span>
+            <span class="count"><%= Number(latest.idea_count||0) %></span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:100%"></div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+    <% if (stats.monthlyStats && stats.monthlyStats.length > 1) { %>
+      <div class="line-chart">
+        <%
+          // Sortiere Monate chronologisch
+          const months = (stats.monthlyStats || [])
+            .slice()
+            .sort((a, b) => a.month.localeCompare(b.month));
+          
+          // Finde Maximum für Prozentberechnung
+          const counts = months.map(m => Number(m.idea_count || 0));
+          const maxCount = counts.length ? Math.max(...counts) : 1;
+          
+          // Debugging (kann später entfernt werden)
+          console.log('Max count:', maxCount);
+          console.log('Counts:', counts);
+        %>
+        
+        <% months.forEach(function(m) { 
+          const count = Number(m.idea_count || 0);
+          const percentage = maxCount > 0 ? ((count / maxCount) * 100) : 0;
+        %>
+          <div class="line-chart-bar">
+            <span class="bar-label"><%= count %></span>
+            <div class="bar" style="height: <%= percentage.toFixed(1) %>%;" title="<%= count %> Ideas"></div>
+            <span class="month-label"><%= m.month %></span>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <p class="no-data">Nicht genügend Monatsdaten (mind. 2 Monate) vorhanden</p>
+    <% } %>
+  </div>
+</div>

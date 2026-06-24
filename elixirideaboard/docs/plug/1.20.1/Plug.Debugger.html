@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.3">
+    <meta name="project" content="Plug v1.20.1">
+
+
+    <title>Plug.Debugger — Plug v1.20.1</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
+
+    <script defer src="dist/sidebar_items-B1FBB5A8.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-Y2MUTVIN.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+Plug
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.20.1
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="Pages"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Plug</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Plug.<wbr />Debugger</span> 
+      <small class="app-vsn" translate="no">(Plug v1.20.1)</small>
+
+    </h1>
+
+<a href="Plug.Debugger.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+
+      <a href="https://github.com/elixir-plug/plug/blob/v1.20.1/lib/plug/debugger.ex#L1" title="View Source" class="icon-action" rel="help nofollow">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>A module (<strong>not a plug</strong>) for debugging in development.</p><p>This module is commonly used within a <a href="Plug.Builder.html"><code class="inline">Plug.Builder</code></a> or a <a href="Plug.Router.html"><code class="inline">Plug.Router</code></a>
+and it wraps the <code class="inline">call/2</code> function.</p><p>Notice <a href="Plug.Debugger.html"><code class="inline">Plug.Debugger</code></a> <em>does not</em> catch errors, as errors should still
+propagate so that the Elixir process finishes with the proper reason.
+This module does not perform any logging either, as all logging is done
+by the web server handler.</p><p><strong>Note:</strong> If this module is used with <a href="Plug.ErrorHandler.html"><code class="inline">Plug.ErrorHandler</code></a>, only one of
+them will effectively handle errors. For this reason, it is recommended
+that <a href="Plug.Debugger.html"><code class="inline">Plug.Debugger</code></a> is used before <a href="Plug.ErrorHandler.html"><code class="inline">Plug.ErrorHandler</code></a> and only in
+particular environments, like <code class="inline">:dev</code>.</p><p>In case of an error, the rendered page drops the <code class="inline">content-security-policy</code>
+header before rendering the error to ensure that the error is displayed
+correctly.</p><h2 id="module-examples" class="section-heading"><a href="#module-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp</span><span class="w"> </span><span class="k" data-group-id="2857622866-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Plug.Builder</span><span class="w">
+
+  </span><span class="k">if</span><span class="w"> </span><span class="nc">Mix</span><span class="o">.</span><span class="n">env</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="ss">:dev</span><span class="w"> </span><span class="k" data-group-id="2857622866-2">do</span><span class="w">
+    </span><span class="kn">use</span><span class="w"> </span><span class="nc">Plug.Debugger</span><span class="p">,</span><span class="w"> </span><span class="ss">otp_app</span><span class="p">:</span><span class="w"> </span><span class="ss">:my_app</span><span class="w">
+  </span><span class="k" data-group-id="2857622866-2">end</span><span class="w">
+
+  </span><span class="n">plug</span><span class="w"> </span><span class="ss">:boom</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">boom</span><span class="p" data-group-id="2857622866-3">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p" data-group-id="2857622866-3">)</span><span class="w"> </span><span class="k" data-group-id="2857622866-4">do</span><span class="w">
+    </span><span class="c1"># Error raised here will be caught and displayed in a debug page</span><span class="w">
+    </span><span class="c1"># complete with a stacktrace and other helpful info.</span><span class="w">
+    </span><span class="k">raise</span><span class="w"> </span><span class="s">&quot;oops&quot;</span><span class="w">
+  </span><span class="k" data-group-id="2857622866-4">end</span><span class="w">
+</span><span class="k" data-group-id="2857622866-1">end</span></code></pre><h2 id="module-options" class="section-heading"><a href="#module-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h2><ul><li><code class="inline">:otp_app</code> - the OTP application that is using Plug. This option is used
+to filter stacktraces that belong only to the given application.</li><li><code class="inline">:style</code> - custom styles (see below)</li><li><code class="inline">:banner</code> - the optional MFA (<code class="inline">{module, function, args}</code>) which receives
+exception details and returns banner contents to appear at the top of
+the page. May be any string, including markup.</li></ul><h2 id="module-custom-styles" class="section-heading"><a href="#module-custom-styles" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Custom styles</span></h2><p>You may pass a <code class="inline">:style</code> option to customize the look of the HTML page.</p><pre><code class="makeup elixir" translate="no"><span class="kn">use</span><span class="w"> </span><span class="nc">Plug.Debugger</span><span class="p">,</span><span class="w"> </span><span class="ss">style</span><span class="p">:</span><span class="w">
+  </span><span class="p" data-group-id="3583788662-1">[</span><span class="ss">primary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#c0392b&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">logo</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;data:image/png;base64,...&quot;</span><span class="p" data-group-id="3583788662-1">]</span></code></pre><p>The following keys are available:</p><ul><li><code class="inline">:primary</code> - primary color</li><li><code class="inline">:accent</code> - accent color</li><li><code class="inline">:logo</code> - logo URI, or <code class="inline">nil</code> to disable</li></ul><p>The <code class="inline">:logo</code> is preferred to be a base64-encoded data URI so not to make any
+external requests, though external URLs (eg, <code class="inline">https://...</code>) are supported.</p><h2 id="module-custom-banners" class="section-heading"><a href="#module-custom-banners" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Custom Banners</span></h2><p>You may pass an MFA (<code class="inline">{module, function, args}</code>) to be invoked when an
+error is rendered which provides a custom banner at the top of the
+debugger page. The function receives the following arguments, with the
+passed <code class="inline">args</code> concatenated at the end:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="7352500992-1">[</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">kind</span><span class="p">,</span><span class="w"> </span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">stacktrace</span><span class="p" data-group-id="7352500992-1">]</span></code></pre><p>For example, the following <code class="inline">:banner</code> option:</p><pre><code class="makeup elixir" translate="no"><span class="kn">use</span><span class="w"> </span><span class="nc">Plug.Debugger</span><span class="p">,</span><span class="w"> </span><span class="ss">banner</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3078531467-1">{</span><span class="nc">MyModule</span><span class="p">,</span><span class="w"> </span><span class="ss">:debug_banner</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3078531467-2">[</span><span class="p" data-group-id="3078531467-2">]</span><span class="p" data-group-id="3078531467-1">}</span></code></pre><p>would invoke the function:</p><pre><code class="makeup elixir" translate="no"><span class="nc">MyModule</span><span class="o">.</span><span class="n">debug_banner</span><span class="p" data-group-id="8254747304-1">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">kind</span><span class="p">,</span><span class="w"> </span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">stacktrace</span><span class="p" data-group-id="8254747304-1">)</span></code></pre><h2 id="module-links-to-the-text-editor" class="section-heading"><a href="#module-links-to-the-text-editor" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Links to the text editor</span></h2><p>If a <code class="inline">PLUG_EDITOR</code> environment variable is set, <a href="Plug.Debugger.html"><code class="inline">Plug.Debugger</code></a> will
+use it to generate links to your text editor. The variable should be
+set with <code class="inline">__FILE__</code> and <code class="inline">__LINE__</code> placeholders which will be correctly
+replaced. For example (with the <a rel="nofollow" href="http://macromates.com">TextMate</a> editor):</p><pre><code class="makeup elixir" translate="no"><span class="n">txmt</span><span class="ss">://</span><span class="n">open</span><span class="o">/</span><span class="sc">?u</span><span class="n">rl</span><span class="o">=</span><span class="n">file</span><span class="ss">://</span><span class="c">__FILE__</span><span class="o">&amp;</span><span class="n">line</span><span class="o">=</span><span class="c">__LINE__</span></code></pre><p>Or, using Visual Studio Code:</p><pre><code class="makeup elixir" translate="no"><span class="n">vscode</span><span class="ss">://</span><span class="n">file</span><span class="o">/</span><span class="c">__FILE__</span><span class="ss">:__LINE__</span></code></pre><p>You can also use <code class="inline">__RELATIVEFILE__</code> if your project path is different from
+the running application. This is useful when working with Docker containers.</p><pre><code class="makeup elixir" translate="no"><span class="n">vscode</span><span class="ss">://</span><span class="n">file</span><span class="o">//</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">your</span><span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="c">__RELATIVEFILE__</span><span class="ss">:__LINE__</span></code></pre>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h2>
+<div class="summary-functions summary">
+  <h3>
+    <a href="#functions">Functions</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#get_mfa/1" data-no-tooltip="" translate="no">get_mfa(capture)</a>
+
+      </div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="functions" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h2>
+
+    <div class="functions-list">
+<section class="detail" id="get_mfa/1">
+
+  <div class="detail-header">
+    <a href="#get_mfa/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_mfa(capture)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.20.1/lib/plug/debugger.ex#L578" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/plug/1.20.1">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/plug/1.20.1">Hex Preview</a>
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="Plug.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.3) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

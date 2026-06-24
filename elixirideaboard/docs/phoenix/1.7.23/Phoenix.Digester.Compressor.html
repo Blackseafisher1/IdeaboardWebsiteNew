@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.37.2">
+    <meta name="project" content="Phoenix v1.7.23">
+
+
+    <title>Phoenix.Digester.Compressor — Phoenix v1.7.23</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-6X3L5KMG.css" />
+
+    <script defer src="dist/sidebar_items-169F3323.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-6XHBGSGW.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.7.23
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-behaviour" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Phoenix.Digester.Compressor</span> <small>behaviour</small>
+      <small class="app-vsn" translate="no">(Phoenix v1.7.23)</small>
+
+    </h1>
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/digester/compressor.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Defines the <a href="Phoenix.Digester.Compressor.html"><code class="inline">Phoenix.Digester.Compressor</code></a> behaviour for
+implementing static file compressors.</p><p>A custom compressor expects 2 functions to be implemented.</p><p>By default, Phoenix uses only <a href="Phoenix.Digester.Gzip.html"><code class="inline">Phoenix.Digester.Gzip</code></a> to compress
+static files, but additional compressors can be defined and added
+to the digest process.</p><h2 id="module-example" class="section-heading">
+  <a href="#module-example" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Example</span>
+</h2>
+<p>If you wanted to compress files using an external brotli compression
+library, you could define a new module implementing the behaviour and add the
+module to the list of configured Phoenix static compressors.</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.BrotliCompressor</span><span class="w"> </span><span class="k" data-group-id="3420341620-1">do</span><span class="w">
+  </span><span class="na">@behaviour</span><span class="w"> </span><span class="nc">Phoenix.Digester.Compressor</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">compress_file</span><span class="p" data-group-id="3420341620-2">(</span><span class="n">file_path</span><span class="p">,</span><span class="w"> </span><span class="n">content</span><span class="p" data-group-id="3420341620-2">)</span><span class="w"> </span><span class="k" data-group-id="3420341620-3">do</span><span class="w">
+    </span><span class="n">valid_extension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Path</span><span class="o">.</span><span class="n">extname</span><span class="p" data-group-id="3420341620-4">(</span><span class="n">file_path</span><span class="p" data-group-id="3420341620-4">)</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nc">Application</span><span class="o">.</span><span class="n">fetch_env!</span><span class="p" data-group-id="3420341620-5">(</span><span class="ss">:phoenix</span><span class="p">,</span><span class="w"> </span><span class="ss">:gzippable_exts</span><span class="p" data-group-id="3420341620-5">)</span><span class="w">
+    </span><span class="p" data-group-id="3420341620-6">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">compressed_content</span><span class="p" data-group-id="3420341620-6">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">:brotli</span><span class="o">.</span><span class="n">encode</span><span class="p" data-group-id="3420341620-7">(</span><span class="n">content</span><span class="p" data-group-id="3420341620-7">)</span><span class="w">
+
+    </span><span class="k">if</span><span class="w"> </span><span class="n">valid_extension</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">byte_size</span><span class="p" data-group-id="3420341620-8">(</span><span class="n">compressed_content</span><span class="p" data-group-id="3420341620-8">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">byte_size</span><span class="p" data-group-id="3420341620-9">(</span><span class="n">content</span><span class="p" data-group-id="3420341620-9">)</span><span class="w"> </span><span class="k" data-group-id="3420341620-10">do</span><span class="w">
+      </span><span class="p" data-group-id="3420341620-11">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">compressed_content</span><span class="p" data-group-id="3420341620-11">}</span><span class="w">
+    </span><span class="k" data-group-id="3420341620-10">else</span><span class="w">
+      </span><span class="ss">:error</span><span class="w">
+    </span><span class="k" data-group-id="3420341620-10">end</span><span class="w">
+  </span><span class="k" data-group-id="3420341620-3">end</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">file_extensions</span><span class="w"> </span><span class="k" data-group-id="3420341620-12">do</span><span class="w">
+    </span><span class="p" data-group-id="3420341620-13">[</span><span class="s">&quot;.br&quot;</span><span class="p" data-group-id="3420341620-13">]</span><span class="w">
+  </span><span class="k" data-group-id="3420341620-12">end</span><span class="w">
+</span><span class="k" data-group-id="3420341620-1">end</span><span class="w">
+
+</span><span class="c1"># config/config.exs</span><span class="w">
+</span><span class="n">config</span><span class="w"> </span><span class="ss">:phoenix</span><span class="p">,</span><span class="w">
+  </span><span class="ss">static_compressors</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3420341620-14">[</span><span class="nc">Phoenix.Digester.Gzip</span><span class="p">,</span><span class="w"> </span><span class="nc">MyApp.BrotliCompressor</span><span class="p" data-group-id="3420341620-14">]</span><span class="p">,</span><span class="w">
+  </span><span class="c1"># ...</span></code></pre>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-callbacks summary">
+  <h2>
+    <a href="#callbacks">Callbacks</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:compress_file/2" data-no-tooltip="" translate="no">compress_file(t, binary)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:file_extensions/0" data-no-tooltip="" translate="no">file_extensions()</a>
+
+      </div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="callbacks" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#callbacks">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Callbacks</span>
+    </h1>
+    <div class="callbacks-list">
+<section class="detail" id="c:compress_file/2">
+
+  <div class="detail-header">
+    <a href="#c:compress_file/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">compress_file(t, binary)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/digester/compressor.ex#L42" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> compress_file(<a href="https://hexdocs.pm/elixir/Path.html#t:t/0">Path.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()) :: {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()} | :error</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="c:file_extensions/0">
+
+  <div class="detail-header">
+    <a href="#c:file_extensions/0" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">file_extensions()</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/lib/phoenix/digester/compressor.ex#L43" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> file_extensions() :: [<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), ...]</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/phoenix/1.7.23" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/phoenix/1.7.23">Hex Preview</a>
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="Phoenix.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.37.2) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

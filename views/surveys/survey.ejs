@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title %></title>
+  
+  <link rel="stylesheet" href="/css/survey.css">
+  <%- include('../partials/head') %>
+</head>
+
+<body>
+<%- include('../partials/header') %>
+
+<main class="surveys-page">
+  <section class="surveys-header">
+    <div class="hero-box survey-hero-container">
+      <h1>Umfragen</h1>
+      <p class="subtitle">Nehmen Sie an Umfragen teil oder erstellen Sie neue</p>
+      <% if (user && (authz.isAdmin(user) || authz.isProjectLead(user))) { %>
+        <a href="/surveys/new" class="btn accent">
+          <span class="btn-icon">+</span> Neue Umfrage
+        </a>
+      <% } %>
+    </div>
+  </section>
+
+  <!-- Private Survey Access -->
+  <section class="private-survey-access">
+    <h2>Private Umfrage</h2>
+    <p>Haben Sie einen Zugangscode? Geben Sie ihn hier ein:</p>
+    <form action="/surveys/private" method="POST" class="private-survey-form">
+      <input type="text" name="code" placeholder="Zugangscode eingeben (8 Zeichen)" class="input" required minlength="8" maxlength="8">
+      <button type="submit" class="btn">Umfrage öffnen</button>
+    </form>
+  </section>
+
+  <!-- Search & Filter Bar -->
+  <section class="surveys-filters">
+    <div class="filter-container hero-overlap-next">
+      <div class="filter-controls">
+        <div class="search-wrapper">
+          <form id="searchForm" class="search-form">
+            <input type="hidden" name="type" id="currentType" value="<%= currentType || 'all' %>">
+            <div style="display: flex; gap: 8px;">
+                   <input type="text" 
+                     name="search" 
+                     id="surveySearchInput" 
+                     class="input"
+                     placeholder="Suche nach Titel, Beschreibung oder Ersteller..."
+                     value="<%= search || '' %>"
+                     hx-get="/surveys/fragment"
+                    hx-trigger="keyup changed delay:1000ms"
+                     hx-target="#surveysList"
+                     hx-include="#currentType"
+                     hx-vals='{"page":1}'
+                     >
+              
+              <button type="button" 
+                      onclick="clearSearch()" 
+                      class="btn"
+                      style="white-space: nowrap; max-width: 30px !important; max-height: 45px;">
+                ✕
+              </button>
+            </div>
+          </form>
+        </div>
+              <div class="filter-buttons">
+          <button type="button" class="filter-btn <%= currentType === 'all' ? 'active' : '' %>" data-type="all"
+            hx-get="/surveys/fragment"
+            hx-target="#surveysList"
+            hx-include="#surveySearchInput"
+            hx-vals='{"type":"all","page":1}'>Alle Umfragen</button>
+  
+          <button type="button" class="filter-btn <%= currentType === 'public' ? 'active' : '' %>" data-type="public"
+            hx-get="/surveys/fragment"
+            hx-target="#surveysList"
+            hx-include="#surveySearchInput"
+            hx-vals='{"type":"public","page":1}'>Öffentlich</button>
+  
+          <button type="button" class="filter-btn <%= currentType === 'private' ? 'active' : '' %>" data-type="private"
+            hx-get="/surveys/fragment"
+            hx-target="#surveysList"
+            hx-include="#surveySearchInput"
+            hx-vals='{"type":"private","page":1}'>Privat</button>
+  
+          <button type="button" class="filter-btn <%= currentType === 'my' ? 'active' : '' %>" data-type="my"
+            hx-get="/surveys/fragment"
+            hx-target="#surveysList"
+            hx-include="#surveySearchInput"
+            hx-vals='{"type":"my","page":1}'>Meine Umfragen</button>
+              </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Surveys Grid -->
+  <section class="surveys-grid" aria-live="polite">
+            <div id="surveysList"
+              hx-get="/surveys/fragment?type=<%= currentType || 'all' %>&search=<%= encodeURIComponent(search || '') %>&page=<%= currentPage || 1 %>"
+              data-page="<%= currentPage || 1 %>"
+              data-fragment-url="/surveys/fragment?type=<%= currentType || 'all' %>&search=<%= encodeURIComponent(search || '') %>&page=<%= currentPage || 1 %>"
+               hx-trigger="load, every 15s"
+              hx-swap="innerHTML">
+      <div class="loading-state skeleton-grid" aria-hidden="true">
+        <% for (let i = 0; i < 4; i++) { %>
+          <article class="survey-card skeleton">
+            <h3>&nbsp;</h3>
+            <p>&nbsp;</p>
+            <div class="survey-card-meta">
+              <span>&nbsp;</span>
+              <span>&nbsp;</span>
+            </div>
+          </article>
+        <% } %>
+      </div>
+    </div>
+  </section>
+
+  
+</main>
+
+<%- include('../partials/footer') %>
+
+<script>
+  async function copyToClipboard(text) {
+    const value = String(text || '');
+    if (!value) return;
+
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+        return;
+      }
+    } catch (_) {
+      // Fallback below.
+    }
+
+    const tempInput = document.createElement('textarea');
+    tempInput.value = value;
+    tempInput.setAttribute('readonly', '');
+    tempInput.style.position = 'absolute';
+    tempInput.style.left = '-9999px';
+    document.body.appendChild(tempInput);
+    tempInput.select();
+
+    try {
+      document.execCommand('copy');
+    } finally {
+      document.body.removeChild(tempInput);
+    }
+  }
+
+  window.copyToClipboard = copyToClipboard;
+</script>
+
+<script src="/js/dist/surveysClient.min.js"></script>
+</body>
+</html>

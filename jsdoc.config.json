@@ -1,0 +1,18 @@
+{
+    "source": {
+        "include": ["server.js", "lib", "routes", "public/js"],
+        "includePattern": ".+\\.js(doc|x)?$",
+        "excludePattern": "(^|\\/|\\\\)node_modules"
+    },
+    "plugins": ["plugins/markdown"],
+    "templates": {
+        "cleverLinks": true,
+        "monospaceLinks": true,
+        "useLongnameInNav": false
+    },
+    "opts": {
+        "destination": "./dokumentation",
+        "recurse": true,
+        "readme": "README.md"
+    }
+}

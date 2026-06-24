@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/services/authService.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/services/authService.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Authentifizierungs- und Benutzerverwaltungsfunktionen (Hashing, Registrierung, Login).
+ * @module lib/services/authService
+ */
+const db = require('../../config/db.js');
+const pointsService = require('./pointsService');
+const isBun = typeof Bun !== 'undefined';
+let nodeArgon2;
+
+/**
+ * Einheitlicher Hashing-Service mit Unterstützung für Bun und Node (argon2).
+ */
+const hashService = {
+    // Unified configuration
+    config: {
+        memoryCost: 65536, // 64 MB
+        timeCost: 3,
+        parallelism: 1,
+        type: 'argon2id'
+    },
+
+    /**
+     * Hasht ein Passwort mittels Argon2 (unterstützt Bun- und Node-Implementierungen).
+     * @async
+     * @param {string} password - Klartext-Passwort.
+     * @returns {Promise&lt;string>} Generierter Passwort-Hash.
+     */
+    async hash(password) {
+        if (isBun) {
+            return await Bun.password.hash(password, {
+                algorithm: 'argon2id',
+                memoryCost: this.config.memoryCost,
+                timeCost: this.config.timeCost
+            });
+        } else {
+            if (!nodeArgon2) nodeArgon2 = await import('argon2');
+            return await nodeArgon2.hash(password, {
+                type: nodeArgon2.argon2id,
+                memoryCost: this.config.memoryCost,
+                timeCost: this.config.timeCost
+            });
+        }
+    },
+
+    /**
+     * Verifiziert ein Passwort anhand eines gespeicherten Hashes.
+     * @async
+     * @param {string} password - Klartext-Passwort.
+     * @param {string} hash - Gespeicherter Passwort-Hash.
+     * @returns {Promise&lt;boolean>} `true`, wenn das Passwort gültig ist.
+     */
+    async verify(password, hash) {
+        if (!hash || !password) return false;
+        if (isBun) {
+            return await Bun.password.verify(password, hash);
+        } else {
+            if (!nodeArgon2) nodeArgon2 = await import('argon2');
+            return await nodeArgon2.verify(hash, password);
+        }
+    }
+};
+
+const crypto = require('crypto');
+
+const DEFAULT_ADMIN_USERNAME = process.env.DEFAULT_ADMIN_USERNAME || 'admin';
+const DEFAULT_ADMIN_EMAIL = process.env.DEFAULT_ADMIN_EMAIL || 'admin@ideenboard.de';
+
+let DEFAULT_ADMIN_PASSWORD = null;
+let INITIAL_ADMIN_PASSWORD_GENERATED = false;
+
+/**
+ * Stellt Standard-Rollen in der Datenbank sicher.
+ * @async
+ * @returns {Promise&lt;void>}
+ */
+async function ensureRoles() {
+    try {
+                await db.query(`
+            INSERT IGNORE INTO roles (role_id, name, description) VALUES
+            (1, 'Admin', 'Administrator'),
+            (2, 'Projektleiter', 'Projektleiter'),
+            (3, 'Mitarbeiter', 'Mitarbeiter')
+        `);
+    } catch (err) {
+        console.error('❌ Konnte Standard-Rollen nicht sicherstellen:', err.message);
+    }
+}
+
+/**
+ * Erstellt ggf. einen Default-Admin-Account und gibt ein einmaliges Passwort aus.
+ * @async
+ * @returns {Promise&lt;void>}
+ */
+async function ensureDefaultAdmin() {
+    let GENERATED_ADMIN_PASSWORD = null;
+
+    try {
+        await ensureRoles();
+        const adminRoleRows = await db.query('SELECT role_id FROM roles WHERE name = ?', ['Admin']);
+        const adminRole = adminRoleRows[0];
+        const adminRoleId = adminRole?.role_id || 1;
+
+        const existing = await db.query(
+            'SELECT user_id, password_hash, username, email FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)',
+            [DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_EMAIL]
+        );
+        if (existing.length === 0) {
+            if (!DEFAULT_ADMIN_PASSWORD) {
+                GENERATED_ADMIN_PASSWORD = crypto.randomBytes(4).toString('hex').slice(0, 8);
+                DEFAULT_ADMIN_PASSWORD = GENERATED_ADMIN_PASSWORD;
+                INITIAL_ADMIN_PASSWORD_GENERATED = true;
+            }
+            const hash = await hashService.hash(DEFAULT_ADMIN_PASSWORD);
+                const insertRes = await db.query(
+                    'INSERT INTO users (username, email, password_hash, role_id) VALUES (?, ?, ?, ?)',
+                    [DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_EMAIL, hash, adminRoleId]
+                );
+            const adminUserId = insertRes?.insertId;
+                if (adminUserId) {
+                await db.query(
+                    'INSERT IGNORE INTO user_points (user_id, current_points, pending_delta) VALUES (?, 0, 0)',
+                    [adminUserId]
+                );
+                console.log(`[INIT] Default Admin '${DEFAULT_ADMIN_USERNAME}' angelegt.`);
+                if (INITIAL_ADMIN_PASSWORD_GENERATED) {
+                    console.log('EINMAL-ADMIN-PASSWORT:', GENERATED_ADMIN_PASSWORD);
+                }
+            }
+        } else {
+            const admin = existing[0];
+            const pwd = admin.password_hash;
+            if (!DEFAULT_ADMIN_PASSWORD &amp;&amp; (!pwd || pwd === '' || pwd === null)) {
+                GENERATED_ADMIN_PASSWORD = crypto.randomBytes(4).toString('hex').slice(0, 8);
+                DEFAULT_ADMIN_PASSWORD = GENERATED_ADMIN_PASSWORD;
+                const hash = await hashService.hash(DEFAULT_ADMIN_PASSWORD);
+                await db.query('UPDATE users SET password_hash = ? WHERE user_id = ?', [hash, admin.user_id]);
+                console.log('EINMAL-ADMIN-PASSWORT (Update):', GENERATED_ADMIN_PASSWORD);
+            }
+        }
+    } catch (err) {
+        console.error('❌ Konnte Default-Admin nicht sicherstellen:', err.message);
+    }
+}
+
+/**
+ * Registriert einen neuen Benutzer und vergibt Punkte für die Registrierung.
+ * @async
+ * @param {string} username
+ * @param {string} email
+ * @param {string} password
+ * @returns {Promise&lt;Object>} Ergebnisobjekt mit `success` und ggf. `user` oder `error`.
+ */
+async function registerUser(username, email, password) {
+    await ensureRoles();
+
+    if (!username || !email) return { success: false, error: 'Benutzername und E-Mail sind erforderlich' };
+    const cleanUsername = String(username).trim();
+    const cleanEmail = String(email).trim();
+
+    // Prüfe E-Mail (case-insensitive)
+    const existingEmail = await db.query('SELECT user_id FROM users WHERE LOWER(email) = LOWER(?)', [cleanEmail]);
+    if (existingEmail.length > 0) return { success: false, error: 'E-Mail bereits registriert' };
+
+    // Prüfe Benutzernamen (case-insensitive) damit sich Namen nicht nur durch Groß-/Kleinschreibung unterscheiden
+    const existingUsername = await db.query('SELECT user_id FROM users WHERE LOWER(username) = LOWER(?)', [cleanUsername]);
+    if (existingUsername.length > 0) return { success: false, error: 'Benutzername bereits vergeben' };
+
+    const hash = await hashService.hash(password);
+
+    // Retrieve default role id (e.g., 'Mitarbeiter') dynamically
+        const roleRows = await db.query('SELECT role_id FROM roles WHERE name = ?', ['Mitarbeiter']);
+    const defaultRole = roleRows.length ? roleRows[0].role_id : 3;
+
+        const insertRes = await db.query(
+            'INSERT INTO users (username, email, password_hash, role_id) VALUES (?, ?, ?, ?)',
+            [cleanUsername, cleanEmail, hash, defaultRole]
+        );
+
+    const newUserId = insertRes?.insertId;
+    if (!newUserId) return { success: false, error: 'Fehler bei der Registrierung' };
+
+    await pointsService.addPendingDelta({
+        userId: Number(newUserId),
+        delta: pointsService.POINT_VALUES.USER_REGISTRATION,
+        reason: 'user_registration'
+    });
+
+    const roleMap = { 1: 'Admin', 2: 'Projektleiter', 3: 'Mitarbeiter' };
+    const roleName = roleMap[defaultRole] || 'Mitarbeiter';
+
+    return {
+        success: true,
+        user: {
+            id: Number(newUserId),
+            username,
+            role: roleName
+        }
+    };
+}
+
+/**
+ * Authentifiziert einen Benutzer anhand E-Mail und Passwort.
+ * @async
+ * @param {string} email
+ * @param {string} password
+ * @returns {Promise&lt;Object>} Objekt mit `success` und `user` oder `error`.
+ */
+async function authenticateUser(email, password) {
+    const rows = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    if (rows.length === 0) return { success: false, error: 'Konto nicht gefunden' };
+
+    const user = rows[0];
+    const match = await hashService.verify(password, user.password_hash);
+    if (!match) return { success: false, error: 'Falsches Passwort' };
+
+    const roleRows = await db.query('SELECT name FROM roles WHERE role_id = ?', [user.role_id]);
+    const roleName = roleRows[0]?.name || 'Mitarbeiter';
+
+    let usesDefaultPassword = false;
+    if (INITIAL_ADMIN_PASSWORD_GENERATED &amp;&amp; DEFAULT_ADMIN_PASSWORD) {
+        usesDefaultPassword = await hashService.verify(DEFAULT_ADMIN_PASSWORD, user.password_hash);
+    }
+
+    return {
+        success: true,
+        user: {
+            id: Number(user.user_id),
+            username: user.username,
+            role: roleName,
+            email: user.email,
+            usesDefaultPassword
+        }
+    };
+}
+
+/**
+ * Prüft, ob ein Admin-Flag für das Passwort gesetzt ist.
+ * @async
+ * @param {number} userId
+ * @returns {Promise&lt;boolean>}
+ */
+async function checkAdminFlag(userId) {
+    try {
+        const rowsFlag = await db.query('SELECT user_id FROM admin_password_flags WHERE user_id = ?', [userId]);
+        return rowsFlag &amp;&amp; rowsFlag.length > 0;
+    } catch (e) {
+        return false;
+    }
+}
+
+/**
+ * Ändert das Passwort eines Users nach Verifizierung des aktuellen Passworts.
+ * @async
+ * @param {number} userId
+ * @param {string} currentPassword
+ * @param {string} newPassword
+ * @returns {Promise&lt;Object>} `{ success: true }` oder `{ success: false, error }`.
+ */
+async function changePassword(userId, currentPassword, newPassword) {
+    const rows = await db.query('SELECT password_hash FROM users WHERE user_id = ?', [userId]);
+    if (!rows.length) return { success: false, error: 'User nicht gefunden' };
+
+    const { password_hash } = rows[0];
+    const valid = await hashService.verify(currentPassword, password_hash);
+    if (!valid) return { success: false, error: 'Aktuelles Passwort ist falsch' };
+
+    const hash = await hashService.hash(newPassword);
+        await db.query('UPDATE users SET password_hash = ? WHERE user_id = ?', [hash, userId]);
+
+    return { success: true };
+}
+
+/**
+ * Kennzeichnet einen Benutzer, dass er das Admin-Passwort-Flag gesetzt hat.
+ * @async
+ * @param {number} userId
+ * @returns {Promise&lt;void>}
+ */
+async function setAdminFlag(userId) {
+    await db.query('INSERT IGNORE INTO admin_password_flags (user_id) VALUES (?)', [userId]);
+}
+
+/**
+ * Setzt das Passwort eines Benutzers direkt (ohne altes Passwort).
+ * @async
+ * @param {number} userId
+ * @param {string} newPassword
+ * @returns {Promise&lt;void>}
+ */
+async function resetPassword(userId, newPassword) {
+    const hash = await hashService.hash(newPassword);
+        await db.query('UPDATE users SET password_hash = ? WHERE user_id = ?', [hash, userId]);
+}
+
+module.exports = {
+    hashService,
+    ensureRoles,
+    ensureDefaultAdmin,
+    registerUser,
+    authenticateUser,
+    checkAdminFlag,
+    setAdminFlag,
+    changePassword,
+    resetPassword,
+    get DEFAULT_ADMIN_PASSWORD() { return DEFAULT_ADMIN_PASSWORD; },
+    get INITIAL_ADMIN_PASSWORD_GENERATED() { return INITIAL_ADMIN_PASSWORD_GENERATED; }
+};
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

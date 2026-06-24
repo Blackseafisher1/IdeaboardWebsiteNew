@@ -1,0 +1,109 @@
+<input type="hidden" id="surveysCurrentPage" value="<%= currentPage || 1 %>">
+
+<% if (!surveys || surveys.length === 0) { %>
+  <div class="empty-state">
+    <p>
+      <% if (search && search.trim()) { %>
+        Keine Umfragen gefunden für "<strong><%= search %></strong>".
+      <% } else { %>
+        Keine Umfragen gefunden.
+      <% } %>
+    </p>
+  </div>
+<% } else { %>
+  <div class="surveys-grid">
+    <% surveys.forEach(survey => { %>
+      <div class="survey-card" id="survey-<%= survey.survey_id %>" tabindex="0">
+        <div class="survey-header">
+          <% if (survey.is_private) { %>
+  <span class="badge private">Privat</span>
+<% } else { %>
+  <span class="badge public">Öffentlich</span>
+<% } %>
+
+          <h3><%= survey.title %></h3>
+          <p class="survey-description"><%= survey.description || '' %></p>
+        </div>
+
+        <div class="survey-meta">
+          <div class="meta-item">
+            <span class="meta-label">Erstellt von:</span>
+            
+<span class="meta-value"><%= survey.creator_name %></span>
+          </div>
+
+          <div class="meta-item">
+            <span class="meta-label">Teilnehmer:</span>
+            <span class="meta-value"><%= survey.response_count || 0 %></span>
+          </div>
+
+          <div class="meta-item">
+            <span class="meta-label">Erstellt:</span>
+            <span class="meta-value"><%= new Date(survey.created_at).toLocaleDateString('de-DE') %></span>
+          </div>
+
+          <% if (survey.is_private && survey.access_code) { %>
+            <div class="meta-item">
+              <span class="meta-label">Zugangscode:</span>
+              <span class="meta-value access-code"
+                    onclick="copyToClipboard('<%= survey.access_code %>')"
+                    style="cursor: pointer; color: #2196F3; text-decoration: underline;">
+                <%= survey.access_code %>
+                <small>(Klicken zum Kopieren)</small>
+              </span>
+            </div>
+          <% } %>
+        </div>
+
+        <div class="survey-actions">
+          <% if (survey.user_id != user.user_id) { %>
+            <a href="/surveys/<%= survey.survey_id %>" class="btn btn-primary">Teilnehmen</a>
+          <% } %>
+
+          <% if (survey.user_id == user.user_id || authz.isAdmin(user)) { %>
+            <a href="/surveys/<%= survey.survey_id %>/results" class="btn btn-secondary">Ergebnisse</a>
+          <% } %>
+        </div>
+
+        <% if (survey.user_id == user.user_id || authz.isAdmin(user)) { %>
+          <div class="survey-owner-actions">
+            <% if (authz.isAdmin(user) || survey.user_id === user.user_id) { %>
+              <button class="btn-delete"
+                      hx-post="/surveys/<%= survey.survey_id %>/delete-survey"
+                      hx-confirm="Möchten Sie die Umfrage '<%= survey.title %>' wirklich löschen?"
+                      hx-target="closest .survey-card"
+                      hx-swap="outerHTML"
+                      style="background: #f44336; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                Löschen
+              </button>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+    <% }); %>
+  </div>
+
+  <!-- Pagination -->
+    <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+      <div class="surveys-pagination">
+        <span class="pagination-info">
+          Seite <%= currentPage %> von <%= totalPages %>
+          <% if (typeof totalResults !== 'undefined') { %>
+            (Insgesamt <%= totalResults %> Ergebnisse)
+          <% } %>
+        </span>
+
+        <!-- HTMX intersect loader (matches projects pattern) -->
+        <% if (nextPage) { %>
+             <div id="load-more-surveys"
+               hx-get="/surveys?type=<%= encodeURIComponent(currentType || 'all') %>&search=<%= encodeURIComponent(search || '') %>&page=<%= nextPage %>"
+               hx-trigger="intersect once"
+               hx-swap="beforeend"
+               hx-target="#surveysList"
+               style="grid-column: 1 / -1; text-align: center; padding: 30px;">
+            <span class="htmx-indicator">Lade weitere Umfragen...</span>
+          </div>
+        <% } %>
+      </div>
+    <% } %>
+<% } %>

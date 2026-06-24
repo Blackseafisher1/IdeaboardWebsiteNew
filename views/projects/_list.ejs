@@ -1,0 +1,33 @@
+<input type="hidden" id="currentStatus" name="status" value="<%= currentStatus || 'all' %>" hx-swap-oob="true">
+<input type="hidden" id="isUserOnlyInput" name="userOnly" value="<%= isUserOnly ? 'true' : 'false' %>" hx-swap-oob="true">
+
+<% (projects || []).forEach(project => { %>
+  <%- include('_project-card', { project: project, user: user }) %>
+<% }) %>
+
+<!-- Infinite Scroll Trigger (ersetzt Pagination-Buttons) -->
+<!-- Pagination / Infinite Scroll -->
+<% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+  <div class="projects-pagination" style="grid-column: 1 / -1; text-align: center; padding: 20px;">
+    <span class="pagination-info">Seite <%= currentPage %> von <%= totalPages %>
+      <% if (typeof totalResults !== 'undefined') { %>
+        (Insgesamt <%= totalResults %> Ergebnisse)
+      <% } %>
+    </span>
+
+    <% if (nextPage) { %>
+      <div id="load-more-projects"
+        hx-get="/projects/fragment?status=<%= encodeURIComponent(currentStatus || 'all') %>&search=<%= encodeURIComponent(currentSearch || '') %>&userOnly=<%= isUserOnly ? 'true' : 'false' %>&page=<%= nextPage %>"
+        hx-trigger="intersect once"
+        hx-swap="beforeend"
+        hx-target="#projectsList"
+        style="padding: 20px;">
+        <span class="htmx-indicator">Lade weitere Projekte...</span>
+      </div>
+    <% } %>
+  </div>
+<% } else if (!projects || projects.length === 0) { %>
+  <div class="empty-state">
+    <p>Keine Projekte gefunden.</p>
+  </div>
+<% } %>

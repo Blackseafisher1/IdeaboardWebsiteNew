@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Neue Umfrage erstellen</title>
+  
+  <link rel="stylesheet" href="/css/survey.css">
+  <link rel="stylesheet" href="/css/create_survey.css">
+  
+  <%- include('../partials/head') %>
+</head>
+<body>
+<%- include('../partials/header') %>
+
+<main class="create-survey-page">
+  <h1>Neue Umfrage erstellen</h1>
+  
+  <form action="/surveys" method="POST" id="survey-form">
+    <% if (authz.isAdmin(user)) { %>
+      <!-- For admins: Radio buttons for public/private -->
+      <div class="form-group">
+        <label class="form-label">Umfrage-Typ *</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="isPrivate" value="false" id="publicSurvey" checked onchange="togglePrivateField()">
+            <span>Öffentliche Umfrage (für alle sichtbar)</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="isPrivate" value="true" id="privateSurvey" onchange="togglePrivateField()">
+            <span>Private Umfrage (nur mit Zugangscode)</span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="form-group" id="privateInfo" style="display: none;">
+        <div class="info-box">
+          <p><strong>ℹ️ Private Umfrage</strong></p>
+          <p>Diese Umfrage ist nur mit einem Zugangscode erreichbar.</p>
+          <small>Nach der Erstellung erhältst du einen eindeutigen Code, den du an Teilnehmer weitergeben kannst.</small>
+        </div>
+      </div>
+    <% } else { %>
+      <!-- For non-admins: Automatically private -->
+      <input type="hidden" name="isPrivate" value="true">
+      <div class="form-group">
+        <div class="info-box">
+          <p><strong>⚠️ Diese Umfrage wird automatisch als private Umfrage erstellt.</strong></p>
+          <p>Teilnehmer benötigen einen Zugangscode, um teilnehmen zu können.</p>
+          <small>Nach der Erstellung erhältst du einen Code, den du an die gewünschten Personen weitergeben kannst.</small>
+        </div>
+      </div>
+    <% } %>
+    
+    <div class="form-group">
+      <label for="title" class="form-label">Titel *</label>
+      <input type="text" id="title" name="title" class="input" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="description" class="form-label">Beschreibung</label>
+      <textarea id="description" name="description" class="input" rows="3"></textarea>
+    </div>
+    
+    <!-- Image for survey -->
+    <div class="form-group">
+      <label for="surveyImage" class="form-label">Umfrage-Bild (optional)</label>
+      <input type="text" id="surveyImage" name="surveyImage" class="input" placeholder="Bild-URL für die Umfrage">
+      <small class="form-hint">Eine URL zu einem Bild, das über der Umfrage angezeigt wird</small>
+    </div>
+    
+    <div id="questions-container">
+      <!-- Questions will be added here -->
+    </div>
+    
+    <button type="button" class="btn outline" id="add-question-btn">
+      + Frage hinzufügen
+    </button>
+    
+    <div class="form-actions">
+      <button type="submit" class="btn">Umfrage erstellen</button>
+      <a href="/surveys" class="btn outline">Abbrechen</a>
+    </div>
+  </form>
+</main>
+
+<script>
+let questionCount = 0;
+let optionCounts = {};
+
+// Nur für Admins: Toggle für private/öffentliche Umfragen
+<% if (authz.isAdmin(user)) { %>
+function togglePrivateField() {
+  const privateSurvey = document.getElementById('privateSurvey');
+  const privateInfo = document.getElementById('privateInfo');
+  
+  if (privateSurvey.checked) {
+    privateInfo.style.display = 'block';
+  } else {
+    privateInfo.style.display = 'none';
+  }
+}
+
+// Beim Laden prüfen
+document.addEventListener('DOMContentLoaded', function() {
+  togglePrivateField();
+});
+<% } %>
+
+// Question Management (bleibt gleich)
+document.getElementById('add-question-btn').addEventListener('click', function() {
+  const container = document.getElementById('questions-container');
+  const questionIndex = questionCount++;
+  optionCounts[questionIndex] = 2;
+  
+  const questionDiv = document.createElement('div');
+  questionDiv.className = 'question-group';
+  questionDiv.innerHTML = `
+    <div class="question-header">
+      <h3>Frage ${questionIndex + 1}</h3>
+      <button type="button" class="btn-remove-question" onclick="this.closest('.question-group').remove()">×</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Frage *</label>
+      <input type="text" name="questions[${questionIndex}][text]" class="input" required>
+    </div>
+    
+    <!-- Image for question -->
+    <div class="form-group">
+      <label class="form-label">Fragen-Bild (optional)</label>
+      <input type="text" name="questions[${questionIndex}][image]" class="input" placeholder="Bild-URL für diese Frage">
+    </div>
+    
+    <div class="options-container" id="options-${questionIndex}">
+      <div class="option-group">
+        <input type="text" name="questions[${questionIndex}][options][0][text]" class="input" placeholder="Option 1" required>
+        <input type="text" name="questions[${questionIndex}][options][0][imageUrl]" class="input" placeholder="Bild-URL (optional)">
+      </div>
+      <div class="option-group">
+        <input type="text" name="questions[${questionIndex}][options][1][text]" class="input" placeholder="Option 2" required>
+        <input type="text" name="questions[${questionIndex}][options][1][imageUrl]" class="input" placeholder="Bild-URL (optional)">
+      </div>
+    </div>
+    <button type="button" class="btn outline" onclick="addOption(${questionIndex})">
+      + Option hinzufügen
+    </button>
+  `;
+  
+  container.appendChild(questionDiv);
+});
+
+function addOption(questionIndex) {
+  const container = document.getElementById(`options-${questionIndex}`);
+  const optionIndex = optionCounts[questionIndex]++;
+  
+  const optionDiv = document.createElement('div');
+  optionDiv.className = 'option-group';
+  optionDiv.innerHTML = `
+    <input type="text" name="questions[${questionIndex}][options][${optionIndex}][text]" 
+           class="input" placeholder="Option ${optionIndex + 1}" required>
+    <input type="text" name="questions[${questionIndex}][options][${optionIndex}][imageUrl]" 
+           class="input" placeholder="Bild-URL (optional)">
+    <button type="button" class="btn-remove-option" onclick="this.parentElement.remove()">×</button>
+  `;
+  
+  container.appendChild(optionDiv);
+}
+
+// Add first question on page load
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('add-question-btn').click();
+});
+</script>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

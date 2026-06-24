@@ -1,0 +1,28 @@
+<h1>Ideen</h1>
+
+<div id="ideas-page" hx-ext="ws" ws-connect="/ws">
+  <form phx-change="filter">
+    <input type="text" name="q" placeholder="Suche..." value="<%= @filters.q %>">
+    <select name="category_id">
+      <option value="">Alle Kategorien</option>
+      <%= for cat <- @categories do %>
+        <option value="<%= cat.category_id %>"><%= cat.name %></option>
+      <% end %>
+    </select>
+    <select name="sort">
+      <option value="latest">Neueste</option>
+      <option value="oldest">Älteste</option>
+      <option value="likes">Meiste Likes</option>
+    </select>
+  </form>
+
+  <div id="ideas-list">
+    <%= for idea <- @ideas do %>
+      <div class="idea-card">
+        <h3><%= idea.title %></h3>
+        <p><%= idea.description %></p>
+        <span><%= idea.author_username %></span>
+      </div>
+    <% end %>
+  </div>
+</div>

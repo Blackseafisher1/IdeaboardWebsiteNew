@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.37.2">
+    <meta name="project" content="Phoenix v1.7.23">
+
+
+    <title>Changelog for v1.7 — Phoenix v1.7.23</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-6X3L5KMG.css" />
+
+    <script defer src="dist/sidebar_items-169F3323.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-6XHBGSGW.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.7.23
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Changelog for v1.7</h1>
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/CHANGELOG.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+<p>See the <a href="https://gist.github.com/chrismccord/00a6ea2a96bc57df0cce526bd20af8a7">upgrade guide</a> to upgrade from Phoenix 1.6.x.</p><p>Phoenix v1.7 requires Elixir v1.11+ &amp; Erlang v22.1+.</p><h2 id="introduction-of-verified-routes" class="section-heading">
+  <a href="#introduction-of-verified-routes" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Introduction of Verified Routes</span>
+</h2>
+<p>Phoenix 1.7 includes a new <a href="Phoenix.VerifiedRoutes.html"><code class="inline">Phoenix.VerifiedRoutes</code></a> feature which provides <code class="inline">~p</code>
+for route generation with compile-time verification.</p><p>Use of the <code class="inline">sigil_p</code> macro allows paths and URLs throughout your
+application to be compile-time verified against your Phoenix router(s).
+For example the following path and URL usages:</p><pre><code class="makeup elixir" translate="no"><span class="o">&lt;</span><span class="o">.</span><span class="n">link</span><span class="w"> </span><span class="n">href</span><span class="o">=</span><span class="p" data-group-id="2645654184-1">{</span><span class="sx">~p&quot;/sessions/new&quot;</span><span class="p" data-group-id="2645654184-1">}</span><span class="w"> </span><span class="n">method</span><span class="o">=</span><span class="s">&quot;post&quot;</span><span class="o">&gt;</span><span class="nc">Log</span><span class="w"> </span><span class="ow">in</span><span class="o">&lt;</span><span class="o">/</span><span class="o">.</span><span class="n">link</span><span class="o">&gt;</span><span class="w">
+
+</span><span class="n">redirect</span><span class="p" data-group-id="2645654184-2">(</span><span class="ss">to</span><span class="p">:</span><span class="w"> </span><span class="n">url</span><span class="p" data-group-id="2645654184-3">(</span><span class="sx">~p&quot;/posts/</span><span class="si" data-group-id="2645654184-4">#{</span><span class="n">post</span><span class="si" data-group-id="2645654184-4">}</span><span class="sx">&quot;</span><span class="p" data-group-id="2645654184-3">)</span><span class="p" data-group-id="2645654184-2">)</span></code></pre><p>Will be verified against your standard <a href="Phoenix.Router.html"><code class="inline">Phoenix.Router</code></a> definitions:</p><pre><code class="makeup elixir" translate="no"><span class="n">get</span><span class="w"> </span><span class="s">&quot;/posts/:post_id&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">PostController</span><span class="p">,</span><span class="w"> </span><span class="ss">:show</span><span class="w">
+</span><span class="n">post</span><span class="w"> </span><span class="s">&quot;/sessions/new&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">SessionController</span><span class="p">,</span><span class="w"> </span><span class="ss">:create</span></code></pre><p>Unmatched routes will issue compiler warnings:</p><pre><code class="makeup elixir" translate="no"><span class="ss">warning</span><span class="p">:</span><span class="w"> </span><span class="n">no</span><span class="w"> </span><span class="n">route</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nc">AppWeb.Router</span><span class="w"> </span><span class="n">matches</span><span class="w"> </span><span class="s">&quot;/postz/</span><span class="si" data-group-id="7137306696-1">#{</span><span class="n">post</span><span class="si" data-group-id="7137306696-1">}</span><span class="s">&quot;</span><span class="w">
+  </span><span class="n">lib</span><span class="o">/</span><span class="n">app_web</span><span class="o">/</span><span class="n">controllers</span><span class="o">/</span><span class="n">post_controller</span><span class="o">.</span><span class="n">ex</span><span class="p">:</span><span class="mi">100</span><span class="p">:</span><span class="w"> </span><span class="nc">AppWeb.PostController</span><span class="o">.</span><span class="n">show</span><span class="o">/</span><span class="mi">2</span></code></pre><p><em>Note: Elixir v1.14+ is required for comprehensive warnings. Older versions
+will work properly and warn on new compilations, but changes to the router file
+will not issue new warnings.</em></p><p>This feature replaces the <code class="inline">Helpers</code> module generated in your Phoenix router, but helpers
+will continue to work and be generated. You can disable router helpers by passing the
+<code class="inline">helpers: false</code> option to <code class="inline">use Phoenix.Router</code>.</p><h2 id="phx-new-revamp" class="section-heading">
+  <a href="#phx-new-revamp" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">phx.new revamp</span>
+</h2>
+<p>The <code class="inline">phx.new</code> application generator has been improved to rely on function components for
+both Controller and LiveView rendering, ultimately simplifying the rendering stack of
+Phoenix applications and providing better reuse.</p><p>New applications come with a collection of well-documented and accessible core components,
+styled with Tailwind CSS by default. You can opt-out of Tailwind CSS with the <code class="inline">--no-tailwind</code>
+flag (the Tailwind CSS classes are kept in the generated components as reference for
+future styling).</p><h2 id="1-7-23-2026-05-06" class="section-heading">
+  <a href="#1-7-23-2026-05-06" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.23 (2026-05-06)</span>
+</h2>
+<h3 id="bug-fixes" class="section-heading">
+  <a href="#bug-fixes" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>Fix invalid status code when longpoll request times out</li></ul><h3 id="javascript-client-bug-fixes" class="section-heading">
+  <a href="#javascript-client-bug-fixes" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">JavaScript Client Bug Fixes</span>
+</h3>
+<ul><li>Fix invalid longpoll POST content type argument</li></ul><h2 id="1-7-22-2026-05-05" class="section-heading">
+  <a href="#1-7-22-2026-05-05" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.22 (2026-05-05)</span>
+</h2>
+<h3 id="security-fixes" class="section-heading">
+  <a href="#security-fixes" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Security fixes</span>
+</h3>
+<ul><li><a href="https://github.com/phoenixframework/phoenix/security/advisories/GHSA-628h-q48j-jr6q">CVE-2026-32689</a>: Fix Phoenix.Socket Longpoll transport memory exhaustion in nd-JSON body splitting</li></ul><h2 id="1-7-21-2025-03-27" class="section-heading">
+  <a href="#1-7-21-2025-03-27" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.21 (2025-03-27)</span>
+</h2>
+<h3 id="bug-fixes-1" class="section-heading">
+  <a href="#bug-fixes-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>Fix socket sometimes not reconnecting after pagehide/pageshow (<a href="https://github.com/phoenixframework/phoenix/issues/6103">#6103</a>)</li><li>Check if priv folder exists before re-linking in CodeReloader (<a href="https://github.com/phoenixframework/phoenix/pull/6124">#6124</a>)</li></ul><h3 id="enhancements" class="section-heading">
+  <a href="#enhancements" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>Relax LiveView dependency for new projects</li></ul><h2 id="1-7-20-2025-02-20" class="section-heading">
+  <a href="#1-7-20-2025-02-20" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.20 (2025-02-20)</span>
+</h2>
+<h3 id="enhancements-1" class="section-heading">
+  <a href="#enhancements-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>Add <code class="inline">[:phoenix, :socket_drain]</code> telemetry event to track socket draining and use it for logging</li><li>Address Elixir 1.18 warnings in phx.new</li><li>Add <code class="inline">PHX_NEW_CACHE_DIR</code> env var for cached <code class="inline">phx.new</code> builds</li></ul><h3 id="bug-fixes-2" class="section-heading">
+  <a href="#bug-fixes-2" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>Fix code reloader error when <code class="inline">mix.lock</code> is touched without its content changing</li></ul><h2 id="1-7-19-2025-01-31" class="section-heading">
+  <a href="#1-7-19-2025-01-31" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.19 (2025-01-31)</span>
+</h2>
+<h3 id="enhancements-2" class="section-heading">
+  <a href="#enhancements-2" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>[phx.new] - bind to <code class="inline">0.0.0.0</code> in <code class="inline">dev.exs</code> if phx.new is being run inside a docker container.
+This exposes the container's phoenix server to the host so that it is accessible over port forwarding.</li></ul><h2 id="1-7-18-2024-12-10" class="section-heading">
+  <a href="#1-7-18-2024-12-10" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.18 (2024-12-10)</span>
+</h2>
+<h3 id="enhancements-3" class="section-heading">
+  <a href="#enhancements-3" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>Use new interpolation syntax in generators</li><li>Update gettext in generators to 0.26</li></ul><h2 id="1-7-17-2024-12-03" class="section-heading">
+  <a href="#1-7-17-2024-12-03" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.17 (2024-12-03)</span>
+</h2>
+<h3 id="enhancements-4" class="section-heading">
+  <a href="#enhancements-4" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>Use LiveView 1.0.0 for newly generated applications</li></ul><h2 id="1-7-16-2024-12-03" class="section-heading">
+  <a href="#1-7-16-2024-12-03" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.16 (2024-12-03)</span>
+</h2>
+<h3 id="bug-fixes-3" class="section-heading">
+  <a href="#bug-fixes-3" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>Fix required Elixir version in mix.exs</li></ul><h2 id="1-7-15-2024-12-02" class="section-heading">
+  <a href="#1-7-15-2024-12-02" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.15 (2024-12-02)</span>
+</h2>
+<h3 id="enhancements-5" class="section-heading">
+  <a href="#enhancements-5" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>Support phoenixframework.org installer</li></ul><h2 id="1-7-14-2024-06-18" class="section-heading">
+  <a href="#1-7-14-2024-06-18" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.14 (2024-06-18)</span>
+</h2>
+<h3 id="bug-fixes-4" class="section-heading">
+  <a href="#bug-fixes-4" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>Revert &quot;Add <code class="inline">follow_redirect/2</code> to Phoenix.ConnTest&quot; (#5797) as this conflicts with <code class="inline">follow_redirect/2</code> in LiveView, which is imported with ConnTest by default</li></ul><h2 id="1-7-13-2024-06-18" class="section-heading">
+  <a href="#1-7-13-2024-06-18" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.13 (2024-06-18)</span>
+</h2>
+<h3 id="bug-fixes-5" class="section-heading">
+  <a href="#bug-fixes-5" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>Fix Elixir 1.17 warning in Cowboy2Adapter</li><li>Fix verified routes emitting diagnostics without file and position</li></ul><h3 id="javascript-client-bug-fixes-1" class="section-heading">
+  <a href="#javascript-client-bug-fixes-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">JavaScript Client Bug Fixes</span>
+</h3>
+<ul><li>Fix error when <code class="inline">sessionStorage</code> is not available on global namespace</li></ul><h3 id="enhancements-6" class="section-heading">
+  <a href="#enhancements-6" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>Add <code class="inline">follow_redirect/2</code> to Phoenix.ConnTest</li><li>Use LiveView 1.0.0-rc for newly generated applications</li><li>Use new <code class="inline">Phoenix.Component.used_input?</code> for form errors in generated <code class="inline">core_components.ex</code></li><li>Allow <code class="inline">mix ecto.setup</code> from the umbrella root</li><li>Bump Endpoint static cache manifest on <code class="inline">config_change</code> callback</li></ul><h2 id="1-7-12-2024-04-11" class="section-heading">
+  <a href="#1-7-12-2024-04-11" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.12 (2024-04-11)</span>
+</h2>
+<h3 id="javascript-client-bug-fixes-2" class="section-heading">
+  <a href="#javascript-client-bug-fixes-2" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">JavaScript Client Bug Fixes</span>
+</h3>
+<ul><li>Fix all unjoined channels from being removed from the socket when channel leave is called on any single unjoined channel instance</li></ul><h3 id="enhancements-7" class="section-heading">
+  <a href="#enhancements-7" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li><p>[phx.gen.auth] Add enhanced session fixation protection.
+For applications whichs previously used <code class="inline">phx.gen.auth</code>, the following line can be added to the <code class="inline">renew_session</code> function in the auth module:</p><pre><code class="makeup diff" translate="no"><span class="n">  defp renew_session(conn) do
+</span><span class="gi">+</span><span class="gi">   delete_csrf_token()
+</span><span class="w">
+</span><span class="n">    conn
+</span><span class="n">    |&gt; configure_session(renew: true)
+</span><span class="n">    |&gt; clear_session()</span></code></pre><p><em>Note</em>: because the session id is in a http-only cookie by default, the only way to perform this attack prior to this change is if your application was already vulnerable to an XSS attack, which itself grants more escalated &quot;privileges” than the CSRF fixation.</p></li></ul><h3 id="javascript-client-enhancements" class="section-heading">
+  <a href="#javascript-client-enhancements" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">JavaScript Client Enhancements</span>
+</h3>
+<ul><li>Only memorize longpoll fallback for browser session if WebSocket never had a successful connection</li></ul><h2 id="1-7-11-2024-02-01" class="section-heading">
+  <a href="#1-7-11-2024-02-01" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.11 (2024-02-01)</span>
+</h2>
+<h3 id="enhancements-8" class="section-heading">
+  <a href="#enhancements-8" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>[phx.new] Default to the <a href="https://github.com/mtrudel/bandit">Bandit webserver</a> for newly generated applications</li><li>[phx.new] Enable longpoll transport by default and auto fallback when websocket fails for newly generated applications</li></ul><h3 id="javascript-client-enhancements-1" class="section-heading">
+  <a href="#javascript-client-enhancements-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">JavaScript Client Enhancements</span>
+</h3>
+<ul><li>Support new <code class="inline">longPollFallbackMs</code> option to auto fallback when websocket fails to connect</li><li>Support new <code class="inline">debug</code> option to enable verbose logging</li></ul><h3 id="deprecations" class="section-heading">
+  <a href="#deprecations" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Deprecations</span>
+</h3>
+<ul><li>Deprecate the <code class="inline">c:init/2</code> callback in endpoints in favor of <code class="inline">config/runtime.exs</code> or in favor of <code class="inline">{Phoenix.Endpoint, options}</code></li></ul><h2 id="1-7-10-2023-11-03" class="section-heading">
+  <a href="#1-7-10-2023-11-03" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.10 (2023-11-03)</span>
+</h2>
+<h3 id="bug-fixes-6" class="section-heading">
+  <a href="#bug-fixes-6" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>[phx.new] Fix <code class="inline">CoreComponents.flash</code> generating incorrect id's causing flash messages to fail to be closed when clicked</li></ul><h3 id="enhancements-9" class="section-heading">
+  <a href="#enhancements-9" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>[Phoenix.Endpoint] Support dynamic port for <code class="inline">Endpoint.url/0</code></li></ul><h2 id="1-7-9-2023-10-11" class="section-heading">
+  <a href="#1-7-9-2023-10-11" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.9 (2023-10-11)</span>
+</h2>
+<h3 id="bug-fixes-7" class="section-heading">
+  <a href="#bug-fixes-7" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>[Phoenix.CodeReloader] - Fix error in code reloader causing compilation errors</li><li>[phx.new] – fix LiveView debug heex configuration being generated when <code class="inline">--no-html</code> pas passed</li></ul><h2 id="1-7-8-2023-10-09" class="section-heading">
+  <a href="#1-7-8-2023-10-09" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.8 (2023-10-09)</span>
+</h2>
+<h3 id="bug-fixes-8" class="section-heading">
+  <a href="#bug-fixes-8" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>[Phoenix.ChannelTest] Stringify lists when pushing data</li><li>[Phoenix.Controller] Fix filename when sending downloads with non-ascii names</li><li>[Phoenix.CodeReloader] Remove duplicate warnings on recent Elixir versions</li><li>[Phoenix.CodeReloader] Do not crash code reloader if file information is missing from diagnostic</li><li>[Phoenix.Logger] Do not crash when status is atom</li><li>[phx.gen.release] Fix <code class="inline">mix phx.gen.release --docker</code> failing with <code class="inline">:http_util</code> error on Elixir v1.15</li><li>[phx.gen.*] Skip map inputs in generated forms as there is no trivial matching input</li><li>[phx.new] Fix tailwind/esbuild config and paths in umbrella projects</li><li>[phx.new] Do not render <code class="inline">th</code> for actions if actions are empty</li></ul><h3 id="enhancements-10" class="section-heading">
+  <a href="#enhancements-10" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>[Phoenix] Allow latest <code class="inline">plug_crypto</code></li><li>[Phoenix.Endpoint] Support dynamic socket drainer configuration</li><li>[Phoenix.Logger] Change socket serializer/version logs to warning</li><li>[Phoenix.VerifiedRoutes] Add support for static resources with fragments in <code class="inline">~p</code></li><li>[phx.gen.schema] Support <code class="inline">--repo</code> and <code class="inline">--migration-dir</code> flags</li><li>[phx.new] Allow <code class="inline">&lt;.input type=&quot;checkbox&quot;&gt;</code> without <code class="inline">value</code> attr in core components</li><li>[phx.new] Allow UTC datetimes in the generators</li><li>[phx.new] Automatically migrate when release starts when using sqlite 3</li><li>[phx.new] Allow ID to be assigned in flash component</li><li>[phx.new] Add <code class="inline">--adapter</code> flag for generating application with bandit</li><li>[phx.new] Include DNSCluster for simple clustering</li><li>[phx.routes] Support <code class="inline">--method</code> option</li></ul><h2 id="1-7-7-2023-07-10" class="section-heading">
+  <a href="#1-7-7-2023-07-10" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.7 (2023-07-10)</span>
+</h2>
+<h3 id="enhancements-11" class="section-heading">
+  <a href="#enhancements-11" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>Support incoming binary payloads to channels over longpoll transport</li></ul><h2 id="1-7-6-2023-06-16" class="section-heading">
+  <a href="#1-7-6-2023-06-16" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.6 (2023-06-16)</span>
+</h2>
+<h3 id="bug-fixes-9" class="section-heading">
+  <a href="#bug-fixes-9" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug Fixes</span>
+</h3>
+<ul><li>Support websock_adapter 0.5.3</li></ul><h3 id="enhancements-12" class="section-heading">
+  <a href="#enhancements-12" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li> Allow using Phoenix.ChannelTest socket/connect in another process</li></ul><h2 id="1-7-5-2023-06-15" class="section-heading">
+  <a href="#1-7-5-2023-06-15" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.5 (2023-06-15)</span>
+</h2>
+<h3 id="bug-fixes-10" class="section-heading">
+  <a href="#bug-fixes-10" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug Fixes</span>
+</h3>
+<ul><li>Fix LongPoll error when draining connections</li></ul><h2 id="1-7-4-2023-06-15" class="section-heading">
+  <a href="#1-7-4-2023-06-15" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.4 (2023-06-15)</span>
+</h2>
+<h3 id="bug-fixes-11" class="section-heading">
+  <a href="#bug-fixes-11" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug Fixes</span>
+</h3>
+<ul><li>Fix the WebSocket draining sending incorrect close code when draining causing LiveViews to reload the page instead of reconnecting</li></ul><h2 id="1-7-3-2023-05-30" class="section-heading">
+  <a href="#1-7-3-2023-05-30" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.3 (2023-05-30)</span>
+</h2>
+<h3 id="enhancements-13" class="section-heading">
+  <a href="#enhancements-13" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>Use LiveView 0.19 for new apps</li></ul><h3 id="bug-fixes-12" class="section-heading">
+  <a href="#bug-fixes-12" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug Fixes</span>
+</h3>
+<ul><li>Fix compilation error page on plug debugger showing obscure error when app fails to compile</li><li>Fix warnings being printed twice in route verification</li></ul><h2 id="1-7-2-2023-03-20" class="section-heading">
+  <a href="#1-7-2-2023-03-20" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.2 (2023-03-20)</span>
+</h2>
+<h3 id="enhancements-14" class="section-heading">
+  <a href="#enhancements-14" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>[Endpoint] Add socket draining for batched and orchestrated Channel/LiveView socket shutdown</li><li>[code reloader] Improve the compilation error page to remove horizontal scrolling and include all warnings and errors from compilation</li><li>[phx.new] Support the <code class="inline">--no-tailwind</code> and <code class="inline">--no-esbuild</code> flags</li><li>[phx.new] Move heroicons to assets/vendor</li><li>[phx.new] Simplify core modal to use the new JS.exec instruction to reduce footprint</li><li>[sockets] Allow custom csrf_token_keys in WebSockets</li></ul><h2 id="1-7-1-2023-03-02" class="section-heading">
+  <a href="#1-7-1-2023-03-02" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.1 (2023-03-02)</span>
+</h2>
+<h3 id="enhancements-15" class="section-heading">
+  <a href="#enhancements-15" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>[phx.new] Embed heroicons in app.css bundle to optimize usage</li></ul><h2 id="1-7-0-2023-02-24" class="section-heading">
+  <a href="#1-7-0-2023-02-24" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.0 (2023-02-24)</span>
+</h2>
+<h3 id="bug-fixes-13" class="section-heading">
+  <a href="#bug-fixes-13" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug Fixes</span>
+</h3>
+<ul><li>Fix race conditions in the longpoll transport by batching messages</li></ul><h2 id="1-7-0-rc-3-2023-02-15" class="section-heading">
+  <a href="#1-7-0-rc-3-2023-02-15" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.0-rc.3 (2023-02-15)</span>
+</h2>
+<h3 id="enhancements-16" class="section-heading">
+  <a href="#enhancements-16" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>Use stream based collections for <code class="inline">phx.gen.live</code> generators</li><li>Update <code class="inline">phx.gen.live</code> generators to use <code class="inline">Phoenix.Component.to_form</code></li></ul><h2 id="1-7-0-rc-2-2023-01-13" class="section-heading">
+  <a href="#1-7-0-rc-2-2023-01-13" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.0-rc.2 (2023-01-13)</span>
+</h2>
+<h3 id="bug-fixes-14" class="section-heading">
+  <a href="#bug-fixes-14" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug Fixes</span>
+</h3>
+<ul><li>[Router] Fix routing bug causing incorrect matching order on similar routes</li><li>[phx.new] Fix installation hanging in some cases</li></ul><h2 id="1-7-0-rc-1-2023-01-06" class="section-heading">
+  <a href="#1-7-0-rc-1-2023-01-06" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.0-rc.1 (2023-01-06)</span>
+</h2>
+<h3 id="enhancements-17" class="section-heading">
+  <a href="#enhancements-17" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>Raise if using verified routes outside of functions</li><li>Add tailwind.install/esbuild.install to mix setup</li></ul><h3 id="bug-fixes-15" class="section-heading">
+  <a href="#bug-fixes-15" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug Fixes</span>
+</h3>
+<ul><li>[Presence] fix task shutdown match causing occasional presence errors</li><li>[VerifiedRoutes] Fix expansion causing more compile-time deps than necessary</li><li>[phx.gen.auth] Add password inputs to password reset edit form</li><li>[phx.gen.embedded] Fixes missing :references generation to phx.gen.embedded</li><li>Fix textarea rendering in core components</li><li>Halt all sockets on intercept to fix longpoll response already sent error</li></ul><h2 id="1-7-0-rc-0-2022-11-07" class="section-heading">
+  <a href="#1-7-0-rc-0-2022-11-07" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.7.0-rc.0 (2022-11-07)</span>
+</h2>
+<h3 id="deprecations-1" class="section-heading">
+  <a href="#deprecations-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Deprecations</span>
+</h3>
+<ul><li><code class="inline">Phoenix.Controller.get_flash</code> has been deprecated in favor of the new <a href="Phoenix.Flash.html"><code class="inline">Phoenix.Flash</code></a> module, which provides unified flash access</li></ul><h3 id="enhancements-18" class="section-heading">
+  <a href="#enhancements-18" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>[Router] Add <a href="Phoenix.VerifiedRoutes.html"><code class="inline">Phoenix.VerifiedRoutes</code></a> for <code class="inline">~p</code>-based route generation with compile-time verification.</li><li>[Router] Support <code class="inline">helpers: false</code> to <code class="inline">use Phoenix.Router</code> to disable helper generation</li><li>[Router] Add <code class="inline">--info [url]</code> switch to <code class="inline">phx.routes</code> to get route information about a url/path</li><li>[Flash] Add <a href="Phoenix.Flash.html"><code class="inline">Phoenix.Flash</code></a> for unfied flash access</li></ul><h3 id="javascript-client-bug-fixes-3" class="section-heading">
+  <a href="#javascript-client-bug-fixes-3" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">JavaScript Client Bug Fixes</span>
+</h3>
+<ul><li>Fix heartbeat being sent after disconnect and causing abnormal disconnects</li></ul><h2 id="v1-6" class="section-heading">
+  <a href="#v1-6" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">v1.6</span>
+</h2>
+<p>The CHANGELOG for v1.6 releases can be found in the <a href="https://github.com/phoenixframework/phoenix/blob/v1.6/CHANGELOG.md">v1.6 branch</a>.</p>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="api-reference.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+API Reference
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="overview.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Overview
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/phoenix/1.7.23" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/phoenix/1.7.23">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/phoenix/1.7.23/show/CHANGELOG.md">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="Phoenix.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.37.2) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

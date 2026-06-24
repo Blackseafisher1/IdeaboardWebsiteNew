@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/keyManager.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/keyManager.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Verwaltung des Master-Keys für Dateiverschlüsselung (Erzeugen, Laden, Wrapping).
+ * @module lib/keyManager
+ */
+
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+
+/**
+ * Verwaltung des Master-Keys für Dateiverschlüsselung.
+ *
+ * Ablauf:
+ * 1. Prüft, ob `master_key.wrapped` im Projekt vorhanden ist.
+ * 2. Falls nicht vorhanden: fordert ein Passwort an, generiert einen 32-Byte-Schlüssel,
+ *    verschlüsselt (wrapt) ihn mit AES-256-GCM und speichert die Box.
+ * 3. Falls vorhanden: versucht, den Schlüssel mit dem Passwort zu entpacken (unwrap).
+ * 4. Bei falschem Passwort wird ein fataler Fehler ausgelöst.
+ */
+
+/** @constant {string} @readonly */
+const KEY_FILE_PATH = path.join(__dirname, '..', 'master_key.wrapped');
+/** @constant {string} @readonly */
+const SALT = 'ideaboard-master-key-wrap-v1';
+
+let masterKey = null;
+
+/**
+ * Interaktives Einlesen eines Passworts von stdin (maskiert).
+ * @private
+ * @param {string} promptText - Text, der als Eingabeaufforderung angezeigt wird.
+ * @returns {Promise&lt;string>} Eingegebenes Passwort.
+ */
+async function askPassword(promptText) {
+  const readlineInterface = require('readline');
+  const rl = readlineInterface.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  // Use the established _writeToOutput hook for masking
+  rl._writeToOutput = function(stringToWrite) {
+    if (this.stdoutMuted) {
+      // Only mask characters, allow newline and prompt text
+      if (stringToWrite === promptText) {
+        process.stdout.write(stringToWrite);
+      } else if (stringToWrite === '\r\n' || stringToWrite === '\n' || stringToWrite === '\r') {
+        process.stdout.write(stringToWrite);
+      } else {
+        process.stdout.write('*');
+      }
+    } else {
+      process.stdout.write(stringToWrite);
+    }
+  };
+  // Promise, das die maskierte Passworteingabe asynchron liefert.
+  // `rl.stdoutMuted` sorgt dafür, dass im Terminal Sterne (*) statt der tatsächlichen
+  // Zeichen angezeigt werden. Bei Abschluss von `rl.question` wird das Promise
+  // mit dem eingegebenen Passwort aufgelöst.
+  return new Promise((resolve) => {
+    rl.stdoutMuted = true;
+    // `rl.question` liest die Benutzereingabe; nach Eingabe wird die Schnittstelle geschlossen
+    // und das eingegebene Passwort zurückgegeben.
+    rl.question(promptText, (password) => {
+      rl.close();
+      process.stdout.write('\n');
+      resolve(password);
+    });
+  });
+}
+
+/**
+ * Leitet aus einem Passwort den Wrap-Key ab (synchron).
+ * @private
+ * @param {string} password
+ * @returns {Buffer} Ableiteter Schlüssel (32 Bytes).
+ */
+function deriveWrapKey(password) {
+  return crypto.scryptSync(password, SALT, 32);
+}
+
+/**
+ * Wrappt einen Schlüssel mit AES-256-GCM basierend auf einem Passwort.
+ * @private
+ * @param {Buffer} key - Rohschlüssel, der geschützt werden soll.
+ * @param {string} password - Passwort zur Ableitung des Wrap-Keys.
+ * @returns {string} JSON-kodierte, mit Base64 versehene Box (iv, authTag, data).
+ */
+function wrap(key, password) {
+  const wrapKey = deriveWrapKey(password);
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', wrapKey, iv);
+  const encrypted = Buffer.concat([cipher.update(key), cipher.final()]);
+  const authTag = cipher.getAuthTag();
+
+  return JSON.stringify({
+    iv: iv.toString('base64'),
+    authTag: authTag.toString('base64'),
+    data: encrypted.toString('base64')
+  });
+}
+
+/**
+ * Entwrappt einen zuvor mit `wrap` erzeugten JSON-String.
+ * @private
+ * @param {string} wrappedJson - JSON-String mit `iv`, `authTag` und `data`.
+ * @param {string} password - Passwort zur Ableitung des Wrap-Keys.
+ * @returns {Buffer|null} Entschlüsselter Schlüssel oder `null` bei Fehler.
+ */
+function unwrap(wrappedJson, password) {
+  try {
+    const { iv, authTag, data } = JSON.parse(wrappedJson);
+    const wrapKey = deriveWrapKey(password);
+    const decipher = crypto.createDecipheriv('aes-256-gcm', wrapKey, Buffer.from(iv, 'base64'));
+    decipher.setAuthTag(Buffer.from(authTag, 'base64'));
+    return Buffer.concat([decipher.update(Buffer.from(data, 'base64')), decipher.final()]);
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
+ * Initialisiert den Key-Manager: Lädt oder erstellt den `master_key.wrapped`.
+ * @async
+ * @returns {Promise&lt;Buffer>} Den geladenen oder neu erzeugten Master-Key.
+ * @throws {Error} Bei fatalen Fehlern (nicht genug Passwort-Länge, falsches Passwort).
+ */
+async function init() {
+  const envPassword = process.env.UPLOAD_MASTER_PASSWORD;
+
+  if (fs.existsSync(KEY_FILE_PATH)) {
+  console.log('--- File Encryption Protection ---');
+    let passwordCandidates = [];
+    if (envPassword) {
+      console.log('Using fixed password from environment to unlock master key.');
+      // Try common variants: raw, trimmed, and unquoted
+      passwordCandidates.push(envPassword);
+      passwordCandidates.push(envPassword.trim());
+      passwordCandidates.push(envPassword.replace(/^['\"]|['\"]$/g, '').trim());
+    } else {
+      const interactive = await askPassword('Enter UPLOAD PROTECTION PASSWORD: ');
+      passwordCandidates.push(interactive);
+    }
+
+    const wrapped = fs.readFileSync(KEY_FILE_PATH, 'utf8');
+    let unwrapped = null;
+    let usedPassword = null;
+    for (const candidate of passwordCandidates) {
+      if (!candidate) continue;
+      unwrapped = unwrap(wrapped, candidate);
+      if (unwrapped) {
+        usedPassword = candidate;
+        break;
+      }
+    }
+
+    if (!unwrapped) {
+      console.error('FATAL: WRONG PASSWORD. Master key decryption failed. Tried variants:', passwordCandidates);
+      process.exit(1);
+    }
+    masterKey = unwrapped;
+    console.log('Master key erfolgreich geladen.');
+  } else {
+    console.log('--- Initializing File Encryption ---');
+    console.log('No master key found. Creating a new one.');
+
+    let password;
+    if (envPassword) {
+      password = envPassword;
+      console.log('Using fixed password from environment to generate master key.');
+    } else {
+      password = await askPassword('Set a NEW UPLOAD PROTECTION PASSWORD: ');
+      const confirm = await askPassword('Confirm NEW password: ');
+
+      if (password !== confirm) {
+        console.error('FATAL: Passwords do not match.');
+        process.exit(1);
+      }
+    }
+
+    if (password.length &lt; 4) {
+      console.error('FATAL: Password zu kurz.');
+      process.exit(1);
+    }
+
+    const newKey = crypto.randomBytes(32);
+    const wrapped = wrap(newKey, password);
+    fs.writeFileSync(KEY_FILE_PATH, wrapped, { mode: 0o600 });
+    masterKey = newKey;
+    console.log(`Neuer Master key generiert und gespeichert unter ${path.basename(KEY_FILE_PATH)}`);
+  }
+  return masterKey;
+}
+
+/**
+ * Liefert den aktuell geladenen Master-Key.
+ * @returns {Buffer} Master-Key.
+ * @throws {Error} Wenn `init()` zuvor nicht aufgerufen wurde.
+ */
+function getMasterKey() {
+  if (!masterKey) {
+    throw new Error('KeyManager not initialized. Call init() first.');
+  }
+  return masterKey;
+}
+
+module.exports = {
+  init,
+  getMasterKey
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

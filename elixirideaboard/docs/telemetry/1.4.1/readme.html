@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.38.2">
+    <meta name="project" content="telemetry v1.4.1">
+
+
+    <title>Telemetry — telemetry v1.4.1</title>
+
+    <link rel="stylesheet" href="dist/html-erlang-DQDXQC7W.css" />
+
+    <script defer src="dist/sidebar_items-138ADA61.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-DPJLHKSM.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+telemetry
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.4.1
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of telemetry</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Telemetry</h1>
+
+
+      <a href="https://github.com/beam-telemetry/telemetry/blob/v1.4.1/README.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p><a href="https://codecov.io/gh/beam-telemetry/telemetry/branch/master/graphs/badge.svg"><img src="https://codecov.io/gh/beam-telemetry/telemetry/branch/master/graphs/badge.svg" alt="Codecov"/></a></p><p><a href="https://hexdocs.pm/telemetry/">Documentation</a></p><p>Telemetry is a lightweight library for dynamic dispatching of events, with a focus on
+metrics and instrumentation. Any Erlang or Elixir library can use <code class="inline">telemetry</code> to emit
+events. Application code and other libraries can then hook into those events and run
+custom handlers.</p><blockquote><p>Note: this library is agnostic to tooling and therefore is not directly related to
+OpenTelemetry. For OpenTelemetry in the Erlang VM, see
+<a href="https://github.com/open-telemetry/opentelemetry-erlang">opentelemetry-erlang</a>, and check
+<a href="https://github.com/open-telemetry/opentelemetry-erlang-contrib/tree/main/utilities/opentelemetry_telemetry">opentelemetry_telemetry</a>
+to connect both libraries.</p></blockquote><h2 id="usage" class="section-heading"><a href="#usage" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Usage</span></h2><p>In a nutshell, you register a custom module and function to be invoked for certain events,
+which are executed whenever there is such an event. The event name is a list of atoms. Each event is
+composed of a numeric value and can have metadata attached to it. Let's look at an example.</p><p>Imagine that you have a web application and you'd like to log latency and response status for each
+incoming request. With Telemetry, you can build a module which does exactly that whenever a response
+is sent. The first step is to execute a measurement.</p><p>In Elixir:</p><pre><code class="makeup elixir" translate="no"><span class="nc">:telemetry</span><span class="o">.</span><span class="n">execute</span><span class="p" data-group-id="0237503150-1">(</span><span class="w">
+  </span><span class="p" data-group-id="0237503150-2">[</span><span class="ss">:web</span><span class="p">,</span><span class="w"> </span><span class="ss">:request</span><span class="p">,</span><span class="w"> </span><span class="ss">:done</span><span class="p" data-group-id="0237503150-2">]</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="0237503150-3">%{</span><span class="ss">latency</span><span class="p">:</span><span class="w"> </span><span class="n">latency</span><span class="p" data-group-id="0237503150-3">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="0237503150-4">%{</span><span class="ss">request_path</span><span class="p">:</span><span class="w"> </span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="ss">status_code</span><span class="p">:</span><span class="w"> </span><span class="n">status</span><span class="p" data-group-id="0237503150-4">}</span><span class="w">
+</span><span class="p" data-group-id="0237503150-1">)</span></code></pre><p>In Erlang:</p><pre><code class="makeup erlang" translate="no"><span class="nc">telemetry</span><span class="p">:</span><span class="nf">execute</span><span class="p" data-group-id="0328846431-1">(</span><span class="w">
+  </span><span class="p" data-group-id="0328846431-2">[</span><span class="ss">web</span><span class="p">,</span><span class="w"> </span><span class="ss">request</span><span class="p">,</span><span class="w"> </span><span class="ss">done</span><span class="p" data-group-id="0328846431-2">]</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="0328846431-3">#{</span><span class="ss">latency</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">Latency</span><span class="p" data-group-id="0328846431-3">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="0328846431-4">#{</span><span class="ss">request_path</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">Path</span><span class="p">,</span><span class="w"> </span><span class="ss">status_code</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">Status</span><span class="p" data-group-id="0328846431-4">}</span><span class="w">
+</span><span class="p" data-group-id="0328846431-1">)</span></code></pre><p>Then you can create a module to be invoked whenever the event happens.</p><p>In Elixir:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">LogResponseHandler</span><span class="w"> </span><span class="k" data-group-id="5306287828-1">do</span><span class="w">
+  </span><span class="kn">require</span><span class="w"> </span><span class="nc">Logger</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_event</span><span class="p" data-group-id="5306287828-2">(</span><span class="p" data-group-id="5306287828-3">[</span><span class="ss">:web</span><span class="p">,</span><span class="w"> </span><span class="ss">:request</span><span class="p">,</span><span class="w"> </span><span class="ss">:done</span><span class="p" data-group-id="5306287828-3">]</span><span class="p">,</span><span class="w"> </span><span class="n">measurements</span><span class="p">,</span><span class="w"> </span><span class="n">metadata</span><span class="p">,</span><span class="w"> </span><span class="c">_config</span><span class="p" data-group-id="5306287828-2">)</span><span class="w"> </span><span class="k" data-group-id="5306287828-4">do</span><span class="w">
+    </span><span class="nc">Logger</span><span class="o">.</span><span class="n">info</span><span class="p" data-group-id="5306287828-5">(</span><span class="w">
+      </span><span class="s">&quot;[</span><span class="si" data-group-id="5306287828-6">#{</span><span class="n">metadata</span><span class="o">.</span><span class="n">request_path</span><span class="si" data-group-id="5306287828-6">}</span><span class="s">] </span><span class="si" data-group-id="5306287828-7">#{</span><span class="n">metadata</span><span class="o">.</span><span class="n">status_code</span><span class="si" data-group-id="5306287828-7">}</span><span class="s"> sent in </span><span class="si" data-group-id="5306287828-8">#{</span><span class="n">measurements</span><span class="o">.</span><span class="n">latency</span><span class="si" data-group-id="5306287828-8">}</span><span class="s">&quot;</span><span class="w">
+    </span><span class="p" data-group-id="5306287828-5">)</span><span class="w">
+  </span><span class="k" data-group-id="5306287828-4">end</span><span class="w">
+</span><span class="k" data-group-id="5306287828-1">end</span></code></pre><p>In Erlang:</p><pre><code class="makeup erlang" translate="no"><span class="p">-</span><span class="na">module</span><span class="p" data-group-id="3524626092-1">(</span><span class="ss">log_response_handler</span><span class="p" data-group-id="3524626092-1">)</span><span class="p">.</span><span class="w">
+</span><span class="w">
+</span><span class="p">-</span><span class="na">include_lib</span><span class="p" data-group-id="3524626092-2">(</span><span class="s">&quot;kernel/include/logger.hrl&quot;</span><span class="p" data-group-id="3524626092-2">)</span><span class="p">.</span><span class="w">
+
+</span><span class="nf">handle_event</span><span class="p" data-group-id="3524626092-3">(</span><span class="p" data-group-id="3524626092-4">[</span><span class="ss">web</span><span class="p">,</span><span class="w"> </span><span class="ss">request</span><span class="p">,</span><span class="w"> </span><span class="ss">done</span><span class="p" data-group-id="3524626092-4">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3524626092-5">#{</span><span class="ss">latency</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="n">Latency</span><span class="p" data-group-id="3524626092-5">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3524626092-6">#{</span><span class="ss">request_path</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="n">Path</span><span class="p">,</span><span class="w">
+                                                            </span><span class="ss">status_code</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="n">Status</span><span class="p" data-group-id="3524626092-6">}</span><span class="p">,</span><span class="w"> </span><span class="p">_</span><span class="n">Config</span><span class="p" data-group-id="3524626092-3">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w">
+  </span><span class="o">?</span><span class="n">LOG_INFO</span><span class="p" data-group-id="3524626092-7">(</span><span class="s">&quot;[</span><span class="si">~s</span><span class="s">] </span><span class="si">~p</span><span class="s"> sent in </span><span class="si">~p</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3524626092-8">[</span><span class="n">Path</span><span class="p">,</span><span class="w"> </span><span class="n">Status</span><span class="p">,</span><span class="w"> </span><span class="n">Latency</span><span class="p" data-group-id="3524626092-8">]</span><span class="p" data-group-id="3524626092-7">)</span><span class="p">.</span><span class="w">
+</span></code></pre><p><strong>Important note:</strong></p><p>The <code class="inline">handle_event</code> callback of each handler is invoked synchronously on each <code class="inline">telemetry:execute</code> call.
+Therefore, it is extremely important to avoid blocking operations. If you need to perform any action
+that is not immediate, consider offloading the work to a separate process (or a pool of processes)
+by sending a message.</p><p>Finally, all you need to do is to attach the module to the executed event.</p><p>In Elixir:</p><pre><code class="makeup elixir" translate="no"><span class="ss">:ok</span><span class="w"> </span><span class="o">=</span><span class="w">
+  </span><span class="nc">:telemetry</span><span class="o">.</span><span class="n">attach</span><span class="p" data-group-id="7591421858-1">(</span><span class="w">
+    </span><span class="c1"># unique handler id</span><span class="w">
+    </span><span class="s">&quot;log-response-handler&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="7591421858-2">[</span><span class="ss">:web</span><span class="p">,</span><span class="w"> </span><span class="ss">:request</span><span class="p">,</span><span class="w"> </span><span class="ss">:done</span><span class="p" data-group-id="7591421858-2">]</span><span class="p">,</span><span class="w">
+    </span><span class="o">&amp;</span><span class="nc">LogResponseHandler</span><span class="o">.</span><span class="n">handle_event</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="no">nil</span><span class="w">
+  </span><span class="p" data-group-id="7591421858-1">)</span></code></pre><p>In Erlang:</p><pre><code class="makeup erlang" translate="no"><span class="ss">ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">telemetry</span><span class="p">:</span><span class="nf">attach</span><span class="p" data-group-id="8053256877-1">(</span><span class="w">
+  </span><span class="c1">%% unique handler id</span><span class="w">
+  </span><span class="p" data-group-id="8053256877-2">&lt;&lt;</span><span class="s">&quot;log-response-handler&quot;</span><span class="p" data-group-id="8053256877-2">&gt;&gt;</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="8053256877-3">[</span><span class="ss">web</span><span class="p">,</span><span class="w"> </span><span class="ss">request</span><span class="p">,</span><span class="w"> </span><span class="ss">done</span><span class="p" data-group-id="8053256877-3">]</span><span class="p">,</span><span class="w">
+  </span><span class="k">fun</span><span class="w"> </span><span class="nc">log_response_handler</span><span class="p">:</span><span class="ss">handle_event</span><span class="p">/</span><span class="mi">4</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="8053256877-4">[</span><span class="p" data-group-id="8053256877-4">]</span><span class="w">
+</span><span class="p" data-group-id="8053256877-1">)</span></code></pre><p>You might think that it isn't very useful, because you could just as well write a log statement
+instead of calling <a href="telemetry.html#execute/3"><code class="inline">telemetry:execute/3</code></a> – and you would be right! But now imagine that each Elixir library
+would publish its own set of events with information useful for introspection. Currently each library
+rolls their own instrumentation layer – Telemetry aims to provide a single interface for these use
+cases across the whole ecosystem.</p><h3 id="spans" class="section-heading"><a href="#spans" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Spans</span></h3><p>In order to provide uniform events that capture the start and end of discrete events, it is recommended
+that you use the <a href="telemetry.html#span/3"><code class="inline">telemetry:span/3</code></a> call. This function will generate a start event and a stop or exception
+event depending on whether the provided function executed successfully or raised an error. Under the hood,
+the <a href="telemetry.html#span/3"><code class="inline">telemetry:span/3</code></a> function leverages the <a href="telemetry.html#execute/3"><code class="inline">telemetry:execute/3</code></a> function, so all the same usage patterns
+apply. If an exception does occur, an <code class="inline">EventPrefix ++ [exception]</code> event will be emitted and the caught error
+will be re-raised.</p><p>The measurements for the <code class="inline">EventPrefix ++ [start]</code> event will contain a key called <code class="inline">system_time</code> which is
+derived by calling <a href="https://www.erlang.org/doc/apps/erts/erlang.html#system_time/0"><code class="inline">erlang:system_time/0</code></a>. For <code class="inline">EventPrefix ++ [stop]</code> and <code class="inline">EventPrefix ++ [exception]</code>
+events, the measurements will contain a key called <code class="inline">duration</code> and its value is derived by calling
+<code class="inline">erlang:monotonic_time() - StartMonotonicTime</code>. All events include a <code class="inline">monotonic_time</code> measurement too.
+All of them represent time as native units.</p><p>To convert the duration from native units you can use:</p><pre><code class="makeup elixir" translate="no"><span class="n">milliseconds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">System</span><span class="o">.</span><span class="n">convert_time_unit</span><span class="p" data-group-id="9653577416-1">(</span><span class="n">duration</span><span class="p">,</span><span class="w"> </span><span class="ss">:native</span><span class="p">,</span><span class="w"> </span><span class="ss">:millisecond</span><span class="p" data-group-id="9653577416-1">)</span></code></pre><p>To create span events you would do something like this:</p><p>In Elixir:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">process_message</span><span class="p" data-group-id="9727589724-1">(</span><span class="n">message</span><span class="p" data-group-id="9727589724-1">)</span><span class="w"> </span><span class="k" data-group-id="9727589724-2">do</span><span class="w">
+  </span><span class="n">start_metadata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="9727589724-3">%{</span><span class="ss">message</span><span class="p">:</span><span class="w"> </span><span class="n">message</span><span class="p" data-group-id="9727589724-3">}</span><span class="w">
+
+  </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w">
+    </span><span class="nc">:telemetry</span><span class="o">.</span><span class="n">span</span><span class="p" data-group-id="9727589724-4">(</span><span class="w">
+      </span><span class="p" data-group-id="9727589724-5">[</span><span class="ss">:worker</span><span class="p">,</span><span class="w"> </span><span class="ss">:processing</span><span class="p" data-group-id="9727589724-5">]</span><span class="p">,</span><span class="w">
+      </span><span class="n">start_metadata</span><span class="p">,</span><span class="w">
+      </span><span class="k" data-group-id="9727589724-6">fn</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">...</span><span class="w"> </span><span class="c1"># Process the message</span><span class="w">
+        </span><span class="p" data-group-id="9727589724-7">{</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9727589724-8">%{</span><span class="ss">metadata</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Information related to the processing of the message&quot;</span><span class="p" data-group-id="9727589724-8">}</span><span class="p" data-group-id="9727589724-7">}</span><span class="w">
+      </span><span class="k" data-group-id="9727589724-6">end</span><span class="w">
+    </span><span class="p" data-group-id="9727589724-4">)</span><span class="w">
+</span><span class="k" data-group-id="9727589724-2">end</span></code></pre><p>In Erlang:</p><pre><code class="makeup erlang" translate="no"><span class="nf">process_message</span><span class="p" data-group-id="7991570112-1">(</span><span class="n">Message</span><span class="p" data-group-id="7991570112-1">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w">
+  </span><span class="n">StartMetadata</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="p" data-group-id="7991570112-2">#{</span><span class="ss">message</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">Message</span><span class="p" data-group-id="7991570112-2">}</span><span class="p">,</span><span class="w">
+  </span><span class="n">Result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">telemetry</span><span class="p">:</span><span class="nf">span</span><span class="p" data-group-id="7991570112-3">(</span><span class="w">
+    </span><span class="p" data-group-id="7991570112-4">[</span><span class="ss">worker</span><span class="p">,</span><span class="w"> </span><span class="ss">processing</span><span class="p" data-group-id="7991570112-4">]</span><span class="p">,</span><span class="w">
+    </span><span class="n">StartMetadata</span><span class="p">,</span><span class="w">
+    </span><span class="nf">fun</span><span class="p" data-group-id="7991570112-5">(</span><span class="p" data-group-id="7991570112-5">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w">
+      </span><span class="n">Result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="c1">% Process the message</span><span class="w">
+      </span><span class="p" data-group-id="7991570112-6">{</span><span class="n">Result</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7991570112-7">#{</span><span class="ss">metadata</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;Information related to the processing of the message&quot;</span><span class="p" data-group-id="7991570112-7">}</span><span class="p" data-group-id="7991570112-6">}</span><span class="w">
+    </span><span class="k">end</span><span class="w">
+  </span><span class="p" data-group-id="7991570112-3">)</span><span class="p">.</span></code></pre><p>To then attach to the events that <a href="telemetry.html#span/3"><code class="inline">telemetry:span/3</code></a> emits you would do the following:</p><p>In Elixir:</p><pre><code class="makeup elixir" translate="no"><span class="ss">:ok</span><span class="w"> </span><span class="o">=</span><span class="w">
+  </span><span class="nc">:telemetry</span><span class="o">.</span><span class="n">attach_many</span><span class="p" data-group-id="5053072562-1">(</span><span class="w">
+    </span><span class="s">&quot;log-response-handler&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="5053072562-2">[</span><span class="w">
+      </span><span class="p" data-group-id="5053072562-3">[</span><span class="ss">:worker</span><span class="p">,</span><span class="w"> </span><span class="ss">:processing</span><span class="p">,</span><span class="w"> </span><span class="ss">:start</span><span class="p" data-group-id="5053072562-3">]</span><span class="p">,</span><span class="w">
+      </span><span class="p" data-group-id="5053072562-4">[</span><span class="ss">:worker</span><span class="p">,</span><span class="w"> </span><span class="ss">:processing</span><span class="p">,</span><span class="w"> </span><span class="ss">:stop</span><span class="p" data-group-id="5053072562-4">]</span><span class="p">,</span><span class="w">
+      </span><span class="p" data-group-id="5053072562-5">[</span><span class="ss">:worker</span><span class="p">,</span><span class="w"> </span><span class="ss">:processing</span><span class="p">,</span><span class="w"> </span><span class="ss">:exception</span><span class="p" data-group-id="5053072562-5">]</span><span class="w">
+    </span><span class="p" data-group-id="5053072562-2">]</span><span class="p">,</span><span class="w">
+    </span><span class="o">&amp;</span><span class="nc">LogResponseHandler</span><span class="o">.</span><span class="n">handle_event</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="no">nil</span><span class="w">
+  </span><span class="p" data-group-id="5053072562-1">)</span></code></pre><p>In Erlang:</p><pre><code class="makeup erlang" translate="no"><span class="ss">ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">telemetry</span><span class="p">:</span><span class="nf">attach_many</span><span class="p" data-group-id="3028566489-1">(</span><span class="w">
+  </span><span class="p" data-group-id="3028566489-2">&lt;&lt;</span><span class="s">&quot;log-response-handler&quot;</span><span class="p" data-group-id="3028566489-2">&gt;&gt;</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="3028566489-3">[</span><span class="w">
+    </span><span class="p" data-group-id="3028566489-4">[</span><span class="ss">worker</span><span class="p">,</span><span class="w"> </span><span class="ss">processing</span><span class="p">,</span><span class="w"> </span><span class="ss">start</span><span class="p" data-group-id="3028566489-4">]</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="3028566489-5">[</span><span class="ss">worker</span><span class="p">,</span><span class="w"> </span><span class="ss">processing</span><span class="p">,</span><span class="w"> </span><span class="ss">stop</span><span class="p" data-group-id="3028566489-5">]</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="3028566489-6">[</span><span class="ss">worker</span><span class="p">,</span><span class="w"> </span><span class="ss">processing</span><span class="p">,</span><span class="w"> </span><span class="ss">exception</span><span class="p" data-group-id="3028566489-6">]</span><span class="w">
+  </span><span class="p" data-group-id="3028566489-3">]</span><span class="p">,</span><span class="w">
+  </span><span class="k">fun</span><span class="w"> </span><span class="nc">log_response_handler</span><span class="p">:</span><span class="ss">handle_event</span><span class="p">/</span><span class="mi">4</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="3028566489-7">[</span><span class="p" data-group-id="3028566489-7">]</span><span class="w">
+</span><span class="p" data-group-id="3028566489-1">)</span></code></pre><p>With the following event handler module defined:</p><p>In Elixir:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">LogResponseHandler</span><span class="w"> </span><span class="k" data-group-id="1896206553-1">do</span><span class="w">
+  </span><span class="kn">require</span><span class="w"> </span><span class="nc">Logger</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_event</span><span class="p" data-group-id="1896206553-2">(</span><span class="n">event</span><span class="p">,</span><span class="w"> </span><span class="n">measurements</span><span class="p">,</span><span class="w"> </span><span class="n">metadata</span><span class="p">,</span><span class="w"> </span><span class="c">_config</span><span class="p" data-group-id="1896206553-2">)</span><span class="w"> </span><span class="k" data-group-id="1896206553-3">do</span><span class="w">
+    </span><span class="nc">Logger</span><span class="o">.</span><span class="n">info</span><span class="p" data-group-id="1896206553-4">(</span><span class="s">&quot;Event: </span><span class="si" data-group-id="1896206553-5">#{</span><span class="n">inspect</span><span class="p" data-group-id="1896206553-6">(</span><span class="n">event</span><span class="p" data-group-id="1896206553-6">)</span><span class="si" data-group-id="1896206553-5">}</span><span class="s">&quot;</span><span class="p" data-group-id="1896206553-4">)</span><span class="w">
+    </span><span class="nc">Logger</span><span class="o">.</span><span class="n">info</span><span class="p" data-group-id="1896206553-7">(</span><span class="s">&quot;Measurements: </span><span class="si" data-group-id="1896206553-8">#{</span><span class="n">inspect</span><span class="p" data-group-id="1896206553-9">(</span><span class="n">measurements</span><span class="p" data-group-id="1896206553-9">)</span><span class="si" data-group-id="1896206553-8">}</span><span class="s">&quot;</span><span class="p" data-group-id="1896206553-7">)</span><span class="w">
+    </span><span class="nc">Logger</span><span class="o">.</span><span class="n">info</span><span class="p" data-group-id="1896206553-10">(</span><span class="s">&quot;Metadata: </span><span class="si" data-group-id="1896206553-11">#{</span><span class="n">inspect</span><span class="p" data-group-id="1896206553-12">(</span><span class="n">metadata</span><span class="p" data-group-id="1896206553-12">)</span><span class="si" data-group-id="1896206553-11">}</span><span class="s">&quot;</span><span class="p" data-group-id="1896206553-10">)</span><span class="w">
+  </span><span class="k" data-group-id="1896206553-3">end</span><span class="w">
+</span><span class="k" data-group-id="1896206553-1">end</span></code></pre><p>In Erlang:</p><pre><code class="makeup erlang" translate="no"><span class="p">-</span><span class="na">module</span><span class="p" data-group-id="4084172324-1">(</span><span class="ss">log_response_handler</span><span class="p" data-group-id="4084172324-1">)</span><span class="p">.</span><span class="w">
+</span><span class="w">
+</span><span class="p">-</span><span class="na">include_lib</span><span class="p" data-group-id="4084172324-2">(</span><span class="s">&quot;kernel/include/logger.hrl&quot;</span><span class="p" data-group-id="4084172324-2">)</span><span class="p">.</span><span class="w">
+
+</span><span class="nf">handle_event</span><span class="p" data-group-id="4084172324-3">(</span><span class="n">Event</span><span class="p">,</span><span class="w"> </span><span class="n">Measurements</span><span class="p">,</span><span class="w"> </span><span class="n">Metadata</span><span class="p">,</span><span class="w"> </span><span class="p">_</span><span class="n">Config</span><span class="p" data-group-id="4084172324-3">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w">
+  </span><span class="o">?</span><span class="n">LOG_INFO</span><span class="p" data-group-id="4084172324-4">(</span><span class="s">&quot;Event: </span><span class="si">~p</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4084172324-5">[</span><span class="n">Event</span><span class="p" data-group-id="4084172324-5">]</span><span class="p" data-group-id="4084172324-4">)</span><span class="p">,</span><span class="w">
+  </span><span class="o">?</span><span class="n">LOG_INFO</span><span class="p" data-group-id="4084172324-6">(</span><span class="s">&quot;Measurements: </span><span class="si">~p</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4084172324-7">[</span><span class="n">Measurements</span><span class="p" data-group-id="4084172324-7">]</span><span class="p" data-group-id="4084172324-6">)</span><span class="p">,</span><span class="w">
+  </span><span class="o">?</span><span class="n">LOG_INFO</span><span class="p" data-group-id="4084172324-8">(</span><span class="s">&quot;Metadata: </span><span class="si">~p</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4084172324-9">[</span><span class="n">Metadata</span><span class="p" data-group-id="4084172324-9">]</span><span class="p" data-group-id="4084172324-8">)</span><span class="p">.</span></code></pre><h2 id="installation" class="section-heading"><a href="#installation" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Installation</span></h2><p>Telemetry is available on <a href="https://hex.pm/packages/telemetry">Hex</a>. To install, just add it to
+your dependencies in <code class="inline">mix.exs</code>:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defp</span><span class="w"> </span><span class="nf">deps</span><span class="p" data-group-id="6724127312-1">(</span><span class="p" data-group-id="6724127312-1">)</span><span class="w"> </span><span class="k" data-group-id="6724127312-2">do</span><span class="w">
+  </span><span class="p" data-group-id="6724127312-3">[</span><span class="w">
+    </span><span class="p" data-group-id="6724127312-4">{</span><span class="ss">:telemetry</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;~&gt; 1.0&quot;</span><span class="p" data-group-id="6724127312-4">}</span><span class="w">
+  </span><span class="p" data-group-id="6724127312-3">]</span><span class="w">
+</span><span class="k" data-group-id="6724127312-2">end</span></code></pre><p>or <code class="inline">rebar.config</code>:</p><pre><code class="makeup erlang" translate="no"><span class="p" data-group-id="8405080915-1">{</span><span class="ss">deps</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8405080915-2">[</span><span class="p" data-group-id="8405080915-3">{</span><span class="ss">telemetry</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;~&gt; 1.0&quot;</span><span class="p" data-group-id="8405080915-3">}</span><span class="p" data-group-id="8405080915-2">]</span><span class="p" data-group-id="8405080915-1">}</span><span class="p">.</span></code></pre><h2 id="copyright-and-license" class="section-heading"><a href="#copyright-and-license" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Copyright and License</span></h2><p>Copyright (c) 2019 Erlang Ecosystem Foundation and Erlang Solutions.</p><p>Telemetry's source code is released under the Apache License, Version 2.0.</p><p>See the <a href="license.html">LICENSE</a> and <a href="notice.html">NOTICE</a> files for more information.</p>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="changelog.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Changelog
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/telemetry/1.4.1" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/telemetry/1.4.1">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/telemetry/1.4.1/show/README.md">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="telemetry.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.38.2) for the
+
+          <a href="https://erlang.org" title="Erlang" target="_blank" translate="no">Erlang programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

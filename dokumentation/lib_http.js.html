@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/http.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/http.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview HTTP-Hilfsfunktionen (Erkennung von HTMX/AJAX, Antwortpräferenzen).
+ * @module lib/http
+ */
+
+/**
+ * Ermittelt robust, ob die Anfrage von HTMX oder als AJAX gesendet wurde.
+ * @param {Object} req - Express-Request-Objekt (vereinfachter Typ für JSDoc).
+ * @returns {boolean} `true`, wenn die Anfrage als HTMX/XHR identifiziert wird.
+ */
+function isHtmx(req) {
+  return (
+    (req.get &amp;&amp; req.get('HX-Request') === 'true') ||
+    req.headers['hx-request'] === 'true' ||
+    req.headers['x-requested-with'] === 'XMLHttpRequest'
+  );
+}
+
+/**
+ * Prüft, ob der Client bevorzugt JSON als Antwort erwartet (Accept-Header).
+ * @param {Object} req - Express-Request-Objekt (vereinfachter Typ für JSDoc).
+ * @returns {boolean} `true`, wenn `application/json` im `Accept`-Header enthalten ist.
+ */
+function wantsJson(req) {
+  const accept = req.get('Accept') || '';
+  return accept.includes('application/json');
+}
+
+/**
+ * Erstellt ein HTML-Snippet für Fehlermeldungen mit einem "Zurück"-Button.
+ * @param {string} message - Die anzuzeigende Fehlermeldung.
+ * @returns {string} Das HTML-Snippet.
+ */
+function errorHtml(message) {
+    return `
+        &lt;!DOCTYPE html>
+        &lt;html lang="de">
+        &lt;head>
+            &lt;meta charset="UTF-8">
+            &lt;meta name="viewport" content="width=device-width, initial-scale=1.0">
+            &lt;title>Hinweis&lt;/title>
+            &lt;style>
+                :root {
+                    --bg-color: #f8fafc;
+                    --card-bg: white;
+                    --text-main: #1e293b;
+                    --text-sub: #475569;
+                    --border-color: #e2e8f0;
+                    --btn-bg: #3b82f6;
+                    --btn-hover: #2563eb;
+                    --btn-shadow: rgba(59, 130, 246, 0.3);
+                }
+
+                html.dark {
+                    --bg-color: #0f172a;
+                    --card-bg: #1e293b;
+                    --text-main: #f1f5f9;
+                    --text-sub: #94a3b8;
+                    --border-color: #334155;
+                    --btn-bg: #3b82f6;
+                    --btn-hover: #60a5fa;
+                }
+
+                body { 
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    height: 100vh; 
+                    margin: 0; 
+                    background-color: var(--bg-color); 
+                    color: var(--text-main); 
+                    transition: background-color 0.3s ease;
+                }
+                .error-card { 
+                    background: var(--card-bg); 
+                    padding: 2.5rem; 
+                    border-radius: 16px; 
+                    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); 
+                    text-align: center; 
+                    max-width: 450px; 
+                    width: 90%; 
+                    border: 1px solid var(--border-color);
+                }
+                h1 { font-size: 1.25rem; margin-top: 0; margin-bottom: 1rem; color: #ef4444; font-weight: 600; }
+                p { margin-bottom: 2rem; line-height: 1.6; color: var(--text-sub); font-size: 1.1rem; }
+                button { 
+                    background-color: var(--btn-bg); 
+                    color: white; 
+                    border: none; 
+                    padding: 12px 24px; 
+                    border-radius: 10px; 
+                    cursor: pointer; 
+                    font-size: 1rem; 
+                    font-weight: 500;
+                    transition: all 0.2s; 
+                    box-shadow: 0 4px 6px -1px var(--btn-shadow);
+                }
+                button:hover { 
+                    background-color: var(--btn-hover); 
+                    transform: translateY(-1px);
+                }
+                button:active { transform: translateY(0); }
+            &lt;/style>
+            &lt;script>
+                (function() {
+                    const theme = localStorage.getItem('theme');
+                    if (theme === 'dark' || (!theme &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                        document.documentElement.classList.add('dark');
+                    }
+                })();
+            &lt;/script>
+        &lt;/head>
+        &lt;body>
+            &lt;div class="error-card">
+                &lt;h1>Hinweis&lt;/h1>
+                &lt;p>${message}&lt;/p>
+                &lt;button onclick="history.back()">Zurück zur letzten Seite&lt;/button>
+            &lt;/div>
+        &lt;/body>
+        &lt;/html>
+    `;
+}
+
+module.exports = {
+  isHtmx,
+  wantsJson,
+  errorHtml
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<div class="metrics-grid">
+
+ <div class="metric-card">
+  <div class="metric-icon">💡</div>
+  <div class="metric-content">
+    <!-- NUR diese h3 wird aktualisiert - nichts anderes! -->
+    <h3 id="new-ideas-count" 
+        hx-get="dashboard/widgets/new-ideas-number" 
+        hx-trigger="every 3s" 
+        hx-target="this" 
+        hx-swap="innerHTML">
+      <%= stats.newIdeasCount || 0 %>
+    </h3>
+    <p>Neue Ideen (30 Tage)</p>
+  </div>
+</div>
+
+
+
+  <div class="metric-card">
+    <div class="metric-icon">👥</div>
+    <div class="metric-content">
+      <h3><%= stats.activeUsersCount || 0 %></h3>
+      <p>Aktive Benutzer (7 Tage)</p>
+    </div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-icon">📊</div>
+    <div class="metric-content">
+      <h3>3</h3>
+      <p>Top bewertete Ideen</p>
+    </div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-icon">📈</div>
+    <div class="metric-content">
+      <h3><%= stats.activeCategoriesCount || 0 %></h3>
+      <p>Aktive Kategorien</p>
+    </div>
+  </div>
+</div>

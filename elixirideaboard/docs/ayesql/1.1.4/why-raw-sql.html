@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="AyeSQL v1.1.4">
+
+
+    <title>Why Raw SQL — AyeSQL v1.1.4</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-B011E228.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+AyeSQL
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.1.4
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="TOPICS"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of AyeSQL</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Why Raw SQL</h1>
+
+<a href="why-raw-sql.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+      <a href="https://github.com/alexdesousa/ayesql/blob/v1.1.4/guides/why-raw-sql.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p>Writing and running raw SQL in Elixir is not pretty. Not only the lack of
+syntax highlighting is horrible, but also substituting parameters into the
+query string can be unmaintainable e.g:</p><pre><code class="makeup elixir" translate="no"><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w">
+  </span><span class="s">&quot;&quot;&quot;
+    SELECT hostname, AVG(ram_usage) AS avg_ram
+      FROM server
+     WHERE hostname IN ($1, $2, $3)
+           AND location = $4
+  GROUP BY hostname
+  &quot;&quot;&quot;</span><span class="w">
+</span><span class="n">arguments</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="0544897312-1">[</span><span class="s">&quot;server_0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;server_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;server_2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Barcelona&quot;</span><span class="p" data-group-id="0544897312-1">]</span><span class="w">
+</span><span class="nc">Postgrex</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="0544897312-2">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">query</span><span class="p">,</span><span class="w"> </span><span class="n">arguments</span><span class="p" data-group-id="0544897312-2">)</span></code></pre><p>Adding more hostnames to the previous query would be a nightmare. If
+the <code class="inline">arguments</code> are generated dynamically, then editing this query would be
+a challenging task.</p><p>Thankfully, we have <a href="https://github.com/elixir-ecto/ecto">Ecto</a>, which provides
+a great DSL for generating database queries at runtime. The same query in Ecto
+would be the following:</p><pre><code class="makeup elixir" translate="no"><span class="n">servers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="3634861333-1">[</span><span class="s">&quot;server_0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;server_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;server_2&quot;</span><span class="p" data-group-id="3634861333-1">]</span><span class="w">
+</span><span class="n">location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Barcelona&quot;</span><span class="w">
+
+</span><span class="n">from</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="s">&quot;server&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">where</span><span class="p">:</span><span class="w"> </span><span class="n">s</span><span class="o">.</span><span class="n">location</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="o">^</span><span class="n">location</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">s</span><span class="o">.</span><span class="n">hostname</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="o">^</span><span class="n">servers</span><span class="p">,</span><span class="w">
+  </span><span class="ss">select</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3634861333-2">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="n">s</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span><span class="w"> </span><span class="ss">avg_ram</span><span class="p">:</span><span class="w"> </span><span class="n">avg</span><span class="p" data-group-id="3634861333-3">(</span><span class="n">s</span><span class="o">.</span><span class="n">ram_usage</span><span class="p" data-group-id="3634861333-3">)</span><span class="p" data-group-id="3634861333-2">}</span></code></pre><p>Pretty straightforward and maintainable.</p><p>If Ecto is so good for building queries, <strong>why would you use raw SQL?</strong>. Though
+Ecto is quite good with simple queries, complex custom queries often require the
+use of fragments. Fragments are not pretty though there are workarounds using
+macros to make them prettier.</p><p>It's easier to see with an example: let's say we have to
+<a href="https://stackoverflow.com/questions/39556763/use-ecto-to-generate-series-in-postgres-and-also-retrieve-null-values-as-0">retrieve the click count of a certain type of link every day of the last N days</a>.</p><p>With complex queries, developers tend to start writing them in raw SQL:</p><pre><code class="sql">    WITH computed_dates AS (
+           SELECT dates::date AS date
+             FROM generate_series(
+                    current_date - $1::interval,
+                    current_date - interval '1 day',
+                    interval '1 day'
+                  ) AS dates
+         )
+  SELECT dates.date AS day, count(clicks.id) AS count
+    FROM computed_dates AS dates
+         LEFT JOIN clicks AS clicks ON date(clicks.inserted_at) = dates.date
+   WHERE clicks.link_id = $2
+GROUP BY dates.date
+ORDER BY dates.date;</code></pre><p>Once we have the raw SQL, it's a bit easier to write our Ecto query. In this
+case, this query should be written using fragments:</p><pre><code class="makeup elixir" translate="no"><span class="n">dates</span><span class="w"> </span><span class="o">=</span><span class="w">
+  </span><span class="s">&quot;&quot;&quot;
+  SELECT generate_series(
+           current_date - ?::interval,
+           current_date - interval &#39;1 day&#39;,
+           interval &#39;1 day&#39;
+         )::date AS d
+  &quot;&quot;&quot;</span><span class="w">
+
+</span><span class="n">from</span><span class="p" data-group-id="3093764677-1">(</span><span class="w">
+  </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="s">&quot;clicks&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">right_join</span><span class="p">:</span><span class="w"> </span><span class="n">day</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">fragment</span><span class="p" data-group-id="3093764677-2">(</span><span class="n">dates</span><span class="p">,</span><span class="w"> </span><span class="o">^</span><span class="n">days</span><span class="p" data-group-id="3093764677-2">)</span><span class="p">,</span><span class="w">
+  </span><span class="ss">on</span><span class="p">:</span><span class="w"> </span><span class="n">day</span><span class="o">.</span><span class="n">d</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">fragment</span><span class="p" data-group-id="3093764677-3">(</span><span class="s">&quot;date(?)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="o">.</span><span class="n">inserted_at</span><span class="p" data-group-id="3093764677-3">)</span><span class="p">,</span><span class="w">
+  </span><span class="ss">where</span><span class="p">:</span><span class="w"> </span><span class="n">c</span><span class="o">.</span><span class="n">link_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">^</span><span class="n">link_id</span><span class="w">
+  </span><span class="ss">group_by</span><span class="p">:</span><span class="w"> </span><span class="n">day</span><span class="o">.</span><span class="n">d</span><span class="p">,</span><span class="w">
+  </span><span class="ss">order_by</span><span class="p">:</span><span class="w"> </span><span class="n">day</span><span class="o">.</span><span class="n">d</span><span class="p">,</span><span class="w">
+  </span><span class="ss">select</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3093764677-4">%{</span><span class="w">
+    </span><span class="ss">day</span><span class="p">:</span><span class="w"> </span><span class="n">fragment</span><span class="p" data-group-id="3093764677-5">(</span><span class="s">&quot;date(?)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">day</span><span class="o">.</span><span class="n">d</span><span class="p" data-group-id="3093764677-5">)</span><span class="p">,</span><span class="w">
+    </span><span class="ss">count</span><span class="p">:</span><span class="w"> </span><span class="n">count</span><span class="p" data-group-id="3093764677-6">(</span><span class="n">c</span><span class="o">.</span><span class="n">id</span><span class="p" data-group-id="3093764677-6">)</span><span class="w">
+  </span><span class="p" data-group-id="3093764677-4">}</span><span class="w">
+</span><span class="p" data-group-id="3093764677-1">)</span></code></pre><p>It's not the ideal solution (yet) and it's harder to maintain than the raw SQL
+solution that would work out-of-the-box.</p><p>Only to get to the previous solution, the developer need to:</p><ul><li>Know the specific SQL dialect of the database they're using.</li><li>Know Ecto's API and its limitations.</li></ul><p>For both, raw SQL and Ecto query, the end result for this query would be the
+same. With extra effort we found a subpar solution that gives us the same
+result as our raw SQL.</p><p>The final, and sometimes, optional step would be to transform the Ecto query
+into something a bit more maintainable.</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">CustomDSL</span><span class="w"> </span><span class="k" data-group-id="8284076136-1">do</span><span class="w">
+  </span><span class="kd">defmacro</span><span class="w"> </span><span class="nf">date</span><span class="p" data-group-id="8284076136-2">(</span><span class="n">date</span><span class="p" data-group-id="8284076136-2">)</span><span class="w"> </span><span class="k" data-group-id="8284076136-3">do</span><span class="w">
+    </span><span class="k">quote</span><span class="w"> </span><span class="k" data-group-id="8284076136-4">do</span><span class="w">
+      </span><span class="n">fragment</span><span class="p" data-group-id="8284076136-5">(</span><span class="s">&quot;date(?)&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">unquote</span><span class="p" data-group-id="8284076136-6">(</span><span class="n">date</span><span class="p" data-group-id="8284076136-6">)</span><span class="p" data-group-id="8284076136-5">)</span><span class="w">
+    </span><span class="k" data-group-id="8284076136-4">end</span><span class="w">
+  </span><span class="k" data-group-id="8284076136-3">end</span><span class="w">
+
+  </span><span class="kd">defmacro</span><span class="w"> </span><span class="nf">ndays</span><span class="p" data-group-id="8284076136-7">(</span><span class="n">n</span><span class="p" data-group-id="8284076136-7">)</span><span class="w"> </span><span class="k" data-group-id="8284076136-8">do</span><span class="w">
+    </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w">
+      </span><span class="s">&quot;&quot;&quot;
+      SELECT generate_series(
+               current_date - ?::interval,
+               current_date - interval &#39;1 day&#39;,
+               interval &#39;1 day&#39;
+             )::date AS d
+      &quot;&quot;&quot;</span><span class="w">
+
+    </span><span class="k">quote</span><span class="w"> </span><span class="k" data-group-id="8284076136-9">do</span><span class="w">
+      </span><span class="n">fragment</span><span class="p" data-group-id="8284076136-10">(</span><span class="k">unquote</span><span class="p" data-group-id="8284076136-11">(</span><span class="n">query</span><span class="p" data-group-id="8284076136-11">)</span><span class="p">,</span><span class="w"> </span><span class="k">unquote</span><span class="p" data-group-id="8284076136-12">(</span><span class="n">n</span><span class="p" data-group-id="8284076136-12">)</span><span class="p" data-group-id="8284076136-10">)</span><span class="w">
+    </span><span class="k" data-group-id="8284076136-9">end</span><span class="w">
+  </span><span class="k" data-group-id="8284076136-8">end</span><span class="w">
+</span><span class="k" data-group-id="8284076136-1">end</span><span class="w">
+
+</span><span class="kn">import</span><span class="w"> </span><span class="nc">CustomDSL</span><span class="w">
+
+</span><span class="n">from</span><span class="p" data-group-id="8284076136-13">(</span><span class="w">
+  </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="s">&quot;clicks&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">right_join</span><span class="p">:</span><span class="w"> </span><span class="n">day</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">ndays</span><span class="p" data-group-id="8284076136-14">(</span><span class="o">^</span><span class="n">days</span><span class="p" data-group-id="8284076136-14">)</span><span class="p">,</span><span class="w">
+  </span><span class="ss">on</span><span class="p">:</span><span class="w"> </span><span class="n">day</span><span class="o">.</span><span class="n">d</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">date</span><span class="p" data-group-id="8284076136-15">(</span><span class="n">c</span><span class="o">.</span><span class="n">inserted_at</span><span class="p" data-group-id="8284076136-15">)</span><span class="p">,</span><span class="w">
+  </span><span class="ss">where</span><span class="p">:</span><span class="w"> </span><span class="n">c</span><span class="o">.</span><span class="n">link_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">^</span><span class="n">link_id</span><span class="w">
+  </span><span class="ss">group_by</span><span class="p">:</span><span class="w"> </span><span class="n">day</span><span class="o">.</span><span class="n">d</span><span class="p">,</span><span class="w">
+  </span><span class="ss">order_by</span><span class="p">:</span><span class="w"> </span><span class="n">day</span><span class="o">.</span><span class="n">d</span><span class="p">,</span><span class="w">
+  </span><span class="ss">select</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8284076136-16">%{</span><span class="w">
+    </span><span class="ss">day</span><span class="p">:</span><span class="w"> </span><span class="n">date</span><span class="p" data-group-id="8284076136-17">(</span><span class="n">day</span><span class="o">.</span><span class="n">d</span><span class="p" data-group-id="8284076136-17">)</span><span class="w">
+    </span><span class="ss">count</span><span class="p">:</span><span class="w"> </span><span class="n">count</span><span class="p" data-group-id="8284076136-18">(</span><span class="n">c</span><span class="o">.</span><span class="n">id</span><span class="p" data-group-id="8284076136-18">)</span><span class="w">
+  </span><span class="p" data-group-id="8284076136-16">}</span><span class="w">
+</span><span class="p" data-group-id="8284076136-13">)</span></code></pre><p>The previous query is more readable, but requires knowledge of:</p><ul><li>The specific SQL dialect.</li><li>Ecto's API and its limitations.</li><li>Elixir's macros.</li><li>Custom DSL API.</li></ul><p>For some problems, getting to this final stage is preferable. However, for
+some other problems, the raw SQL query would have been enough.</p><p>The raw SQL query was already a good solution to the problem. It only needs a
+maintainable way to be parameterized. That's why AyeSQL exists.</p>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="readme.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+AyeSQL
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="debugging-queries.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Debugging Queries
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/ayesql/1.1.4">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/ayesql/1.1.4">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/ayesql/1.1.4/show/guides/why-raw-sql.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="AyeSQL.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

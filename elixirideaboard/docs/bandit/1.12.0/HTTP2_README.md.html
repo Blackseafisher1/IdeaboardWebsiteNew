@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.3">
+    <meta name="project" content="Bandit v1.12.0">
+
+
+    <title>HTTP/2 Implementation Notes — Bandit v1.12.0</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
+
+    <script defer src="dist/sidebar_items-CB53B3B3.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-Y2MUTVIN.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="Bandit.html" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Bandit" />
+        </a>
+
+      <div>
+        <a href="Bandit.html" class="sidebar-projectName" translate="no">
+Bandit
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.12.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="Pages"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Bandit</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>HTTP/2 Handler</h1>
+
+<a href="HTTP2_README.md.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+      <a href="https://github.com/mtrudel/bandit/blob/main/lib/bandit/http2/README.md#L1" title="View Source" class="icon-action" rel="help nofollow">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p>Included in this folder is a complete <a href="https://hexdocs.pm/thousand_island/1.5.0/ThousandIsland.Handler.html"><code class="inline">ThousandIsland.Handler</code></a> based implementation of HTTP/2 as
+defined in <a rel="nofollow" href="https://datatracker.ietf.org/doc/rfc9110">RFC 9110</a> &amp; <a rel="nofollow" href="https://datatracker.ietf.org/doc/rfc9113">RFC
+9113</a></p><h2 id="process-model" class="section-heading"><a href="#process-model" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Process model</span></h2><p>Within a Bandit server, an HTTP/2 connection is modeled as a set of processes:</p><ul><li>1 process per connection, a <code class="inline">Bandit.HTTP2.Handler</code> module implementing the
+<a href="https://hexdocs.pm/thousand_island/1.5.0/ThousandIsland.Handler.html"><code class="inline">ThousandIsland.Handler</code></a> behaviour, and;</li><li>1 process per stream (i.e.: per HTTP request) within the connection, implemented as
+a <code class="inline">Bandit.HTTP2.StreamProcess</code> process</li></ul><p>Each of these processes model the majority of their state via a
+<code class="inline">Bandit.HTTP2.Connection</code> &amp; <code class="inline">Bandit.HTTP2.Stream</code> struct, respectively.</p><p>The lifetimes of these processes correspond to their role; a connection process lives for as long
+as a client is connected, and a stream process lives only as long as is required to process
+a single stream request within a connection.</p><p>Connection processes are the 'root' of each connection's process group, and are supervised by
+Thousand Island in the same manner that <a href="https://hexdocs.pm/thousand_island/1.5.0/ThousandIsland.Handler.html"><code class="inline">ThousandIsland.Handler</code></a> processes are usually supervised
+(see the <a rel="nofollow" href="https://github.com/mtrudel/thousand_island">project README</a> for details).</p><p>Stream processes are not supervised by design. The connection process starts new
+stream processes as required, via a standard <code class="inline">start_link</code>
+call, and manages the termination of the resultant linked stream processes by
+handling <code class="inline">{:EXIT,...}</code> messages as described in the Elixir documentation. Each
+stream process stays alive long enough to fully model an HTTP/2 stream,
+beginning its life in the <code class="inline">:init</code> state and ending it in the <code class="inline">:closed</code> state (or
+else by a stream or connection error being raised). This approach is aligned
+with the realities of the HTTP/2 model, insofar as if a connection process
+terminates there is no reason to keep its constituent stream processes around,
+and if a stream process dies the connection should be able to handle this
+without itself terminating. It also means that our process model is very
+lightweight - there is no extra supervision overhead present because no such
+supervision is required for the system to function in the desired way.</p><h2 id="reading-client-data" class="section-heading"><a href="#reading-client-data" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Reading client data</span></h2><p>The overall structure of the implementation is managed by the <code class="inline">Bandit.HTTP2.Handler</code> module, and
+looks like the following:</p><ol><li>Bytes are asynchronously received from ThousandIsland via the
+<code class="inline">Bandit.HTTP2.Handler.handle_data/3</code> function</li><li>Frames are parsed from these bytes by calling the <code class="inline">Bandit.HTTP2.Frame.deserialize/2</code>
+function. If successful, the parsed frame(s) are returned. We retain any unparsed bytes in
+a buffer in order to attempt parsing them upon receipt of subsequent data from the client</li><li>Parsed frames are passed into the <code class="inline">Bandit.HTTP2.Connection</code> module along with a struct of
+same module. Frames are processed via the <code class="inline">Bandit.HTTP2.Connection.handle_frame/3</code> function.
+Connection-level frames are handled within the <code class="inline">Bandit.HTTP2.Connection</code>
+struct, and stream-level frames are passed along to the corresponding stream
+process, which is wholly responsible for managing all aspects of a stream's
+state (which is tracked via the <code class="inline">Bandit.HTTP2.Stream</code> struct). The one
+exception to this is the handling of frames sent to streams which have
+already been closed (and whose corresponding processes have thus terminated).
+Any such frames are discarded without effect.</li><li>This process is repeated every time we receive data from the client until the
+<code class="inline">Bandit.HTTP2.Connection</code> module indicates that the connection should be closed, either
+normally or due to error. Note that frame deserialization may end up returning a connection
+error if the parsed frames fail specific criteria (generally, the frame parsing modules are
+responsible for identifying errors as described in <a rel="nofollow" href="https://datatracker.ietf.org/doc/html/rfc9113#section-6">section
+6</a> of RFC 9113). In these cases, the
+failure is passed through to the connection module for processing in order to coordinate an
+orderly shutdown or client notification as appropriate</li></ol><h2 id="processing-requests" class="section-heading"><a href="#processing-requests" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Processing requests</span></h2><p>The state of a particular stream are contained within a <code class="inline">Bandit.HTTP2.Stream</code>
+struct, maintained within a <code class="inline">Bandit.HTTP2.StreamProcess</code> process. As part of the
+stream's lifecycle, the server's configured Plug is called, with an instance of
+the <code class="inline">Bandit.Adapter</code> struct being used to interface with the Plug. There
+is a separation of concerns between the aspect of HTTP semantics managed by
+<code class="inline">Bandit.Adapter</code> (roughly, those concerns laid out in
+<a rel="nofollow" href="https://datatracker.ietf.org/doc/html/rfc9110">RFC9110</a>) and the more
+transport-specific HTTP/2 concerns managed by <code class="inline">Bandit.HTTP2.Stream</code> (roughly the
+concerns specified in <a rel="nofollow" href="https://datatracker.ietf.org/doc/html/rfc9113">RFC9113</a>).</p><h1>Testing</h1><p>All of this is exhaustively tested. Tests are broken up primarily into <code class="inline">protocol_test.exs</code>, which
+is concerned with aspects of the implementation relating to protocol conformance and
+client-facing concerns, while <code class="inline">plug_test.exs</code> is concerned with aspects of the implementation
+having to do with the Plug API and application-facing concerns. There are also more
+unit-style tests covering frame serialization and deserialization.</p><p>In addition, the <code class="inline">h2spec</code> conformance suite is run via a <a href="https://hexdocs.pm/elixir/System.html"><code class="inline">System</code></a> wrapper &amp; executes the entirety
+of the suite (in strict mode) against a running Bandit server.</p><h2 id="limitations-and-assumptions" class="section-heading"><a href="#limitations-and-assumptions" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Limitations and Assumptions</span></h2><p>Some limitations and assumptions of this implementation:</p><ul><li>This handler assumes that the HTTP/2 connection preface has already been consumed from the
+client. The <code class="inline">Bandit.InitialHandler</code> module uses this preface to discriminate between various
+HTTP versions when determining which handler to use</li><li>Priority frames are parsed and validated, but do not induce any action on the part of the
+server. There is no priority assigned to respective streams in terms of processing; all streams
+are run in parallel as soon as they arrive</li><li>While flow control is completely implemented here, the specific values used for upload flow
+control (that is, the end that we control) are fixed. Specifically, we attempt to maintain
+fairly large windows in order to not restrict client uploads (we 'slow-start' window changes
+upon receipt of first byte, mostly to retain parity between connection and stream window
+management since connection windows cannot be changed via settings). The majority of flow
+control logic has been encapsulated in the <code class="inline">Bandit.HTTP2.FlowControl</code> module should future
+refinement be required</li></ul>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="HTTP1_README.md.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+HTTP/1 Implementation Notes
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="WebSocket_README.md.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+WebSocket Implementation Notes
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/bandit/1.12.0">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/bandit/1.12.0">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/bandit/1.12.0/show/lib/bandit/http2/README.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="Bandit.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.3) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

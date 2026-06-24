@@ -1,0 +1,14 @@
+
+           body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+
+          code {
+            font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            background: #e3e3e36e;
+            border-radius: 5px;
+            padding: 1.5px;
+          }
+     

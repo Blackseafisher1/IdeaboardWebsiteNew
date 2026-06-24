@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.38.4">
+    <meta name="project" content="Phoenix.HTML v4.3.0">
+
+
+    <title>Phoenix.HTML.Form — Phoenix.HTML v4.3.0</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-RLZO5U2C.css" />
+
+    <script defer src="dist/sidebar_items-7EFBDAC8.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-Y223O6DN.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="Phoenix.HTML.html" class="sidebar-projectName" translate="no">
+Phoenix.HTML
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v4.3.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix.HTML</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Phoenix.HTML.Form</span> 
+      <small class="app-vsn" translate="no">(Phoenix.HTML v4.3.0)</small>
+
+    </h1>
+
+      <a href="https://github.com/phoenixframework/phoenix_html/blob/v4.3.0/lib/phoenix_html/form.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Define a <a href="Phoenix.HTML.Form.html"><code class="inline">Phoenix.HTML.Form</code></a> struct and functions to interact with it.</p><p>For building actual forms in your Phoenix application, see
+<a href="https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#form/1">the <code class="inline">Phoenix.Component.form/1</code> component</a>.</p><h2 id="module-access-behaviour" class="section-heading"><a href="#module-access-behaviour" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Access behaviour</span></h2><p>The <a href="Phoenix.HTML.Form.html"><code class="inline">Phoenix.HTML.Form</code></a> struct implements the <a href="https://hexdocs.pm/elixir/Access.html"><code class="inline">Access</code></a> behaviour.
+When you do <code class="inline">form[field]</code>, it returns a <a href="Phoenix.HTML.FormField.html"><code class="inline">Phoenix.HTML.FormField</code></a>
+struct with the <code class="inline">id</code>, <code class="inline">name</code>, <code class="inline">value</code>, and <code class="inline">errors</code> prefilled.</p><p>The field name can be either an atom or a string. If it is an atom,
+it assumes the form keeps both data and errors as atoms. If it is a
+string, it considers that data and errors are stored as strings for said
+field. Forms backed by an <code class="inline">Ecto.Changeset</code> only support atom field names.</p><p>It is possible to &quot;access&quot; fields which do not exist in the source data
+structure. A <a href="Phoenix.HTML.FormField.html"><code class="inline">Phoenix.HTML.FormField</code></a> struct will be dynamically created
+with some attributes such as <code class="inline">name</code> and <code class="inline">id</code> populated.</p><h2 id="module-custom-implementations" class="section-heading"><a href="#module-custom-implementations" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Custom implementations</span></h2><p>There is a protocol named <a href="Phoenix.HTML.FormData.html"><code class="inline">Phoenix.HTML.FormData</code></a> which can be implemented
+by any data structure that wants to be cast to the <a href="Phoenix.HTML.Form.html"><code class="inline">Phoenix.HTML.Form</code></a> struct.</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:field/0" data-no-tooltip="" translate="no">field()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:t/0" data-no-tooltip="" translate="no">t()</a>
+
+      </div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#__struct__/0" data-no-tooltip="" translate="no">%Phoenix.HTML.Form{}</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Defines the Phoenix.HTML.Form struct.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#input_changed?/3" data-no-tooltip="" translate="no">input_changed?(form1, form2, field)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Receives two forms structs and checks if the given field changed.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#input_id/2" data-no-tooltip="" translate="no">input_id(name, field)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns an id of a corresponding form field.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#input_id/3" data-no-tooltip="" translate="no">input_id(name, field, value)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns an id of a corresponding form field and value attached to it.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#input_name/2" data-no-tooltip="" translate="no">input_name(form_or_name, field)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns a name of a corresponding form field.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#input_validations/2" data-no-tooltip="" translate="no">input_validations(form, field)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the HTML validations that would apply to
+the given field.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#input_value/2" data-no-tooltip="" translate="no">input_value(form, field)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns a value of a corresponding form field.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#normalize_value/2" data-no-tooltip="" translate="no">normalize_value(type, value)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Normalizes an input <code class="inline">value</code> according to its input <code class="inline">type</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#options_for_select/3" data-no-tooltip="" translate="no">options_for_select(options, selected_values, extra \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns options to be used inside a select element.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+
+    <div class="types-list">
+<section class="detail" id="t:field/0">
+
+  <div class="detail-header">
+    <a href="#t:field/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">field()</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix_html/blob/v4.3.0/lib/phoenix_html/form.ex#L91" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> field() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>() | <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:t/0">
+
+  <div class="detail-header">
+    <a href="#t:t/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">t()</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix_html/blob/v4.3.0/lib/phoenix_html/form.ex#L77" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> t() :: %Phoenix.HTML.Form{
+  action: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(),
+  data: %{required(<a href="#t:field/0">field</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()},
+  errors: [{<a href="#t:field/0">field</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}],
+  hidden: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>(),
+  id: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  impl: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(),
+  index: nil | <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  name: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  options: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>(),
+  params: %{required(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()},
+  source: <a href="Phoenix.HTML.FormData.html#t:t/0">Phoenix.HTML.FormData.t</a>()
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+
+    <div class="functions-list">
+<section class="detail" id="__struct__/0">
+
+  <div class="detail-header">
+    <a href="#__struct__/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">%Phoenix.HTML.Form{}</h1>
+
+        <span class="note">(struct)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix_html/blob/v4.3.0/lib/phoenix_html/form.ex#L65" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Defines the Phoenix.HTML.Form struct.</p><p>Its fields are:</p><ul><li><p><code class="inline">:source</code> - the data structure that implements the form data protocol</p></li><li><p><code class="inline">:action</code> - The action that was taken against the form. This value can be
+used to distinguish between different operations such as the user typing
+into a form for validation, or submitting a form for a database insert.</p></li><li><p><code class="inline">:impl</code> - the module with the form data protocol implementation.
+This is used to avoid multiple protocol dispatches.</p></li><li><p><code class="inline">:id</code> - the id to be used when generating input fields</p></li><li><p><code class="inline">:index</code> - the index of the struct in the form</p></li><li><p><code class="inline">:name</code> - the name to be used when generating input fields</p></li><li><p><code class="inline">:data</code> - the field used to store lookup data</p></li><li><p><code class="inline">:params</code> - the parameters associated with this form</p></li><li><p><code class="inline">:hidden</code> - a keyword list of fields that are required to
+submit the form behind the scenes as hidden inputs</p></li><li><p><code class="inline">:options</code> - a copy of the options given when creating the
+form without any form data specific key</p></li><li><p><code class="inline">:errors</code> - a keyword list of errors that are associated with
+the form</p></li></ul>
+  </section>
+</section>
+<section class="detail" id="input_changed?/3">
+
+  <div class="detail-header">
+    <a href="#input_changed?/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">input_changed?(form1, form2, field)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix_html/blob/v4.3.0/lib/phoenix_html/form.ex#L203" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> input_changed?(<a href="#t:t/0">t</a>(), <a href="#t:t/0">t</a>(), <a href="#t:field/0">field</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Receives two forms structs and checks if the given field changed.</p><p>The field will have changed if either its associated value, errors,
+action, or implementation changed. This is mostly used for optimization
+engines as an extension of the <a href="https://hexdocs.pm/elixir/Access.html"><code class="inline">Access</code></a> behaviour.</p>
+  </section>
+</section>
+<section class="detail" id="input_id/2">
+
+  <div class="detail-header">
+    <a href="#input_id/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">input_id(name, field)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix_html/blob/v4.3.0/lib/phoenix_html/form.ex#L152" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> input_id(<a href="#t:t/0">t</a>() | <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), <a href="#t:field/0">field</a>()) :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+<p>Returns an id of a corresponding form field.</p><p>The form should either be a <a href="Phoenix.HTML.Form.html"><code class="inline">Phoenix.HTML.Form</code></a> or an atom.</p>
+  </section>
+</section>
+<section class="detail" id="input_id/3">
+
+  <div class="detail-header">
+    <a href="#input_id/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">input_id(name, field, value)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix_html/blob/v4.3.0/lib/phoenix_html/form.ex#L168" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> input_id(<a href="#t:t/0">t</a>() | <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), <a href="#t:field/0">field</a>(), <a href="Phoenix.HTML.Safe.html#t:t/0">Phoenix.HTML.Safe.t</a>()) :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+<p>Returns an id of a corresponding form field and value attached to it.</p><p>Useful for radio buttons and inputs like multiselect checkboxes.</p>
+  </section>
+</section>
+<section class="detail" id="input_name/2">
+
+  <div class="detail-header">
+    <a href="#input_name/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">input_name(form_or_name, field)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix_html/blob/v4.3.0/lib/phoenix_html/form.ex#L185" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> input_name(<a href="#t:t/0">t</a>() | <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), <a href="#t:field/0">field</a>()) :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+<p>Returns a name of a corresponding form field.</p><p>The first argument should either be a <a href="Phoenix.HTML.Form.html"><code class="inline">Phoenix.HTML.Form</code></a> or an atom.</p><h2 id="input_name/2-examples" class="section-heading"><a href="#input_name/2-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Phoenix.HTML.Form</span><span class="o">.</span><span class="n">input_name</span><span class="p" data-group-id="6814689870-1">(</span><span class="ss">:user</span><span class="p">,</span><span class="w"> </span><span class="ss">:first_name</span><span class="p" data-group-id="6814689870-1">)</span><span class="w">
+</span><span class="s">&quot;user[first_name]&quot;</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="input_validations/2">
+
+  <div class="detail-header">
+    <a href="#input_validations/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">input_validations(form, field)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix_html/blob/v4.3.0/lib/phoenix_html/form.ex#L233" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> input_validations(<a href="#t:t/0">t</a>(), <a href="#t:field/0">field</a>()) :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()</pre>
+
+      </div>
+
+<p>Returns the HTML validations that would apply to
+the given field.</p>
+  </section>
+</section>
+<section class="detail" id="input_value/2">
+
+  <div class="detail-header">
+    <a href="#input_value/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">input_value(form, field)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix_html/blob/v4.3.0/lib/phoenix_html/form.ex#L139" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> input_value(<a href="#t:t/0">t</a>() | <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), <a href="#t:field/0">field</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()</pre>
+
+      </div>
+
+<p>Returns a value of a corresponding form field.</p><p>The <code class="inline">form</code> should either be a <a href="Phoenix.HTML.Form.html"><code class="inline">Phoenix.HTML.Form</code></a> or an atom.
+The field is either a string or an atom. If the field is given
+as an atom, it will attempt to look data with atom keys. If
+a string, it will look data with string keys.</p><p>When a form is given, it will look for changes, then
+fallback to parameters, and finally fallback to the default
+struct/map value.</p><p>Since the function looks up parameter values too, there is
+no guarantee that the value will have a certain type. For
+example, a boolean field will be sent as &quot;false&quot; as a
+parameter, and this function will return it as is. If you
+need to normalize the result of <code class="inline">input_value</code>, see
+<a href="#normalize_value/2"><code class="inline">normalize_value/2</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="normalize_value/2">
+
+  <div class="detail-header">
+    <a href="#normalize_value/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">normalize_value(type, value)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix_html/blob/v4.3.0/lib/phoenix_html/form.ex#L256" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Normalizes an input <code class="inline">value</code> according to its input <code class="inline">type</code>.</p><p>Certain HTML input values must be cast, or they will have idiosyncracies
+when they are rendered. The goal of this function is to encapsulate
+this logic. In particular:</p><ul><li><p>For &quot;datetime-local&quot; types, it converts <a href="https://hexdocs.pm/elixir/DateTime.html"><code class="inline">DateTime</code></a> and
+<a href="https://hexdocs.pm/elixir/NaiveDateTime.html"><code class="inline">NaiveDateTime</code></a> to strings without the second precision</p></li><li><p>For &quot;checkbox&quot; types, it returns a boolean depending on
+whether the input is &quot;true&quot; or not</p></li><li><p>For &quot;textarea&quot;, it prefixes a newline to ensure newlines
+won't be ignored on submission. This requires however
+that the textarea is rendered with no spaces after its
+content</p></li></ul>
+  </section>
+</section>
+<section class="detail" id="options_for_select/3">
+
+    <span id="options_for_select/2"></span>
+
+  <div class="detail-header">
+    <a href="#options_for_select/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">options_for_select(options, selected_values, extra \\ [])</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix_html/blob/v4.3.0/lib/phoenix_html/form.ex#L345" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Returns options to be used inside a select element.</p><p><code class="inline">options</code> is expected to be an enumerable which will be used to
+generate each <code class="inline">option</code> element. The function supports different data
+for the individual elements:</p><ul><li>keyword lists - each keyword list is expected to have the keys
+<code class="inline">:key</code> and <code class="inline">:value</code>. Additional keys such as <code class="inline">:disabled</code> may
+be given to customize the option.</li><li>two-item tuples - where the first element is an atom, string or
+integer to be used as the option label and the second element is
+an atom, string or integer to be used as the option value</li><li>simple atom, string or integer - which will be used as both label and value
+for the generated select</li></ul><h2 id="options_for_select/3-option-groups" class="section-heading"><a href="#options_for_select/3-option-groups" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Option groups</span></h2><p>If <code class="inline">options</code> is map or keyword list where the first element is a string,
+atom or integer and the second element is a list or a map, it is assumed
+the key will be wrapped in an <code class="inline">&lt;optgroup&gt;</code> and the value will be used to
+generate <code class="inline">&lt;options&gt;</code> nested under the group.</p><h2 id="options_for_select/3-examples" class="section-heading"><a href="#options_for_select/3-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="n">options_for_select</span><span class="p" data-group-id="5998714481-1">(</span><span class="p" data-group-id="5998714481-2">[</span><span class="ss">&quot;Admin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">&quot;User&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;user&quot;</span><span class="p" data-group-id="5998714481-2">]</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="p" data-group-id="5998714481-1">)</span><span class="w">
+</span><span class="c1">#=&gt; &lt;option value=&quot;admin&quot; selected&gt;Admin&lt;/option&gt;</span><span class="w">
+</span><span class="c1">#=&gt; &lt;option value=&quot;user&quot;&gt;User&lt;/option&gt;</span></code></pre><p>Multiple selected values:</p><pre><code class="makeup elixir" translate="no"><span class="n">options_for_select</span><span class="p" data-group-id="5811125382-1">(</span><span class="p" data-group-id="5811125382-2">[</span><span class="ss">&quot;Admin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">&quot;User&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;user&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">&quot;Moderator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;moderator&quot;</span><span class="p" data-group-id="5811125382-2">]</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="5811125382-3">[</span><span class="s">&quot;admin&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;moderator&quot;</span><span class="p" data-group-id="5811125382-3">]</span><span class="p" data-group-id="5811125382-1">)</span><span class="w">
+</span><span class="c1">#=&gt; &lt;option value=&quot;admin&quot; selected&gt;Admin&lt;/option&gt;</span><span class="w">
+</span><span class="c1">#=&gt; &lt;option value=&quot;user&quot;&gt;User&lt;/option&gt;</span><span class="w">
+</span><span class="c1">#=&gt; &lt;option value=&quot;moderator&quot; selected&gt;Moderator&lt;/option&gt;</span></code></pre><p>Groups:</p><pre><code class="makeup elixir" translate="no"><span class="n">options_for_select</span><span class="p" data-group-id="5601160996-1">(</span><span class="p" data-group-id="5601160996-2">[</span><span class="ss">&quot;Europe&quot;</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5601160996-3">[</span><span class="s">&quot;UK&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sweden&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;France&quot;</span><span class="p" data-group-id="5601160996-3">]</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="5601160996-2">]</span><span class="p">,</span><span class="w"> </span><span class="no">nil</span><span class="p" data-group-id="5601160996-1">)</span><span class="w">
+</span><span class="c1">#=&gt; &lt;optgroup label=&quot;Europe&quot;&gt;</span><span class="w">
+</span><span class="c1">#=&gt;   &lt;option&gt;UK&lt;/option&gt;</span><span class="w">
+</span><span class="c1">#=&gt;   &lt;option&gt;Sweden&lt;/option&gt;</span><span class="w">
+</span><span class="c1">#=&gt;   &lt;option&gt;France&lt;/option&gt;</span><span class="w">
+</span><span class="c1">#=&gt; &lt;/optgroup&gt;</span></code></pre><p>Custom option tags:</p><pre><code class="makeup elixir" translate="no"><span class="n">options_for_select</span><span class="p" data-group-id="9317043092-1">(</span><span class="p" data-group-id="9317043092-2">[</span><span class="ss">&quot;Admin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">&quot;User&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;user&quot;</span><span class="p" data-group-id="9317043092-2">]</span><span class="p">,</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w"> </span><span class="ss">tag</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;opt&quot;</span><span class="p" data-group-id="9317043092-1">)</span><span class="w">
+</span><span class="c1">#=&gt; &lt;opt value=&quot;admin&quot;&gt;Admin&lt;/opt&gt;</span><span class="w">
+</span><span class="c1">#=&gt; &lt;opt value=&quot;user&quot;&gt;User&lt;/opt&gt;</span></code></pre><p>Horizontal separators can be added:</p><pre><code class="makeup elixir" translate="no"><span class="n">options_for_select</span><span class="p" data-group-id="9691239171-1">(</span><span class="p" data-group-id="9691239171-2">[</span><span class="s">&quot;Admin&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;User&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">:hr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;New&quot;</span><span class="p" data-group-id="9691239171-2">]</span><span class="p">,</span><span class="w"> </span><span class="no">nil</span><span class="p" data-group-id="9691239171-1">)</span><span class="w">
+</span><span class="c1">#=&gt; &lt;option&gt;Admin&lt;/option&gt;</span><span class="w">
+</span><span class="c1">#=&gt; &lt;option&gt;User&lt;/option&gt;</span><span class="w">
+</span><span class="c1">#=&gt; &lt;hr/&gt;</span><span class="w">
+</span><span class="c1">#=&gt; &lt;option&gt;New&lt;/option&gt;</span><span class="w">
+
+</span><span class="n">options_for_select</span><span class="p" data-group-id="9691239171-3">(</span><span class="p" data-group-id="9691239171-4">[</span><span class="ss">&quot;Admin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">&quot;User&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;user&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">hr</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w"> </span><span class="ss">&quot;New&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;new&quot;</span><span class="p" data-group-id="9691239171-4">]</span><span class="p">,</span><span class="w"> </span><span class="no">nil</span><span class="p" data-group-id="9691239171-3">)</span><span class="w">
+</span><span class="c1">#=&gt; &lt;option value=&quot;admin&quot; selected&gt;Admin&lt;/option&gt;</span><span class="w">
+</span><span class="c1">#=&gt; &lt;option value=&quot;user&quot;&gt;User&lt;/option&gt;</span><span class="w">
+</span><span class="c1">#=&gt; &lt;hr/&gt;</span><span class="w">
+</span><span class="c1">#=&gt; &lt;option value=&quot;new&quot;&gt;New&lt;/option&gt;</span></code></pre>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/phoenix_html/4.3.0" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/phoenix_html/4.3.0">Hex Preview</a>
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="Phoenix.HTML.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.38.4) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

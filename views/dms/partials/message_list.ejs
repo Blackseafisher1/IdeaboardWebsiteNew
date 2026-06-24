@@ -1,0 +1,7 @@
+<% if (messages.length === 0) { %>
+    <div class="no-messages">
+        <p>Noch keine Nachrichten. Beginne das Gespräch!</p>
+    </div>
+<% } else { %>
+    <%- include('message_items', { messages, currentUserId }) %>
+<% } %>

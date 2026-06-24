@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <%- include('partials/head') %>
+  <link rel="stylesheet" href="/css/index.css">
+ 
+</head>
+<body class="hero-under-header">
+  <%- include('partials/header') %>
+
+  <main>
+
+  <!-- Hero Section mit Video -->
+  <section class="hero">
+  <video autoplay muted loop playsinline class="hero-video">
+    <source src="/assets/teamwork4k.mp4" type="video/mp4">
+  </video>
+
+  <div class="hero-overlay">
+    <h1>Willkommen beim Ideenboard</h1>
+    <p>Teile deine Ideen, inspiriere andere und <br> gestalte die Zukunft.</p>
+  
+        <% if (user) { %>
+  <a href="/ideas" class="btn accent" id="Start-btn">Jetzt starten</a>
+<% } else { %>
+  <a href="/users/auth" class="btn accent" id="Start-btn">Jetzt starten</a>
+<% } %>
+  </div>
+  
+</section>
+
+
+  <!-- Features Section -->
+  <section class="features">
+  <!-- Feature 1 -->
+  <div class="feature">
+    <div class="feature-text">
+      <h2>💡 Ideen sammeln</h2>
+      <p>Erfasse deine Gedanken schnell und strukturiert.</p>
+    </div>
+    <div class="feature-image">
+      <img src="/assets/ideensammeln.jpg" alt="Ideen sammeln" onclick="window.location.href='/ideas'">
+    </div>
+  </div>
+
+  <!-- Feature 2 -->
+  <div class="feature reverse">
+    <div class="feature-text">
+      <h2>🤝 Zusammenarbeit</h2>
+      <p>Arbeite mit deinem Team zusammen und entwickle Ideen weiter - Nutze den Teamchat
+         um dich in auszutauschen.</p>
+    </div>
+    <div class="feature-image">
+      <img src="/assets/hände.jpg" alt="Zusammenarbeit" onclick="window.location.href='/projects'">
+    </div>
+  </div>
+
+  <!-- Feature 3 -->
+  <div class="feature">
+    <div class="feature-text">
+      <h2>📊 Übersicht</h2>
+      <p>Behalte den Überblick dank intuitiver Filter auf den Ideen, Umfragen und Projektseiten und Zusammenfassungen auf dem Dashboard</p>
+    </div>
+    <div class="feature-image">
+      <img src="/assets/lupeHand.jpg" alt="Übersicht" onclick="window.location.href='/dashboard'">
+    </div>
+  </div>
+</section>
+
+
+
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

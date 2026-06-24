@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix v1.8.5">
+
+
+    <title>Phoenix.ChannelTest — Phoenix v1.8.5</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-209F6654.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.8.5
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="true">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Latest</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="https://hexdocs.pm/?packages=plug%3Alatest%2Cphoenix%3Alatest%2Cphoenix_html%3Alatest%2Cphoenix_live_view%3Alatest%2Cphoenix_pubsub%3Alatest%2Cphoenix_template%3Alatest&q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Latest</span>
+                <span class="help">Search latest versions of Plug, Phoenix, Phoenix.{HTML, LiveView, PubSub, Template}</span>
+              </button>
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="false">
+                <span class="name">Current version</span>
+                <span class="help">Search only this project</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Phoenix.<wbr>ChannelTest</span> 
+      <small class="app-vsn" translate="no">(Phoenix v1.8.5)</small>
+
+    </h1>
+
+
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Conveniences for testing Phoenix channels.</p><p>In channel tests, we interact with channels via process
+communication, sending and receiving messages. It is also
+common to subscribe to the same topic the channel subscribes
+to, allowing us to assert if a given message was broadcast
+or not.</p><h2 id="module-channel-testing" class="section-heading"><a href="#module-channel-testing" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Channel testing</span></h2><p>To get started, define the module attribute <code class="inline">@endpoint</code>
+in your test case pointing to your application endpoint.</p><p>Then you can directly create a socket and
+<a href="#subscribe_and_join/4"><code class="inline">subscribe_and_join/4</code></a> topics and channels:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="3764191801-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="3764191801-1">}</span><span class="w"> </span><span class="o">=</span><span class="w">
+  </span><span class="n">socket</span><span class="p" data-group-id="3764191801-2">(</span><span class="nc">UserSocket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;user:id&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3764191801-3">%{</span><span class="ss">some_assigns</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="3764191801-3">}</span><span class="p" data-group-id="3764191801-2">)</span><span class="w">
+  </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">subscribe_and_join</span><span class="p" data-group-id="3764191801-4">(</span><span class="nc">RoomChannel</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;room:lobby&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3764191801-5">%{</span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="3764191801-5">}</span><span class="p" data-group-id="3764191801-4">)</span></code></pre><p>You usually want to set the same ID and assigns your
+<code class="inline">UserSocket.connect/3</code> callback would set. Alternatively,
+you can use the <a href="#connect/3"><code class="inline">connect/3</code></a> helper to call your <code class="inline">UserSocket.connect/3</code>
+callback and initialize the socket with the socket id:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="7396094827-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="7396094827-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">connect</span><span class="p" data-group-id="7396094827-2">(</span><span class="nc">UserSocket</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7396094827-3">%{</span><span class="s">&quot;some&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;params&quot;</span><span class="p" data-group-id="7396094827-3">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7396094827-4">%{</span><span class="p" data-group-id="7396094827-4">}</span><span class="p" data-group-id="7396094827-2">)</span><span class="w">
+</span><span class="p" data-group-id="7396094827-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="7396094827-5">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">subscribe_and_join</span><span class="p" data-group-id="7396094827-6">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;room:lobby&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7396094827-7">%{</span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="7396094827-7">}</span><span class="p" data-group-id="7396094827-6">)</span></code></pre><p>Once called, <a href="#subscribe_and_join/4"><code class="inline">subscribe_and_join/4</code></a> will subscribe the
+current test process to the &quot;room:lobby&quot; topic and start a
+channel in another process. It returns <code class="inline">{:ok, reply, socket}</code>
+or <code class="inline">{:error, reply}</code>.</p><p>Now, in the same way the channel has a socket representing
+communication it will push to the client. Our test has a
+socket representing communication to be pushed to the server.</p><p>For example, we can use the <a href="#push/3"><code class="inline">push/3</code></a> function in the test
+to push messages to the channel (it will invoke <code class="inline">handle_in/3</code>):</p><pre><code class="makeup elixir" translate="no"><span class="n">push</span><span class="p" data-group-id="4220851993-1">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;my_event&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4220851993-2">%{</span><span class="s">&quot;some&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;data&quot;</span><span class="p" data-group-id="4220851993-2">}</span><span class="p" data-group-id="4220851993-1">)</span></code></pre><p>Similarly, we can broadcast messages from the test itself
+on the topic that both test and channel are subscribed to,
+triggering <code class="inline">handle_out/3</code> on the channel:</p><pre><code class="makeup elixir" translate="no"><span class="n">broadcast_from</span><span class="p" data-group-id="1951961347-1">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;my_event&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1951961347-2">%{</span><span class="s">&quot;some&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;data&quot;</span><span class="p" data-group-id="1951961347-2">}</span><span class="p" data-group-id="1951961347-1">)</span></code></pre><blockquote><p>Note only <a href="#broadcast_from/3"><code class="inline">broadcast_from/3</code></a> and <a href="#broadcast_from!/3"><code class="inline">broadcast_from!/3</code></a> are
+available in tests to avoid broadcast messages to be resent
+to the test process.</p></blockquote><p>While the functions above are pushing data to the channel
+(server) we can use <a href="#assert_push/3"><code class="inline">assert_push/3</code></a> to verify the channel
+pushed a message to the client:</p><pre><code class="makeup elixir" translate="no"><span class="n">assert_push</span><span class="w"> </span><span class="s">&quot;my_event&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6293921728-1">%{</span><span class="s">&quot;some&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;data&quot;</span><span class="p" data-group-id="6293921728-1">}</span></code></pre><p>Or even assert something was broadcast into pubsub:</p><pre><code class="makeup elixir" translate="no"><span class="n">assert_broadcast</span><span class="w"> </span><span class="s">&quot;my_event&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0615407525-1">%{</span><span class="s">&quot;some&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;data&quot;</span><span class="p" data-group-id="0615407525-1">}</span></code></pre><p>Finally, every time a message is pushed to the channel,
+a reference is returned. We can use this reference to
+assert a particular reply was sent from the server:</p><pre><code class="makeup elixir" translate="no"><span class="n">ref</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">push</span><span class="p" data-group-id="3023401235-1">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;counter&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3023401235-2">%{</span><span class="p" data-group-id="3023401235-2">}</span><span class="p" data-group-id="3023401235-1">)</span><span class="w">
+</span><span class="n">assert_reply</span><span class="w"> </span><span class="n">ref</span><span class="p">,</span><span class="w"> </span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3023401235-3">%{</span><span class="s">&quot;counter&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="3023401235-3">}</span></code></pre><h2 id="module-checking-side-effects" class="section-heading"><a href="#module-checking-side-effects" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Checking side-effects</span></h2><p>Often one may want to do side-effects inside channels,
+like writing to the database, and verify those side-effects
+during their tests.</p><p>Imagine the following <code class="inline">handle_in/3</code> inside a channel:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">handle_in</span><span class="p" data-group-id="7237434400-1">(</span><span class="s">&quot;publish&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7237434400-2">%{</span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">id</span><span class="p" data-group-id="7237434400-2">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="7237434400-1">)</span><span class="w"> </span><span class="k" data-group-id="7237434400-3">do</span><span class="w">
+  </span><span class="nc">Repo</span><span class="o">.</span><span class="n">get!</span><span class="p" data-group-id="7237434400-4">(</span><span class="nc">Post</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p" data-group-id="7237434400-4">)</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Post</span><span class="o">.</span><span class="n">publish</span><span class="p" data-group-id="7237434400-5">(</span><span class="p" data-group-id="7237434400-5">)</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Repo</span><span class="o">.</span><span class="n">update!</span><span class="p" data-group-id="7237434400-6">(</span><span class="p" data-group-id="7237434400-6">)</span><span class="w">
+  </span><span class="p" data-group-id="7237434400-7">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="7237434400-7">}</span><span class="w">
+</span><span class="k" data-group-id="7237434400-3">end</span></code></pre><p>Because the whole communication is asynchronous, the
+following test would be very brittle:</p><pre><code class="makeup elixir" translate="no"><span class="n">push</span><span class="p" data-group-id="0772321654-1">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;publish&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0772321654-2">%{</span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="0772321654-2">}</span><span class="p" data-group-id="0772321654-1">)</span><span class="w">
+</span><span class="n">assert</span><span class="w"> </span><span class="nc">Repo</span><span class="o">.</span><span class="n">get_by</span><span class="p" data-group-id="0772321654-3">(</span><span class="nc">Post</span><span class="p">,</span><span class="w"> </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="ss">published</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p" data-group-id="0772321654-3">)</span></code></pre><p>The issue is that we have no guarantees the channel has
+done processing our message after calling <a href="#push/3"><code class="inline">push/3</code></a>. The
+best solution is to assert the channel sent us a reply
+before doing any other assertion. First change the
+channel to send replies:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">handle_in</span><span class="p" data-group-id="3593177935-1">(</span><span class="s">&quot;publish&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3593177935-2">%{</span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">id</span><span class="p" data-group-id="3593177935-2">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="3593177935-1">)</span><span class="w"> </span><span class="k" data-group-id="3593177935-3">do</span><span class="w">
+  </span><span class="nc">Repo</span><span class="o">.</span><span class="n">get!</span><span class="p" data-group-id="3593177935-4">(</span><span class="nc">Post</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p" data-group-id="3593177935-4">)</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Post</span><span class="o">.</span><span class="n">publish</span><span class="p" data-group-id="3593177935-5">(</span><span class="p" data-group-id="3593177935-5">)</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Repo</span><span class="o">.</span><span class="n">update!</span><span class="p" data-group-id="3593177935-6">(</span><span class="p" data-group-id="3593177935-6">)</span><span class="w">
+  </span><span class="p" data-group-id="3593177935-7">{</span><span class="ss">:reply</span><span class="p">,</span><span class="w"> </span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="3593177935-7">}</span><span class="w">
+</span><span class="k" data-group-id="3593177935-3">end</span></code></pre><p>Then expect them in the test:</p><pre><code class="makeup elixir" translate="no"><span class="n">ref</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">push</span><span class="p" data-group-id="2276798627-1">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;publish&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2276798627-2">%{</span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="2276798627-2">}</span><span class="p" data-group-id="2276798627-1">)</span><span class="w">
+</span><span class="n">assert_reply</span><span class="w"> </span><span class="n">ref</span><span class="p">,</span><span class="w"> </span><span class="ss">:ok</span><span class="w">
+</span><span class="n">assert</span><span class="w"> </span><span class="nc">Repo</span><span class="o">.</span><span class="n">get_by</span><span class="p" data-group-id="2276798627-3">(</span><span class="nc">Post</span><span class="p">,</span><span class="w"> </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="ss">published</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p" data-group-id="2276798627-3">)</span></code></pre><h2 id="module-leave-and-close" class="section-heading"><a href="#module-leave-and-close" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Leave and close</span></h2><p>This module also provides functions to simulate leaving
+and closing a channel. Once you leave or close a channel,
+because the channel is linked to the test process on join,
+it will crash the test process:</p><pre><code class="makeup elixir" translate="no"><span class="n">leave</span><span class="p" data-group-id="4203667882-1">(</span><span class="n">socket</span><span class="p" data-group-id="4203667882-1">)</span><span class="w">
+</span><span class="gt">** (EXIT from #PID&lt;...&gt;) {:shutdown, :leave}</span></code></pre><p>You can avoid this by unlinking the channel process in
+the test:</p><pre><code class="makeup elixir" translate="no"><span class="nc">Process</span><span class="o">.</span><span class="n">unlink</span><span class="p" data-group-id="2726858197-1">(</span><span class="n">socket</span><span class="o">.</span><span class="n">channel_pid</span><span class="p" data-group-id="2726858197-1">)</span></code></pre><p>Notice <a href="#leave/1"><code class="inline">leave/1</code></a> is async, so it will also return a
+reference which you can use to check for a reply:</p><pre><code class="makeup elixir" translate="no"><span class="n">ref</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leave</span><span class="p" data-group-id="0999880549-1">(</span><span class="n">socket</span><span class="p" data-group-id="0999880549-1">)</span><span class="w">
+</span><span class="n">assert_reply</span><span class="w"> </span><span class="n">ref</span><span class="p">,</span><span class="w"> </span><span class="ss">:ok</span></code></pre><p>On the other hand, close is always sync and it will
+return only after the channel process is guaranteed to
+have been terminated:</p><pre><code class="makeup elixir" translate="no"><span class="ss">:ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">close</span><span class="p" data-group-id="5163751325-1">(</span><span class="n">socket</span><span class="p" data-group-id="5163751325-1">)</span></code></pre><p>This mimics the behaviour existing in clients.</p><p>To assert that your channel closes or errors asynchronously,
+you can monitor the channel process with the tools provided
+by Elixir, and wait for the <code class="inline">:DOWN</code> message.
+Imagine an implementation of the <code class="inline">handle_info/2</code> function
+that closes the channel when it receives <code class="inline">:some_message</code>:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">handle_info</span><span class="p" data-group-id="3608731299-1">(</span><span class="ss">:some_message</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="3608731299-1">)</span><span class="w"> </span><span class="k" data-group-id="3608731299-2">do</span><span class="w">
+  </span><span class="p" data-group-id="3608731299-3">{</span><span class="ss">:stop</span><span class="p">,</span><span class="w"> </span><span class="ss">:normal</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="3608731299-3">}</span><span class="w">
+</span><span class="k" data-group-id="3608731299-2">end</span></code></pre><p>In your test, you can assert that the close happened by:</p><pre><code class="makeup elixir" translate="no"><span class="nc">Process</span><span class="o">.</span><span class="n">monitor</span><span class="p" data-group-id="2114635968-1">(</span><span class="n">socket</span><span class="o">.</span><span class="n">channel_pid</span><span class="p" data-group-id="2114635968-1">)</span><span class="w">
+</span><span class="n">send</span><span class="p" data-group-id="2114635968-2">(</span><span class="n">socket</span><span class="o">.</span><span class="n">channel_pid</span><span class="p">,</span><span class="w"> </span><span class="ss">:some_message</span><span class="p" data-group-id="2114635968-2">)</span><span class="w">
+</span><span class="n">assert_receive</span><span class="w"> </span><span class="p" data-group-id="2114635968-3">{</span><span class="ss">:DOWN</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p">,</span><span class="w"> </span><span class="ss">:normal</span><span class="p" data-group-id="2114635968-3">}</span></code></pre>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h2>
+<div class="summary-functions summary">
+  <h3>
+    <a href="#functions">Functions</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#assert_broadcast/3" data-no-tooltip="" translate="no">assert_broadcast(event, payload, timeout \\ Application.fetch_env!(:ex_unit, :assert_receive_timeout))</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Asserts the channel has broadcast a message within <code class="inline">timeout</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#assert_push/3" data-no-tooltip="" translate="no">assert_push(event, payload, timeout \\ Application.fetch_env!(:ex_unit, :assert_receive_timeout))</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Asserts the channel has pushed a message back to the client
+with the given event and payload within <code class="inline">timeout</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#assert_reply/4" data-no-tooltip="" translate="no">assert_reply(ref, status, payload \\ Macro.escape(%{}), timeout \\ Application.fetch_env!(:ex_unit, :assert_receive_timeout))</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Asserts the channel has replied to the given message within
+<code class="inline">timeout</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#broadcast_from/3" data-no-tooltip="" translate="no">broadcast_from(socket, event, message)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Broadcast event from pid to all subscribers of the socket topic.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#broadcast_from!/3" data-no-tooltip="" translate="no">broadcast_from!(socket, event, message)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Same as <a href="#broadcast_from/3"><code class="inline">broadcast_from/3</code></a>, but raises if broadcast fails.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#close/2" data-no-tooltip="" translate="no">close(socket, timeout \\ 5000)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Emulates the client closing the socket.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#connect/3" data-no-tooltip="" translate="no">connect(handler, params, options \\ quote do
+  []
+end)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Initiates a transport connection for the socket handler.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#join/2" data-no-tooltip="" translate="no">join(socket, topic)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>See <a href="#join/4"><code class="inline">join/4</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#join/3" data-no-tooltip="" translate="no">join(socket, topic, payload)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>See <a href="#join/4"><code class="inline">join/4</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#join/4" data-no-tooltip="" translate="no">join(socket, channel, topic, payload \\ %{})</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Joins the channel under the given topic and payload.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#leave/1" data-no-tooltip="" translate="no">leave(socket)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Emulates the client leaving the channel.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#push/3" data-no-tooltip="" translate="no">push(socket, event, payload \\ %{})</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Pushes a message into the channel.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#refute_broadcast/3" data-no-tooltip="" translate="no">refute_broadcast(event, payload, timeout \\ Application.fetch_env!(:ex_unit, :refute_receive_timeout))</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Asserts the channel has not broadcast a message within <code class="inline">timeout</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#refute_push/3" data-no-tooltip="" translate="no">refute_push(event, payload, timeout \\ Application.fetch_env!(:ex_unit, :refute_receive_timeout))</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Asserts the channel has not pushed a message to the client
+matching the given event and payload within <code class="inline">timeout</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#refute_reply/4" data-no-tooltip="" translate="no">refute_reply(ref, status, payload \\ Macro.escape(%{}), timeout \\ Application.fetch_env!(:ex_unit, :refute_receive_timeout))</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Asserts the channel has not replied with a matching payload within
+<code class="inline">timeout</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#socket/1" data-no-tooltip="" translate="no">socket(socket_module)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Builds a socket for the given <code class="inline">socket_module</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#socket/4" data-no-tooltip="" translate="no">socket(socket_module, socket_id, socket_assigns, options \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Builds a socket for the given <code class="inline">socket_module</code> with given id and assigns.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#subscribe_and_join/2" data-no-tooltip="" translate="no">subscribe_and_join(socket, topic)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>See <a href="#subscribe_and_join/4"><code class="inline">subscribe_and_join/4</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#subscribe_and_join/3" data-no-tooltip="" translate="no">subscribe_and_join(socket, topic, payload)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>See <a href="#subscribe_and_join/4"><code class="inline">subscribe_and_join/4</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#subscribe_and_join/4" data-no-tooltip="" translate="no">subscribe_and_join(socket, channel, topic, payload \\ %{})</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Subscribes to the given topic and joins the channel
+under the given topic and payload.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#subscribe_and_join!/2" data-no-tooltip="" translate="no">subscribe_and_join!(socket, topic)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>See <a href="#subscribe_and_join!/4"><code class="inline">subscribe_and_join!/4</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#subscribe_and_join!/3" data-no-tooltip="" translate="no">subscribe_and_join!(socket, topic, payload)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>See <a href="#subscribe_and_join!/4"><code class="inline">subscribe_and_join!/4</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#subscribe_and_join!/4" data-no-tooltip="" translate="no">subscribe_and_join!(socket, channel, topic, payload \\ %{})</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Same as <a href="#subscribe_and_join/4"><code class="inline">subscribe_and_join/4</code></a>, but returns either the socket
+or throws an error.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="functions" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h2>
+
+    <div class="functions-list">
+<section class="detail" id="assert_broadcast/3">
+
+    <span id="assert_broadcast/2"></span>
+
+  <div class="detail-header">
+    <a href="#assert_broadcast/3" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">assert_broadcast(event, payload, timeout \\ Application.fetch_env!(:ex_unit, :assert_receive_timeout))</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L675" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Asserts the channel has broadcast a message within <code class="inline">timeout</code>.</p><p>Before asserting anything was broadcast, we must first
+subscribe to the topic of the channel in the test process:</p><pre><code class="makeup elixir" translate="no"><span class="na">@endpoint</span><span class="o">.</span><span class="n">subscribe</span><span class="p" data-group-id="3484793483-1">(</span><span class="s">&quot;foo:ok&quot;</span><span class="p" data-group-id="3484793483-1">)</span></code></pre><p>Now we can match on event and payload as patterns:</p><pre><code class="makeup elixir" translate="no"><span class="n">assert_broadcast</span><span class="w"> </span><span class="s">&quot;some_event&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0889609271-1">%{</span><span class="s">&quot;data&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="bp">_</span><span class="p" data-group-id="0889609271-1">}</span></code></pre><p>In the assertion above, we don't particularly care about
+the data being sent, as long as something was sent.</p><p>The timeout is in milliseconds and defaults to the <code class="inline">:assert_receive_timeout</code>
+set on the <code class="inline">:ex_unit</code> application (which defaults to 100ms).</p><p>Guards can also be given to the payload pattern:</p><pre><code class="makeup elixir" translate="no"><span class="n">assert_broadcast</span><span class="w"> </span><span class="s">&quot;some_event&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1482557216-1">%{</span><span class="s">&quot;counter&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">c</span><span class="p" data-group-id="1482557216-1">}</span><span class="w"> </span><span class="ow">when</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="assert_push/3">
+
+    <span id="assert_push/2"></span>
+
+  <div class="detail-header">
+    <a href="#assert_push/3" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">assert_push(event, payload, timeout \\ Application.fetch_env!(:ex_unit, :assert_receive_timeout))</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L564" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Asserts the channel has pushed a message back to the client
+with the given event and payload within <code class="inline">timeout</code>.</p><p>Notice event and payload are patterns. This means one can write:</p><pre><code class="makeup elixir" translate="no"><span class="n">assert_push</span><span class="w"> </span><span class="s">&quot;some_event&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0835253767-1">%{</span><span class="s">&quot;data&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="bp">_</span><span class="p" data-group-id="0835253767-1">}</span></code></pre><p>In the assertion above, we don't particularly care about
+the data being sent, as long as something was sent.</p><p>The timeout is in milliseconds and defaults to the <code class="inline">:assert_receive_timeout</code>
+set on the <code class="inline">:ex_unit</code> application (which defaults to 100ms).</p><p><strong>NOTE:</strong> Because event and payload are patterns, they will be matched.  This
+means that if you wish to assert that the received payload is equivalent to
+an existing variable, you need to pin the variable in the assertion
+expression.</p><p>Good:</p><pre><code class="makeup elixir" translate="no"><span class="n">expected_payload</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="3339231859-1">%{</span><span class="ss">foo</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p" data-group-id="3339231859-1">}</span><span class="w">
+</span><span class="n">assert_push</span><span class="w"> </span><span class="s">&quot;some_event&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">^</span><span class="n">expected_payload</span></code></pre><p>Bad:</p><pre><code class="makeup elixir" translate="no"><span class="n">expected_payload</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="7962912205-1">%{</span><span class="ss">foo</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p" data-group-id="7962912205-1">}</span><span class="w">
+</span><span class="n">assert_push</span><span class="w"> </span><span class="s">&quot;some_event&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">expected_payload</span><span class="w">
+</span><span class="c1"># The code above does not assert the payload matches the described map.</span></code></pre><p>Guards can also be given to the payload pattern:</p><pre><code class="makeup elixir" translate="no"><span class="n">assert_push</span><span class="w"> </span><span class="s">&quot;some_event&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0500542049-1">%{</span><span class="s">&quot;counter&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">c</span><span class="p" data-group-id="0500542049-1">}</span><span class="w"> </span><span class="ow">when</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="assert_reply/4">
+
+    <span id="assert_reply/2"></span>
+
+    <span id="assert_reply/3"></span>
+
+  <div class="detail-header">
+    <a href="#assert_reply/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">assert_reply(ref, status, payload \\ Macro.escape(%{}), timeout \\ Application.fetch_env!(:ex_unit, :assert_receive_timeout))</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L613" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Asserts the channel has replied to the given message within
+<code class="inline">timeout</code>.</p><p>Notice status and payload are patterns. This means one can write:</p><pre><code class="makeup elixir" translate="no"><span class="n">ref</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">push</span><span class="p" data-group-id="2777962103-1">(</span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;some_event&quot;</span><span class="p" data-group-id="2777962103-1">)</span><span class="w">
+</span><span class="n">assert_reply</span><span class="w"> </span><span class="n">ref</span><span class="p">,</span><span class="w"> </span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2777962103-2">%{</span><span class="s">&quot;data&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="bp">_</span><span class="p" data-group-id="2777962103-2">}</span></code></pre><p>In the assertion above, we don't particularly care about
+the data being sent, as long as something was replied.</p><p>The timeout is in milliseconds and defaults to the <code class="inline">:assert_receive_timeout</code>
+set on the <code class="inline">:ex_unit</code> application (which defaults to 100ms).</p><p>Guards can also be given to the payload pattern:</p><pre><code class="makeup elixir" translate="no"><span class="n">ref</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">push</span><span class="p" data-group-id="7280227958-1">(</span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;some_event&quot;</span><span class="p" data-group-id="7280227958-1">)</span><span class="w">
+</span><span class="n">assert_reply</span><span class="w"> </span><span class="n">ref</span><span class="p">,</span><span class="w"> </span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7280227958-2">%{</span><span class="s">&quot;counter&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">c</span><span class="p" data-group-id="7280227958-2">}</span><span class="w"> </span><span class="ow">when</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="broadcast_from/3">
+
+  <div class="detail-header">
+    <a href="#broadcast_from/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">broadcast_from(socket, event, message)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L517" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Broadcast event from pid to all subscribers of the socket topic.</p><p>The test process will not receive the published message. This triggers
+the <code class="inline">handle_out/3</code> callback in the channel.</p><h2 id="broadcast_from/3-examples" class="section-heading"><a href="#broadcast_from/3-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">broadcast_from</span><span class="p" data-group-id="3036846137-1">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_message&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3036846137-2">%{</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">content</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p" data-group-id="3036846137-2">}</span><span class="p" data-group-id="3036846137-1">)</span><span class="w">
+</span><span class="ss">:ok</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="broadcast_from!/3">
+
+  <div class="detail-header">
+    <a href="#broadcast_from!/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">broadcast_from!(socket, event, message)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L525" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Same as <a href="#broadcast_from/3"><code class="inline">broadcast_from/3</code></a>, but raises if broadcast fails.</p>
+  </section>
+</section>
+<section class="detail" id="close/2">
+
+    <span id="close/1"></span>
+
+  <div class="detail-header">
+    <a href="#close/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">close(socket, timeout \\ 5000)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L501" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Emulates the client closing the socket.</p><p>By default this will crash the test process. Run
+<code class="inline">Process.unlink(socket.channel_pid)</code> before this to prevent
+this from happening. See <a href="#module-leave-and-close">Leave and close</a>.</p><p>Closing socket is synchronous and has a default timeout
+of 5000 milliseconds.</p>
+  </section>
+</section>
+<section class="detail" id="connect/3">
+
+    <span id="connect/2"></span>
+
+  <div class="detail-header">
+    <a href="#connect/3" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">connect(handler, params, options \\ quote do
+  []
+end)</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L310" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Initiates a transport connection for the socket handler.</p><p>Useful for testing UserSocket authentication. Returns
+the result of the handler's <a href="#connect/3"><code class="inline">connect/3</code></a> callback.</p>
+  </section>
+</section>
+<section class="detail" id="join/2">
+
+  <div class="detail-header">
+    <a href="#join/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">join(socket, topic)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L411" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>See <a href="#join/4"><code class="inline">join/4</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="join/3">
+
+  <div class="detail-header">
+    <a href="#join/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">join(socket, topic, payload)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L416" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>See <a href="#join/4"><code class="inline">join/4</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="join/4">
+
+  <div class="detail-header">
+    <a href="#join/4" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">join(socket, channel, topic, payload \\ %{})</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L428" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Joins the channel under the given topic and payload.</p><p>The given channel is joined in a separate process
+which is linked to the test process.</p><p>It returns <code class="inline">{:ok, reply, socket}</code> or <code class="inline">{:error, reply}</code>.</p>
+  </section>
+</section>
+<section class="detail" id="leave/1">
+
+  <div class="detail-header">
+    <a href="#leave/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">leave(socket)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L487" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> leave(<a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">reference</a>()</pre>
+
+      </div>
+
+<p>Emulates the client leaving the channel.</p><p>By default this will crash the test process. Run
+<code class="inline">Process.unlink(socket.channel_pid)</code> before this to prevent
+this from happening. See <a href="#module-leave-and-close">Leave and close</a>.</p>
+  </section>
+</section>
+<section class="detail" id="push/3">
+
+    <span id="push/2"></span>
+
+  <div class="detail-header">
+    <a href="#push/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">push(socket, event, payload \\ %{})</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L472" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> push(<a href="Phoenix.Socket.html#t:t/0">Phoenix.Socket.t</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">reference</a>()</pre>
+
+      </div>
+
+<p>Pushes a message into the channel.</p><p>The triggers the <code class="inline">handle_in/3</code> callback in the channel.</p><h2 id="push/3-examples" class="section-heading"><a href="#push/3-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">push</span><span class="p" data-group-id="8335915670-1">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new_message&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8335915670-2">%{</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">content</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p" data-group-id="8335915670-2">}</span><span class="p" data-group-id="8335915670-1">)</span><span class="w">
+</span><span class="n">reference</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="refute_broadcast/3">
+
+    <span id="refute_broadcast/2"></span>
+
+  <div class="detail-header">
+    <a href="#refute_broadcast/3" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">refute_broadcast(event, payload, timeout \\ Application.fetch_env!(:ex_unit, :refute_receive_timeout))</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L694" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Asserts the channel has not broadcast a message within <code class="inline">timeout</code>.</p><p>Like <code class="inline">assert_broadcast</code>, the event and payload are patterns.</p><p>The timeout is in milliseconds and defaults to the <code class="inline">:refute_receive_timeout</code>
+set on the <code class="inline">:ex_unit</code> application (which defaults to 100ms).
+Keep in mind this macro will block the test by the
+timeout value, so use it only when necessary as overuse
+will certainly slow down your test suite.</p>
+  </section>
+</section>
+<section class="detail" id="refute_push/3">
+
+    <span id="refute_push/2"></span>
+
+  <div class="detail-header">
+    <a href="#refute_push/3" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">refute_push(event, payload, timeout \\ Application.fetch_env!(:ex_unit, :refute_receive_timeout))</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L584" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Asserts the channel has not pushed a message to the client
+matching the given event and payload within <code class="inline">timeout</code>.</p><p>Like <code class="inline">assert_push</code>, the event and payload are patterns.</p><p>The timeout is in milliseconds and defaults to the <code class="inline">:refute_receive_timeout</code>
+set on the <code class="inline">:ex_unit</code> application (which defaults to 100ms).
+Keep in mind this macro will block the test by the
+timeout value, so use it only when necessary as overuse
+will certainly slow down your test suite.</p>
+  </section>
+</section>
+<section class="detail" id="refute_reply/4">
+
+    <span id="refute_reply/2"></span>
+
+    <span id="refute_reply/3"></span>
+
+  <div class="detail-header">
+    <a href="#refute_reply/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">refute_reply(ref, status, payload \\ Macro.escape(%{}), timeout \\ Application.fetch_env!(:ex_unit, :refute_receive_timeout))</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L643" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Asserts the channel has not replied with a matching payload within
+<code class="inline">timeout</code>.</p><p>Like <code class="inline">assert_reply</code>, the event and payload are patterns.</p><p>The timeout is in milliseconds and defaults to the <code class="inline">:refute_receive_timeout</code>
+set on the <code class="inline">:ex_unit</code> application (which defaults to 100ms).
+Keep in mind this macro will block the test by the
+timeout value, so use it only when necessary as overuse
+will certainly slow down your test suite.</p>
+  </section>
+</section>
+<section class="detail" id="socket/1">
+
+  <div class="detail-header">
+    <a href="#socket/1" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">socket(socket_module)</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L208" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Builds a socket for the given <code class="inline">socket_module</code>.</p><p>The socket is then used to subscribe and join channels.
+Use this function when you want to create a blank socket
+to pass to functions like <code class="inline">UserSocket.connect/3</code>.</p><p>Otherwise, use <a href="#socket/4"><code class="inline">socket/4</code></a> if you want to build a socket with
+existing id and assigns.</p><h2 id="socket/1-examples" class="section-heading"><a href="#socket/1-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="n">socket</span><span class="p" data-group-id="0527710416-1">(</span><span class="nc">MyApp.UserSocket</span><span class="p" data-group-id="0527710416-1">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="socket/4">
+
+    <span id="socket/3"></span>
+
+  <div class="detail-header">
+    <a href="#socket/4" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">socket(socket_module, socket_id, socket_assigns, options \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L235" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Builds a socket for the given <code class="inline">socket_module</code> with given id and assigns.</p><h2 id="socket/4-examples" class="section-heading"><a href="#socket/4-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="n">socket</span><span class="p" data-group-id="6396315312-1">(</span><span class="nc">MyApp.UserSocket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;user_id&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6396315312-2">%{</span><span class="ss">some</span><span class="p">:</span><span class="w"> </span><span class="ss">:assign</span><span class="p" data-group-id="6396315312-2">}</span><span class="p" data-group-id="6396315312-1">)</span></code></pre><p>If you need to access the socket in another process than the test process,
+you can give the <code class="inline">pid</code> of the test process in the 4th argument.</p><h2 id="socket/4-examples-1" class="section-heading"><a href="#socket/4-examples-1" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="n">test</span><span class="w"> </span><span class="s">&quot;connect in a task&quot;</span><span class="w"> </span><span class="k" data-group-id="5339349373-1">do</span><span class="w">
+  </span><span class="n">pid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p" data-group-id="5339349373-2">(</span><span class="p" data-group-id="5339349373-2">)</span><span class="w">
+  </span><span class="n">task</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Task</span><span class="o">.</span><span class="n">async</span><span class="p" data-group-id="5339349373-3">(</span><span class="k" data-group-id="5339349373-4">fn</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+    </span><span class="n">socket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="5339349373-5">(</span><span class="nc">MyApp.UserSocket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;user_id&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5339349373-6">%{</span><span class="ss">some</span><span class="p">:</span><span class="w"> </span><span class="ss">:assign</span><span class="p" data-group-id="5339349373-6">}</span><span class="p">,</span><span class="w"> </span><span class="ss">test_process</span><span class="p">:</span><span class="w"> </span><span class="n">pid</span><span class="p" data-group-id="5339349373-5">)</span><span class="w">
+    </span><span class="n">broadcast_from!</span><span class="p" data-group-id="5339349373-7">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5339349373-8">%{</span><span class="s">&quot;foo&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p" data-group-id="5339349373-8">}</span><span class="p" data-group-id="5339349373-7">)</span><span class="w">
+    </span><span class="n">assert_push</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5339349373-9">%{</span><span class="s">&quot;foo&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;bar&quot;</span><span class="p" data-group-id="5339349373-9">}</span><span class="w">
+  </span><span class="k" data-group-id="5339349373-4">end</span><span class="p" data-group-id="5339349373-3">)</span><span class="w">
+  </span><span class="nc">Task</span><span class="o">.</span><span class="n">await</span><span class="p" data-group-id="5339349373-10">(</span><span class="n">task</span><span class="p" data-group-id="5339349373-10">)</span><span class="w">
+</span><span class="k" data-group-id="5339349373-1">end</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="subscribe_and_join/2">
+
+  <div class="detail-header">
+    <a href="#subscribe_and_join/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">subscribe_and_join(socket, topic)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L378" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>See <a href="#subscribe_and_join/4"><code class="inline">subscribe_and_join/4</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="subscribe_and_join/3">
+
+  <div class="detail-header">
+    <a href="#subscribe_and_join/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">subscribe_and_join(socket, topic, payload)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L383" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>See <a href="#subscribe_and_join/4"><code class="inline">subscribe_and_join/4</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="subscribe_and_join/4">
+
+  <div class="detail-header">
+    <a href="#subscribe_and_join/4" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">subscribe_and_join(socket, channel, topic, payload \\ %{})</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L404" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Subscribes to the given topic and joins the channel
+under the given topic and payload.</p><p>By subscribing to the topic, we can use <a href="#assert_broadcast/3"><code class="inline">assert_broadcast/3</code></a>
+to verify a message has been sent through the pubsub layer.</p><p>By joining the channel, we can interact with it directly.
+The given channel is joined in a separate process which is
+linked to the test process.</p><p>If no channel module is provided, the socket's handler is used to
+lookup the matching channel for the given topic.</p><p>It returns <code class="inline">{:ok, reply, socket}</code> or <code class="inline">{:error, reply}</code>.</p>
+  </section>
+</section>
+<section class="detail" id="subscribe_and_join!/2">
+
+  <div class="detail-header">
+    <a href="#subscribe_and_join!/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">subscribe_and_join!(socket, topic)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L352" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>See <a href="#subscribe_and_join!/4"><code class="inline">subscribe_and_join!/4</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="subscribe_and_join!/3">
+
+  <div class="detail-header">
+    <a href="#subscribe_and_join!/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">subscribe_and_join!(socket, topic, payload)</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L357" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>See <a href="#subscribe_and_join!/4"><code class="inline">subscribe_and_join!/4</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="subscribe_and_join!/4">
+
+  <div class="detail-header">
+    <a href="#subscribe_and_join!/4" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">subscribe_and_join!(socket, channel, topic, payload \\ %{})</h1>
+
+
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.8.5/lib/phoenix/test/channel_test.ex#L369" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Same as <a href="#subscribe_and_join/4"><code class="inline">subscribe_and_join/4</code></a>, but returns either the socket
+or throws an error.</p><p>This is helpful when you are not testing joining the channel
+and just need the socket.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix/1.8.5">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix/1.8.5">Hex Preview</a>
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+
+              <a href="Phoenix.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

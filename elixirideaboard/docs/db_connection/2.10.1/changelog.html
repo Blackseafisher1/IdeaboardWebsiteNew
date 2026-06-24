@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.2">
+    <meta name="project" content="db_connection v2.10.1">
+
+
+    <title>Changelog — db_connection v2.10.1</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
+
+    <script defer src="dist/sidebar_items-74B86FAF.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-Y2MUTVIN.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="DBConnection.html" class="sidebar-projectName" translate="no">
+db_connection
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v2.10.1
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="Pages"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of db_connection</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Changelog</h1>
+
+<a href="changelog.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+      <a href="https://github.com/elixir-ecto/db_connection/blob/v2.10.1/CHANGELOG.md#L1" title="View Source" class="icon-action" rel="help nofollow">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<h2 id="v2-10-1-2026-05-09" class="section-heading"><a href="#v2-10-1-2026-05-09" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.10.1 (2026-05-09)</span></h2><ul><li>Ensure <code class="inline">:max_lifetime</code> works on connections that have been idle</li><li>Always distribute <code class="inline">:disconnect_all</code> over the given limit, even for idle connections</li></ul><h2 id="v2-10-0-2026-04-24" class="section-heading"><a href="#v2-10-0-2026-04-24" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.10.0 (2026-04-24)</span></h2><ul><li>Add <code class="inline">:max_lifetime</code> to connection</li><li>Fix watcher blocking during slow pool termination</li><li>Fix owner unallow using wrong ref when switching owners</li><li>Add label (repo name) to ownership errors</li><li>Wrap options into a sensitive data struct when crossing process boundaries</li></ul><h2 id="v2-9-0-2026-01-10" class="section-heading"><a href="#v2-9-0-2026-01-10" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.9.0 (2026-01-10)</span></h2><ul><li>Enhancements<ul><li>Whenever possible, have error messages that include a PID also include ancestors and one of process label, name, or initial call</li><li>Allow clients to retry when specified</li><li>Remove sensitive options before calling <code class="inline">after_connect</code></li></ul></li></ul><h2 id="v2-8-1-2025-06-24" class="section-heading"><a href="#v2-8-1-2025-06-24" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.8.1 (2025-06-24)</span></h2><ul><li>Enhancements<ul><li>Automatically set and read process labels in error reports</li></ul></li></ul><h2 id="v2-8-0-2025-06-24" class="section-heading"><a href="#v2-8-0-2025-06-24" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.8.0 (2025-06-24)</span></h2><ul><li>Enhancements<ul><li>Allow <code class="inline">unallow_existing</code> as an opt to <code class="inline">ownership_allow/4</code></li><li>Improve ETS performance by enabling descentralized counters</li><li>Increase default queue interval to 2000ms</li></ul></li></ul><h2 id="v2-7-0-2024-07-02" class="section-heading"><a href="#v2-7-0-2024-07-02" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.7.0 (2024-07-02)</span></h2><ul><li><p>Enhancements</p><ul><li>Add API for retrieving pool metrics</li><li>Include a built-in listener that emits telemetry events</li></ul></li><li><p>Bug fixes</p><ul><li>Discard EXIT messages from trapped exits</li></ul></li></ul><h2 id="v2-6-0-2023-10-15" class="section-heading"><a href="#v2-6-0-2023-10-15" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.6.0 (2023-10-15)</span></h2><ul><li>Enhancements<ul><li>Call <code class="inline">disconnect</code> on terminate</li><li>Allow <code class="inline">handle_begin</code> callbacks to return query for logging purposes</li><li>Add <code class="inline">:connection_listeners_tag</code></li><li>Add <a href="DBConnection.html#available_connection_options/0"><code class="inline">DBConnection.available_connection_options/0</code></a></li><li>Add <a href="DBConnection.html#available_start_options/0"><code class="inline">DBConnection.available_start_options/0</code></a></li></ul></li></ul><h2 id="v2-5-0-2023-04-10" class="section-heading"><a href="#v2-5-0-2023-04-10" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.5.0 (2023-04-10)</span></h2><ul><li>Internal changes<ul><li>No longer depend on <code class="inline">connection</code></li></ul></li></ul><h2 id="v2-4-3-2022-11-22" class="section-heading"><a href="#v2-4-3-2022-11-22" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.4.3 (2022-11-22)</span></h2><ul><li>Bug fixes<ul><li>Fix bug where <code class="inline">disconnect_all/2</code> interval would be disabled above 4294ms</li><li>Add <code class="inline">:idle_limit</code> to limit the amount of disconnections on a ping</li></ul></li></ul><h2 id="v2-4-2-2022-03-03" class="section-heading"><a href="#v2-4-2-2022-03-03" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.4.2 (2022-03-03)</span></h2><ul><li>Enhancements<ul><li>Add <a href="DBConnection.html#connection_module/1"><code class="inline">DBConnection.connection_module/1</code></a></li></ul></li></ul><h2 id="v2-4-1-2021-10-14" class="section-heading"><a href="#v2-4-1-2021-10-14" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.4.1 (2021-10-14)</span></h2><ul><li>Enhancements<ul><li>Add <a href="DBConnection.html#disconnect_all/2"><code class="inline">DBConnection.disconnect_all/2</code></a></li></ul></li></ul><h2 id="v2-4-0-2021-04-02" class="section-heading"><a href="#v2-4-0-2021-04-02" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.4.0 (2021-04-02)</span></h2><ul><li>Enhancements<ul><li>Add telemetry events for connection errors</li><li>Use <code class="inline">:rand</code> default algorithm</li><li>Allow decentralized lookups on DBConnection.Ownership</li></ul></li></ul><h2 id="v2-3-1-2020-11-25" class="section-heading"><a href="#v2-3-1-2020-11-25" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.3.1 (2020-11-25)</span></h2><ul><li>Enhancements<ul><li>Add <code class="inline">:connection_listeners</code> to <a href="DBConnection.html#start_link/2"><code class="inline">DBConnection.start_link/2</code></a></li><li>Allow connection <code class="inline">~&gt; 1.0</code></li></ul></li></ul><h2 id="v2-3-0-2020-10-14" class="section-heading"><a href="#v2-3-0-2020-10-14" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.3.0 (2020-10-14)</span></h2><p>This release requires Elixir v1.7+.</p><ul><li>Bug fixes<ul><li>Fix deprecation warnings related to the use of <code class="inline">System.stacktrace()</code></li></ul></li></ul><h2 id="v2-2-2-2020-04-22" class="section-heading"><a href="#v2-2-2-2020-04-22" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.2.2 (2020-04-22)</span></h2><ul><li>Bug fixes<ul><li>Make sure all idle connections in the pool are pinged on each idle interval</li></ul></li></ul><h2 id="v2-2-1-2020-02-04" class="section-heading"><a href="#v2-2-1-2020-02-04" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.2.1 (2020-02-04)</span></h2><ul><li>Enhancements<ul><li>Remove warnings</li></ul></li></ul><h2 id="v2-2-0-2019-12-11" class="section-heading"><a href="#v2-2-0-2019-12-11" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.2.0 (2019-12-11)</span></h2><ul><li>Enhancements<ul><li>Add <code class="inline">:idle_time</code> to <a href="DBConnection.LogEntry.html"><code class="inline">DBConnection.LogEntry</code></a></li><li>Ping all stale connections on idle interval</li><li>Add <code class="inline">crash_reason</code> to relevant Logger error reports</li><li>Ping all stale connections on idle interval. One possible downside of this approach is that we may shut down all connections at once and if there is a request around this time, the response time will be higher. However, this is likely better than the current approach, where we ping only the first one, which means we can have a pool of stale connections. The current behaviour is the same as in v1.0</li></ul></li></ul><h2 id="v2-1-1-2019-07-17" class="section-heading"><a href="#v2-1-1-2019-07-17" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.1.1 (2019-07-17)</span></h2><ul><li><p>Enhancements</p><ul><li>Reduce severity in client exits to info</li><li>Improve error message on redirect checkout</li></ul></li><li><p>Bug fixes</p><ul><li>Make sure ownership timeout is respected on automatic checkouts</li></ul></li></ul><h2 id="v2-1-0-2019-06-07" class="section-heading"><a href="#v2-1-0-2019-06-07" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">v2.1.0 (2019-06-07)</span></h2><ul><li>Enhancements<ul><li>Require Elixir v1.6+</li><li>Include client stacktrace on check out timeouts</li></ul></li></ul>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+  </div>
+  <div class="bottom-actions-item">
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/db_connection/2.10.1">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/db_connection/2.10.1">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/db_connection/2.10.1/show/CHANGELOG.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="db_connection.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.2) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

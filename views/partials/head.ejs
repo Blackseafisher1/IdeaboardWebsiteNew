@@ -1,0 +1,42 @@
+<!-- Critical inline background & immediate theme injection to prevent FOUC -->
+<script>
+	(function(){
+		try {
+			var theme = localStorage.getItem('theme');
+			if (!theme) {
+				theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+			}
+			document.documentElement.setAttribute('data-theme', theme);
+			document.documentElement.style.colorScheme = theme;
+			// Use the exact background colors from style.css to prevent flash
+			document.documentElement.style.backgroundColor = (theme === 'dark' ? '#1e1e1e' : '#f2f4f7');
+		} catch (e) { /* fail silently */ }
+	})();
+</script>
+
+<!-- Early external script to ensure theme & blur applied before CSS paints -->
+<script src="/js/dist/early-theme-blur.min.js"></script>
+
+<!-- Shared head partial: favicon and small common head items -->
+<link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+
+<!-- Fonts: Inter (centralized) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+<!-- Base stylesheet (included globally via head partial) -->
+<link rel="stylesheet" href="/css/style.css">
+
+<!-- Brief, general head content only -->
+
+<script src="/js/dist/index.min.js"></script>
+
+<!-- HTMX (progressive enhancement) loader -->
+<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
+
+
+
+
+
+

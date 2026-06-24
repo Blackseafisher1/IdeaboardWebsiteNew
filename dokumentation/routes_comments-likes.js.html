@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: routes/comments-likes.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: routes/comments-likes.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Routen zum Liken und Reagieren auf Kommentare (HTMX kompatible Partials).
+ * Nutzt `ideasCommentsService` für die Geschäftslogik und `liveUpdates` zum Benachrichtigen.
+ * @module routes/comments-likes
+ */
+
+const express = require('express');
+const router = express.Router();
+const asyncHandler = require('../lib/asyncHandler');
+const { 
+  toggleCommentLike, 
+  toggleCommentReaction, 
+  loadSingleCommentWithReactions 
+} = require('../lib/services/ideasCommentsService');
+const liveUpdates = require('../lib/liveUpdates');
+const { errorHtml } = require('../lib/http');
+
+const { isLoggedIn } = require('./middleware');
+router.use(isLoggedIn);
+const htmxDetector = require('../lib/htmxDetector');
+router.use(htmxDetector.middleware);
+
+// Serverseitige Emoji-Whitelist für Kommentar-Reaktionen
+const ALLOWED_REACTION_EMOJIS = ['❤️','😂','😮','😢','😡','🎉','🙏','👀','🤔'];
+
+/**
+ * POST /comments-likes/:commentId/react
+ * Führt eine Emoji-Reaktion auf einen Kommentar aus.
+ * @name POST /:commentId/react
+ * @function
+ * @inner
+ */
+router.post('/:commentId/react', asyncHandler(async (req, res) => {
+  const commentId = Number(req.params.commentId);
+  const userId = req.session.user.id;
+  
+  // Akzeptiere Emoji aus Body oder Query; unterstütze camelCase und snake_case
+  const emoji = req.body.emoji || req.query.emoji;
+  const ideaId = Number(req.body.ideaId || req.body.idea_id || req.query.idea_id || req.query.ideaId);
+
+  if (!emoji || !ideaId) {
+    console.warn('Emoji-Reaktion: fehlende Parameter:', { emoji, ideaId, body: req.body, query: req.query });
+    return res.status(400).send(req.isHtmx ? 'Ungültige Anfrage: emoji und idea_id erforderlich' : errorHtml('Ungültige Anfrage: emoji und idea_id erforderlich'));
+  }
+
+  // Emoji gegen Server-Whitelist validieren, um beliebige Werte in der DB zu verhindern
+  if (!ALLOWED_REACTION_EMOJIS.includes(String(emoji))) {
+    return res.status(400).send(req.isHtmx ? 'Ungültiges Emoji' : errorHtml('Ungültiges Emoji'));
+  }
+
+  const { removed, addedEmoji } = await toggleCommentReaction(commentId, userId, emoji);
+
+  liveUpdates.recordChange(ideaId, 'comment_reacted', {
+    comment_id: commentId,
+    user: req.session.user.username
+  });
+
+  if (req.isHtmx) {
+    const single = await loadSingleCommentWithReactions(commentId, userId);
+    if (!single) return res.status(404).send(req.isHtmx ? 'Nicht gefunden' : errorHtml('Nicht gefunden'));
+
+    return res.render('ideas/_comment-item', {
+      comment: single.comment,
+      user: req.session.user,
+      layout: false
+    });
+  }
+
+  res.redirect(`/ideas/${ideaId}`);
+}));
+
+/**
+ * POST /comments-likes/:id/like
+ * Toggelt das Like eines Kommentars (Binär-Like).
+ * @name POST /:id/like
+ * @function
+ * @inner
+ */
+router.post('/:id/like', asyncHandler(async (req, res) => {
+  const commentId = Number(req.params.id);
+  const userId = req.session.user.id;
+  const ideaId = Number(req.query.idea_id ?? req.body.idea_id);
+
+  if (!ideaId) return res.status(400).send(req.isHtmx ? 'idea_id erforderlich' : errorHtml('idea_id erforderlich'));
+
+  const liked = await toggleCommentLike(commentId, userId);
+
+  // Sitzung für lokalen Zustand aktualisieren
+  req.session.user.commentLikes = req.session.user.commentLikes || {};
+  if (liked) req.session.user.commentLikes[commentId] = true;
+  else delete req.session.user.commentLikes[commentId];
+
+  liveUpdates.recordChange(ideaId, 'comment_reacted', {
+    comment_id: commentId,
+    user: req.session.user.username
+  });
+
+  if (req.isHtmx) {
+    const single = await loadSingleCommentWithReactions(commentId, userId);
+    if (!single) return res.status(404).send(req.isHtmx ? 'Nicht gefunden' : errorHtml('Nicht gefunden'));
+
+    return res.render('ideas/_comment-item', {
+      comment: single.comment,
+      user: req.session.user,
+      layout: false,
+      liked
+    });
+  }
+
+  res.redirect(`/ideas/${ideaId}`);
+}));
+
+module.exports = router;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

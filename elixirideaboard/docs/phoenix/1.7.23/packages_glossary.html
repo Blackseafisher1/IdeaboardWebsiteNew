@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.37.2">
+    <meta name="project" content="Phoenix v1.7.23">
+
+
+    <title>Packages Glossary — Phoenix v1.7.23</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-6X3L5KMG.css" />
+
+    <script defer src="dist/sidebar_items-169F3323.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-6XHBGSGW.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="https://www.phoenixframework.org" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Phoenix" />
+        </a>
+
+      <div>
+        <a href="https://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.7.23
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Packages Glossary</h1>
+
+
+      <a href="https://github.com/phoenixframework/phoenix/blob/v1.7.23/guides/introduction/packages_glossary.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+<p>By default, Phoenix applications depend on several packages with different purposes.
+This page is a quick reference of the different packages you may work with as a Phoenix
+developer.</p><p>The main packages are:</p><ul><li><p><a href="https://hexdocs.pm/ecto">Ecto</a> - a language integrated query and
+database wrapper</p></li><li><p><a href="https://hexdocs.pm/phoenix">Phoenix</a> - the Phoenix web framework
+(these docs)</p></li><li><p><a href="https://hexdocs.pm/phoenix_live_view">Phoenix LiveView</a> - build rich,
+real-time user experiences with server-rendered HTML. The LiveView
+project also defines <a href="https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html"><code class="inline">Phoenix.Component</code></a> and
+<a href="https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2">the HEEx template engine</a>,
+used for rendering HTML content in both regular and real-time applications</p></li><li><p><a href="https://hexdocs.pm/plug">Plug</a> - specification and conveniences for
+building composable modules web applications. This is the package
+responsible for the connection abstraction and the regular request-
+response life-cycle</p></li></ul><p>You will also work with the following:</p><ul><li><p><a href="https://hexdocs.pm/ex_unit">ExUnit</a> - Elixir's built-in test framework</p></li><li><p><a href="https://hexdocs.pm/gettext">Gettext</a> - internationalization and
+localization through <a href="https://www.gnu.org/software/gettext/"><code class="inline">gettext</code></a></p></li><li><p><a href="https://hexdocs.pm/swoosh">Swoosh</a> - a library for composing,
+delivering and testing emails, also used by <a href="Mix.Tasks.Phx.Gen.Auth.html"><code class="inline">mix phx.gen.auth</code></a></p></li></ul><p>When peeking under the covers, you will find those libraries play
+an important role in Phoenix applications:</p><ul><li><p><a href="https://hexdocs.pm/phoenix_html">Phoenix HTML</a> - building blocks
+for working with HTML and forms safely</p></li><li><p><a href="https://hex.pm/packages/phoenix_ecto">Phoenix Ecto</a> - plugs and
+protocol implementations for using phoenix with ecto</p></li><li><p><a href="https://hexdocs.pm/phoenix_pubsub">Phoenix PubSub</a> - a distributed
+pub/sub system with presence support</p></li></ul><p>When it comes to instrumentation and monitoring, check out:</p><ul><li><p><a href="https://hexdocs.pm/phoenix_live_dashboard">Phoenix LiveDashboard</a> -
+real-time performance monitoring and debugging tools for Phoenix
+developers</p></li><li><p><a href="https://hexdocs.pm/telemetry_metrics">Telemetry Metrics</a> - common
+interface for defining metrics based on Telemetry events</p></li></ul>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="community.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Community
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="directory_structure.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Directory structure
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/phoenix/1.7.23" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/phoenix/1.7.23">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/phoenix/1.7.23/show/guides/introduction/packages_glossary.md">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="Phoenix.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.37.2) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

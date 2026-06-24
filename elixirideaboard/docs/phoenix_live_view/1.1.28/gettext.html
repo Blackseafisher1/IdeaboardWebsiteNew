@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="Phoenix LiveView v1.1.28">
+
+
+    <title>Gettext for internationalization — Phoenix LiveView v1.1.28</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-B046587D.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="http://www.phoenixframework.org" class="sidebar-projectName" translate="no">
+Phoenix LiveView
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.1.28
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="GUIDES"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Phoenix LiveView</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>Gettext for internationalization</h1>
+
+<a href="gettext.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+      <a href="https://github.com/phoenixframework/phoenix_live_view/blob/v1.1.28/guides/server/gettext.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p>For internationalization with <a href="https://hexdocs.pm/gettext/Gettext.html">gettext</a>,
+you must call <code class="inline">Gettext.put_locale/2</code> on the LiveView mount callback to instruct
+the LiveView which locale should be used for rendering the page.</p><p>However, one question that has to be answered is how to retrieve the locale in
+the first place. There are many approaches to solve this problem:</p><ol><li>The locale could be stored in the URL as a parameter</li><li>The locale could be stored in the session</li><li>The locale could be stored in the database</li></ol><p>We will briefly cover these approaches to provide some direction.</p><h2 id="locale-from-parameters" class="section-heading"><a href="#locale-from-parameters" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Locale from parameters</span></h2><p>You can say all URLs have a locale parameter. In your router:</p><pre><code class="makeup elixir" translate="no"><span class="n">scope</span><span class="w"> </span><span class="s">&quot;/:locale&quot;</span><span class="w"> </span><span class="k" data-group-id="4472223039-1">do</span><span class="w">
+  </span><span class="n">live</span><span class="w"> </span><span class="n">...</span><span class="w">
+  </span><span class="n">get</span><span class="w"> </span><span class="n">...</span><span class="w">
+</span><span class="k" data-group-id="4472223039-1">end</span></code></pre><p>Accessing a page without a locale should automatically redirect
+to a URL with locale (the best locale could be fetched from
+HTTP headers, which is outside of the scope of this guide).</p><p>Then, assuming all URLs have a locale, you can set the Gettext
+locale accordingly:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">mount</span><span class="p" data-group-id="6270547407-1">(</span><span class="p" data-group-id="6270547407-2">%{</span><span class="s">&quot;locale&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">locale</span><span class="p" data-group-id="6270547407-2">}</span><span class="p">,</span><span class="w"> </span><span class="c">_session</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="6270547407-1">)</span><span class="w"> </span><span class="k" data-group-id="6270547407-3">do</span><span class="w">
+  </span><span class="nc">Gettext</span><span class="o">.</span><span class="n">put_locale</span><span class="p" data-group-id="6270547407-4">(</span><span class="nc">MyApp.Gettext</span><span class="p">,</span><span class="w"> </span><span class="n">locale</span><span class="p" data-group-id="6270547407-4">)</span><span class="w">
+  </span><span class="p" data-group-id="6270547407-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="6270547407-5">}</span><span class="w">
+</span><span class="k" data-group-id="6270547407-3">end</span></code></pre><p>You can also use the <a href="Phoenix.LiveView.html#on_mount/1"><code class="inline">on_mount</code></a> hook to
+automatically restore the locale for every LiveView in your application:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyAppWeb.RestoreLocale</span><span class="w"> </span><span class="k" data-group-id="2261207150-1">do</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">on_mount</span><span class="p" data-group-id="2261207150-2">(</span><span class="ss">:default</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2261207150-3">%{</span><span class="s">&quot;locale&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">locale</span><span class="p" data-group-id="2261207150-3">}</span><span class="p">,</span><span class="w"> </span><span class="c">_session</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="2261207150-2">)</span><span class="w"> </span><span class="k" data-group-id="2261207150-4">do</span><span class="w">
+    </span><span class="nc">Gettext</span><span class="o">.</span><span class="n">put_locale</span><span class="p" data-group-id="2261207150-5">(</span><span class="nc">MyApp.Gettext</span><span class="p">,</span><span class="w"> </span><span class="n">locale</span><span class="p" data-group-id="2261207150-5">)</span><span class="w">
+    </span><span class="p" data-group-id="2261207150-6">{</span><span class="ss">:cont</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="2261207150-6">}</span><span class="w">
+  </span><span class="k" data-group-id="2261207150-4">end</span><span class="w">
+
+  </span><span class="c1"># catch-all case</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">on_mount</span><span class="p" data-group-id="2261207150-7">(</span><span class="ss">:default</span><span class="p">,</span><span class="w"> </span><span class="c">_params</span><span class="p">,</span><span class="w"> </span><span class="c">_session</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="2261207150-7">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2261207150-8">{</span><span class="ss">:cont</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="2261207150-8">}</span><span class="w">
+</span><span class="k" data-group-id="2261207150-1">end</span></code></pre><p>Then, add this hook to <code class="inline">def live_view</code> under <code class="inline">MyAppWeb</code>, to run it on all
+LiveViews by default:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">live_view</span><span class="w"> </span><span class="k" data-group-id="8870753778-1">do</span><span class="w">
+  </span><span class="k">quote</span><span class="w"> </span><span class="k" data-group-id="8870753778-2">do</span><span class="w">
+    </span><span class="kn">use</span><span class="w"> </span><span class="nc">Phoenix.LiveView</span><span class="w">
+
+    </span><span class="n">on_mount</span><span class="w"> </span><span class="nc">MyAppWeb.RestoreLocale</span><span class="w">
+    </span><span class="k">unquote</span><span class="p" data-group-id="8870753778-3">(</span><span class="n">view_helpers</span><span class="p" data-group-id="8870753778-4">(</span><span class="p" data-group-id="8870753778-4">)</span><span class="p" data-group-id="8870753778-3">)</span><span class="w">
+  </span><span class="k" data-group-id="8870753778-2">end</span><span class="w">
+</span><span class="k" data-group-id="8870753778-1">end</span></code></pre><p>Note that, because the Gettext locale is not stored in the assigns, if you
+want to change the locale, you must use <code class="inline">&lt;.link navigate={...} /&gt;</code>, instead
+of simply patching the page.</p><h2 id="locale-from-session" class="section-heading"><a href="#locale-from-session" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Locale from session</span></h2><p>You may also store the locale in the Plug session. For example, in a controller
+you might do:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">put_user_session</span><span class="p" data-group-id="6455616766-1">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">current_user</span><span class="p" data-group-id="6455616766-1">)</span><span class="w"> </span><span class="k" data-group-id="6455616766-2">do</span><span class="w">
+  </span><span class="nc">Gettext</span><span class="o">.</span><span class="n">put_locale</span><span class="p" data-group-id="6455616766-3">(</span><span class="nc">MyApp.Gettext</span><span class="p">,</span><span class="w"> </span><span class="n">current_user</span><span class="o">.</span><span class="n">locale</span><span class="p" data-group-id="6455616766-3">)</span><span class="w">
+
+  </span><span class="n">conn</span><span class="w">
+  </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">put_session</span><span class="p" data-group-id="6455616766-4">(</span><span class="ss">:user_id</span><span class="p">,</span><span class="w"> </span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p" data-group-id="6455616766-4">)</span><span class="w">
+  </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">put_session</span><span class="p" data-group-id="6455616766-5">(</span><span class="ss">:locale</span><span class="p">,</span><span class="w"> </span><span class="n">current_user</span><span class="o">.</span><span class="n">locale</span><span class="p" data-group-id="6455616766-5">)</span><span class="w">
+</span><span class="k" data-group-id="6455616766-2">end</span></code></pre><p>and then restore the locale from session within your LiveView mount:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">mount</span><span class="p" data-group-id="4677003050-1">(</span><span class="c">_params</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4677003050-2">%{</span><span class="s">&quot;locale&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">locale</span><span class="p" data-group-id="4677003050-2">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="4677003050-1">)</span><span class="w"> </span><span class="k" data-group-id="4677003050-3">do</span><span class="w">
+  </span><span class="nc">Gettext</span><span class="o">.</span><span class="n">put_locale</span><span class="p" data-group-id="4677003050-4">(</span><span class="nc">MyApp.Gettext</span><span class="p">,</span><span class="w"> </span><span class="n">locale</span><span class="p" data-group-id="4677003050-4">)</span><span class="w">
+  </span><span class="p" data-group-id="4677003050-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="4677003050-5">}</span><span class="w">
+</span><span class="k" data-group-id="4677003050-3">end</span></code></pre><p>You can also encapsulate this in a hook, as done in the previous section.</p><p>However, if the locale is stored in the session, you can only change it
+by using regular controller requests. Therefore you should always use
+<code class="inline">&lt;.link to={...} /&gt;</code> to point to a controller that change the session
+accordingly, reloading any LiveView.</p><h2 id="locale-from-database" class="section-heading"><a href="#locale-from-database" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Locale from database</span></h2><p>You may also allow users to store their locale configuration in the database.
+Then, on <code class="inline">mount/3</code>, you can retrieve the user id from the session and load
+the locale:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">mount</span><span class="p" data-group-id="5286661632-1">(</span><span class="c">_params</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5286661632-2">%{</span><span class="s">&quot;user_id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">user_id</span><span class="p" data-group-id="5286661632-2">}</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="5286661632-1">)</span><span class="w"> </span><span class="k" data-group-id="5286661632-3">do</span><span class="w">
+  </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Users</span><span class="o">.</span><span class="n">get_user!</span><span class="p" data-group-id="5286661632-4">(</span><span class="n">user_id</span><span class="p" data-group-id="5286661632-4">)</span><span class="w">
+  </span><span class="nc">Gettext</span><span class="o">.</span><span class="n">put_locale</span><span class="p" data-group-id="5286661632-5">(</span><span class="nc">MyApp.Gettext</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="o">.</span><span class="n">locale</span><span class="p" data-group-id="5286661632-5">)</span><span class="w">
+  </span><span class="p" data-group-id="5286661632-6">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p" data-group-id="5286661632-6">}</span><span class="w">
+</span><span class="k" data-group-id="5286661632-3">end</span></code></pre><p>In practice, you may end-up mixing more than one approach listed here.
+For example, reading from the database is great once the user is logged in
+but, before that happens, you may need to store the locale in the session
+or in the URL.</p><p>Similarly, you can keep the locale in the URL, but change the URL accordingly
+to the user preferred locale once they sign in. Hopefully this guide gives
+some suggestions on how to move forward and explore the best approach for your
+application.</p>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="error-handling.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Error and exception handling
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="live-layouts.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Live layouts
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/phoenix_live_view/1.1.28">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/phoenix_live_view/1.1.28">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/phoenix_live_view/1.1.28/show/guides/server/gettext.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="Phoenix LiveView.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js"></script>
+<script>
+  let initialized = false;
+
+  window.addEventListener("exdoc:loaded", () => {
+    if (!initialized) {
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: document.body.className.includes("dark") ? "dark" : "default"
+      });
+      initialized = true;
+    }
+
+    let id = 0;
+    for (const codeEl of document.querySelectorAll("pre code.mermaid")) {
+      const graphDefinition = codeEl.textContent;
+      const graphId = "mermaid-graph-" + id++;
+      mermaid.render(graphId, graphDefinition).then(({svg, bindFunctions}) => {
+        codeEl.innerHTML = svg;
+        bindFunctions?.(codeEl);
+      });
+    }
+  });
+</script>
+
+  </body>
+</html>

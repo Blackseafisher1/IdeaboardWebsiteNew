@@ -1,0 +1,10 @@
+<div class="gate-page">
+  <h1>Zugangscode erforderlich</h1>
+  <%= if assigns[:error] do %><div class="error"><%= @error %></div><% end %>
+  <form action="/gate" method="POST">
+    <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
+    <input type="hidden" name="back" value={@back} />
+    <input type="password" name="password" placeholder="Passwort" class="input" required />
+    <button class="btn" type="submit">Bestätigen</button>
+  </form>
+</div>

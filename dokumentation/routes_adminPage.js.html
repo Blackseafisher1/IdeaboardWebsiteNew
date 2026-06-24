@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: routes/adminPage.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: routes/adminPage.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Admin-Routen für Benutzerverwaltung, Rollen und Audit-Logs.
+ * Alle Routen sind geschützt und verwenden das `isLoggedIn` + `isAdmin` Middleware-Setup.
+ * JSDoc-Kommentare in diesem Projekt sind auf Deutsch verfasst.
+ * @module routes/adminPage
+ */
+
+const express = require('express');
+const router = express.Router();
+const asyncHandler = require('../lib/asyncHandler');
+const adminService = require('../lib/services/adminService');
+const authService = require('../lib/services/authService');
+const { errorHtml } = require('../lib/http');
+const { isLoggedIn, isAdmin } = require('./middleware');
+
+const hashService = authService.hashService;
+
+router.use(isLoggedIn);
+router.use(isAdmin);
+const htmxDetector = require('../lib/htmxDetector');
+router.use(htmxDetector.middleware);
+
+/**
+ * GET /admin
+ * Zeigt die Benutzerverwaltung an (Liste von Benutzern und Rollen).
+ * @name GET /
+ * @function
+ * @inner
+ */
+router.get('/', asyncHandler(async (req, res) => {
+    const usersWithRoles = await adminService.getUsersWithRoles();
+    const availableRoles = await adminService.getAvailableRoles();
+    
+    res.render('adminPage/adminPage', {
+        pageTitle: 'Benutzerverwaltung',
+        users: usersWithRoles,
+        availableRoles: availableRoles
+    });
+}));
+
+/**
+ * GET /admin/logs
+ * Zeigt die Audit-Logs (Aktivitätenprotokoll) an.
+ * @name GET /logs
+ * @function
+ * @inner
+ */
+router.get('/logs', asyncHandler(async (req, res) => {
+    const logs = await adminService.getAdminLogs(200);
+    res.render('adminPage/adminLogs', { logs });
+}));
+
+/**
+ * POST /admin/change-role
+ * Ändert die Rolle eines Benutzers und loggt die Aktion.
+ * @name POST /change-role
+ * @function
+ * @inner
+ */
+router.post('/change-role', asyncHandler(async (req, res) => {
+    const { user_id, new_role_id } = req.body;
+    const actorId = req.session.user.id;
+
+    const targetUser = await adminService.getUserForAdmin(user_id);
+
+    if (!targetUser) {
+        return res.status(404).send(req.isHtmx ? 'Zielbenutzer nicht gefunden.' : errorHtml('Zielbenutzer nicht gefunden.'));
+    }
+
+    try {
+        await adminService.updateUserRole(actorId, user_id, new_role_id);
+    } catch (err) {
+        const msg = String(err &amp;&amp; err.message ? err.message : 'Fehler beim Ändern der Rolle');
+        if (msg.indexOf('FORBIDDEN') === 0) {
+            const userMsg = msg.replace(/^FORBIDDEN:\s*/, '') || 'Aktion nicht erlaubt.';
+            return res.status(403).send(req.isHtmx ? userMsg : errorHtml(userMsg));
+        }
+        if (msg.indexOf('BAD_REQUEST') === 0) {
+            const userMsg = msg.replace(/^BAD_REQUEST:\s*/,'') || 'Ungültige Anfrage.';
+            const statusCode = userMsg.includes('Ansprechpartner') &amp;&amp; userMsg.includes('Mitarbeiter') ? 409 : 400;
+            return res.status(statusCode).send(req.isHtmx ? userMsg : errorHtml(userMsg));
+        }
+        throw err;
+    }
+
+    if (req.isHtmx) {
+        const updatedUser = await adminService.getUserForAdmin(user_id);
+        const availableRoles = await adminService.getAvailableRoles();
+        return res.render('adminPage/_userRow', { user: updatedUser, availableRoles });
+    }
+
+    res.redirect('/adminPage');
+}));
+
+/**
+ * POST /admin/delete-user
+ * Löscht einen Benutzer dauerhaft und loggt die Aktion.
+ * @name POST /delete-user
+ * @function
+ * @inner
+ */
+router.post('/delete-user', asyncHandler(async (req, res) => {
+    const { user_id_to_delete } = req.body;
+    const idToDelete = Number(user_id_to_delete);
+    const actorId = req.session.user.id;
+
+    const targetUser = await adminService.getUserForAdmin(idToDelete);
+
+    if (!targetUser) {
+        return res.status(404).send(req.isHtmx ? 'Zielbenutzer nicht gefunden.' : errorHtml('Zielbenutzer nicht gefunden.'));
+    }
+
+    // Primär-Admin und Nutzer mit Rolle 'Admin' dürfen nicht gelöscht werden
+    if (idToDelete === 1 || hasAdminRole(targetUser)) {
+        return res.status(403).send(req.isHtmx ? 'Administratoren können nicht gelöscht werden.' : errorHtml('Administratoren können nicht gelöscht werden.'));
+    }
+
+    await adminService.deleteUser(actorId, idToDelete);
+
+    if (req.isHtmx) {
+        return res.send('');
+    }
+
+    res.redirect('/adminPage');
+}));
+
+/**
+ * POST /admin/manual-points
+ * Vergibt manuell Punkte an einen Benutzer durch einen Admin.
+ * @name POST /manual-points
+ * @function
+ * @inner
+ */
+router.post('/manual-points', asyncHandler(async (req, res) => {
+    const { user_id, points, reason } = req.body;
+    const actorId = req.session.user.id;
+    const pointsNum = Number(points);
+
+    if (isNaN(pointsNum) || pointsNum &lt; -50 || pointsNum > 50) {
+        return res.status(400).send(req.isHtmx ? 'Punkte müssen zwischen -50 und +50 liegen.' : errorHtml('Punkte müssen zwischen -50 und +50 liegen.'));
+    }
+
+    await adminService.assignManualPoints(actorId, user_id, pointsNum, reason);
+
+    if (req.isHtmx) {
+        return res.send('&lt;div class="hx-message">Punkte erfolgreich vergeben.&lt;/div>');
+    }
+    res.redirect('/adminPage');
+}));
+
+/**
+ * POST /admin/reset-password
+ * Setzt das Passwort eines Benutzers auf einen zufälligen Wert zurück.
+ * @name POST /reset-password
+ * @function
+ * @inner
+ */
+router.post('/reset-password', asyncHandler(async (req, res) => {
+    const { user_id } = req.body;
+    const actorId = req.session.user.id;
+    const targetId = Number(user_id);
+
+    if (!targetId || isNaN(targetId)) return res.status(400).send(req.isHtmx ? 'Ungültiger Benutzer.' : errorHtml('Ungültiger Benutzer.'));
+
+    const targetUser = await adminService.getUserForAdmin(targetId);
+    if (!targetUser) return res.status(404).send(req.isHtmx ? 'Benutzer nicht gefunden.' : errorHtml('Benutzer nicht gefunden.'));
+
+    // Generiere ein 8-stelliges alphanumerisches Passwort
+    const genPassword = Math.random().toString(36).slice(-8).padStart(8, '0');
+
+    const hash = await hashService.hash(genPassword);
+    await adminService.resetUserPassword(actorId, targetId, hash);
+
+    if (req.isHtmx) {
+        return res.send(`&lt;div class="generated-pw">Passwort: &lt;strong>${genPassword}&lt;/strong>&lt;/div>`);
+    }
+
+    res.redirect('/adminPage');
+}));
+
+module.exports = router;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

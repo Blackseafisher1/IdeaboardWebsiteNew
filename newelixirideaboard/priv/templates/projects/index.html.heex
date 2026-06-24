@@ -1,0 +1,9 @@
+<h1>Projekte</h1>
+<div class="projects-list">
+  <%= for project <- @projects do %>
+    <div class="project-card">
+      <h3><%= project.name %></h3>
+      <p><%= project.description %></p>
+    </div>
+  <% end %>
+</div>

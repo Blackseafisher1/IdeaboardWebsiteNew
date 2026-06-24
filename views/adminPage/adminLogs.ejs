@@ -1,0 +1,56 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Audit Log</title>
+  
+  <link rel="stylesheet" href="/css/adminPage.css">
+  <%- include('../partials/head') %>
+</head>
+
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="admin-page">
+    <header class="admin-page__header">
+      <h1 class="admin-page__title">Admin Audit Log</h1>
+      <p class="admin-page__subtitle">Protokolliert Rollenänderungen und Löschaktionen.</p>
+      <p><a href="/adminPage">← Zurück zur Benutzerverwaltung</a></p>
+    </header>
+
+    <div class="admin-table-wrap" tabindex="0" aria-label="Audit Log Tabelle">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th scope="col">Zeit</th>
+            <th scope="col">Aktion</th>
+            <th scope="col">Actor</th>
+            <th scope="col">Target</th>
+            <th scope="col">Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% logs.forEach(function(row){ %>
+            <tr>
+              <td data-label="Zeit"><%= new Date(row.created_at).toLocaleString('de-DE') %></td>
+              <td data-label="Aktion"><%= row.action %></td>
+              <td data-label="Actor"><%= row.actor_username %> (#<%= row.actor_id %>)</td>
+              <td data-label="Target">
+                <% if (row.target_user_id) { %>
+                  <%= row.target_username || 'gelöscht' %> (#<%= row.target_user_id %>)
+                <% } else { %>
+                  -
+                <% } %>
+              </td>
+              <td data-label="Details"><%= row.details || '' %></td>
+            </tr>
+          <% }) %>
+
+          <% if (!logs.length) { %>
+            <tr><td colspan="5" class="no-users">Keine Log-Einträge vorhanden.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
