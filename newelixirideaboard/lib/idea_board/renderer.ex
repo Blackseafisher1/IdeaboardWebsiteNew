@@ -22,7 +22,8 @@ defmodule IdeaBoard.Renderer do
   def render_partial(template, assigns, conn \\ nil) do
     user = get_user(conn)
     assigns = assigns |> Enum.into(%{}) |> Map.put(:user, user)
-    Phoenix.Template.render(__MODULE__, template, "heex", assigns)
+    result = Phoenix.Template.render(__MODULE__, template, "heex", assigns)
+    if is_binary(result), do: [result], else: result
   end
 
   def render_partial_string(template, assigns, conn \\ nil) do
