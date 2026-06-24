@@ -1,44 +1,19 @@
-# Todo: Code Cleanup & Konsistenz
+# Todo – Offene Punkte
 
-## 1. Übersetzung englischer Kommentare → Deutsch
+## Seed-Script
+- [ ] `seed-test-data.js` erzeugt Testnutzer mit unvollständigen DM-Referenzen → `Failed to fetch` bei Chat-Aktionen. Normale Registrierung funktioniert.
 
-Vereinzelte englische Inline-Kommentare finden, die inmitten von deutschem Code stehen:
+## Mögliche Verbesserungen
+- Levenshtein UDF in `ideasSearchService.js` als optionaler Fuzzy-Fallback integrieren
+- `buildBooleanQuery()` in `ideasSearchService.js` bereits gesichert ✓
+- Lazy `require('./ideasFilesService')` in `ideasService.js:39` auflösen (zirkuläre Deps)
+- Event Scheduler (`server.js:373`) sollte automatisch aktiviert werden, nicht nur Hinweis
+- Migration `0039_fulltext_projects_surveys.sql` testen ob Indizes korrekt erstellt
 
-- [ ] `lib/services/ideasSearchService.js:53` — `// Normalize: trim + lowercase` → Deutsch
-- [ ] `routes/ideas.js:288` — `// BigInt-sicher serialisieren und als SSE-Event senden` → `// BigInt-sicher serialisieren und als SSE-Event senden` (bereits Deutsch, ok)
-- [ ] `lib/services/userService.js:94` — `// Verhindere Kollisionen nur durch Groß-/Kleinschreibung` → `// Verhindere Kollisionen durch Groß-/Kleinschreibung`
-
-## 2. Entfernte Tote Code-Stellen ✓ (erledigt)
-
-- [x] `config/db.js:20-26` — auskommentiertes CREATE DATABASE + Kategorie-Seed entfernt
-- [x] `config/db.js:40` — verwaiste Zeile `statusEl.classList.remove(...)` entfernt
-- [x] `routes/load_test.js:7-12` — doppelter `@fileoverview`-Block entfernt
-- [x] `lib/liveUpdates.js:78-83` — verwaister `sanitizeValue`-JSDoc-Block entfernt
-- [x] `routes/ideas.js:280-285` — verwaister `sendUpdate`-JSDoc-Block entfernt
-- [x] `routes/ideas.js:175-181` — verwaister JSDoc-Block in `res.render()` entfernt
-- [x] `server.js:71` — auskommentiertes `app.use(timing('global'))` entfernt
-- [x] `server.js:331-334` — `reusePort` gesäubert
-
-## 3. JSDoc-Konsistenz
-
-JSDoc in Deutsch ist erwünscht. Prüfen, ob alle Dateien konsistent deutschen JSDoc haben:
-
-- [ ] `lib/cacheHelper.js` — hat keinen JSDoc-Modulheader
-- [ ] `config/db.js:68` — `// Internal normalization helper (keep internal only)` → Deutsch
-- [ ] `lib/keyManager.js:42` — `// Use the established _writeToOutput hook for masking` → Deutsch
-- [ ] `lib/dbHelpers.js:28` — `// Kurze Wartezeit (exponentielles Backoff-ähnlich)` → bereits Deutsch ✓
-- [ ] `public/js/index.js:87-193` — einige englische Inline-Kommentare → Deutsch
-- [ ] `public/js/ideasLive.js:288` — `// BigInt-sicher serialisieren und als SSE-Event senden` → bereits Deutsch ✓
-
-## 4. Datenbank-Migrationen
-
-Die Kategorie-Erstellung + Seed in `config/db.js` wurde entfernt (gehörte nicht in `getPool()`).
-Stattdessen in eine Migration auslagern, falls nicht bereits vorhanden:
-
-- [ ] Prüfen, ob `migrations/0000_baseline.sql` die categories-Tabelle anlegt (ja, tut es)
-- [ ] Prüfen, ob der Seed (Innovation, Prozess, Produkt, Kultur) in einer Migration vorhanden ist (nein) → Migration `0039_seed_categories.sql` erstellen
-
-## 5. Schnelle Korrekturen
-
-- [ ] `lib/services/ideasService.js:39` — Lazy `require('./ideasFilesService')` dokumentieren oder umgehen
-- [ ] `lib/services/ideasSearchService.js:166-181` — `buildBooleanQuery()` vor FULLTEXT-Sonderzeichen schützen
+## Erledigt
+- Dead Code entfernt ✓
+- Alle Inline-Kommentare deutsch ✓
+- Fuse.js entfernt, FULLTEXT-Suche für Projekte/Umfragen ✓
+- Levenshtein UDF gebaut + registriert ✓
+- Projekt-/Umfragenseite: Filter + Suche bleiben nach HTMX-Poll erhalten ✓
+- "Keine Ergebnisse"-Meldungen zeigen jetzt Suchbegriff ✓

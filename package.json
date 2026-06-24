@@ -16,6 +16,8 @@
     "s:off": "node scripts/toggle_event_scheduler.js off",
     "s:toggle": "node scripts/toggle_event_scheduler.js toggle",
     "genSecret": "node scripts/genSecret.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "smoke-test": "node scripts/smoke_test.js",
     "minify:js": "node scripts/minify-js.js",
     "doc:gen": "jsdoc -c jsdoc.config.json"
@@ -33,7 +35,6 @@
     "express": "5.2.1",
     "express-rate-limit": "^8.3.1",
     "express-session": "1.18.2",
-
     "ioredis": "5.9.2",
     "mariadb": "3.4.5",
     "multer": "^2.1.1",
@@ -43,7 +44,10 @@
   "devDependencies": {
     "esbuild": "^0.28.1",
     "jsdoc": "4.0.5",
-    "nodemon": "3.1.14"
+    "nodemon": "3.1.14",
+    "supertest": "^7.2.2",
+    "vite": "^8.1.0",
+    "vitest": "^4.1.9"
   },
   "allowScripts": {
     "argon2@0.44.0": true,
