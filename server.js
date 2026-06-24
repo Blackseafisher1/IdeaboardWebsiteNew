@@ -68,7 +68,6 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 // Mount timing and request-logging early so static files and all routes are measured
 
-//app.use(timing('global'));
 // Request logger: ensures every HTTP request is logged (method, url, status, duration)
 app.use((req, res, next) => {
   const start = Date.now();
@@ -328,10 +327,9 @@ async function startServer() {
     }
   });
 
-  // NUR FÜR BUN: reusePort aktivieren!
+  // Für Bun: reusePort ermöglicht mehreren Prozessen denselben Port zu teilen
   if (isBun) {
-  server.reusePort = true;  
-  console.log('🔧 Bun reusePort aktiviert - alle Prozesse teilen sich Port', PORT);
+  console.log('🔧 Bun: Alle Prozesse teilen sich Port', PORT);
   }
 
   // Graceful shutdown helper

@@ -18,12 +18,6 @@ let initialized = false;
 
 async function getPool() {
   if (pool && initialized) return pool;
- /*
-  // Ensure database exists
-  const adminConn = await driver.createConnection({ ...baseConfig, database: undefined });
-  await adminConn.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
-  await adminConn.end();
-*/
   pool = await driver.createPool(baseConfig);
 
   // Basic version check (best-effort)
@@ -40,23 +34,6 @@ async function getPool() {
         }
       }
     }
-
-      // Categories
-  console.log('  Kategorien...');
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS categories (
-      category_id INT AUTO_INCREMENT PRIMARY KEY,
-      name VARCHAR(100) NOT NULL UNIQUE
-    )
-  `);
-  
-  const cats = ['Innovation', 'Prozess', 'Produkt', 'Kultur'];
-  for (const cat of cats) {
-    await pool.query(
-      `INSERT INTO categories (name) VALUES (?) ON DUPLICATE KEY UPDATE name=VALUES(name)`,
-      [cat]
-    );
-  }
   } catch (e) {
     console.warn('DB version check failed:', e && e.message ? e.message : e);
   }

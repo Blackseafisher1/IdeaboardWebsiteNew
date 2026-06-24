@@ -172,13 +172,6 @@ router.get('/chunk', async (req, res) => {
       const { remainingLikes, remainingDislikes } = await getWeeklyRemaining(userId);
       const categories = await categoriesService.getAll();
       
-      /**
-       * Rendert das Partial `ideas/_list` in einen HTML-String und liefert
-       * diesen als Promise-Ergebnis. Das Promise löst mit dem gerenderten
-       * HTML auf oder lehnt bei einem Renderfehler ab.
-       * @param {Error|null} err - Fehler beim Rendern oder null
-       * @param {string} html - Gerendertes HTML-Fragment
-       */
       const html = await new Promise((resolve, reject) => {
         res.render('ideas/_list', {
           ideas,
@@ -275,14 +268,8 @@ router.get('/updates', async (req, res) => {
         'Cache-Control': 'no-cache',
         'Connection': 'keep-alive'
       });
-      res.write('\n'); // Initialer Flush
+      res.write('\n');
 
-/**
- * sendUpdate ist ein Express-Route-Handler und verarbeitet Anfragen für diese Route.
- *
- * @returns {*} Beschreibung des Rückgabewerts
- * @function sendUpdate
- */
       const sendUpdate = (payload) => {
         if (payload.changes && payload.changes.length > 0) {
           // BigInt-sicher serialisieren und als SSE-Event senden

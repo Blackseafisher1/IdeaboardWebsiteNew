@@ -4,12 +4,6 @@
  * Nur für Test-/Entwicklungszwecke gedacht.
  * @module routes/load_test
  */
-/**
- * @fileoverview Lasttest-Utilities: Endpoints zum synthetischen Durchführen von Suchanfragen
- * gegen die `ideas`-Logik, z.B. zur Messung von Latenz und Durchsatz.
- * Nur für Test-/Entwicklungszwecke gedacht.
- * @module routes/load_test
- */
 
 const express = require('express');
 const db = require('../config/db.js');

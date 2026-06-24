@@ -1,0 +1,62 @@
+1. Einführung
+In modernen Unternehmen ist es entscheidend, Mitarbeiter aktiv in Entscheidungs- und Innovationsprozesse einzubeziehen. Ein digitales Ideenboard schafft hierfür die notwendige Transparenz, fördert die Zusammenarbeit und gibt allen Beteiligten die Möglichkeit, eigene Ideen einzubringen.
+Im Rahmen des Projektes soll ein modernes, responsives Ideenboard auf Basis von Java und JavaScript entwickelt werden, dass die Erfassung, Bewertung und Zuordnung von Ideen ebenso ermöglicht wie die transparente Übersicht über Projekte, Umfragen und Statistiken. Die benutzerfreundliche Oberfläche ist für
+Smartphones, Tablets und Desktopgeräte optimiert.
+Szenario:
+Stellen wir uns ein mittelständisches Unternehmen vor, das seine Innovationskraft steigern und die Mitarbeiter stärker in Entscheidungs- und Innovationsprozesse einbinden möchte. Die Mitarbeiter stammen aus
+unterschiedlichen Abteilungen wie Entwicklung, Marketing, Vertrieb und Support. Das Unternehmen erkennt, dass gute Ideen oft unstrukturiert eingereicht werden und dadurch wertvolles Potenzial verloren geht.
+Unternehmensprofil: Das Unternehmen entwickelt technologiegetriebene Produkte und legt großen Wert
+auf kontinuierliche Verbesserung. Entscheidungen zu Produktinnovationen, Prozessoptimierungen oder
+neuen Projekten werden transparent und nachvollziehbar getroffen.
+Problemstellung: Bisher wurden Ideen, Vorschläge und Feedbacks der Mitarbeiter über verschiedene Kanäle
+gesammelt (z. B. E-Mail, Meetings, Whiteboards oder Excel-Listen). Das führte zu:
+− Unübersichtlicher Erfassung von Ideen
+− Schwierigkeiten bei Bewertung von Vorschlägen
+− Mangelnder Transparenz über den Status laufender Projekte
+− Fehlender Motivation der Mitarbeiter durch begrenztes Feedback
+Die Folge waren verpasste Innovationschancen, ineffiziente Prozesse und unklare Verantwortlichkeiten.
+September 2025 / 3
+2. Aufgabenbeschreibung
+Entwickeln Sie ein modernes, benutzerfreundliches digitales Ideenboard mit folgenden Kernfunktionen:
+2.1 Ideen einreichen
+− Neue Ideen anlegen (Title, Beschreibung und Kategorie)
+− Möglichkeit Schlagworte/ Tags hinzuzufügen
+− Möglichkeit zur Bearbeitung eigener eingereichten Ideen
+− Option zum Hochladen von Dateien zu Ideen
+2.2 Ideen fördern & bewerten
+− Eingereichte Ideen können geliked werden
+− Jeder Nutzer hat drei Likes pro Woche
+− Ideen können kommentiert werden (max. 200 Zeichen)
+− Nutzer können auf Kommentare reagieren (z. B. mit Emojis)
+2.3 Projektübersicht
+− Übersicht über alle aktuell laufenden Projekte
+− Anzeige des Status (Konzeption, Umsetzung, Abgeschlossen)
+− Visualisierung des Projektfortschritt (z. B. Fortschrittsbalken)
+− Direkte Kontaktmöglichkeit des Ansprechpartners
+2.4 Dashboard & Übersicht
+− Übersicht über neue Ideen, Top-Ideen, Projekte und Umfragen
+− Möglichkeit an Umfragen teilzunehmen
+− Interaktive Filter- und Sortiermöglichkeiten
+− Hervorhebung der „Top 3 – Ideen der Woche“ 
+September 2025 / 4
+2.5 Statistiken & Reporting
+− Anzeige von Kennzahlen (Anzahl neuer Ideen, Beliebtesten Kategorien, Beliebteste Idee)
+− Graphische Darstellung dieser Kennzahlen (z. B. Diagramme)
+2.6 Rollenmanagement
+− Verwaltung von Nutzerrollen und Berechtigungen (Administratoren, Projektleiter, Mitarbeiter)
+− Mitarbeiter können nur Ideen einreichen, bewerten, Kommentare schreiben und an Umfragen teilnehmen
+− Projektleiter können zusätzlich noch Projekte bearbeiten (z. B. den Status verändern)
+− Admins können alle Bereiche verwalten (z. B. Ideen löschen)
+2.7 Benutzeroberfläche
+− Moderne, intuitive Bedienoberfläche in deutscher Sprache
+− Responsive Design für verschiedene Endgeräte
+2.8 Backend & Datenhaltung
+Die Daten werden im Backend verarbeitet und validiert. Zu diesen Daten gehören Benutzerdaten, eingereichte Ideen, Kommentare, Likes, etc.
+2.9 Optionale Funktionen
+Bei der Recherche zu dem Thema werdet Ihr zahlreiche Use Cases (z. B. Dark Mode, Gamification-Elemente,
+etc.) finden, die sich in Euer Projekt integrieren lassen. Lasst euch inspirieren und schaut, was möglich ist.
+Aber Vorsicht: Erfüllt zuerst die Mindestanforderungen, bevor Ihr euer Projekt mit zusätzlichen Funktionen
+bestückt. 
+September 2025 / 5
+2.10 Design
+Das Oberflächendesign der Anwendung ist frei wählbar, sollte sich jedoch an der Gestaltung aktueller Software orientieren, Stichwort: »Material Design« oder »Flat-UI«. Entsprechende Ressourcen und Vorlagen findet Ihr u.a. bei Google: https://material.io/design/ oder bei Apple: https://developer.apple.com/design/human-interface-guidelines/guidelines/overview/
