@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initCommentReactionPopovers();
   bindCreateAndDeleteHandlers();
 
-  // Create idea modal open (migrated from inline script in ideas.ejs)
+  // Create-Idea-Modal öffnen (aus inline-Script in ideas.ejs migriert)
   const openCreateModalBtn = document.getElementById('openCreateModal');
   
   const createIdeaModal = document.getElementById('createIdeaModal');
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
     checkDeepLink();
     pageJustLoaded = false;
 
-    // Defensive: also support /ideas/<id> path deep-link (migrated behavior)
+    // Defensiv: auch /ideas/<id>-Pfad als Deep-Link unterstützen (migriertes Verhalten)
     const m = location.pathname.match(/\/ideas\/(\d+)/);
     if (m) {
       const id = m[1];
@@ -91,9 +91,9 @@ document.addEventListener('DOMContentLoaded', function() {
  * @returns {void}
  */
 function setupCardHandlers() {
-  // Description expansion handled by CSS/Template (full text shown)
+  // Beschreibungserweiterung durch CSS/Template (vollständiger Text)
 
-  // Keep single-click behavior for expand buttons
+  // Einfachklick-Verhalten für Erweitern-Buttons beibehalten
   document.addEventListener('click', function(e) {
     const btn = e.target.closest('.expand-card');
     if (!btn) return;

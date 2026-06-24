@@ -186,7 +186,7 @@ function handleIdeaDeletion(ideaId, currentlyExpandedCardId) {
     }
   }
 
-  // Fade out smoothly before removing
+  // Sanft ausblenden vor dem Entfernen
   cardToRemove.style.opacity = '0.5';
   cardToRemove.style.transition = 'opacity 0.3s ease';
 
@@ -207,7 +207,7 @@ async function fetchNewIdeaAndPrepend(ideaId) {
     console.log('SSE: Already refreshing, skipping fetch/prepend for idea:', ideaId);
     return;
   }
-  // Avoid duplicate cards if local creation and SSE both trigger
+  // Doppelte Karten vermeiden, wenn lokale Erstellung und SSE gleichzeitig auslösen
   if (document.querySelector(`.idea-card[data-id="${ideaId}"]`)) {
     console.log('SSE: Idea card already exists, skipping prepend:', ideaId);
     return;
@@ -226,13 +226,13 @@ async function fetchNewIdeaAndPrepend(ideaId) {
 
     if (newCard) {
       const newId = newCard.dataset.id || newCard.getAttribute('data-id');
-      // Final check to handle race with the main POST response or other SSE events
+      // Endprüfung, um Rennen mit der POST-Antwort oder anderen SSE-Ereignissen zu vermeiden
       if (newId && document.querySelector(`.idea-card[data-id="${newId}"]`)) {
         console.log('SSE: Idea card appeared during fetch, skipping insert:', newId);
         return;
       }
 
-      // Check whether the new idea matches the currently applied search filter
+      // Prüfen, ob die neue Idee zum aktuellen Suchfilter passt
       const searchInput = document.querySelector('input[name="q"]');
       const currentQuery = searchInput ? searchInput.value.toLowerCase() : "";
       const cardText = newCard.textContent.toLowerCase();
@@ -242,7 +242,7 @@ async function fetchNewIdeaAndPrepend(ideaId) {
       const ideasGrid = document.querySelector('#ideas-content .ideas-grid');
       if (!ideasGrid) return;
 
-      // Remove empty-state placeholder when the first idea arrives via live updates
+      // Leeren-Zustand-Platzhalter entfernen, wenn die erste Idee per Live-Update eintrifft
       const emptyState = ideasGrid.querySelector('.ideas-empty-state');
       if (emptyState) emptyState.remove();
 
