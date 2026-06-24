@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.34.1">
+    <meta name="project" content="jason v1.4.4">
+
+
+    <title>Changelog — jason v1.4.4</title>
+    <link rel="stylesheet" href="dist/html-elixir-VEFCVPF3.css" />
+
+
+      <link rel="canonical" href="http://hexdocs.pm/jason/changelog.html" />
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-782289CD.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-7XSQ4GTY.js"></script>
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+jason
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.4.4
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of jason</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <h1>
+
+      <a href="https://github.com/michalmuskala/jason/blob/v1.4.4/CHANGELOG.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+
+    <span>Changelog</span>
+  </h1>
+
+<h2 id="1-4-4-26-07-2024" class="section-heading">
+  <a href="#1-4-4-26-07-2024" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.4.4 (26.07.2024)</span>
+</h2>
+<ul><li>Fix warnings on Elixir 1.17 by conditionally compiling Decimal support</li></ul><h2 id="1-4-3-29-06-2024" class="section-heading">
+  <a href="#1-4-3-29-06-2024" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.4.3 (29.06.2024)</span>
+</h2>
+<ul><li>Fix derive with _ struct key</li></ul><h2 id="1-4-2-29-06-2024" class="section-heading">
+  <a href="#1-4-2-29-06-2024" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.4.2 (29.06.2024)</span>
+</h2>
+<ul><li>Fix compiler warnings for Elixir 1.17</li></ul><h2 id="1-4-1-06-07-2023" class="section-heading">
+  <a href="#1-4-1-06-07-2023" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.4.1 (06.07.2023)</span>
+</h2>
+<ul><li>Add limit to decoded integer sizes of 1024 digits. This can be changed
+with the <code class="inline">decoding_integer_digit_limit</code> app env config.</li></ul><h2 id="1-4-0-12-09-2022" class="section-heading">
+  <a href="#1-4-0-12-09-2022" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.4.0 (12.09.2022)</span>
+</h2>
+<h3 id="enhancements" class="section-heading">
+  <a href="#enhancements" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>Use the <code class="inline">:erlang.float_to_binary(_, [:short])</code> function, instead of <code class="inline">io_lib_format.fwrite_g/1</code>
+where available (OTP 24.1+). This provides equivalent output with much less memory used
+and significantly improved performance.</li></ul><h2 id="1-3-0-21-12-2021" class="section-heading">
+  <a href="#1-3-0-21-12-2021" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.3.0 (21.12.2021)</span>
+</h2>
+<h3 id="enhancements-1" class="section-heading">
+  <a href="#enhancements-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>Add the <a href="Jason.OrderedObject.html"><code class="inline">Jason.OrderedObject</code></a> struct</li><li>Support decoding objects preserving all the keys with <code class="inline">objects: :ordered_objects</code> option</li><li>Support decoding floats to <a href="https://hexdocs.pm/decimal/2.1.1/Decimal.html"><code class="inline">Decimal</code></a> with <code class="inline">floats: :decimals</code> option</li><li>Add <code class="inline">~j</code> and <code class="inline">~J</code> sigils in module <a href="Jason.Sigil.html"><code class="inline">Jason.Sigil</code></a> to support writing JSON literals in code</li></ul><h3 id="fixes" class="section-heading">
+  <a href="#fixes" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Fixes</span>
+</h3>
+<ul><li>Fix error reporting when decoding strings (it was possible to mis-attribute the offending byte)</li><li>Verify fields given to <code class="inline">@derive</code></li></ul><h2 id="1-2-2-08-09-2020" class="section-heading">
+  <a href="#1-2-2-08-09-2020" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.2.2 (08.09.2020)</span>
+</h2>
+<h3 id="enhancements-2" class="section-heading">
+  <a href="#enhancements-2" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>Support Decimal 2.0</li></ul><h2 id="1-2-1-04-05-2020" class="section-heading">
+  <a href="#1-2-1-04-05-2020" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.2.1 (04.05.2020)</span>
+</h2>
+<h3 id="security" class="section-heading">
+  <a href="#security" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Security</span>
+</h3>
+<ul><li><p>Fix <code class="inline">html_safe</code> escaping in <code class="inline">Jason.encode</code></p><p>The <code class="inline">&lt;!--</code> sequence of characters would not be escaped in <code class="inline">Jason.encode</code>
+with<code class="inline">html_escape</code> mode, which could lead to DoS attacks when used for
+embedding of arbitrary, user controlled strings into HTML through JSON
+(e.g. inside of <code class="inline">&lt;script&gt;</code> tags).</p><p>If you were not using the <code class="inline">html_safe</code> option, you are not affected.</p><p>Affected versions: &lt; 1.2.1
+Patched versions: &gt;= 1.2.1</p></li></ul><h2 id="1-2-0-17-03-2020" class="section-heading">
+  <a href="#1-2-0-17-03-2020" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.2.0 (17.03.2020)</span>
+</h2>
+<h3 id="enhancements-3" class="section-heading">
+  <a href="#enhancements-3" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>Add <a href="Jason.Encode.html#keyword/2"><code class="inline">Jason.Encode.keyword/2</code></a>
+(<a href="https://github.com/michalmuskala/jason/commit/cb1f26a">cb1f26a</a>).</li></ul><h3 id="bug-fixes" class="section-heading">
+  <a href="#bug-fixes" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>Fix <a href="Jason.Helpers.html#json_map/1"><code class="inline">Jason.Helpers.json_map/1</code></a> value expansion
+(<a href="https://github.com/michalmuskala/jason/commit/70b046a">70b046a</a>).</li></ul><h2 id="1-1-2-19-10-2018" class="section-heading">
+  <a href="#1-1-2-19-10-2018" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.1.2 (19.10.2018)</span>
+</h2>
+<h3 id="bug-fixes-1" class="section-heading">
+  <a href="#bug-fixes-1" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>correctly handle the <code class="inline">pretty: false</code> option
+(<a href="https://github.com/michalmuskala/jason/commit/ba318c8">ba318c8</a>).</li></ul><h2 id="1-1-1-10-07-2018" class="section-heading">
+  <a href="#1-1-1-10-07-2018" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.1.1 (10.07.2018)</span>
+</h2>
+<h3 id="bug-fixes-2" class="section-heading">
+  <a href="#bug-fixes-2" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>correctly handle escape sequences in strings when pretty printing
+(<a href="https://github.com/michalmuskala/jason/commit/794bbe4">794bbe4</a>).</li></ul><h2 id="1-1-0-02-07-2018" class="section-heading">
+  <a href="#1-1-0-02-07-2018" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.1.0 (02.07.2018)</span>
+</h2>
+<h3 id="enhancements-4" class="section-heading">
+  <a href="#enhancements-4" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Enhancements</span>
+</h3>
+<ul><li>pretty-printing support through <a href="Jason.Formatter.html"><code class="inline">Jason.Formatter</code></a> and <code class="inline">pretty: true</code> option
+in <a href="Jason.html#encode/2"><code class="inline">Jason.encode/2</code></a> (<a href="https://github.com/michalmuskala/jason/commit/d758e36">d758e36</a>).</li></ul><h3 id="bug-fixes-3" class="section-heading">
+  <a href="#bug-fixes-3" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>silence variable warnings for fields with underscores used during deriving
+(<a href="https://github.com/michalmuskala/jason/commit/88dd85c">88dd85c</a>).</li><li><strong>potential incompatibility</strong> don't raise <a href="https://hexdocs.pm/elixir/Protocol.UndefinedError.html"><code class="inline">Protocol.UndefinedError</code></a> in non-bang functions
+(<a href="https://github.com/michalmuskala/jason/commit/ad0f57b">ad0f57b</a>).</li></ul><h2 id="1-0-1-02-07-2018" class="section-heading">
+  <a href="#1-0-1-02-07-2018" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.0.1 (02.07.2018)</span>
+</h2>
+<h3 id="bug-fixes-4" class="section-heading">
+  <a href="#bug-fixes-4" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>fix <code class="inline">Jason.Encode.escape</code> type (<a href="https://github.com/michalmuskala/jason/commit/a57b430">a57b430</a>)</li><li>multiple documentation improvements</li></ul><h2 id="1-0-0-26-01-2018" class="section-heading">
+  <a href="#1-0-0-26-01-2018" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.0.0 (26.01.2018)</span>
+</h2>
+<p>No changes</p><h2 id="1-0-0-rc-3-26-01-2018" class="section-heading">
+  <a href="#1-0-0-rc-3-26-01-2018" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.0.0-rc.3 (26.01.2018)</span>
+</h2>
+<h3 id="changes" class="section-heading">
+  <a href="#changes" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Changes</span>
+</h3>
+<ul><li>update <code class="inline">escape</code> option of <a href="Jason.html#encode/2"><code class="inline">Jason.encode/2</code></a> to take values:
+<code class="inline">:json | :unicode_safe | :html_safe | :javascript_safe</code> for consistency. Old values of
+<code class="inline">:unicode</code> and <code class="inline">:javascript</code> are still supported for compatibility with Poison.
+(<a href="https://github.com/michalmuskala/jason/commit/f42dcbd">f42dcbd</a>)</li></ul><h2 id="1-0-0-rc-2-07-01-2018" class="section-heading">
+  <a href="#1-0-0-rc-2-07-01-2018" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.0.0-rc.2 (07.01.2018)</span>
+</h2>
+<h3 id="bug-fixes-5" class="section-heading">
+  <a href="#bug-fixes-5" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bug fixes</span>
+</h3>
+<ul><li>add type for <code class="inline">strings</code> option (<a href="https://github.com/michalmuskala/jason/commit/b459ee4">b459ee4</a>)</li><li>support iodata in <code class="inline">decode!</code> (<a href="https://github.com/michalmuskala/jason/commit/a1f3456">a1f3456</a>)</li></ul><h2 id="1-0-0-rc-1-22-12-2017" class="section-heading">
+  <a href="#1-0-0-rc-1-22-12-2017" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1.0.0-rc.1 (22.12.2017)</span>
+</h2>
+<ul><li>Initial release</li></ul>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="readme.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Jason
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="license.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+LICENSE
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/jason/1.4.4" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/jason/1.4.4">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/jason/1.4.4/show/CHANGELOG.md">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="jason.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.1) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

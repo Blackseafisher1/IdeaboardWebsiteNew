@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.35.1">
+    <meta name="project" content="HPAX v1.0.3">
+
+
+    <title>HPAX — HPAX v1.0.3</title>
+    <link rel="stylesheet" href="dist/html-elixir-P45HOAC7.css" />
+
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-0E6F223F.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-PVRIOB7F.js"></script>
+
+  </head>
+  <body data-type="modules" class="page-module">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="api-reference.html" class="sidebar-projectName" translate="no">
+HPAX
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.0.3
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of HPAX</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <h1>
+
+      <a href="https://github.com/elixir-mint/hpax/blob/v1.0.3/lib/hpax.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+    <span translate="no">HPAX</span> 
+    <small class="app-vsn" translate="no">(HPAX v1.0.3)</small>
+
+  </h1>
+
+
+    <section id="moduledoc">
+<p>Support for the HPACK header compression algorithm.</p><p>This module provides support for the HPACK header compression algorithm used mainly in HTTP/2.</p><h2 id="module-encoding-and-decoding-contexts" class="section-heading">
+  <a href="#module-encoding-and-decoding-contexts" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Encoding and decoding contexts</span>
+</h2>
+<p>The HPACK algorithm requires both</p><ul><li>an encoding context on the encoder side</li><li>a decoding context on the decoder side</li></ul><p>These contexts are semantically different but structurally the same. In HPACK they are
+implemented as <strong>HPACK tables</strong>. This library uses the name &quot;tables&quot; everywhere internally</p><p>HPACK tables can be created through the <a href="#new/1"><code class="inline">new/1</code></a> function.</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:header_name/0" data-no-tooltip translate="no">header_name()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>An HPACK header name.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:header_value/0" data-no-tooltip translate="no">header_value()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>An HPACK header value.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:table/0" data-no-tooltip translate="no">table()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>An HPACK table.</p></div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#decode/2" data-no-tooltip translate="no">decode(block, table)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Decodes a header block fragment (HBF) through a given table.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#encode/2" data-no-tooltip translate="no">encode(headers, table)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Encodes a list of headers through the given table.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#encode/3" data-no-tooltip translate="no">encode(action, headers, table)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Encodes a list of headers through the given table, applying the same <code class="inline">action</code> to all of them.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#new/1" data-no-tooltip translate="no">new(max_table_size)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Creates a new HPACK table.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#new/2" data-no-tooltip translate="no">new(max_table_size, options)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Create a new HPACK table that can be used as encoding or decoding context.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#resize/2" data-no-tooltip translate="no">resize(table, new_max_size)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Resizes the given table to the given maximum size.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+    <div class="types-list">
+<section class="detail" id="t:header_name/0">
+
+  <div class="detail-header">
+    <a href="#t:header_name/0" class="detail-link" data-no-tooltip aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">header_name()</h1>
+
+      <a href="https://github.com/elixir-mint/hpax/blob/v1.0.3/lib/hpax.ex#L33" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> header_name() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()</pre>
+
+      </div>
+
+<p>An HPACK header name.</p>
+  </section>
+</section>
+<section class="detail" id="t:header_value/0">
+
+  <div class="detail-header">
+    <a href="#t:header_value/0" class="detail-link" data-no-tooltip aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">header_value()</h1>
+
+      <a href="https://github.com/elixir-mint/hpax/blob/v1.0.3/lib/hpax.ex#L38" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> header_value() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()</pre>
+
+      </div>
+
+<p>An HPACK header value.</p>
+  </section>
+</section>
+<section class="detail" id="t:table/0">
+
+  <div class="detail-header">
+    <a href="#t:table/0" class="detail-link" data-no-tooltip aria-label="Link to this opaque">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">table()</h1>
+
+      <a href="https://github.com/elixir-mint/hpax/blob/v1.0.3/lib/hpax.ex#L28" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 0.2.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@opaque</span> table()</pre>
+
+      </div>
+
+<p>An HPACK table.</p><p>This can be used for encoding or decoding.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="decode/2">
+
+  <div class="detail-header">
+    <a href="#decode/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">decode(block, table)</h1>
+
+      <a href="https://github.com/elixir-mint/hpax/blob/v1.0.3/lib/hpax.ex#L129" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> decode(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), <a href="#t:table/0">table</a>()) ::
+  {:ok, [{<a href="#t:header_name/0">header_name</a>(), <a href="#t:header_value/0">header_value</a>()}], <a href="#t:table/0">table</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
+
+      </div>
+
+<p>Decodes a header block fragment (HBF) through a given table.</p><p>If decoding is successful, this function returns a <code class="inline">{:ok, headers, updated_table}</code> tuple where
+<code class="inline">headers</code> is a list of decoded headers, and <code class="inline">updated_table</code> is the updated table. If there's
+an error in decoding, this function returns <code class="inline">{:error, reason}</code>.</p><h2 id="decode/2-examples" class="section-heading">
+  <a href="#decode/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="n">decoding_context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">HPAX</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="9981136435-1">(</span><span class="mi">1000</span><span class="p" data-group-id="9981136435-1">)</span><span class="w">
+</span><span class="n">hbf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_hbf_from_somewhere</span><span class="p" data-group-id="9981136435-2">(</span><span class="p" data-group-id="9981136435-2">)</span><span class="w">
+</span><span class="nc">HPAX</span><span class="o">.</span><span class="n">decode</span><span class="p" data-group-id="9981136435-3">(</span><span class="n">hbf</span><span class="p">,</span><span class="w"> </span><span class="n">decoding_context</span><span class="p" data-group-id="9981136435-3">)</span><span class="w">
+</span><span class="c1">#=&gt; {:ok, [{&quot;:method&quot;, &quot;GET&quot;}], decoding_context}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="encode/2">
+
+  <div class="detail-header">
+    <a href="#encode/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">encode(headers, table)</h1>
+
+      <a href="https://github.com/elixir-mint/hpax/blob/v1.0.3/lib/hpax.ex#L164" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> encode([header], <a href="#t:table/0">table</a>()) :: {<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>(), <a href="#t:table/0">table</a>()}
+when header: {action, <a href="#t:header_name/0">header_name</a>(), <a href="#t:header_value/0">header_value</a>()},
+     action: :store | :store_name | :no_store | :never_store</pre>
+
+      </div>
+
+<p>Encodes a list of headers through the given table.</p><p>Returns a two-element tuple where the first element is a binary representing the encoded headers
+and the second element is an updated table.</p><h2 id="encode/2-examples" class="section-heading">
+  <a href="#encode/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="n">headers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="0359330631-1">[</span><span class="p" data-group-id="0359330631-2">{</span><span class="ss">:store</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;:authority&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;https://example.com&quot;</span><span class="p" data-group-id="0359330631-2">}</span><span class="p" data-group-id="0359330631-1">]</span><span class="w">
+</span><span class="n">encoding_context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">HPAX</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="0359330631-3">(</span><span class="mi">1000</span><span class="p" data-group-id="0359330631-3">)</span><span class="w">
+</span><span class="nc">HPAX</span><span class="o">.</span><span class="n">encode</span><span class="p" data-group-id="0359330631-4">(</span><span class="n">headers</span><span class="p">,</span><span class="w"> </span><span class="n">encoding_context</span><span class="p" data-group-id="0359330631-4">)</span><span class="w">
+</span><span class="c1">#=&gt; {iodata, updated_encoding_context}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="encode/3">
+
+  <div class="detail-header">
+    <a href="#encode/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">encode(action, headers, table)</h1>
+
+      <a href="https://github.com/elixir-mint/hpax/blob/v1.0.3/lib/hpax.ex#L188" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 0.2.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> encode(action, [header], <a href="#t:table/0">table</a>()) :: {<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>(), <a href="#t:table/0">table</a>()}
+when action: :store | :store_name | :no_store | :never_store,
+     header: {<a href="#t:header_name/0">header_name</a>(), <a href="#t:header_value/0">header_value</a>()}</pre>
+
+      </div>
+
+<p>Encodes a list of headers through the given table, applying the same <code class="inline">action</code> to all of them.</p><p>This function is the similar to <a href="#encode/2"><code class="inline">encode/2</code></a>, but <code class="inline">headers</code> are <code class="inline">{name, value}</code> tuples instead,
+and the same <code class="inline">action</code> is applied to all headers.</p><p>  ## Examples</p><pre><code class="makeup elixir" translate="no"><span class="n">headers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="2039584592-1">[</span><span class="p" data-group-id="2039584592-2">{</span><span class="s">&quot;:authority&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;https://example.com&quot;</span><span class="p" data-group-id="2039584592-2">}</span><span class="p" data-group-id="2039584592-1">]</span><span class="w">
+</span><span class="n">encoding_context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">HPAX</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2039584592-3">(</span><span class="mi">1000</span><span class="p" data-group-id="2039584592-3">)</span><span class="w">
+</span><span class="nc">HPAX</span><span class="o">.</span><span class="n">encode</span><span class="p" data-group-id="2039584592-4">(</span><span class="ss">:store</span><span class="p">,</span><span class="w"> </span><span class="n">headers</span><span class="p">,</span><span class="w"> </span><span class="n">encoding_context</span><span class="p" data-group-id="2039584592-4">)</span><span class="w">
+</span><span class="c1">#=&gt; {iodata, updated_encoding_context}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="new/1">
+
+  <div class="detail-header">
+    <a href="#new/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">new(max_table_size)</h1>
+
+      <a href="https://github.com/elixir-mint/hpax/blob/v1.0.3/lib/hpax.ex#L48" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> new(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()) :: <a href="#t:table/0">table</a>()</pre>
+
+      </div>
+
+<p>Creates a new HPACK table.</p><p>Same as <a href="#new/2"><code class="inline">new/2</code></a> with default options.</p>
+  </section>
+</section>
+<section class="detail" id="new/2">
+
+  <div class="detail-header">
+    <a href="#new/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">new(max_table_size, options)</h1>
+
+      <a href="https://github.com/elixir-mint/hpax/blob/v1.0.3/lib/hpax.ex#L72" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 0.2.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> new(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(), [<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()]) :: <a href="#t:table/0">table</a>()</pre>
+
+      </div>
+
+<p>Create a new HPACK table that can be used as encoding or decoding context.</p><p>See the &quot;Encoding and decoding contexts&quot; section in the module documentation.</p><p><code class="inline">max_table_size</code> is the maximum table size (in bytes) for the newly created table.</p><h2 id="new/2-options" class="section-heading">
+  <a href="#new/2-options" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Options</span>
+</h2>
+<p>This function accepts the following <code class="inline">options</code>:</p><ul><li><code class="inline">:huffman_encoding</code> - (since 0.2.0) <code class="inline">:always</code> or <code class="inline">:never</code>. If <code class="inline">:always</code>,
+then HPAX will always encode headers using Huffman encoding. If <code class="inline">:never</code>,
+HPAX will not use any Huffman encoding. Defaults to <code class="inline">:never</code>.</li></ul><h2 id="new/2-examples" class="section-heading">
+  <a href="#new/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="n">encoding_context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">HPAX</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="9329212738-1">(</span><span class="mi">4096</span><span class="p" data-group-id="9329212738-1">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="resize/2">
+
+  <div class="detail-header">
+    <a href="#resize/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">resize(table, new_max_size)</h1>
+
+      <a href="https://github.com/elixir-mint/hpax/blob/v1.0.3/lib/hpax.ex#L107" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> resize(<a href="#t:table/0">table</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()) :: <a href="#t:table/0">table</a>()</pre>
+
+      </div>
+
+<p>Resizes the given table to the given maximum size.</p><p>This is intended for use where the overlying protocol has signaled a change to the table's
+maximum size, such as when an HTTP/2 <code class="inline">SETTINGS</code> frame is received.</p><p>If the indicated size is less than the table's current size, entries
+will be evicted as needed to fit within the specified size, and the table's
+maximum size will be decreased to the specified value. A flag will also be
+set which will enqueue a &quot;dynamic table size update&quot; command to be prefixed
+to the next block encoded with this table, per
+<a href="https://www.rfc-editor.org/rfc/rfc9113.html#section-4.3.1">RFC9113§4.3.1</a>.</p><p>If the indicated size is greater than or equal to the table's current max size, no entries are evicted
+and the table's maximum size changes to the specified value.</p><h2 id="resize/2-examples" class="section-heading">
+  <a href="#resize/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="n">decoding_context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">HPAX</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="0855826266-1">(</span><span class="mi">4096</span><span class="p" data-group-id="0855826266-1">)</span><span class="w">
+</span><span class="nc">HPAX</span><span class="o">.</span><span class="n">resize</span><span class="p" data-group-id="0855826266-2">(</span><span class="n">decoding_context</span><span class="p">,</span><span class="w"> </span><span class="mi">8192</span><span class="p" data-group-id="0855826266-2">)</span></code></pre>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/hpax/1.0.3" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/hpax/1.0.3">Hex Preview</a>
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="HPAX.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.35.1) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

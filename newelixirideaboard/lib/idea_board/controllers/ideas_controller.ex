@@ -23,7 +23,7 @@ defmodule IdeaBoard.IdeasController do
 
     categories = IdeaBoard.CategoriesService.all()
     result = IdeaBoard.IdeasService.list(user, filters)
-    html = IdeaBoard.Renderer.render("ideas/ideas", Map.merge(result, %{categories: categories, filters: filters}), conn)
+    html = IdeaBoard.Renderer.render_page("ideas/ideas", Map.merge(result, %{categories: categories, filters: filters}), conn)
     send_resp(conn, 200, html)
   end
 
@@ -32,7 +32,7 @@ defmodule IdeaBoard.IdeasController do
     query = Map.get(conn.params, "q", "")
     page = (Map.get(conn.params, "page", "1") |> String.to_integer())
     result = IdeaBoard.IdeasSearchService.search(user, query, page)
-    html = IdeaBoard.Renderer.render_raw("ideas/_list", result, conn)
+    html = IdeaBoard.Renderer.render_partial("ideas/_list", result, conn)
     assign(conn, :rendered_html, html)
   end
 
@@ -48,7 +48,7 @@ defmodule IdeaBoard.IdeasController do
     {:ok, %{idea_id: idea_id}} = IdeaBoard.IdeasService.create(user, data)
     {:ok, %{rows: [idea | _]}} = IdeaBoard.IdeasService.fetch(idea_id)
     IdeaBoard.PubSub.broadcast("ideas", {:idea_created, idea})
-    html = IdeaBoard.Renderer.render_raw("ideas/_idea_card", %{idea: idea, user: user}, conn)
+    html = IdeaBoard.Renderer.render_partial("ideas/_idea_card", %{idea: idea, user: user}, conn)
     assign(conn, :rendered_html, html)
   end
 
@@ -66,7 +66,7 @@ defmodule IdeaBoard.IdeasController do
     case IdeaBoard.IdeasService.update(user, idea_id, data) do
       {:ok, idea} ->
         IdeaBoard.PubSub.broadcast("ideas", {:idea_updated, idea})
-        html = IdeaBoard.Renderer.render_raw("ideas/_idea_card", %{idea: idea, user: user}, conn)
+        html = IdeaBoard.Renderer.render_partial("ideas/_idea_card", %{idea: idea, user: user}, conn)
         assign(conn, :rendered_html, html)
 
       {:error, reason} ->

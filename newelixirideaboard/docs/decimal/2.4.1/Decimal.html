@@ -1,0 +1,2859 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.35.1">
+    <meta name="project" content="Decimal v2.4.1">
+
+
+    <title>Decimal — Decimal v2.4.1</title>
+    <link rel="stylesheet" href="dist/html-elixir-P45HOAC7.css" />
+
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-7EF92158.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-PVRIOB7F.js"></script>
+
+  </head>
+  <body data-type="modules" class="page-module">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+Decimal
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v2.4.1
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Decimal</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+    <span translate="no">Decimal</span> 
+    <small class="app-vsn" translate="no">(Decimal v2.4.1)</small>
+
+  </h1>
+
+
+    <section id="moduledoc">
+<p>Decimal arithmetic on arbitrary precision floating-point numbers.</p><p>A number is represented by a signed coefficient and exponent such that: <code class="inline">sign * coefficient * 10 ^ exponent</code>. All numbers are represented and calculated
+exactly, but the result of an operation may be rounded depending on the
+context the operation is performed with, see: <a href="Decimal.Context.html"><code class="inline">Decimal.Context</code></a>. Trailing
+zeros in the coefficient are never truncated to preserve the number of
+significant digits unless explicitly done so.</p><p>There are also special values such as NaN (not a number) and ±Infinity.
+-0 and +0 are two distinct values.
+Some operation results are not defined and will return NaN.
+This kind of NaN is quiet, any operation returning a number will return
+NaN when given a quiet NaN (the NaN value will flow through all operations).</p><p>Exceptional conditions are grouped into signals, each signal has a flag and a
+trap enabler in the context. Whenever a signal is triggered it's flag is set
+in the context and will be set until explicitly cleared. If the signal is trap
+enabled <a href="Decimal.Error.html"><code class="inline">Decimal.Error</code></a> will be raised.</p><h2 id="module-specifications" class="section-heading">
+  <a href="#module-specifications" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Specifications</span>
+</h2>
+<ul><li><a href="http://speleotrove.com/decimal/decarith.html">IBM's General Decimal Arithmetic Specification</a></li><li><a href="http://web.archive.org/web/20150908012941/http://754r.ucbtest.org/standards/854.pdf">IEEE standard 854-1987</a></li></ul><p>This library follows the above specifications for reference of arithmetic
+operation implementations, but the public APIs may differ to provide a
+more idiomatic Elixir interface.</p><p>The specification models the sign of the number as 1, for a negative number,
+and 0 for a positive number. Internally this implementation models the sign as
+1 or -1 such that the complete number will be <code class="inline">sign * coefficient * 10 ^ exponent</code> and will refer to the sign in documentation as either <em>positive</em>
+or <em>negative</em>.</p><p>By default there is no maximum or minimum value for the exponent because
+<a href="Decimal.Context.html"><code class="inline">Decimal.Context</code></a> defaults <code class="inline">emax</code> and <code class="inline">emin</code> to <code class="inline">:infinity</code>. Because of that
+all numbers are &quot;normal&quot;. This means that when an operation should, according
+to the specification, return a number that &quot;underflows&quot; 0 is returned instead
+of Etiny. This may happen when dividing a number with infinity. When <code class="inline">emax</code>
+or <code class="inline">emin</code> are finite, overflow and underflow may be signalled. Clamped is
+still not signalled.</p><h2 id="module-large-exponents-and-untrusted-input" class="section-heading">
+  <a href="#module-large-exponents-and-untrusted-input" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Large exponents and untrusted input</span>
+</h2>
+<p>Decimal can represent compact values with very large exponents, such as
+<code class="inline">1e1000000</code>. These values are valid decimals, but some APIs may need memory
+or CPU proportional to the expanded size of the number. This is especially
+important for decimals parsed from user input, JSON payloads, form fields,
+database fields, or other external data.</p><p>Use <a href="#parse/2"><code class="inline">parse/2</code></a> or <a href="#cast/2"><code class="inline">cast/2</code></a> with <code class="inline">:max_digits</code> and <code class="inline">:max_exponent</code> when parsing
+untrusted input. Use <a href="#to_string/3"><code class="inline">to_string/3</code></a> with <code class="inline">:max_digits</code> when rendering output
+formats that may expand the exponent, such as <code class="inline">:normal</code> or <code class="inline">:xsd</code>.
+Finite <a href="Decimal.Context.html"><code class="inline">Decimal.Context</code></a> <code class="inline">emax</code> and <code class="inline">emin</code> values can limit operation
+results, but they do not validate already-created decimals and should not
+replace parse/cast limits for untrusted input.</p><h2 id="module-protocol-implementations" class="section-heading">
+  <a href="#module-protocol-implementations" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Protocol Implementations</span>
+</h2>
+<p><a href="Decimal.html"><code class="inline">Decimal</code></a> implements the following protocols:</p><h3 id="module-inspect" class="section-heading">
+  <a href="#module-inspect" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text"><a href="https://hexdocs.pm/elixir/Inspect.html"><code class="inline">Inspect</code></a></span>
+</h3>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">inspect</span><span class="p" data-group-id="0930447824-1">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="0930447824-2">(</span><span class="s">&quot;1.00&quot;</span><span class="p" data-group-id="0930447824-2">)</span><span class="p" data-group-id="0930447824-1">)</span><span class="w">
+</span><span class="s">&quot;Decimal.new(</span><span class="se">\&quot;</span><span class="s">1.00</span><span class="se">\&quot;</span><span class="s">)&quot;</span></code></pre><h3 id="module-string-chars" class="section-heading">
+  <a href="#module-string-chars" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text"><a href="https://hexdocs.pm/elixir/String.Chars.html"><code class="inline">String.Chars</code></a></span>
+</h3>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">to_string</span><span class="p" data-group-id="4383966222-1">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="4383966222-2">(</span><span class="s">&quot;1.00&quot;</span><span class="p" data-group-id="4383966222-2">)</span><span class="p" data-group-id="4383966222-1">)</span><span class="w">
+</span><span class="s">&quot;1.00&quot;</span></code></pre><h3 id="module-json-encoder" class="section-heading">
+  <a href="#module-json-encoder" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text"><a href="https://hexdocs.pm/elixir/JSON.Encoder.html"><code class="inline">JSON.Encoder</code></a></span>
+</h3>
+<p><em>(If running Elixir 1.18+.)</em></p><p>By default, decimals are encoded as strings to preserve precision:</p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">JSON</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="7985996993-1">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7985996993-2">(</span><span class="s">&quot;1.00&quot;</span><span class="p" data-group-id="7985996993-2">)</span><span class="p" data-group-id="7985996993-1">)</span><span class="w">
+</span><span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">1.00</span><span class="se">\&quot;</span><span class="s">&quot;</span></code></pre><p>To change that, pass a custom encoder to <a href="https://hexdocs.pm/elixir/JSON.html#encode!/2"><code class="inline">JSON.encode!/2</code></a>. The following encodes
+decimals as floats:</p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">encoder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k" data-group-id="7250388511-1">fn</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="w">  </span><span class="p" data-group-id="7250388511-2">%</span><span class="nc" data-group-id="7250388511-2">Decimal</span><span class="p" data-group-id="7250388511-2">{</span><span class="p" data-group-id="7250388511-2">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">decimal</span><span class="p">,</span><span class="w"> </span><span class="c">_encoder</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">inf?</span><span class="p" data-group-id="7250388511-3">(</span><span class="n">decimal</span><span class="p" data-group-id="7250388511-3">)</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">nan?</span><span class="p" data-group-id="7250388511-4">(</span><span class="n">decimal</span><span class="p" data-group-id="7250388511-4">)</span><span class="w"> </span><span class="k" data-group-id="7250388511-5">do</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="w">      </span><span class="k">raise</span><span class="w"> </span><span class="nc">ArgumentError</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;</span><span class="si" data-group-id="7250388511-6">#{</span><span class="n">inspect</span><span class="p" data-group-id="7250388511-7">(</span><span class="n">decimal</span><span class="p" data-group-id="7250388511-7">)</span><span class="si" data-group-id="7250388511-6">}</span><span class="s"> cannot be encoded to JSON&quot;</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="w">    </span><span class="k" data-group-id="7250388511-5">end</span><span class="w">
+</span><span class="gp unselectable">...&gt;</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="w">    </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_string</span><span class="p" data-group-id="7250388511-8">(</span><span class="n">decimal</span><span class="p" data-group-id="7250388511-8">)</span><span class="w">
+</span><span class="gp unselectable">...&gt;</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="w">  </span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="n">encoder</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="w">    </span><span class="nc">JSON</span><span class="o">.</span><span class="n">protocol_encode</span><span class="p" data-group-id="7250388511-9">(</span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="n">encoder</span><span class="p" data-group-id="7250388511-9">)</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="k" data-group-id="7250388511-1">end</span><span class="w">
+</span><span class="gp unselectable">...&gt;</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">JSON</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="7250388511-10">(</span><span class="p" data-group-id="7250388511-11">%{</span><span class="ss">x</span><span class="p">:</span><span class="w"> </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7250388511-12">(</span><span class="s">&quot;1.00&quot;</span><span class="p" data-group-id="7250388511-12">)</span><span class="p" data-group-id="7250388511-11">}</span><span class="p">,</span><span class="w"> </span><span class="n">encoder</span><span class="p" data-group-id="7250388511-10">)</span><span class="w">
+</span><span class="s">&quot;{</span><span class="se">\&quot;</span><span class="s">x</span><span class="se">\&quot;</span><span class="s">:1.00}&quot;</span></code></pre>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:coefficient/0" data-no-tooltip translate="no">coefficient()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The coefficient of the power of <code class="inline">10</code>. Non-negative because the sign is stored separately in <code class="inline">sign</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:compare_result/0" data-no-tooltip translate="no">compare_result()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:decimal/0" data-no-tooltip translate="no">decimal()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:exponent/0" data-no-tooltip translate="no">exponent()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The exponent to which <code class="inline">10</code> is raised.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:parse_option/0" data-no-tooltip translate="no">parse_option()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:rounding/0" data-no-tooltip translate="no">rounding()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Rounding algorithm.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:sign/0" data-no-tooltip translate="no">sign()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><ul><li><code class="inline">1</code> for positive</li><li><code class="inline">-1</code> for negative</li></ul></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:signal/0" data-no-tooltip translate="no">signal()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:t/0" data-no-tooltip translate="no">t()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>This implementation models the <code class="inline">sign</code> as <code class="inline">1</code> or <code class="inline">-1</code> such that the complete number will be: <code class="inline">sign * coef * 10 ^ exp</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:to_string_option/0" data-no-tooltip translate="no">to_string_option()</a>
+
+      </div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#abs/1" data-no-tooltip translate="no">abs(num)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The absolute value of given number. Sets the number's sign to positive.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#add/2" data-no-tooltip translate="no">add(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Adds two numbers together.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#apply_context/1" data-no-tooltip translate="no">apply_context(num)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Applies the context to the given number rounding it to specified precision.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cast/1" data-no-tooltip translate="no">cast(integer)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Creates a new decimal number from an integer, string, float, or existing decimal number.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cast/2" data-no-tooltip translate="no">cast(term, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Creates a new decimal number from an integer, string, float, or existing decimal
+number with parsing limits.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cmp/2" data-no-tooltip translate="no">cmp(num1, num2)</a>
+
+          <span class="deprecated" title="Use compare/2 instead">deprecated</span>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#compare/2" data-no-tooltip translate="no">compare(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Compares two numbers numerically. If the first number is greater than the second
+<code class="inline">:gt</code> is returned, if less than <code class="inline">:lt</code> is returned, if both numbers are equal
+<code class="inline">:eq</code> is returned.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#compare/3" data-no-tooltip translate="no">compare(n1, n2, threshold)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Compares two numbers numerically using a threshold. If the first number added
+to the threshold is greater than the second number, and the first number
+subtracted by the threshold is smaller than the second number, then the two
+numbers are considered equal.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#div/2" data-no-tooltip translate="no">div(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Divides two numbers.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#div_int/2" data-no-tooltip translate="no">div_int(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Divides two numbers and returns the integer part.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#div_rem/2" data-no-tooltip translate="no">div_rem(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Integer division of two numbers and the remainder. Should be used when both
+<a href="#div_int/2"><code class="inline">div_int/2</code></a> and <a href="#rem/2"><code class="inline">rem/2</code></a> is needed. Equivalent to: <code class="inline">{Decimal.div_int(x, y), Decimal.rem(x, y)}</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#eq?/2" data-no-tooltip translate="no">eq?(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Compares two numbers numerically and returns <code class="inline">true</code> if they are equal,
+otherwise <code class="inline">false</code>. If one of the operands is a quiet NaN this operation
+will always return <code class="inline">false</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#eq?/3" data-no-tooltip translate="no">eq?(num1, num2, threshold)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>It compares the equality of two numbers. If the second number is within
+the range of first - threshold and first + threshold, it returns true;
+otherwise, it returns false.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#equal?/2" data-no-tooltip translate="no">equal?(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Compares two numbers numerically and returns <code class="inline">true</code> if they are equal,
+otherwise <code class="inline">false</code>. If one of the operands is a quiet NaN this operation
+will always return <code class="inline">false</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#from_float/1" data-no-tooltip translate="no">from_float(float)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Creates a new decimal number from a floating point number.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#gt?/2" data-no-tooltip translate="no">gt?(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Compares two numbers numerically and returns <code class="inline">true</code> if the first argument
+is greater than the second, otherwise <code class="inline">false</code>. If one the operands is a
+quiet NaN this operation will always return <code class="inline">false</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#gte?/2" data-no-tooltip translate="no">gte?(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Compares two numbers numerically and returns <code class="inline">true</code> if
+the first argument is greater than or equal the second,
+otherwise <code class="inline">false</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#inf?/1" data-no-tooltip translate="no">inf?(decimal)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns <code class="inline">true</code> if number is ±Infinity, otherwise <code class="inline">false</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#integer?/1" data-no-tooltip translate="no">integer?(num)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns <code class="inline">true</code> when the given <code class="inline">decimal</code> has no significant digits after the decimal point.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#is_decimal/1" data-no-tooltip translate="no">is_decimal(term)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns <code class="inline">true</code> if argument is a decimal number, otherwise <code class="inline">false</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#lt?/2" data-no-tooltip translate="no">lt?(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Compares two numbers numerically and returns <code class="inline">true</code> if the first number is
+less than the second number, otherwise <code class="inline">false</code>. If one of the operands is a
+quiet NaN this operation will always return <code class="inline">false</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#lte?/2" data-no-tooltip translate="no">lte?(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Compares two numbers numerically and returns <code class="inline">true</code> if
+the first number is less than or equal the second number,
+otherwise <code class="inline">false</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#max/2" data-no-tooltip translate="no">max(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Compares two values numerically and returns the maximum. Unlike most other
+functions in <a href="Decimal.html"><code class="inline">Decimal</code></a> if a number is NaN the result will be the other number.
+Only if both numbers are NaN will NaN be returned.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#min/2" data-no-tooltip translate="no">min(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Compares two values numerically and returns the minimum. Unlike most other
+functions in <a href="Decimal.html"><code class="inline">Decimal</code></a> if a number is NaN the result will be the other number.
+Only if both numbers are NaN will NaN be returned.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#mult/2" data-no-tooltip translate="no">mult(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Multiplies two numbers.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#nan?/1" data-no-tooltip translate="no">nan?(decimal)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns <code class="inline">true</code> if number is NaN, otherwise <code class="inline">false</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#negate/1" data-no-tooltip translate="no">negate(num)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Negates the given number.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#negative?/1" data-no-tooltip translate="no">negative?(decimal)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns <code class="inline">true</code> if given number is negative, otherwise <code class="inline">false</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#new/1" data-no-tooltip translate="no">new(num)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Creates a new decimal number from an integer or a string representation.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#new/3" data-no-tooltip translate="no">new(sign, coef, exp)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Creates a new decimal number from the sign, coefficient and exponent such that
+the number will be: <code class="inline">sign * coefficient * 10 ^ exponent</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#normalize/1" data-no-tooltip translate="no">normalize(num)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Normalizes the given decimal: removes trailing zeros from coefficient while
+keeping the number numerically equivalent by increasing the exponent.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#parse/1" data-no-tooltip translate="no">parse(binary)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Parses a binary into a decimal.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#parse/2" data-no-tooltip translate="no">parse(binary, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Parses a binary into a decimal with optional limits.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#positive?/1" data-no-tooltip translate="no">positive?(decimal)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns <code class="inline">true</code> if given number is positive, otherwise <code class="inline">false</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#rem/2" data-no-tooltip translate="no">rem(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Remainder of integer division of two numbers. The result will have the sign of
+the first number.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#round/3" data-no-tooltip translate="no">round(num, places \\ 0, mode \\ :half_up)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Rounds the given number to specified decimal places with the given strategy
+(default is to round to nearest one). If places is negative, at least that
+many digits to the left of the decimal point will be zero.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#scale/1" data-no-tooltip translate="no">scale(decimal)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the scale of the decimal.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sqrt/1" data-no-tooltip translate="no">sqrt(num)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Finds the square root.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sub/2" data-no-tooltip translate="no">sub(num1, num2)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Subtracts second number from the first. Equivalent to <a href="#add/2"><code class="inline">Decimal.add/2</code></a> when the
+second number's sign is negated.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#to_float/1" data-no-tooltip translate="no">to_float(decimal)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the decimal converted to a float.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#to_integer/1" data-no-tooltip translate="no">to_integer(decimal)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the decimal represented as an integer.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#to_string/2" data-no-tooltip translate="no">to_string(num, type \\ :scientific)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Converts given number to its string representation.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#to_string/3" data-no-tooltip translate="no">to_string(num, type, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Converts given number to its string representation with optional limits.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+    <div class="types-list">
+<section class="detail" id="t:coefficient/0">
+
+  <div class="detail-header">
+    <a href="#t:coefficient/0" class="detail-link" data-no-tooltip aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">coefficient()</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L120" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> coefficient() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>() | :NaN | :inf</pre>
+
+      </div>
+
+<p>The coefficient of the power of <code class="inline">10</code>. Non-negative because the sign is stored separately in <code class="inline">sign</code>.</p><ul><li><code class="inline">non_neg_integer</code> - when the <code class="inline">t</code> represents a number, instead of one of the special values below.</li><li><code class="inline">:NaN</code> - Not a Number.</li><li><code class="inline">:inf</code> - Infinity.</li></ul>
+  </section>
+</section>
+<section class="detail" id="t:compare_result/0">
+
+  <div class="detail-header">
+    <a href="#t:compare_result/0" class="detail-link" data-no-tooltip aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">compare_result()</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L143" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> compare_result() :: :lt | :gt | :eq</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:decimal/0">
+
+  <div class="detail-header">
+    <a href="#t:decimal/0" class="detail-link" data-no-tooltip aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">decimal()</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L204" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> decimal() :: <a href="#t:t/0">t</a>() | <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>() | <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:exponent/0">
+
+  <div class="detail-header">
+    <a href="#t:exponent/0" class="detail-link" data-no-tooltip aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">exponent()</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L125" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> exponent() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>()</pre>
+
+      </div>
+
+<p>The exponent to which <code class="inline">10</code> is raised.</p>
+  </section>
+</section>
+<section class="detail" id="t:parse_option/0">
+
+  <div class="detail-header">
+    <a href="#t:parse_option/0" class="detail-link" data-no-tooltip aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">parse_option()</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L160" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> parse_option() ::
+  {:max_digits, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>() | :infinity}
+  | {:max_exponent, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>() | :infinity}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:rounding/0">
+
+  <div class="detail-header">
+    <a href="#t:rounding/0" class="detail-link" data-no-tooltip aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">rounding()</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L151" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> rounding() ::
+  :down | :half_up | :half_even | :ceiling | :floor | :half_down | :up</pre>
+
+      </div>
+
+<p>Rounding algorithm.</p><p>See <a href="Decimal.Context.html"><code class="inline">Decimal.Context</code></a> for more information.</p>
+  </section>
+</section>
+<section class="detail" id="t:sign/0">
+
+  <div class="detail-header">
+    <a href="#t:sign/0" class="detail-link" data-no-tooltip aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">sign()</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L133" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> sign() :: 1 | -1</pre>
+
+      </div>
+
+<ul><li><code class="inline">1</code> for positive</li><li><code class="inline">-1</code> for negative</li></ul>
+  </section>
+</section>
+<section class="detail" id="t:signal/0">
+
+  <div class="detail-header">
+    <a href="#t:signal/0" class="detail-link" data-no-tooltip aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">signal()</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L135" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> signal() ::
+  :invalid_operation
+  | :division_by_zero
+  | :rounded
+  | :inexact
+  | :overflow
+  | :underflow</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:t/0">
+
+  <div class="detail-header">
+    <a href="#t:t/0" class="detail-link" data-no-tooltip aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">t()</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L198" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> t() :: %Decimal{coef: <a href="#t:coefficient/0">coefficient</a>(), exp: <a href="#t:exponent/0">exponent</a>(), sign: <a href="#t:sign/0">sign</a>()}</pre>
+
+      </div>
+
+<p>This implementation models the <code class="inline">sign</code> as <code class="inline">1</code> or <code class="inline">-1</code> such that the complete number will be: <code class="inline">sign * coef * 10 ^ exp</code>.</p><ul><li><code class="inline">coef</code> - the coefficient of the power of <code class="inline">10</code>.</li><li><code class="inline">exp</code> - the exponent of the power of <code class="inline">10</code>.</li><li><code class="inline">sign</code> - <code class="inline">1</code> for positive, <code class="inline">-1</code> for negative.</li></ul>
+  </section>
+</section>
+<section class="detail" id="t:to_string_option/0">
+
+  <div class="detail-header">
+    <a href="#t:to_string_option/0" class="detail-link" data-no-tooltip aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">to_string_option()</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L164" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> to_string_option() :: {:max_digits, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>() | :infinity}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="abs/1">
+
+  <div class="detail-header">
+    <a href="#abs/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">abs(num)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L319" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> abs(<a href="#t:t/0">t</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>The absolute value of given number. Sets the number's sign to positive.</p><h2 id="abs/1-examples" class="section-heading">
+  <a href="#abs/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">abs</span><span class="p" data-group-id="4925468390-1">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="4925468390-2">(</span><span class="s">&quot;1&quot;</span><span class="p" data-group-id="4925468390-2">)</span><span class="p" data-group-id="4925468390-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="4925468390-3">(</span><span class="s">&quot;1&quot;</span><span class="p" data-group-id="4925468390-3">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">abs</span><span class="p" data-group-id="4925468390-4">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="4925468390-5">(</span><span class="s">&quot;-1&quot;</span><span class="p" data-group-id="4925468390-5">)</span><span class="p" data-group-id="4925468390-4">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="4925468390-6">(</span><span class="s">&quot;1&quot;</span><span class="p" data-group-id="4925468390-6">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">abs</span><span class="p" data-group-id="4925468390-7">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="4925468390-8">(</span><span class="s">&quot;NaN&quot;</span><span class="p" data-group-id="4925468390-8">)</span><span class="p" data-group-id="4925468390-7">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="4925468390-9">(</span><span class="s">&quot;NaN&quot;</span><span class="p" data-group-id="4925468390-9">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="add/2">
+
+  <div class="detail-header">
+    <a href="#add/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">add(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L340" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> add(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Adds two numbers together.</p><h2 id="add/2-exceptional-conditions" class="section-heading">
+  <a href="#add/2-exceptional-conditions" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Exceptional conditions</span>
+</h2>
+<ul><li>If one number is -Infinity and the other +Infinity, <code class="inline">:invalid_operation</code> will
+be signalled.</li></ul><h2 id="add/2-examples" class="section-heading">
+  <a href="#add/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">add</span><span class="p" data-group-id="4001937958-1">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1.1&quot;</span><span class="p" data-group-id="4001937958-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="4001937958-2">(</span><span class="s">&quot;2.1&quot;</span><span class="p" data-group-id="4001937958-2">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">add</span><span class="p" data-group-id="4001937958-3">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Inf&quot;</span><span class="p" data-group-id="4001937958-3">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="4001937958-4">(</span><span class="s">&quot;Infinity&quot;</span><span class="p" data-group-id="4001937958-4">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="apply_context/1">
+
+  <div class="detail-header">
+    <a href="#apply_context/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">apply_context(num)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1150" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 1.9.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> apply_context(<a href="#t:t/0">t</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Applies the context to the given number rounding it to specified precision.</p>
+  </section>
+</section>
+<section class="detail" id="cast/1">
+
+  <div class="detail-header">
+    <a href="#cast/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">cast(integer)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1541" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> cast(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) :: {:ok, <a href="#t:t/0">t</a>()} | :error</pre>
+
+      </div>
+
+<p>Creates a new decimal number from an integer, string, float, or existing decimal number.</p><p>Because conversion from a floating point number is not exact, it's recommended
+to instead use <a href="#new/1"><code class="inline">new/1</code></a> or <a href="#from_float/1"><code class="inline">from_float/1</code></a> when the argument's type is certain.
+See <a href="#from_float/1"><code class="inline">from_float/1</code></a>.</p><h2 id="cast/1-examples" class="section-heading">
+  <a href="#cast/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="p" data-group-id="6204460914-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">decimal</span><span class="p" data-group-id="6204460914-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">cast</span><span class="p" data-group-id="6204460914-2">(</span><span class="mi">3</span><span class="p" data-group-id="6204460914-2">)</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="n">decimal</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="6204460914-3">(</span><span class="s">&quot;3&quot;</span><span class="p" data-group-id="6204460914-3">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">cast</span><span class="p" data-group-id="6204460914-4">(</span><span class="s">&quot;bad&quot;</span><span class="p" data-group-id="6204460914-4">)</span><span class="w">
+</span><span class="ss">:error</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="cast/2">
+
+  <div class="detail-header">
+    <a href="#cast/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">cast(term, opts)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1562" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 2.4.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> cast(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), [<a href="#t:parse_option/0">parse_option</a>()]) :: {:ok, <a href="#t:t/0">t</a>()} | :error</pre>
+
+      </div>
+
+<p>Creates a new decimal number from an integer, string, float, or existing decimal
+number with parsing limits.</p><p>Options are the same as <a href="#parse/2"><code class="inline">parse/2</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="cmp/2">
+
+  <div class="detail-header">
+    <a href="#cmp/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">cmp(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L568" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+    <div class="deprecated">
+      This function is deprecated. Use compare/2 instead.
+    </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> cmp(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: :lt | :eq | :gt</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="compare/2">
+
+  <div class="detail-header">
+    <a href="#compare/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">compare(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L469" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> compare(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="#t:compare_result/0">compare_result</a>()</pre>
+
+      </div>
+
+<p>Compares two numbers numerically. If the first number is greater than the second
+<code class="inline">:gt</code> is returned, if less than <code class="inline">:lt</code> is returned, if both numbers are equal
+<code class="inline">:eq</code> is returned.</p><p>Neither number can be a NaN.</p><h2 id="compare/2-examples" class="section-heading">
+  <a href="#compare/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="8287229413-1">(</span><span class="s">&quot;1.0&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="8287229413-1">)</span><span class="w">
+</span><span class="ss">:eq</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="8287229413-2">(</span><span class="s">&quot;Inf&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p" data-group-id="8287229413-2">)</span><span class="w">
+</span><span class="ss">:gt</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="compare/3">
+
+  <div class="detail-header">
+    <a href="#compare/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">compare(n1, n2, threshold)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L435" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> compare(decimal :: <a href="#t:decimal/0">decimal</a>(), decimal :: <a href="#t:decimal/0">decimal</a>(), threshold :: <a href="#t:decimal/0">decimal</a>()) ::
+  <a href="#t:compare_result/0">compare_result</a>()</pre>
+
+      </div>
+
+<p>Compares two numbers numerically using a threshold. If the first number added
+to the threshold is greater than the second number, and the first number
+subtracted by the threshold is smaller than the second number, then the two
+numbers are considered equal.</p><h2 id="compare/3-examples" class="section-heading">
+  <a href="#compare/3-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="2326643624-1">(</span><span class="s">&quot;1.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0.2&quot;</span><span class="p" data-group-id="2326643624-1">)</span><span class="w">
+</span><span class="ss">:eq</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="2326643624-2">(</span><span class="s">&quot;1.2&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0.1&quot;</span><span class="p" data-group-id="2326643624-2">)</span><span class="w">
+</span><span class="ss">:gt</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="2326643624-3">(</span><span class="s">&quot;1.0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1.2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0.1&quot;</span><span class="p" data-group-id="2326643624-3">)</span><span class="w">
+</span><span class="ss">:lt</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="div/2">
+
+  <div class="detail-header">
+    <a href="#div/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">div(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L762" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> div(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Divides two numbers.</p><h2 id="div/2-exceptional-conditions" class="section-heading">
+  <a href="#div/2-exceptional-conditions" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Exceptional conditions</span>
+</h2>
+<ul><li>If both numbers are ±Infinity <code class="inline">:invalid_operation</code> is signalled.</li><li>If both numbers are ±0 <code class="inline">:invalid_operation</code> is signalled.</li><li>If second number (denominator) is ±0 <code class="inline">:division_by_zero</code> is signalled.</li></ul><h2 id="div/2-examples" class="section-heading">
+  <a href="#div/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">div</span><span class="p" data-group-id="1530978778-1">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p" data-group-id="1530978778-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="1530978778-2">(</span><span class="s">&quot;0.75&quot;</span><span class="p" data-group-id="1530978778-2">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">div</span><span class="p" data-group-id="1530978778-3">(</span><span class="s">&quot;Inf&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p" data-group-id="1530978778-3">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="1530978778-4">(</span><span class="s">&quot;-Infinity&quot;</span><span class="p" data-group-id="1530978778-4">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="div_int/2">
+
+  <div class="detail-header">
+    <a href="#div_int/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">div_int(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L828" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> div_int(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Divides two numbers and returns the integer part.</p><h2 id="div_int/2-exceptional-conditions" class="section-heading">
+  <a href="#div_int/2-exceptional-conditions" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Exceptional conditions</span>
+</h2>
+<ul><li>If both numbers are ±Infinity <code class="inline">:invalid_operation</code> is signalled.</li><li>If both numbers are ±0 <code class="inline">:invalid_operation</code> is signalled.</li><li>If second number (denominator) is ±0 <code class="inline">:division_by_zero</code> is signalled.</li></ul><h2 id="div_int/2-examples" class="section-heading">
+  <a href="#div_int/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">div_int</span><span class="p" data-group-id="7127442470-1">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="7127442470-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7127442470-2">(</span><span class="s">&quot;2&quot;</span><span class="p" data-group-id="7127442470-2">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">div_int</span><span class="p" data-group-id="7127442470-3">(</span><span class="s">&quot;Inf&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p" data-group-id="7127442470-3">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7127442470-4">(</span><span class="s">&quot;-Infinity&quot;</span><span class="p" data-group-id="7127442470-4">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="div_rem/2">
+
+  <div class="detail-header">
+    <a href="#div_rem/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">div_rem(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L966" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> div_rem(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: {<a href="#t:t/0">t</a>(), <a href="#t:t/0">t</a>()}</pre>
+
+      </div>
+
+<p>Integer division of two numbers and the remainder. Should be used when both
+<a href="#div_int/2"><code class="inline">div_int/2</code></a> and <a href="#rem/2"><code class="inline">rem/2</code></a> is needed. Equivalent to: <code class="inline">{Decimal.div_int(x, y), Decimal.rem(x, y)}</code>.</p><h2 id="div_rem/2-exceptional-conditions" class="section-heading">
+  <a href="#div_rem/2-exceptional-conditions" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Exceptional conditions</span>
+</h2>
+<ul><li>If both numbers are ±Infinity <code class="inline">:invalid_operation</code> is signalled.</li><li>If both numbers are ±0 <code class="inline">:invalid_operation</code> is signalled.</li><li>If second number (denominator) is ±0 <code class="inline">:division_by_zero</code> is signalled.</li></ul><h2 id="div_rem/2-examples" class="section-heading">
+  <a href="#div_rem/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">div_rem</span><span class="p" data-group-id="2031611887-1">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="2031611887-1">)</span><span class="w">
+</span><span class="p" data-group-id="2031611887-2">{</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2031611887-3">(</span><span class="mi">2</span><span class="p" data-group-id="2031611887-3">)</span><span class="p">,</span><span class="w"> </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2031611887-4">(</span><span class="mi">1</span><span class="p" data-group-id="2031611887-4">)</span><span class="p" data-group-id="2031611887-2">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="eq?/2">
+
+  <div class="detail-header">
+    <a href="#eq?/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">eq?(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L607" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 1.8.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> eq?(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Compares two numbers numerically and returns <code class="inline">true</code> if they are equal,
+otherwise <code class="inline">false</code>. If one of the operands is a quiet NaN this operation
+will always return <code class="inline">false</code>.</p><h2 id="eq?/2-examples" class="section-heading">
+  <a href="#eq?/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">eq?</span><span class="p" data-group-id="1696774621-1">(</span><span class="s">&quot;1.0&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="1696774621-1">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">eq?</span><span class="p" data-group-id="1696774621-2">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p" data-group-id="1696774621-2">)</span><span class="w">
+</span><span class="no">false</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="eq?/3">
+
+  <div class="detail-header">
+    <a href="#eq?/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">eq?(num1, num2, threshold)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L633" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 2.2.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> eq?(decimal :: <a href="#t:decimal/0">decimal</a>(), decimal :: <a href="#t:decimal/0">decimal</a>(), threshold :: <a href="#t:decimal/0">decimal</a>()) ::
+  <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>It compares the equality of two numbers. If the second number is within
+the range of first - threshold and first + threshold, it returns true;
+otherwise, it returns false.</p><h2 id="eq?/3-examples" class="section-heading">
+  <a href="#eq?/3-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">eq?</span><span class="p" data-group-id="0676879777-1">(</span><span class="s">&quot;1.0&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p" data-group-id="0676879777-1">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">eq?</span><span class="p" data-group-id="0676879777-2">(</span><span class="s">&quot;1.2&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0.1&quot;</span><span class="p" data-group-id="0676879777-2">)</span><span class="w">
+</span><span class="no">false</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">eq?</span><span class="p" data-group-id="0676879777-3">(</span><span class="s">&quot;1.2&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0.2&quot;</span><span class="p" data-group-id="0676879777-3">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">eq?</span><span class="p" data-group-id="0676879777-4">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0.0&quot;</span><span class="p" data-group-id="0676879777-4">)</span><span class="w">
+</span><span class="no">false</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="equal?/2">
+
+  <div class="detail-header">
+    <a href="#equal?/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">equal?(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L587" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> equal?(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Compares two numbers numerically and returns <code class="inline">true</code> if they are equal,
+otherwise <code class="inline">false</code>. If one of the operands is a quiet NaN this operation
+will always return <code class="inline">false</code>.</p><h2 id="equal?/2-examples" class="section-heading">
+  <a href="#equal?/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">equal?</span><span class="p" data-group-id="1594976482-1">(</span><span class="s">&quot;1.0&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="1594976482-1">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">equal?</span><span class="p" data-group-id="1594976482-2">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p" data-group-id="1594976482-2">)</span><span class="w">
+</span><span class="no">false</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="from_float/1">
+
+  <div class="detail-header">
+    <a href="#from_float/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">from_float(float)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1515" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 1.5.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> from_float(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">float</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Creates a new decimal number from a floating point number.</p><p>Floating point numbers use a fixed number of binary digits to represent
+a decimal number which has inherent inaccuracy as some decimal numbers cannot
+be represented exactly in limited precision binary.</p><p>Floating point numbers will be converted to decimal numbers with
+<code class="inline">:io_lib_format.fwrite_g/1</code>. Since this conversion is not exact and
+because of inherent inaccuracy mentioned above, we may run into counter-intuitive results:</p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Enum</span><span class="o">.</span><span class="n">reduce</span><span class="p" data-group-id="7712137531-1">(</span><span class="p" data-group-id="7712137531-2">[</span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="mf">0.1</span><span class="p" data-group-id="7712137531-2">]</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="o">+</span><span class="o">/</span><span class="mi">2</span><span class="p" data-group-id="7712137531-1">)</span><span class="w">
+</span><span class="mf">0.30000000000000004</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Enum</span><span class="o">.</span><span class="n">reduce</span><span class="p" data-group-id="7712137531-3">(</span><span class="p" data-group-id="7712137531-4">[</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7712137531-5">(</span><span class="s">&quot;0.1&quot;</span><span class="p" data-group-id="7712137531-5">)</span><span class="p">,</span><span class="w"> </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7712137531-6">(</span><span class="s">&quot;0.1&quot;</span><span class="p" data-group-id="7712137531-6">)</span><span class="p">,</span><span class="w"> </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7712137531-7">(</span><span class="s">&quot;0.1&quot;</span><span class="p" data-group-id="7712137531-7">)</span><span class="p" data-group-id="7712137531-4">]</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">add</span><span class="o">/</span><span class="mi">2</span><span class="p" data-group-id="7712137531-3">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7712137531-8">(</span><span class="s">&quot;0.3&quot;</span><span class="p" data-group-id="7712137531-8">)</span></code></pre><p>For this reason, it's recommended to build decimals with <a href="#new/1"><code class="inline">new/1</code></a>, which is always precise, instead.</p><h2 id="from_float/1-examples" class="section-heading">
+  <a href="#from_float/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">from_float</span><span class="p" data-group-id="8687816533-1">(</span><span class="mf">3.14</span><span class="p" data-group-id="8687816533-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="8687816533-2">(</span><span class="s">&quot;3.14&quot;</span><span class="p" data-group-id="8687816533-2">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="gt?/2">
+
+  <div class="detail-header">
+    <a href="#gt?/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">gt?(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L651" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 1.8.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> gt?(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Compares two numbers numerically and returns <code class="inline">true</code> if the first argument
+is greater than the second, otherwise <code class="inline">false</code>. If one the operands is a
+quiet NaN this operation will always return <code class="inline">false</code>.</p><h2 id="gt?/2-examples" class="section-heading">
+  <a href="#gt?/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">gt?</span><span class="p" data-group-id="6715682648-1">(</span><span class="s">&quot;1.3&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1.2&quot;</span><span class="p" data-group-id="6715682648-1">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">gt?</span><span class="p" data-group-id="6715682648-2">(</span><span class="s">&quot;1.2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1.3&quot;</span><span class="p" data-group-id="6715682648-2">)</span><span class="w">
+</span><span class="no">false</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="gte?/2">
+
+  <div class="detail-header">
+    <a href="#gte?/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">gte?(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L698" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 2.2.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> gte?(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Compares two numbers numerically and returns <code class="inline">true</code> if
+the first argument is greater than or equal the second,
+otherwise <code class="inline">false</code>.</p><p>If one the operands is a quiet NaN this operation
+will always return <code class="inline">false</code>.</p><h2 id="gte?/2-examples" class="section-heading">
+  <a href="#gte?/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">gte?</span><span class="p" data-group-id="1541013437-1">(</span><span class="s">&quot;1.3&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1.3&quot;</span><span class="p" data-group-id="1541013437-1">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">gte?</span><span class="p" data-group-id="1541013437-2">(</span><span class="s">&quot;1.3&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1.2&quot;</span><span class="p" data-group-id="1541013437-2">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">gte?</span><span class="p" data-group-id="1541013437-3">(</span><span class="s">&quot;1.2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1.3&quot;</span><span class="p" data-group-id="1541013437-3">)</span><span class="w">
+</span><span class="no">false</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="inf?/1">
+
+  <div class="detail-header">
+    <a href="#inf?/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">inf?(decimal)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L249" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> inf?(<a href="#t:t/0">t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Returns <code class="inline">true</code> if number is ±Infinity, otherwise <code class="inline">false</code>.</p><h2 id="inf?/1-examples" class="section-heading">
+  <a href="#inf?/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">inf?</span><span class="p" data-group-id="0378100612-1">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="0378100612-2">(</span><span class="s">&quot;+Infinity&quot;</span><span class="p" data-group-id="0378100612-2">)</span><span class="p" data-group-id="0378100612-1">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">inf?</span><span class="p" data-group-id="0378100612-3">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="0378100612-4">(</span><span class="s">&quot;-Infinity&quot;</span><span class="p" data-group-id="0378100612-4">)</span><span class="p" data-group-id="0378100612-3">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">inf?</span><span class="p" data-group-id="0378100612-5">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="0378100612-6">(</span><span class="s">&quot;1.5&quot;</span><span class="p" data-group-id="0378100612-6">)</span><span class="p" data-group-id="0378100612-5">)</span><span class="w">
+</span><span class="no">false</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="integer?/1">
+
+  <div class="detail-header">
+    <a href="#integer?/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">integer?(num)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L2116" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 2.0.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> integer?(<a href="#t:decimal/0">decimal</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Returns <code class="inline">true</code> when the given <code class="inline">decimal</code> has no significant digits after the decimal point.</p><h2 id="integer?/1-examples" class="section-heading">
+  <a href="#integer?/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">integer?</span><span class="p" data-group-id="3183472784-1">(</span><span class="s">&quot;1.00&quot;</span><span class="p" data-group-id="3183472784-1">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">integer?</span><span class="p" data-group-id="3183472784-2">(</span><span class="s">&quot;1.10&quot;</span><span class="p" data-group-id="3183472784-2">)</span><span class="w">
+</span><span class="no">false</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="is_decimal/1">
+
+  <div class="detail-header">
+    <a href="#is_decimal/1" class="detail-link" data-no-tooltip aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">is_decimal(term)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L266" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 1.9.0)</span>
+
+      <span class="note">(macro)</span>
+
+  </div>
+
+  <section class="docstring">
+
+<p>Returns <code class="inline">true</code> if argument is a decimal number, otherwise <code class="inline">false</code>.</p><h2 id="is_decimal/1-examples" class="section-heading">
+  <a href="#is_decimal/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">is_decimal</span><span class="p" data-group-id="1803970669-1">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="1803970669-2">(</span><span class="mi">42</span><span class="p" data-group-id="1803970669-2">)</span><span class="p" data-group-id="1803970669-1">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">is_decimal</span><span class="p" data-group-id="1803970669-3">(</span><span class="mi">42</span><span class="p" data-group-id="1803970669-3">)</span><span class="w">
+</span><span class="no">false</span></code></pre><p>Allowed in guard tests on OTP 21+.</p>
+  </section>
+</section>
+<section class="detail" id="lt?/2">
+
+  <div class="detail-header">
+    <a href="#lt?/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">lt?(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L671" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 1.8.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> lt?(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Compares two numbers numerically and returns <code class="inline">true</code> if the first number is
+less than the second number, otherwise <code class="inline">false</code>. If one of the operands is a
+quiet NaN this operation will always return <code class="inline">false</code>.</p><h2 id="lt?/2-examples" class="section-heading">
+  <a href="#lt?/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">lt?</span><span class="p" data-group-id="1748849802-1">(</span><span class="s">&quot;1.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1.2&quot;</span><span class="p" data-group-id="1748849802-1">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">lt?</span><span class="p" data-group-id="1748849802-2">(</span><span class="s">&quot;1.4&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1.2&quot;</span><span class="p" data-group-id="1748849802-2">)</span><span class="w">
+</span><span class="no">false</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="lte?/2">
+
+  <div class="detail-header">
+    <a href="#lte?/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">lte?(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L732" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 2.2.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> lte?(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Compares two numbers numerically and returns <code class="inline">true</code> if
+the first number is less than or equal the second number,
+otherwise <code class="inline">false</code>.</p><p>If one of the operands is a quiet NaN this operation
+will always return <code class="inline">false</code>.</p><h2 id="lte?/2-examples" class="section-heading">
+  <a href="#lte?/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">lte?</span><span class="p" data-group-id="7419886200-1">(</span><span class="s">&quot;1.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1.1&quot;</span><span class="p" data-group-id="7419886200-1">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">lte?</span><span class="p" data-group-id="7419886200-2">(</span><span class="s">&quot;1.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1.2&quot;</span><span class="p" data-group-id="7419886200-2">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">lte?</span><span class="p" data-group-id="7419886200-3">(</span><span class="s">&quot;1.4&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1.2&quot;</span><span class="p" data-group-id="7419886200-3">)</span><span class="w">
+</span><span class="no">false</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="max/2">
+
+  <div class="detail-header">
+    <a href="#max/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">max(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1047" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> max(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Compares two values numerically and returns the maximum. Unlike most other
+functions in <a href="Decimal.html"><code class="inline">Decimal</code></a> if a number is NaN the result will be the other number.
+Only if both numbers are NaN will NaN be returned.</p><h2 id="max/2-examples" class="section-heading">
+  <a href="#max/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">max</span><span class="p" data-group-id="2880753147-1">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;2.0&quot;</span><span class="p" data-group-id="2880753147-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2880753147-2">(</span><span class="s">&quot;2.0&quot;</span><span class="p" data-group-id="2880753147-2">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">max</span><span class="p" data-group-id="2880753147-3">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;NaN&quot;</span><span class="p" data-group-id="2880753147-3">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2880753147-4">(</span><span class="s">&quot;1&quot;</span><span class="p" data-group-id="2880753147-4">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">max</span><span class="p" data-group-id="2880753147-5">(</span><span class="s">&quot;NaN&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;NaN&quot;</span><span class="p" data-group-id="2880753147-5">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2880753147-6">(</span><span class="s">&quot;NaN&quot;</span><span class="p" data-group-id="2880753147-6">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="min/2">
+
+  <div class="detail-header">
+    <a href="#min/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">min(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1096" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> min(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Compares two values numerically and returns the minimum. Unlike most other
+functions in <a href="Decimal.html"><code class="inline">Decimal</code></a> if a number is NaN the result will be the other number.
+Only if both numbers are NaN will NaN be returned.</p><h2 id="min/2-examples" class="section-heading">
+  <a href="#min/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">min</span><span class="p" data-group-id="5359485873-1">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;2.0&quot;</span><span class="p" data-group-id="5359485873-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="5359485873-2">(</span><span class="s">&quot;1&quot;</span><span class="p" data-group-id="5359485873-2">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">min</span><span class="p" data-group-id="5359485873-3">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;NaN&quot;</span><span class="p" data-group-id="5359485873-3">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="5359485873-4">(</span><span class="s">&quot;1&quot;</span><span class="p" data-group-id="5359485873-4">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">min</span><span class="p" data-group-id="5359485873-5">(</span><span class="s">&quot;NaN&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;NaN&quot;</span><span class="p" data-group-id="5359485873-5">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="5359485873-6">(</span><span class="s">&quot;NaN&quot;</span><span class="p" data-group-id="5359485873-6">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="mult/2">
+
+  <div class="detail-header">
+    <a href="#mult/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">mult(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1220" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> mult(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Multiplies two numbers.</p><h2 id="mult/2-exceptional-conditions" class="section-heading">
+  <a href="#mult/2-exceptional-conditions" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Exceptional conditions</span>
+</h2>
+<ul><li>If one number is ±0 and the other is ±Infinity <code class="inline">:invalid_operation</code> is
+signalled.</li></ul><h2 id="mult/2-examples" class="section-heading">
+  <a href="#mult/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">mult</span><span class="p" data-group-id="9571809253-1">(</span><span class="s">&quot;0.5&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="9571809253-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="9571809253-2">(</span><span class="s">&quot;1.5&quot;</span><span class="p" data-group-id="9571809253-2">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">mult</span><span class="p" data-group-id="9571809253-3">(</span><span class="s">&quot;Inf&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p" data-group-id="9571809253-3">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="9571809253-4">(</span><span class="s">&quot;-Infinity&quot;</span><span class="p" data-group-id="9571809253-4">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="nan?/1">
+
+  <div class="detail-header">
+    <a href="#nan?/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">nan?(decimal)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L230" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> nan?(<a href="#t:t/0">t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Returns <code class="inline">true</code> if number is NaN, otherwise <code class="inline">false</code>.</p><h2 id="nan?/1-examples" class="section-heading">
+  <a href="#nan?/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">nan?</span><span class="p" data-group-id="9515857554-1">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="9515857554-2">(</span><span class="s">&quot;NaN&quot;</span><span class="p" data-group-id="9515857554-2">)</span><span class="p" data-group-id="9515857554-1">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">nan?</span><span class="p" data-group-id="9515857554-3">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="9515857554-4">(</span><span class="mi">42</span><span class="p" data-group-id="9515857554-4">)</span><span class="p" data-group-id="9515857554-3">)</span><span class="w">
+</span><span class="no">false</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="negate/1">
+
+  <div class="detail-header">
+    <a href="#negate/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">negate(num)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1141" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 1.9.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> negate(<a href="#t:decimal/0">decimal</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Negates the given number.</p><h2 id="negate/1-examples" class="section-heading">
+  <a href="#negate/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">negate</span><span class="p" data-group-id="9784257456-1">(</span><span class="mi">1</span><span class="p" data-group-id="9784257456-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="9784257456-2">(</span><span class="s">&quot;-1&quot;</span><span class="p" data-group-id="9784257456-2">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">negate</span><span class="p" data-group-id="9784257456-3">(</span><span class="s">&quot;-Inf&quot;</span><span class="p" data-group-id="9784257456-3">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="9784257456-4">(</span><span class="s">&quot;Infinity&quot;</span><span class="p" data-group-id="9784257456-4">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="negative?/1">
+
+  <div class="detail-header">
+    <a href="#negative?/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">negative?(decimal)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1197" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 1.5.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> negative?(<a href="#t:t/0">t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Returns <code class="inline">true</code> if given number is negative, otherwise <code class="inline">false</code>.</p><h2 id="negative?/1-examples" class="section-heading">
+  <a href="#negative?/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">negative?</span><span class="p" data-group-id="3309555702-1">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="3309555702-2">(</span><span class="s">&quot;-42&quot;</span><span class="p" data-group-id="3309555702-2">)</span><span class="p" data-group-id="3309555702-1">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">negative?</span><span class="p" data-group-id="3309555702-3">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="3309555702-4">(</span><span class="s">&quot;42&quot;</span><span class="p" data-group-id="3309555702-4">)</span><span class="p" data-group-id="3309555702-3">)</span><span class="w">
+</span><span class="no">false</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">negative?</span><span class="p" data-group-id="3309555702-5">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="3309555702-6">(</span><span class="s">&quot;0&quot;</span><span class="p" data-group-id="3309555702-6">)</span><span class="p" data-group-id="3309555702-5">)</span><span class="w">
+</span><span class="no">false</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">negative?</span><span class="p" data-group-id="3309555702-7">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="3309555702-8">(</span><span class="s">&quot;NaN&quot;</span><span class="p" data-group-id="3309555702-8">)</span><span class="p" data-group-id="3309555702-7">)</span><span class="w">
+</span><span class="no">false</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="new/1">
+
+  <div class="detail-header">
+    <a href="#new/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">new(num)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1454" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> new(<a href="#t:decimal/0">decimal</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Creates a new decimal number from an integer or a string representation.</p><p>A decimal number will always be created exactly as specified with all digits
+kept - it will not be rounded with the context.</p><h2 id="new/1-backus-naur-form" class="section-heading">
+  <a href="#new/1-backus-naur-form" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Backus–Naur form</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="n">sign</span><span class="w">           </span><span class="o">::</span><span class="o">=</span><span class="w">  </span><span class="s">&quot;+&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s">&quot;-&quot;</span><span class="w">
+</span><span class="n">digit</span><span class="w">          </span><span class="o">::</span><span class="o">=</span><span class="w">  </span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s">&quot;5&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s">&quot;6&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s">&quot;7&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s">&quot;8&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s">&quot;9&quot;</span><span class="w">
+</span><span class="n">indicator</span><span class="w">      </span><span class="o">::</span><span class="o">=</span><span class="w">  </span><span class="s">&quot;e&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s">&quot;E&quot;</span><span class="w">
+</span><span class="n">digits</span><span class="w">         </span><span class="o">::</span><span class="o">=</span><span class="w">  </span><span class="n">digit</span><span class="w"> </span><span class="p" data-group-id="0260272226-1">[</span><span class="n">digit</span><span class="p" data-group-id="0260272226-1">]</span><span class="n">...</span><span class="w">
+</span><span class="n">decimal</span><span class="o">-</span><span class="n">part</span><span class="w">   </span><span class="o">::</span><span class="o">=</span><span class="w">  </span><span class="n">digits</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="w"> </span><span class="p" data-group-id="0260272226-2">[</span><span class="n">digits</span><span class="p" data-group-id="0260272226-2">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p" data-group-id="0260272226-3">[</span><span class="s">&quot;.&quot;</span><span class="p" data-group-id="0260272226-3">]</span><span class="w"> </span><span class="n">digits</span><span class="w">
+</span><span class="n">exponent</span><span class="o">-</span><span class="n">part</span><span class="w">  </span><span class="o">::</span><span class="o">=</span><span class="w">  </span><span class="n">indicator</span><span class="w"> </span><span class="p" data-group-id="0260272226-4">[</span><span class="n">sign</span><span class="p" data-group-id="0260272226-4">]</span><span class="w"> </span><span class="n">digits</span><span class="w">
+</span><span class="n">infinity</span><span class="w">       </span><span class="o">::</span><span class="o">=</span><span class="w">  </span><span class="s">&quot;Infinity&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s">&quot;Inf&quot;</span><span class="w">
+</span><span class="n">nan</span><span class="w">            </span><span class="o">::</span><span class="o">=</span><span class="w">  </span><span class="s">&quot;NaN&quot;</span><span class="w"> </span><span class="p" data-group-id="0260272226-5">[</span><span class="n">digits</span><span class="p" data-group-id="0260272226-5">]</span><span class="w">
+</span><span class="n">numeric</span><span class="o">-</span><span class="n">value</span><span class="w">  </span><span class="o">::</span><span class="o">=</span><span class="w">  </span><span class="n">decimal</span><span class="o">-</span><span class="n">part</span><span class="w"> </span><span class="p" data-group-id="0260272226-6">[</span><span class="n">exponent</span><span class="o">-</span><span class="n">part</span><span class="p" data-group-id="0260272226-6">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">infinity</span><span class="w">
+</span><span class="n">numeric</span><span class="o">-</span><span class="n">string</span><span class="w"> </span><span class="o">::</span><span class="o">=</span><span class="w">  </span><span class="p" data-group-id="0260272226-7">[</span><span class="n">sign</span><span class="p" data-group-id="0260272226-7">]</span><span class="w"> </span><span class="n">numeric</span><span class="o">-</span><span class="n">value</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p" data-group-id="0260272226-8">[</span><span class="n">sign</span><span class="p" data-group-id="0260272226-8">]</span><span class="w"> </span><span class="n">nan</span></code></pre><h2 id="new/1-floats" class="section-heading">
+  <a href="#new/1-floats" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Floats</span>
+</h2>
+<p>See also <a href="#from_float/1"><code class="inline">from_float/1</code></a>.</p><h2 id="new/1-examples" class="section-heading">
+  <a href="#new/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="1272452852-1">(</span><span class="mi">1</span><span class="p" data-group-id="1272452852-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="1272452852-2">(</span><span class="s">&quot;1&quot;</span><span class="p" data-group-id="1272452852-2">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="1272452852-3">(</span><span class="s">&quot;3.14&quot;</span><span class="p" data-group-id="1272452852-3">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="1272452852-4">(</span><span class="s">&quot;3.14&quot;</span><span class="p" data-group-id="1272452852-4">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="1272452852-5">(</span><span class="s">&quot;1.79769313486231581e308&quot;</span><span class="p" data-group-id="1272452852-5">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="1272452852-6">(</span><span class="s">&quot;1.79769313486231581e308&quot;</span><span class="p" data-group-id="1272452852-6">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="1272452852-7">(</span><span class="s">&quot;2.22507385850720139e-308&quot;</span><span class="p" data-group-id="1272452852-7">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="1272452852-8">(</span><span class="s">&quot;2.22507385850720139e-308&quot;</span><span class="p" data-group-id="1272452852-8">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="new/3">
+
+  <div class="detail-header">
+    <a href="#new/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">new(sign, coef, exp)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1483" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> new(sign :: 1 | -1, coef :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>() | :NaN | :inf, exp :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>()) ::
+  <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Creates a new decimal number from the sign, coefficient and exponent such that
+the number will be: <code class="inline">sign * coefficient * 10 ^ exponent</code>.</p><p>A decimal number will always be created exactly as specified with all digits
+kept - it will not be rounded with the context.</p><h2 id="new/3-examples" class="section-heading">
+  <a href="#new/3-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2022731225-1">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p" data-group-id="2022731225-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2022731225-2">(</span><span class="s">&quot;42&quot;</span><span class="p" data-group-id="2022731225-2">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="normalize/1">
+
+  <div class="detail-header">
+    <a href="#normalize/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">normalize(num)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1268" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 1.9.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> normalize(<a href="#t:t/0">t</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Normalizes the given decimal: removes trailing zeros from coefficient while
+keeping the number numerically equivalent by increasing the exponent.</p><h2 id="normalize/1-examples" class="section-heading">
+  <a href="#normalize/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">normalize</span><span class="p" data-group-id="0852412779-1">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="0852412779-2">(</span><span class="s">&quot;1.00&quot;</span><span class="p" data-group-id="0852412779-2">)</span><span class="p" data-group-id="0852412779-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="0852412779-3">(</span><span class="s">&quot;1&quot;</span><span class="p" data-group-id="0852412779-3">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">normalize</span><span class="p" data-group-id="0852412779-4">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="0852412779-5">(</span><span class="s">&quot;1.01&quot;</span><span class="p" data-group-id="0852412779-5">)</span><span class="p" data-group-id="0852412779-4">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="0852412779-6">(</span><span class="s">&quot;1.01&quot;</span><span class="p" data-group-id="0852412779-6">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="parse/1">
+
+  <div class="detail-header">
+    <a href="#parse/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">parse(binary)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1610" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> parse(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()) :: {<a href="#t:t/0">t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()} | :error</pre>
+
+      </div>
+
+<p>Parses a binary into a decimal.</p><p>If successful, returns a tuple in the form of <code class="inline">{decimal, remainder_of_binary}</code>,
+otherwise <code class="inline">:error</code>.</p><h2 id="parse/1-examples" class="section-heading">
+  <a href="#parse/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">parse</span><span class="p" data-group-id="5138239970-1">(</span><span class="s">&quot;3.14&quot;</span><span class="p" data-group-id="5138239970-1">)</span><span class="w">
+</span><span class="p" data-group-id="5138239970-2">{</span><span class="p" data-group-id="5138239970-3">%</span><span class="nc" data-group-id="5138239970-3">Decimal</span><span class="p" data-group-id="5138239970-3">{</span><span class="ss">coef</span><span class="p">:</span><span class="w"> </span><span class="mi">314</span><span class="p">,</span><span class="w"> </span><span class="ss">exp</span><span class="p">:</span><span class="w"> </span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="ss">sign</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="5138239970-3">}</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="5138239970-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">parse</span><span class="p" data-group-id="5138239970-4">(</span><span class="s">&quot;3.14.15&quot;</span><span class="p" data-group-id="5138239970-4">)</span><span class="w">
+</span><span class="p" data-group-id="5138239970-5">{</span><span class="p" data-group-id="5138239970-6">%</span><span class="nc" data-group-id="5138239970-6">Decimal</span><span class="p" data-group-id="5138239970-6">{</span><span class="ss">coef</span><span class="p">:</span><span class="w"> </span><span class="mi">314</span><span class="p">,</span><span class="w"> </span><span class="ss">exp</span><span class="p">:</span><span class="w"> </span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="ss">sign</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="5138239970-6">}</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.15&quot;</span><span class="p" data-group-id="5138239970-5">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">parse</span><span class="p" data-group-id="5138239970-7">(</span><span class="s">&quot;-1.1e3&quot;</span><span class="p" data-group-id="5138239970-7">)</span><span class="w">
+</span><span class="p" data-group-id="5138239970-8">{</span><span class="p" data-group-id="5138239970-9">%</span><span class="nc" data-group-id="5138239970-9">Decimal</span><span class="p" data-group-id="5138239970-9">{</span><span class="ss">coef</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span><span class="w"> </span><span class="ss">exp</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="ss">sign</span><span class="p">:</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p" data-group-id="5138239970-9">}</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p" data-group-id="5138239970-8">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">parse</span><span class="p" data-group-id="5138239970-10">(</span><span class="s">&quot;bad&quot;</span><span class="p" data-group-id="5138239970-10">)</span><span class="w">
+</span><span class="ss">:error</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="parse/2">
+
+  <div class="detail-header">
+    <a href="#parse/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">parse(binary, opts)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1643" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 2.4.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> parse(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), [<a href="#t:parse_option/0">parse_option</a>()]) :: {<a href="#t:t/0">t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()} | :error</pre>
+
+      </div>
+
+<p>Parses a binary into a decimal with optional limits.</p><p>Use this function instead of <a href="#parse/1"><code class="inline">parse/1</code></a> for untrusted input. Without explicit
+limits, decimal parsing accepts any exponent and digit count for backwards
+compatibility.</p><p>The following options are supported:</p><ul><li><code class="inline">:max_digits</code> - maximum number of decimal digits consumed from the input,
+including leading and trailing zeros.</li><li><code class="inline">:max_exponent</code> - maximum absolute value of the parsed decimal exponent,
+after fractional digits are accounted for.</li></ul><p>Returns <code class="inline">:error</code> when a parsed number exceeds the configured limits.</p>
+  </section>
+</section>
+<section class="detail" id="positive?/1">
+
+  <div class="detail-header">
+    <a href="#positive?/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">positive?(decimal)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1172" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 1.5.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> positive?(<a href="#t:t/0">t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Returns <code class="inline">true</code> if given number is positive, otherwise <code class="inline">false</code>.</p><h2 id="positive?/1-examples" class="section-heading">
+  <a href="#positive?/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">positive?</span><span class="p" data-group-id="8331065110-1">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="8331065110-2">(</span><span class="s">&quot;42&quot;</span><span class="p" data-group-id="8331065110-2">)</span><span class="p" data-group-id="8331065110-1">)</span><span class="w">
+</span><span class="no">true</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">positive?</span><span class="p" data-group-id="8331065110-3">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="8331065110-4">(</span><span class="s">&quot;-42&quot;</span><span class="p" data-group-id="8331065110-4">)</span><span class="p" data-group-id="8331065110-3">)</span><span class="w">
+</span><span class="no">false</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">positive?</span><span class="p" data-group-id="8331065110-5">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="8331065110-6">(</span><span class="s">&quot;0&quot;</span><span class="p" data-group-id="8331065110-6">)</span><span class="p" data-group-id="8331065110-5">)</span><span class="w">
+</span><span class="no">false</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">positive?</span><span class="p" data-group-id="8331065110-7">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="8331065110-8">(</span><span class="s">&quot;NaN&quot;</span><span class="p" data-group-id="8331065110-8">)</span><span class="p" data-group-id="8331065110-7">)</span><span class="w">
+</span><span class="no">false</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="rem/2">
+
+  <div class="detail-header">
+    <a href="#rem/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">rem(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L899" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> rem(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Remainder of integer division of two numbers. The result will have the sign of
+the first number.</p><h2 id="rem/2-exceptional-conditions" class="section-heading">
+  <a href="#rem/2-exceptional-conditions" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Exceptional conditions</span>
+</h2>
+<ul><li>If both numbers are ±Infinity <code class="inline">:invalid_operation</code> is signalled.</li><li>If both numbers are ±0 <code class="inline">:invalid_operation</code> is signalled.</li><li>If second number (denominator) is ±0 <code class="inline">:division_by_zero</code> is signalled.</li></ul><h2 id="rem/2-examples" class="section-heading">
+  <a href="#rem/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">rem</span><span class="p" data-group-id="9680537747-1">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="9680537747-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="9680537747-2">(</span><span class="s">&quot;1&quot;</span><span class="p" data-group-id="9680537747-2">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="round/3">
+
+    <span id="round/1"></span>
+
+    <span id="round/2"></span>
+
+  <div class="detail-header">
+    <a href="#round/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">round(num, places \\ 0, mode \\ :half_up)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1300" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> round(<a href="#t:decimal/0">decimal</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>(), <a href="#t:rounding/0">rounding</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Rounds the given number to specified decimal places with the given strategy
+(default is to round to nearest one). If places is negative, at least that
+many digits to the left of the decimal point will be zero.</p><p>See <a href="Decimal.Context.html"><code class="inline">Decimal.Context</code></a> for more information about rounding algorithms.</p><h2 id="round/3-examples" class="section-heading">
+  <a href="#round/3-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">round</span><span class="p" data-group-id="6676971289-1">(</span><span class="s">&quot;1.234&quot;</span><span class="p" data-group-id="6676971289-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="6676971289-2">(</span><span class="s">&quot;1&quot;</span><span class="p" data-group-id="6676971289-2">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">round</span><span class="p" data-group-id="6676971289-3">(</span><span class="s">&quot;1.234&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="6676971289-3">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="6676971289-4">(</span><span class="s">&quot;1.2&quot;</span><span class="p" data-group-id="6676971289-4">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="scale/1">
+
+  <div class="detail-header">
+    <a href="#scale/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">scale(decimal)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L2068" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> scale(<a href="#t:t/0">t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()</pre>
+
+      </div>
+
+<p>Returns the scale of the decimal.</p><p>A decimal's scale is the number of digits after the decimal point. This
+includes trailing zeros; see <a href="#normalize/1"><code class="inline">normalize/1</code></a> to remove them.</p><h2 id="scale/1-examples" class="section-heading">
+  <a href="#scale/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">scale</span><span class="p" data-group-id="7560378541-1">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7560378541-2">(</span><span class="s">&quot;42&quot;</span><span class="p" data-group-id="7560378541-2">)</span><span class="p" data-group-id="7560378541-1">)</span><span class="w">
+</span><span class="mi">0</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">scale</span><span class="p" data-group-id="7560378541-3">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7560378541-4">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">26</span><span class="p" data-group-id="7560378541-4">)</span><span class="p" data-group-id="7560378541-3">)</span><span class="w">
+</span><span class="mi">0</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">scale</span><span class="p" data-group-id="7560378541-5">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7560378541-6">(</span><span class="s">&quot;99.12345&quot;</span><span class="p" data-group-id="7560378541-6">)</span><span class="p" data-group-id="7560378541-5">)</span><span class="w">
+</span><span class="mi">5</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">scale</span><span class="p" data-group-id="7560378541-7">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7560378541-8">(</span><span class="s">&quot;1.50&quot;</span><span class="p" data-group-id="7560378541-8">)</span><span class="p" data-group-id="7560378541-7">)</span><span class="w">
+</span><span class="mi">2</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="sqrt/1">
+
+  <div class="detail-header">
+    <a href="#sqrt/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">sqrt(num)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1329" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 1.7.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> sqrt(<a href="#t:decimal/0">decimal</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Finds the square root.</p><h2 id="sqrt/1-examples" class="section-heading">
+  <a href="#sqrt/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">sqrt</span><span class="p" data-group-id="1611223651-1">(</span><span class="s">&quot;100&quot;</span><span class="p" data-group-id="1611223651-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="1611223651-2">(</span><span class="s">&quot;10&quot;</span><span class="p" data-group-id="1611223651-2">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="sub/2">
+
+  <div class="detail-header">
+    <a href="#sub/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">sub(num1, num2)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L407" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> sub(<a href="#t:decimal/0">decimal</a>(), <a href="#t:decimal/0">decimal</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Subtracts second number from the first. Equivalent to <a href="#add/2"><code class="inline">Decimal.add/2</code></a> when the
+second number's sign is negated.</p><h2 id="sub/2-exceptional-conditions" class="section-heading">
+  <a href="#sub/2-exceptional-conditions" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Exceptional conditions</span>
+</h2>
+<ul><li>If one number is -Infinity and the other +Infinity <code class="inline">:invalid_operation</code> will
+be signalled.</li></ul><h2 id="sub/2-examples" class="section-heading">
+  <a href="#sub/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">sub</span><span class="p" data-group-id="3391787118-1">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0.1&quot;</span><span class="p" data-group-id="3391787118-1">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="3391787118-2">(</span><span class="s">&quot;0.9&quot;</span><span class="p" data-group-id="3391787118-2">)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">sub</span><span class="p" data-group-id="3391787118-3">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Inf&quot;</span><span class="p" data-group-id="3391787118-3">)</span><span class="w">
+</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="3391787118-4">(</span><span class="s">&quot;-Infinity&quot;</span><span class="p" data-group-id="3391787118-4">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="to_float/1">
+
+  <div class="detail-header">
+    <a href="#to_float/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">to_float(decimal)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L2021" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> to_float(<a href="#t:t/0">t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">float</a>()</pre>
+
+      </div>
+
+<p>Returns the decimal converted to a float.</p><p>The returned float may have lower precision than the decimal.</p><p>Raises if the decimal cannot be converted to a float.</p><h2 id="to_float/1-examples" class="section-heading">
+  <a href="#to_float/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_float</span><span class="p" data-group-id="2839965259-1">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2839965259-2">(</span><span class="s">&quot;1.5&quot;</span><span class="p" data-group-id="2839965259-2">)</span><span class="p" data-group-id="2839965259-1">)</span><span class="w">
+</span><span class="mf">1.5</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_float</span><span class="p" data-group-id="2839965259-3">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2839965259-4">(</span><span class="s">&quot;-1.79769313486231581e308&quot;</span><span class="p" data-group-id="2839965259-4">)</span><span class="p" data-group-id="2839965259-3">)</span><span class="w">
+</span><span class="gt">** (Decimal.Error) : negative number smaller than DBL_MAX: Decimal.new(&quot;-1.79769313486231581E+308&quot;)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_float</span><span class="p" data-group-id="2839965259-5">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2839965259-6">(</span><span class="s">&quot;-1.79769313486231581e308&quot;</span><span class="p" data-group-id="2839965259-6">)</span><span class="p" data-group-id="2839965259-5">)</span><span class="w">
+</span><span class="gt">** (Decimal.Error) : negative number smaller than DBL_MAX: Decimal.new(&quot;-1.79769313486231581E+308&quot;)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_float</span><span class="p" data-group-id="2839965259-7">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2839965259-8">(</span><span class="s">&quot;2.22507385850720139e-308&quot;</span><span class="p" data-group-id="2839965259-8">)</span><span class="p" data-group-id="2839965259-7">)</span><span class="w">
+</span><span class="gt">** (Decimal.Error) : number smaller than DBL_MIN: Decimal.new(&quot;2.22507385850720139E-308&quot;)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_float</span><span class="p" data-group-id="2839965259-9">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2839965259-10">(</span><span class="s">&quot;-2.22507385850720139e-308&quot;</span><span class="p" data-group-id="2839965259-10">)</span><span class="p" data-group-id="2839965259-9">)</span><span class="w">
+</span><span class="gt">** (Decimal.Error): negative number bigger than DBL_MIN: Decimal.new(&quot;-2.22507385850720139E-308&quot;)</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_float</span><span class="p" data-group-id="2839965259-11">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2839965259-12">(</span><span class="s">&quot;inf&quot;</span><span class="p" data-group-id="2839965259-12">)</span><span class="p" data-group-id="2839965259-11">)</span><span class="w">
+</span><span class="gt">** (ArgumentError) Decimal.new(&quot;Infinity&quot;) cannot be converted to float</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="to_integer/1">
+
+  <div class="detail-header">
+    <a href="#to_integer/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">to_integer(decimal)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1970" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> to_integer(<a href="#t:t/0">t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>()</pre>
+
+      </div>
+
+<p>Returns the decimal represented as an integer.</p><p>Raises when loss of precision will occur.</p><h2 id="to_integer/1-examples" class="section-heading">
+  <a href="#to_integer/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_integer</span><span class="p" data-group-id="3411492046-1">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="3411492046-2">(</span><span class="s">&quot;42&quot;</span><span class="p" data-group-id="3411492046-2">)</span><span class="p" data-group-id="3411492046-1">)</span><span class="w">
+</span><span class="mi">42</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_integer</span><span class="p" data-group-id="3411492046-3">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="3411492046-4">(</span><span class="s">&quot;1.00&quot;</span><span class="p" data-group-id="3411492046-4">)</span><span class="p" data-group-id="3411492046-3">)</span><span class="w">
+</span><span class="mi">1</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_integer</span><span class="p" data-group-id="3411492046-5">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="3411492046-6">(</span><span class="s">&quot;1.10&quot;</span><span class="p" data-group-id="3411492046-6">)</span><span class="p" data-group-id="3411492046-5">)</span><span class="w">
+</span><span class="gt">** (ArgumentError) cannot convert Decimal.new(&quot;1.1&quot;) without losing precision. Use Decimal.round/3 first.</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="to_string/2">
+
+    <span id="to_string/1"></span>
+
+  <div class="detail-header">
+    <a href="#to_string/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">to_string(num, type \\ :scientific)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1697" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> to_string(<a href="#t:t/0">t</a>(), :scientific | :normal | :xsd | :raw) :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+<p>Converts given number to its string representation.</p><p>The default <code class="inline">:scientific</code> format is compact for large positive exponents.
+The <code class="inline">:normal</code> and <code class="inline">:xsd</code> formats may allocate output proportional to the
+expanded size of the decimal. Use <a href="#to_string/3"><code class="inline">to_string/3</code></a> with <code class="inline">:max_digits</code> when
+rendering decimals from untrusted input.</p><h2 id="to_string/2-options" class="section-heading">
+  <a href="#to_string/2-options" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Options</span>
+</h2>
+<ul><li><code class="inline">:scientific</code> - number converted to scientific notation.</li><li><code class="inline">:normal</code> - number converted without a exponent.</li><li><code class="inline">:xsd</code> - number converted to the <a href="https://www.w3.org/TR/xmlschema-2/#decimal">canonical XSD representation</a>.</li><li><code class="inline">:raw</code> - number converted to its raw, internal format.</li></ul><h2 id="to_string/2-examples" class="section-heading">
+  <a href="#to_string/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_string</span><span class="p" data-group-id="6387311233-1">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="6387311233-2">(</span><span class="s">&quot;1.00&quot;</span><span class="p" data-group-id="6387311233-2">)</span><span class="p" data-group-id="6387311233-1">)</span><span class="w">
+</span><span class="s">&quot;1.00&quot;</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_string</span><span class="p" data-group-id="6387311233-3">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="6387311233-4">(</span><span class="s">&quot;123e1&quot;</span><span class="p" data-group-id="6387311233-4">)</span><span class="p">,</span><span class="w"> </span><span class="ss">:scientific</span><span class="p" data-group-id="6387311233-3">)</span><span class="w">
+</span><span class="s">&quot;1.23E+3&quot;</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_string</span><span class="p" data-group-id="6387311233-5">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="6387311233-6">(</span><span class="s">&quot;42.42&quot;</span><span class="p" data-group-id="6387311233-6">)</span><span class="p">,</span><span class="w"> </span><span class="ss">:normal</span><span class="p" data-group-id="6387311233-5">)</span><span class="w">
+</span><span class="s">&quot;42.42&quot;</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_string</span><span class="p" data-group-id="6387311233-7">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="6387311233-8">(</span><span class="s">&quot;1.00&quot;</span><span class="p" data-group-id="6387311233-8">)</span><span class="p">,</span><span class="w"> </span><span class="ss">:xsd</span><span class="p" data-group-id="6387311233-7">)</span><span class="w">
+</span><span class="s">&quot;1.0&quot;</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">to_string</span><span class="p" data-group-id="6387311233-9">(</span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="6387311233-10">(</span><span class="s">&quot;4321.768&quot;</span><span class="p" data-group-id="6387311233-10">)</span><span class="p">,</span><span class="w"> </span><span class="ss">:raw</span><span class="p" data-group-id="6387311233-9">)</span><span class="w">
+</span><span class="s">&quot;4321768E-3&quot;</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="to_string/3">
+
+  <div class="detail-header">
+    <a href="#to_string/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">to_string(num, type, opts)</h1>
+
+      <a href="https://github.com/ericmj/decimal/blob/v2.4.1/lib/decimal.ex#L1863" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+      <span class="note">(since 2.4.0)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> to_string(<a href="#t:t/0">t</a>(), :scientific | :normal | :xsd | :raw, [<a href="#t:to_string_option/0">to_string_option</a>()]) ::
+  <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+<p>Converts given number to its string representation with optional limits.</p><p>Use this function when rendering decimals from untrusted input, especially
+with <code class="inline">:normal</code> or <code class="inline">:xsd</code>, because those formats may otherwise allocate output
+proportional to the expanded size of the decimal.</p><p>The following options are supported:</p><ul><li><code class="inline">:max_digits</code> - maximum number of digit characters in the output. Sign,
+decimal point, and exponent markers are not counted.</li></ul><p>Raises <a href="https://hexdocs.pm/elixir/ArgumentError.html"><code class="inline">ArgumentError</code></a> when the configured limit would be exceeded.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/decimal/2.4.1" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/decimal/2.4.1">Hex Preview</a>
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="Decimal.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.35.1) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

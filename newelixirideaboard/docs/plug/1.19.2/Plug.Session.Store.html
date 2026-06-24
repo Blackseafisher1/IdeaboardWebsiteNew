@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.39.2">
+    <meta name="project" content="Plug v1.19.2">
+
+
+    <title>Plug.Session.Store — Plug v1.19.2</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-VYWJUHZE.css" />
+
+    <script defer src="dist/sidebar_items-B73977CD.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-XBCM4BHM.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+Plug
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.19.2
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-behaviour" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Plug</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Plug.Session.Store</span> <small>behaviour</small>
+      <small class="app-vsn" translate="no">(Plug v1.19.2)</small>
+
+    </h1>
+
+      <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/session/store.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Specification for session stores.</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:cookie/0" data-no-tooltip="" translate="no">cookie()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The cookie value that will be sent in cookie headers. This value should be
+base64 encoded to avoid security issues.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:session/0" data-no-tooltip="" translate="no">session()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The session contents, the final data to be stored after it has been built
+with <a href="Plug.Conn.html#put_session/3"><code class="inline">Plug.Conn.put_session/3</code></a> and the other session manipulating functions.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:sid/0" data-no-tooltip="" translate="no">sid()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The internal reference to the session in the store.</p></div>
+
+    </div>
+
+</div>
+<div class="summary-callbacks summary">
+  <h2>
+    <a href="#callbacks">Callbacks</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:delete/3" data-no-tooltip="" translate="no">delete(conn, sid, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Removes the session associated with given session id from the store.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:get/3" data-no-tooltip="" translate="no">get(conn, cookie, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Parses the given cookie.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:init/1" data-no-tooltip="" translate="no">init(opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Initializes the store.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:put/4" data-no-tooltip="" translate="no">put(conn, sid, any, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Stores the session associated with given session id.</p></div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#get/1" data-no-tooltip="" translate="no">get(store)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Gets the store name from an atom or a module.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+
+    <div class="types-list">
+<section class="detail" id="t:cookie/0">
+
+  <div class="detail-header">
+    <a href="#t:cookie/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">cookie()</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/session/store.ex#L32" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> cookie() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()</pre>
+
+      </div>
+
+<p>The cookie value that will be sent in cookie headers. This value should be
+base64 encoded to avoid security issues.</p>
+  </section>
+</section>
+<section class="detail" id="t:session/0">
+
+  <div class="detail-header">
+    <a href="#t:session/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">session()</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/session/store.ex#L38" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> session() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()</pre>
+
+      </div>
+
+<p>The session contents, the final data to be stored after it has been built
+with <a href="Plug.Conn.html#put_session/3"><code class="inline">Plug.Conn.put_session/3</code></a> and the other session manipulating functions.</p>
+  </section>
+</section>
+<section class="detail" id="t:sid/0">
+
+  <div class="detail-header">
+    <a href="#t:sid/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">sid()</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/session/store.ex#L26" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> sid() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>() | nil</pre>
+
+      </div>
+
+<p>The internal reference to the session in the store.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="callbacks" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#callbacks">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Callbacks</span>
+    </h1>
+
+    <div class="callbacks-list">
+<section class="detail" id="c:delete/3">
+
+  <div class="detail-header">
+    <a href="#c:delete/3" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">delete(conn, sid, opts)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/session/store.ex#L70" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> delete(conn :: <a href="Plug.Conn.html#t:t/0">Plug.Conn.t</a>(), <a href="#t:sid/0">sid</a>(), opts :: <a href="Plug.html#t:opts/0">Plug.opts</a>()) :: :ok</pre>
+
+      </div>
+
+<p>Removes the session associated with given session id from the store.</p>
+  </section>
+</section>
+<section class="detail" id="c:get/3">
+
+  <div class="detail-header">
+    <a href="#c:get/3" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get(conn, cookie, opts)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/session/store.ex#L57" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> get(conn :: <a href="Plug.Conn.html#t:t/0">Plug.Conn.t</a>(), <a href="#t:cookie/0">cookie</a>(), opts :: <a href="Plug.html#t:opts/0">Plug.opts</a>()) :: {<a href="#t:sid/0">sid</a>(), <a href="#t:session/0">session</a>()}</pre>
+
+      </div>
+
+<p>Parses the given cookie.</p><p>Returns a session id and the session contents. The session id is any
+value that can be used to identify the session by the store.</p><p>The session id may be nil in case the cookie does not identify any
+value in the store. The session contents must be a map.</p>
+  </section>
+</section>
+<section class="detail" id="c:init/1">
+
+  <div class="detail-header">
+    <a href="#c:init/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">init(opts)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/session/store.ex#L46" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> init(opts :: <a href="Plug.html#t:opts/0">Plug.opts</a>()) :: <a href="Plug.html#t:opts/0">Plug.opts</a>()</pre>
+
+      </div>
+
+<p>Initializes the store.</p><p>The options returned from this function will be given
+to <a href="#c:get/3"><code class="inline">get/3</code></a>, <a href="#c:put/4"><code class="inline">put/4</code></a> and <a href="#c:delete/3"><code class="inline">delete/3</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="c:put/4">
+
+  <div class="detail-header">
+    <a href="#c:put/4" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">put(conn, sid, any, opts)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/session/store.ex#L65" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> put(conn :: <a href="Plug.Conn.html#t:t/0">Plug.Conn.t</a>(), <a href="#t:sid/0">sid</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(), opts :: <a href="Plug.html#t:opts/0">Plug.opts</a>()) :: <a href="#t:cookie/0">cookie</a>()</pre>
+
+      </div>
+
+<p>Stores the session associated with given session id.</p><p>If <code class="inline">nil</code> is given as id, a new session id should be
+generated and returned.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+
+    <div class="functions-list">
+<section class="detail" id="get/1">
+
+  <div class="detail-header">
+    <a href="#get/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get(store)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/session/store.ex#L16" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Gets the store name from an atom or a module.</p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Plug.Session.Store</span><span class="o">.</span><span class="n">get</span><span class="p" data-group-id="2849688628-1">(</span><span class="nc">CustomStore</span><span class="p" data-group-id="2849688628-1">)</span><span class="w">
+</span><span class="nc">CustomStore</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Plug.Session.Store</span><span class="o">.</span><span class="n">get</span><span class="p" data-group-id="2849688628-2">(</span><span class="ss">:cookie</span><span class="p" data-group-id="2849688628-2">)</span><span class="w">
+</span><span class="nc">Plug.Session.COOKIE</span></code></pre>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/plug/1.19.2" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/plug/1.19.2">Hex Preview</a>
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+            Go to package docs
+          </button>
+
+            <a href="Plug.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.39.2) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

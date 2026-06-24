@@ -11,7 +11,7 @@ defmodule IdeaBoard.AuthController do
   end
 
   defp render_login(conn, error) do
-    html = IdeaBoard.Renderer.render("auth/login", [error: error, form: "login"], conn)
+    html = IdeaBoard.Renderer.render_page("auth/login", [error: error, form: "login"], conn)
     send_resp(conn, 200, html)
   end
 
@@ -20,7 +20,7 @@ defmodule IdeaBoard.AuthController do
     password = Map.get(conn.params, "password", "")
 
     if email == "" or password == "" do
-      html = IdeaBoard.Renderer.render("auth/login", [error: "Bitte E-Mail und Passwort eingeben", form: "login"], conn)
+      html = IdeaBoard.Renderer.render_page("auth/login", [error: "Bitte E-Mail und Passwort eingeben", form: "login"], conn)
       send_resp(conn, 400, html)
     else
       case IdeaBoard.AuthService.authenticate(email, password) do
@@ -29,7 +29,7 @@ defmodule IdeaBoard.AuthController do
           redirect(conn, "/")
 
         {:error, reason} ->
-          html = IdeaBoard.Renderer.render("auth/login", [error: reason, form: "login"], conn)
+          html = IdeaBoard.Renderer.render_page("auth/login", [error: reason, form: "login"], conn)
           send_resp(conn, 401, html)
       end
     end
@@ -41,7 +41,7 @@ defmodule IdeaBoard.AuthController do
     password = Map.get(conn.params, "password", "")
 
     if username == "" or email == "" or password == "" do
-      html = IdeaBoard.Renderer.render("auth/login", [error: "Bitte alle Felder ausfüllen", form: "register"], conn)
+      html = IdeaBoard.Renderer.render_page("auth/login", [error: "Bitte alle Felder ausfüllen", form: "register"], conn)
       send_resp(conn, 400, html)
     else
       case IdeaBoard.AuthService.register(username, email, password) do
@@ -50,7 +50,7 @@ defmodule IdeaBoard.AuthController do
           redirect(conn, "/")
 
         {:error, reason} ->
-          html = IdeaBoard.Renderer.render("auth/login", [error: reason, form: "register"], conn)
+          html = IdeaBoard.Renderer.render_page("auth/login", [error: reason, form: "register"], conn)
           send_resp(conn, 400, html)
       end
     end

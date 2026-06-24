@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.39.2">
+    <meta name="project" content="Plug v1.19.2">
+
+
+    <title>Plug.CSRFProtection — Plug v1.19.2</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-VYWJUHZE.css" />
+
+    <script defer src="dist/sidebar_items-B73977CD.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-XBCM4BHM.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+Plug
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.19.2
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Plug</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Plug.CSRFProtection</span> 
+      <small class="app-vsn" translate="no">(Plug v1.19.2)</small>
+
+    </h1>
+
+      <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/csrf_protection.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Plug to protect from cross-site request forgery.</p><p>For this plug to work, it expects a session to have been
+previously fetched. It will then compare the token stored
+in the session with the one sent by the request to determine
+the validity of the request. For an invalid request the action
+taken is based on the <code class="inline">:with</code> option.</p><p>The token may be sent by the request either via the params
+with key &quot;_csrf_token&quot; or a header with name &quot;x-csrf-token&quot;.</p><p>GET requests are not protected, as they should not have any
+side-effect or change your application state. JavaScript
+requests are an exception: by using a script tag, external
+websites can embed server-side generated JavaScript, which
+can leak information. For this reason, this plug also forbids
+any GET JavaScript request that is not XHR (or AJAX).</p><p>Note that it is recommended to enable CSRFProtection whenever
+a session is used, even for JSON requests. For example, Chrome
+had a bug that allowed POST requests to be triggered with
+arbitrary content-type, making JSON exploitable. More info:
+<a href="https://bugs.chromium.org/p/chromium/issues/detail?id=490015">https://bugs.chromium.org/p/chromium/issues/detail?id=490015</a></p><p>Finally, we recommend developers to invoke <a href="#delete_csrf_token/0"><code class="inline">delete_csrf_token/0</code></a>
+every time after they log a user in, to avoid CSRF fixation
+attacks.</p><h2 id="module-token-generation" class="section-heading"><a href="#module-token-generation" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Token generation</span></h2><p>This plug won't generate tokens automatically. Instead, tokens
+will be generated only when required by calling <a href="#get_csrf_token/0"><code class="inline">get_csrf_token/0</code></a>.
+In case you are generating the token for certain specific URL,
+you should use <a href="#get_csrf_token_for/1"><code class="inline">get_csrf_token_for/1</code></a> as that will avoid tokens
+from being leaked to other applications.</p><p>Once a token is generated, it is cached in the process dictionary.
+The CSRF token is usually generated inside forms which may be
+isolated from <a href="Plug.Conn.html"><code class="inline">Plug.Conn</code></a>. Storing them in the process dictionary
+allows them to be generated as a side-effect only when necessary,
+becoming one of those rare situations where using the process
+dictionary is useful.</p><h2 id="module-cross-host-protection" class="section-heading"><a href="#module-cross-host-protection" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Cross-host protection</span></h2><p>If you are sending data to a full URI, such as <code class="inline">//subdomain.host.com/path</code>
+or <code class="inline">//external.com/path</code>, instead of a simple path such as <code class="inline">/path</code>, you may
+want to consider using <a href="#get_csrf_token_for/1"><code class="inline">get_csrf_token_for/1</code></a>, as that will encode the host
+in the CSRF token. Once received, Plug will only consider the CSRF token to
+be valid if the <code class="inline">host</code> encoded in the token is the same as the one in
+<code class="inline">conn.host</code>.</p><p>Therefore, if you get a warning that the host does not match, it is either
+because someone is attempting to steal CSRF tokens or because you have a
+misconfigured host configuration.</p><p>For example, if you are running your application behind a proxy, the browser
+will send a request to the proxy with <code class="inline">www.example.com</code> but the proxy will
+request you using an internal IP. In such cases, it is common for proxies
+to attach information such as <code class="inline">&quot;x-forwarded-host&quot;</code> that contains the original
+host.</p><p>This may also happen on redirects. If you have a POST request to <code class="inline">foo.example.com</code>
+that redirects to <code class="inline">bar.example.com</code> with status 307, the token will contain a
+different host than the one in the request.</p><p>You can pass the <code class="inline">:allow_hosts</code> option to control any host that you may want
+to allow. The values in <code class="inline">:allow_hosts</code> may either be a full host name or a
+host suffix. For example: <code class="inline">[&quot;www.example.com&quot;, &quot;.subdomain.example.com&quot;]</code>
+will allow the exact host of <code class="inline">&quot;www.example.com&quot;</code> and any host that ends with
+<code class="inline">&quot;.subdomain.example.com&quot;</code>.</p><h2 id="module-options" class="section-heading"><a href="#module-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h2><ul><li><code class="inline">:session_key</code> - the name of the key in session to store the token under</li><li><code class="inline">:allow_hosts</code> - a list with hosts to allow on cross-host tokens</li><li><code class="inline">:with</code> - should be one of <code class="inline">:exception</code> or <code class="inline">:clear_session</code>. Defaults to
+<code class="inline">:exception</code>.<ul><li><code class="inline">:exception</code> -  for invalid requests, this plug will raise
+<a href="Plug.CSRFProtection.InvalidCSRFTokenError.html"><code class="inline">Plug.CSRFProtection.InvalidCSRFTokenError</code></a>.</li><li><code class="inline">:clear_session</code> -  for invalid requests, this plug will set an empty
+session for only this request. Also any changes to the session during this
+request will be ignored.</li></ul></li></ul><h2 id="module-disabling" class="section-heading"><a href="#module-disabling" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Disabling</span></h2><p>You may disable this plug by doing
+<code class="inline">Plug.Conn.put_private(conn, :plug_skip_csrf_protection, true)</code>. This was made
+available for disabling <a href="Plug.CSRFProtection.html"><code class="inline">Plug.CSRFProtection</code></a> in tests and not for dynamically
+skipping <a href="Plug.CSRFProtection.html"><code class="inline">Plug.CSRFProtection</code></a> in production code. If you want specific routes to
+skip <a href="Plug.CSRFProtection.html"><code class="inline">Plug.CSRFProtection</code></a>, then use a different stack of plugs for that route that
+does not include <a href="Plug.CSRFProtection.html"><code class="inline">Plug.CSRFProtection</code></a>.</p><h2 id="module-examples" class="section-heading"><a href="#module-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="n">plug</span><span class="w"> </span><span class="nc">Plug.Session</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="w">
+</span><span class="n">plug</span><span class="w"> </span><span class="ss">:fetch_session</span><span class="w">
+</span><span class="n">plug</span><span class="w"> </span><span class="nc">Plug.CSRFProtection</span></code></pre>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#delete_csrf_token/0" data-no-tooltip="" translate="no">delete_csrf_token()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Deletes the CSRF token from the process dictionary.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#dump_state/0" data-no-tooltip="" translate="no">dump_state()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Dump CSRF state from the process dictionary.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#dump_state_from_session/1" data-no-tooltip="" translate="no">dump_state_from_session(session_token)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Dumps the CSRF state from the session token.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#get_csrf_token/0" data-no-tooltip="" translate="no">get_csrf_token()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Gets the CSRF token.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#get_csrf_token_for/1" data-no-tooltip="" translate="no">get_csrf_token_for(url)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Gets the CSRF token for the associated URL (as a string or a URI struct).</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#load_state/2" data-no-tooltip="" translate="no">load_state(secret_key_base, csrf_state)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Load CSRF state into the process dictionary.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#valid_state_and_csrf_token?/2" data-no-tooltip="" translate="no">valid_state_and_csrf_token?(state, csrf_token)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Validates the <code class="inline">csrf_token</code> against the state.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+
+    <div class="functions-list">
+<section class="detail" id="delete_csrf_token/0">
+
+  <div class="detail-header">
+    <a href="#delete_csrf_token/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">delete_csrf_token()</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/csrf_protection.ex#L278" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Deletes the CSRF token from the process dictionary.</p><p>This will force the token to be deleted once the response is sent.
+If you want to refresh the CSRF state, you can call <a href="#get_csrf_token/0"><code class="inline">get_csrf_token/0</code></a>
+after <a href="#delete_csrf_token/0"><code class="inline">delete_csrf_token/0</code></a> to ensure a new token is generated.</p>
+  </section>
+</section>
+<section class="detail" id="dump_state/0">
+
+  <div class="detail-header">
+    <a href="#dump_state/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">dump_state()</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/csrf_protection.ex#L183" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Dump CSRF state from the process dictionary.</p><p>This allows it to be loaded in another process.</p><p>See <a href="#load_state/2"><code class="inline">load_state/2</code></a> for more information.</p>
+  </section>
+</section>
+<section class="detail" id="dump_state_from_session/1">
+
+  <div class="detail-header">
+    <a href="#dump_state_from_session/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">dump_state_from_session(session_token)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/csrf_protection.ex#L193" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Dumps the CSRF state from the session token.</p><p>It expects the value of <code class="inline">get_session(conn, &quot;_csrf_token&quot;)</code>
+as input. It returns <code class="inline">nil</code> if the given token is not valid.</p>
+  </section>
+</section>
+<section class="detail" id="get_csrf_token/0">
+
+  <div class="detail-header">
+    <a href="#get_csrf_token/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_csrf_token()</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/csrf_protection.ex#L223" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Gets the CSRF token.</p><p>Generates a token and stores it in the process
+dictionary if one does not exist.</p>
+  </section>
+</section>
+<section class="detail" id="get_csrf_token_for/1">
+
+  <div class="detail-header">
+    <a href="#get_csrf_token_for/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_csrf_token_for(url)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/csrf_protection.ex#L240" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Gets the CSRF token for the associated URL (as a string or a URI struct).</p><p>If the URL has a host, a CSRF token that is tied to that
+host will be generated. If it is a relative path URL, a
+simple token emitted with <a href="#get_csrf_token/0"><code class="inline">get_csrf_token/0</code></a> will be used.</p>
+  </section>
+</section>
+<section class="detail" id="load_state/2">
+
+  <div class="detail-header">
+    <a href="#load_state/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">load_state(secret_key_base, csrf_state)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/csrf_protection.ex#L170" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Load CSRF state into the process dictionary.</p><p>This can be used to load CSRF state into another process.
+See <a href="#dump_state/0"><code class="inline">dump_state/0</code></a> and <code class="inline">dump_state_from_session/2</code> for dumping it.</p><h2 id="load_state/2-examples" class="section-heading"><a href="#load_state/2-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><p>To dump the state from the current process and load into another one:</p><pre><code class="makeup elixir" translate="no"><span class="n">csrf_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Plug.CSRFProtection</span><span class="o">.</span><span class="n">dump_state</span><span class="p" data-group-id="3786347320-1">(</span><span class="p" data-group-id="3786347320-1">)</span><span class="w">
+</span><span class="n">secret_key_base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">conn</span><span class="o">.</span><span class="n">secret_key_base</span><span class="w">
+
+</span><span class="nc">Task</span><span class="o">.</span><span class="n">async</span><span class="p" data-group-id="3786347320-2">(</span><span class="k" data-group-id="3786347320-3">fn</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+  </span><span class="nc">Plug.CSRFProtection</span><span class="o">.</span><span class="n">load_state</span><span class="p" data-group-id="3786347320-4">(</span><span class="n">secret_key_base</span><span class="p">,</span><span class="w"> </span><span class="n">csrf_state</span><span class="p" data-group-id="3786347320-4">)</span><span class="w">
+</span><span class="k" data-group-id="3786347320-3">end</span><span class="p" data-group-id="3786347320-2">)</span></code></pre><p>If you have a session but the CSRF state was not loaded into the
+current process, you can dump the state from the session:</p><pre><code class="makeup elixir" translate="no"><span class="n">csrf_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Plug.CSRFProtection</span><span class="o">.</span><span class="n">dump_state_from_session</span><span class="p" data-group-id="8700635022-1">(</span><span class="n">session</span><span class="p" data-group-id="8700635022-2">[</span><span class="s">&quot;_csrf_token&quot;</span><span class="p" data-group-id="8700635022-2">]</span><span class="p" data-group-id="8700635022-1">)</span><span class="w">
+
+</span><span class="nc">Task</span><span class="o">.</span><span class="n">async</span><span class="p" data-group-id="8700635022-3">(</span><span class="k" data-group-id="8700635022-4">fn</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+  </span><span class="nc">Plug.CSRFProtection</span><span class="o">.</span><span class="n">load_state</span><span class="p" data-group-id="8700635022-5">(</span><span class="n">secret_key_base</span><span class="p">,</span><span class="w"> </span><span class="n">csrf_state</span><span class="p" data-group-id="8700635022-5">)</span><span class="w">
+</span><span class="k" data-group-id="8700635022-4">end</span><span class="p" data-group-id="8700635022-3">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="valid_state_and_csrf_token?/2">
+
+  <div class="detail-header">
+    <a href="#valid_state_and_csrf_token?/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">valid_state_and_csrf_token?(state, csrf_token)</h1>
+
+
+        <a href="https://github.com/elixir-plug/plug/blob/v1.19.2/lib/plug/csrf_protection.ex#L206" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Validates the <code class="inline">csrf_token</code> against the state.</p><p>This is the mechanism used by the Plug itself to match the token
+received in the request (via headers or parameters) with the state
+(typically stored in the session).</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/plug/1.19.2" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/plug/1.19.2">Hex Preview</a>
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+            Go to package docs
+          </button>
+
+            <a href="Plug.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.39.2) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

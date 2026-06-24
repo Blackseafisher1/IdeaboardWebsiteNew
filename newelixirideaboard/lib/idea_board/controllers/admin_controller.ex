@@ -14,7 +14,7 @@ defmodule IdeaBoard.AdminController do
       send_resp(conn, 403, "Forbidden")
     else
       data = IdeaBoard.AdminService.get_dashboard(user)
-      html = IdeaBoard.Renderer.render("admin/index", data, conn)
+      html = IdeaBoard.Renderer.render_page("admin/index", data, conn)
       send_resp(conn, 200, html)
     end
   end

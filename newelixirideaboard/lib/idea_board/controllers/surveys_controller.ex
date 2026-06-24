@@ -10,7 +10,7 @@ defmodule IdeaBoard.SurveysController do
   defp handle_index(conn) do
     user = get_session(conn, :user)
     surveys = IdeaBoard.SurveyService.list(user)
-    html = IdeaBoard.Renderer.render("surveys/index", %{surveys: surveys}, conn)
+    html = IdeaBoard.Renderer.render_page("surveys/index", %{surveys: surveys}, conn)
     send_resp(conn, 200, html)
   end
 end

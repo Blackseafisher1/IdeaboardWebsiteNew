@@ -1,5 +1,7 @@
 import Config
 
+config :plug, :secret_key_base, System.get_env("SECRET_KEY_BASE", "")
+
 config :newelixirideaboard,
   dev_routes: false,
   db_host: System.get_env("DB_HOST", "127.0.0.1"),

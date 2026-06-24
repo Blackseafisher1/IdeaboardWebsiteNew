@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.39.3">
+    <meta name="project" content="db_connection v2.9.0">
+
+
+    <title>DBConnection.Ownership — db_connection v2.9.0</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-VYWJUHZE.css" />
+
+    <script defer src="dist/sidebar_items-6B5AB0B0.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-XBCM4BHM.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="DBConnection.html" class="sidebar-projectName" translate="no">
+db_connection
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v2.9.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of db_connection</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">DBConnection.Ownership</span> 
+      <small class="app-vsn" translate="no">(db_connection v2.9.0)</small>
+
+    </h1>
+
+      <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection/ownership.ex#L11" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>A DBConnection pool that requires explicit checkout and checkin
+as a mechanism to coordinate between processes.</p><h2 id="module-options" class="section-heading"><a href="#module-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h2><ul><li><code class="inline">:ownership_mode</code> - When mode is <code class="inline">:manual</code>, all connections must
+be explicitly checked out before by using <a href="#ownership_checkout/2"><code class="inline">ownership_checkout/2</code></a>.
+Otherwise, mode is <code class="inline">:auto</code> and connections are checked out
+implicitly. <code class="inline">{:shared, owner}</code> mode is also supported so
+processes are allowed on demand. On all cases, checkins are
+explicit via <a href="#ownership_checkin/2"><code class="inline">ownership_checkin/2</code></a>. Defaults to <code class="inline">:auto</code>.</li><li><code class="inline">:ownership_timeout</code> - The maximum time (in milliseconds) that a process
+is allowed to own a connection or <code class="inline">:infinity</code>, default <code class="inline">120_000</code>.
+This timeout exists mostly for sanity checking purposes and can be increased
+at will, since DBConnection automatically checks in connections whenever
+there is a mode change.</li><li><code class="inline">:ownership_log</code> - The <code class="inline">Logger.level</code> to log ownership changes, or <code class="inline">nil</code>
+not to log, default <code class="inline">nil</code>.</li></ul><p>There are also two experimental options, <code class="inline">:post_checkout</code> and <code class="inline">:pre_checkin</code>
+which allows a developer to configure what happens when a connection is
+checked out and checked in. Those options are meant to be used during tests,
+and have the following behaviour:</p><ul><li><p><code class="inline">:post_checkout</code> - it must be an anonymous function that receives the
+connection module, the connection state and it must return either
+<code class="inline">{:ok, connection_module, connection_state}</code> or
+<code class="inline">{:disconnect, err, connection_module, connection_state}</code>. This allows
+the developer to change the connection module on post checkout. However,
+in case of disconnects, the return <code class="inline">connection_module</code> must be the same
+as the <code class="inline">connection_module</code> given. Defaults to simply returning the given
+connection module and state.</p></li><li><p><code class="inline">:pre_checkin</code> - it must be an anonymous function that receives the
+checkin reason (<code class="inline">:checkin</code>, <code class="inline">{:disconnect, err}</code> or <code class="inline">{:stop, err}</code>),
+the connection module and the connection state returned by <code class="inline">post_checkout</code>.
+It must return either <code class="inline">{:ok, connection_module, connection_state}</code> or
+<code class="inline">{:disconnect, err, connection_module, connection_state}</code> where the connection
+module is the module given to <code class="inline">:post_checkout</code> Defaults to simply returning
+the given connection module and state.</p></li></ul><h2 id="module-callers-lookup" class="section-heading"><a href="#module-callers-lookup" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Callers lookup</span></h2><p>When checking out, the ownership pool first looks if there is a connection
+assigned to the current process and then checks if there is a connection
+assigned to any of the processes listed under the <code class="inline">$callers</code> process
+dictionary entry. The <code class="inline">$callers</code> entry is set by default for tasks from
+Elixir v1.8.</p><p>You can also pass the <code class="inline">:caller</code> option on checkout with a pid and that
+pid will be looked up first, instead of <code class="inline">self()</code>, and then we fall back
+to <code class="inline">$callers</code>.</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#ownership_allow/4" data-no-tooltip="" translate="no">ownership_allow(manager, owner, allow, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Allows the process given by <code class="inline">allow</code> to use the connection checked out
+by <code class="inline">owner_or_allowed</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#ownership_checkin/2" data-no-tooltip="" translate="no">ownership_checkin(manager, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Checks a connection back in.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#ownership_checkout/2" data-no-tooltip="" translate="no">ownership_checkout(manager, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Explicitly checks a connection out from the ownership manager.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#ownership_mode/3" data-no-tooltip="" translate="no">ownership_mode(manager, mode, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Changes the ownership mode.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+
+    <div class="functions-list">
+<section class="detail" id="ownership_allow/4">
+
+  <div class="detail-header">
+    <a href="#ownership_allow/4" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">ownership_allow(manager, owner, allow, opts)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection/ownership.ex#L154" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> ownership_allow(
+  <a href="https://hexdocs.pm/elixir/GenServer.html#t:server/0">GenServer.server</a>(),
+  owner_or_allowed :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(),
+  allow :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(),
+  <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()
+) ::
+  :ok | {:already, :owner | :allowed} | :not_found</pre>
+
+      </div>
+
+<p>Allows the process given by <code class="inline">allow</code> to use the connection checked out
+by <code class="inline">owner_or_allowed</code>.</p><p>It may return <code class="inline">:ok</code> if the connection is checked out.
+<code class="inline">{:already, :owner | :allowed}</code> if the <code class="inline">allow</code> process already
+has a connection. <code class="inline">owner_or_allowed</code> may either be the owner or any
+other allowed process. Returns <code class="inline">:not_found</code> if the given process
+does not have any connection checked out.</p><p>Setting the <code class="inline">unallow_existing</code> option to <code class="inline">true</code> will remove the process given by <code class="inline">allow</code> from
+any existing allowance it may have (this is necessary because a given process can only be
+allowed on a single connection at a time).</p>
+  </section>
+</section>
+<section class="detail" id="ownership_checkin/2">
+
+  <div class="detail-header">
+    <a href="#ownership_checkin/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">ownership_checkin(manager, opts)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection/ownership.ex#L136" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> ownership_checkin(<a href="https://hexdocs.pm/elixir/GenServer.html#t:server/0">GenServer.server</a>(), <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) ::
+  :ok | :not_owner | :not_found</pre>
+
+      </div>
+
+<p>Checks a connection back in.</p><p>A connection can only be checked back in by its owner.</p>
+  </section>
+</section>
+<section class="detail" id="ownership_checkout/2">
+
+  <div class="detail-header">
+    <a href="#ownership_checkout/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">ownership_checkout(manager, opts)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection/ownership.ex#L101" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> ownership_checkout(<a href="https://hexdocs.pm/elixir/GenServer.html#t:server/0">GenServer.server</a>(), <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) ::
+  :ok | {:already, :owner | :allowed}</pre>
+
+      </div>
+
+<p>Explicitly checks a connection out from the ownership manager.</p><p>It may return <code class="inline">:ok</code> if the connection is checked out.
+<code class="inline">{:already, :owner | :allowed}</code> if the caller process already
+has a connection, or raise if there was an error.</p>
+  </section>
+</section>
+<section class="detail" id="ownership_mode/3">
+
+  <div class="detail-header">
+    <a href="#ownership_mode/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">ownership_mode(manager, mode, opts)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection/ownership.ex#L127" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> ownership_mode(
+  <a href="https://hexdocs.pm/elixir/GenServer.html#t:server/0">GenServer.server</a>(),
+  :auto | :manual | {:shared, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>()},
+  <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()
+) ::
+  :ok | :already_shared | :not_owner | :not_found</pre>
+
+      </div>
+
+<p>Changes the ownership mode.</p><p><code class="inline">mode</code> may be <code class="inline">:auto</code>, <code class="inline">:manual</code> or <code class="inline">{:shared, owner}</code>.</p><p>The operation will always succeed when setting the mode to
+<code class="inline">:auto</code> or <code class="inline">:manual</code>. It may fail with reason <code class="inline">:not_owner</code>
+or <code class="inline">:not_found</code> when setting <code class="inline">{:shared, pid}</code> and the
+given pid does not own any connection. May return
+<code class="inline">:already_shared</code> if another process set the ownership
+mode to <code class="inline">{:shared, _}</code> and is still alive.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/db_connection/2.9.0" class="footer-hex-package">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/db_connection/2.9.0">Hex Preview</a>
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="db_connection.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.39.3) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

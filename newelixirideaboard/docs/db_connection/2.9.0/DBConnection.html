@@ -1,0 +1,2483 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.39.3">
+    <meta name="project" content="db_connection v2.9.0">
+
+
+    <title>DBConnection — db_connection v2.9.0</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-VYWJUHZE.css" />
+
+    <script defer src="dist/sidebar_items-6B5AB0B0.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-XBCM4BHM.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="DBConnection.html" class="sidebar-projectName" translate="no">
+db_connection
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v2.9.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-behaviour" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of db_connection</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">DBConnection</span> <small>behaviour</small>
+      <small class="app-vsn" translate="no">(db_connection v2.9.0)</small>
+
+    </h1>
+
+      <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L33" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>A behaviour module for implementing efficient database connection
+client processes, pools and transactions.</p><p><a href="DBConnection.html"><code class="inline">DBConnection</code></a> handles callbacks differently to most behaviours. Some
+callbacks will be called in the calling process, with the state
+copied to and from the calling process. This is useful when the data
+for a request is large and means that a calling process can interact
+with a socket directly.</p><p>A side effect of this is that query handling can be written in a
+simple blocking fashion, while the connection process itself will
+remain responsive to OTP messages and can enqueue and cancel queued
+requests.</p><p>If a request or series of requests takes too long to handle in the
+client process a timeout will trigger and the socket can be cleanly
+disconnected by the connection process.</p><p>If a calling process waits too long to start its request it will
+timeout and its request will be cancelled. This prevents requests
+building up when the database can not keep up.</p><p>If no requests are received for an idle interval, the pool will
+ping all stale connections which can then ping the database to keep
+the connection alive.</p><p>Should the connection be lost, attempts will be made to reconnect with
+(configurable) exponential random backoff to reconnect. All state is
+lost when a connection disconnects but the process is reused.</p><p>The <a href="DBConnection.Query.html"><code class="inline">DBConnection.Query</code></a> protocol provide utility functions so that
+queries can be encoded and decoded without blocking the connection or pool.</p><h2 id="module-connection-pools" class="section-heading"><a href="#module-connection-pools" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Connection pools</span></h2><p>DBConnection connections support using different pools via the <code class="inline">:pool</code> option
+passed to <a href="#start_link/2"><code class="inline">start_link/2</code></a>. The default pool is <a href="DBConnection.ConnectionPool.html"><code class="inline">DBConnection.ConnectionPool</code></a>.
+Another supported pool that is commonly used for tests is <a href="DBConnection.Ownership.html"><code class="inline">DBConnection.Ownership</code></a>.</p><p>For now, using <em>custom</em> pools is not supported since the API for pools is not
+public.</p><h2 id="module-errors" class="section-heading"><a href="#module-errors" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Errors</span></h2><p>Most functions in this module raise a <a href="DBConnection.ConnectionError.html"><code class="inline">DBConnection.ConnectionError</code></a> exception
+when failing to check out a connection from the pool.</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:conn/0" data-no-tooltip="" translate="no">conn()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:connection_option/0" data-no-tooltip="" translate="no">connection_option()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>An option you can pass to DBConnection functions.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:cursor/0" data-no-tooltip="" translate="no">cursor()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:option/0" data-no-tooltip="" translate="no">option()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>An option you can pass to DBConnection functions (<em>deprecated</em>).</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:params/0" data-no-tooltip="" translate="no">params()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:query/0" data-no-tooltip="" translate="no">query()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:result/0" data-no-tooltip="" translate="no">result()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:start_option/0" data-no-tooltip="" translate="no">start_option()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:status/0" data-no-tooltip="" translate="no">status()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:t/0" data-no-tooltip="" translate="no">t()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Run or transaction connection reference.</p></div>
+
+    </div>
+
+</div>
+<div class="summary-callbacks summary">
+  <h2>
+    <a href="#callbacks">Callbacks</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:checkout/1" data-no-tooltip="" translate="no">checkout(state)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Checkouts the state from the connection process. Return <code class="inline">{:ok, state}</code>
+to allow the checkout or <code class="inline">{:disconnect, exception, state}</code> to disconnect.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:connect/1" data-no-tooltip="" translate="no">connect(opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Connect to the database. Return <code class="inline">{:ok, state}</code> on success or
+<code class="inline">{:error, exception}</code> on failure.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:disconnect/2" data-no-tooltip="" translate="no">disconnect(err, state)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Disconnect from the database. Return <code class="inline">:ok</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_begin/2" data-no-tooltip="" translate="no">handle_begin(opts, state)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Handle the beginning of a transaction.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_close/3" data-no-tooltip="" translate="no">handle_close(query, opts, state)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Close a query prepared by <a href="#c:handle_prepare/3"><code class="inline">handle_prepare/3</code></a> with the database. Return
+<code class="inline">{:ok, result, state}</code> on success and to continue,
+<code class="inline">{:error, exception, state}</code> to return an error and continue, or
+<code class="inline">{:disconnect | :disconnect_and_retry, exception, state}</code> to
+error and disconnect (and optionally retry).</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_commit/2" data-no-tooltip="" translate="no">handle_commit(opts, state)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Handle committing a transaction. Return <code class="inline">{:ok, result, state}</code> on successfully
+committing transaction, <code class="inline">{status, state}</code> to notify caller that the
+transaction can not commit due to the transaction status <code class="inline">status</code>,
+or <code class="inline">{:disconnect, exception, state}</code> to error and disconnect.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_deallocate/4" data-no-tooltip="" translate="no">handle_deallocate(query, cursor, opts, state)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Deallocate a cursor declared by <a href="#c:handle_declare/4"><code class="inline">handle_declare/4</code></a> with the database. Return
+<code class="inline">{:ok, result, state}</code> on success and to continue,
+<code class="inline">{:error, exception, state}</code> to return an error and continue, or
+<code class="inline">{:disconnect, exception, state}</code> to return an error and disconnect.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_declare/4" data-no-tooltip="" translate="no">handle_declare(query, params, opts, state)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Declare a cursor using a query prepared by <a href="#c:handle_prepare/3"><code class="inline">handle_prepare/3</code></a>. Return
+<code class="inline">{:ok, query, cursor, state}</code> to return altered query <code class="inline">query</code> and cursor
+<code class="inline">cursor</code> for a stream and continue, <code class="inline">{:error, exception, state}</code> to return an
+error and continue or <code class="inline">{:disconnect, exception, state}</code> to error and disconnect.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_execute/4" data-no-tooltip="" translate="no">handle_execute(query, params, opts, state)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Execute a query prepared by <a href="#c:handle_prepare/3"><code class="inline">handle_prepare/3</code></a>. Return
+<code class="inline">{:ok, query, result, state}</code> to return altered query <code class="inline">query</code> and result
+<code class="inline">result</code> and continue, <code class="inline">{:error, exception, state}</code> to return an error and
+continue or <code class="inline">{:disconnect | :disconnect_and_retry, exception, state}</code> to
+error and disconnect (and optionally retry).</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_fetch/4" data-no-tooltip="" translate="no">handle_fetch(query, cursor, opts, state)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Fetch the next result from a cursor declared by <a href="#c:handle_declare/4"><code class="inline">handle_declare/4</code></a>. Return
+<code class="inline">{:cont, result, state}</code> to return the result <code class="inline">result</code> and continue using
+cursor, <code class="inline">{:halt, result, state}</code> to return the result <code class="inline">result</code> and close the
+cursor, <code class="inline">{:error, exception, state}</code> to return an error and close the
+cursor, <code class="inline">{:disconnect, exception, state}</code> to return an error and disconnect.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_prepare/3" data-no-tooltip="" translate="no">handle_prepare(query, opts, state)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Prepare a query with the database. Return <code class="inline">{:ok, query, state}</code> where
+<code class="inline">query</code> is a query to pass to <a href="#execute/4"><code class="inline">execute/4</code></a> or <a href="#close/3"><code class="inline">close/3</code></a>,
+<code class="inline">{:error, exception, state}</code> to return an error and continue or
+<code class="inline">{:disconnect | :disconnect_and_retry, exception, state}</code> to error and disconnect
+(and optionally retry).</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_rollback/2" data-no-tooltip="" translate="no">handle_rollback(opts, state)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Handle rolling back a transaction. Return <code class="inline">{:ok, result, state}</code> on successfully
+rolling back transaction, <code class="inline">{status, state}</code> to notify caller that the
+transaction can not rollback due to the transaction status <code class="inline">status</code> or
+<code class="inline">{:disconnect, exception, state}</code> to error and disconnect.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:handle_status/2" data-no-tooltip="" translate="no">handle_status(opts, state)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Handle getting the transaction status. Return <code class="inline">{:idle, state}</code> if outside a
+transaction, <code class="inline">{:transaction, state}</code> if inside a transaction,
+<code class="inline">{:error, state}</code> if inside an aborted transaction, or
+<code class="inline">{:disconnect | :disconnect_and_retry, exception, state}</code> to error and disconnect
+(and optionally retry).</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:ping/1" data-no-tooltip="" translate="no">ping(state)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Called when the connection has been idle for a period of time. Return
+<code class="inline">{:ok, state}</code> to continue or <code class="inline">{:disconnect, exception, state}</code> to
+disconnect.</p></div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#__using__/1" data-no-tooltip="" translate="no">__using__(_)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Use <a href="DBConnection.html"><code class="inline">DBConnection</code></a> to set the behaviour.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#available_connection_options/0" data-no-tooltip="" translate="no">available_connection_options()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the names of all possible options that you can pass to most functions
+in this module.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#available_start_options/0" data-no-tooltip="" translate="no">available_start_options()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the names of all possible options that you can pass to <a href="#start_link/2"><code class="inline">start_link/2</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#child_spec/2" data-no-tooltip="" translate="no">child_spec(conn_mod, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Creates a supervisor child specification for a pool of connections.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#close/3" data-no-tooltip="" translate="no">close(conn, query, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Close a prepared query on a database connection and return <code class="inline">{:ok, result}</code> on
+success or <code class="inline">{:error, exception}</code> on error.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#close!/3" data-no-tooltip="" translate="no">close!(conn, query, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Close a prepared query on a database connection and return the result. Raises
+an exception on error.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#connection_module/1" data-no-tooltip="" translate="no">connection_module(conn)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the connection module used by the given connection pool.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#disconnect_all/3" data-no-tooltip="" translate="no">disconnect_all(conn, interval, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Forces all connections in the pool to disconnect within the given interval
+in milliseconds.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#execute/4" data-no-tooltip="" translate="no">execute(conn, query, params, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Execute a prepared query with a database connection and return
+<code class="inline">{:ok, query, result}</code> on success or <code class="inline">{:error, exception}</code> if there was an error.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#execute!/4" data-no-tooltip="" translate="no">execute!(conn, query, params, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Execute a prepared query with a database connection and return the
+result. Raises an exception on error.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#get_connection_metrics/2" data-no-tooltip="" translate="no">get_connection_metrics(conn, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns connection metrics as a list in the shape of</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#prepare/3" data-no-tooltip="" translate="no">prepare(conn, query, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Prepare a query with a database connection for later execution.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#prepare!/3" data-no-tooltip="" translate="no">prepare!(conn, query, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Prepare a query with a database connection and return the prepared
+query. An exception is raised on error.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#prepare_execute/4" data-no-tooltip="" translate="no">prepare_execute(conn, query, params, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Prepare a query and execute it with a database connection and return both the
+prepared query and the result, <code class="inline">{:ok, query, result}</code> on success or
+<code class="inline">{:error, exception}</code> if there was an error.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#prepare_execute!/4" data-no-tooltip="" translate="no">prepare_execute!(conn, query, params, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Prepare a query and execute it with a database connection and return both the
+prepared query and result. An exception is raised on error.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#prepare_stream/4" data-no-tooltip="" translate="no">prepare_stream(conn, query, params, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Create a stream that will prepare a query, execute it and stream results
+using a cursor.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#reduce/3" data-no-tooltip="" translate="no">reduce(stream, acc, fun)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Reduces a previously built stream or prepared stream.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#rollback/2" data-no-tooltip="" translate="no">rollback(conn, reason)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Rollback a database transaction and release lock on connection.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#run/3" data-no-tooltip="" translate="no">run(conn, fun, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Acquire a lock on a connection and run a series of requests on it.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#start_link/2" data-no-tooltip="" translate="no">start_link(conn_mod, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Starts and links to a database connection process.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#status/2" data-no-tooltip="" translate="no">status(conn, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Return the transaction status of a connection.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#stream/4" data-no-tooltip="" translate="no">stream(conn, query, params, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Create a stream that will execute a prepared query and stream results using a
+cursor.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#transaction/3" data-no-tooltip="" translate="no">transaction(conn, fun, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Acquire a lock on a connection and run a series of requests inside a
+transaction. The result of the transaction fun is return inside an <code class="inline">:ok</code>
+tuple: <code class="inline">{:ok, result}</code>.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+
+    <div class="types-list">
+<section class="detail" id="t:conn/0">
+
+  <div class="detail-header">
+    <a href="#t:conn/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">conn()</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L112" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> conn() :: <a href="https://hexdocs.pm/elixir/GenServer.html#t:server/0">GenServer.server</a>() | <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:connection_option/0">
+
+  <div class="detail-header">
+    <a href="#t:connection_option/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">connection_option()</h1>
+
+        <span class="note">(since 2.6.0)</span>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L152" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> connection_option() ::
+  {:log,
+   (<a href="DBConnection.LogEntry.html#t:t/0">DBConnection.LogEntry.t</a>() -&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) | {<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()]} | nil}
+  | {:queue, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()}
+  | {:timeout, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">timeout</a>()}
+  | {:deadline, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>() | nil}</pre>
+
+      </div>
+
+<p>An option you can pass to DBConnection functions.</p>
+  </section>
+</section>
+<section class="detail" id="t:cursor/0">
+
+  <div class="detail-header">
+    <a href="#t:cursor/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">cursor()</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L116" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> cursor() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:option/0">
+
+  <div class="detail-header">
+    <a href="#t:option/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">option()</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L146" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> option() :: <a href="#t:connection_option/0">connection_option</a>()</pre>
+
+      </div>
+
+<p>An option you can pass to DBConnection functions (<em>deprecated</em>).</p><section role="note" class="admonition warning"><h4 class="admonition-title warning">Deprecated</h4><p>This option is deprecated since v2.6.0. Use <a href="#t:connection_option/0"><code class="inline">connection_option/0</code></a> instead.</p></section>
+  </section>
+</section>
+<section class="detail" id="t:params/0">
+
+  <div class="detail-header">
+    <a href="#t:params/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">params()</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L114" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> params() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:query/0">
+
+  <div class="detail-header">
+    <a href="#t:query/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">query()</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L113" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> query() :: <a href="DBConnection.Query.html#t:t/0">DBConnection.Query.t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:result/0">
+
+  <div class="detail-header">
+    <a href="#t:result/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">result()</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L115" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> result() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:start_option/0">
+
+  <div class="detail-header">
+    <a href="#t:start_option/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">start_option()</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L119" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> start_option() ::
+  {:after_connect, (<a href="#t:t/0">t</a>() -&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) | {<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()]} | nil}
+  | {:after_connect_timeout, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">timeout</a>()}
+  | {:connection_listeners, [<a href="https://hexdocs.pm/elixir/Process.html#t:dest/0">Process.dest</a>()] | nil | {[<a href="https://hexdocs.pm/elixir/Process.html#t:dest/0">Process.dest</a>()], <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}}
+  | {:backoff_max, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()}
+  | {:backoff_min, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()}
+  | {:backoff_type, :stop | :exp | :rand | :rand_exp}
+  | {:configure, (<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>() -&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) | {<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()]} | nil}
+  | {:idle_interval, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()}
+  | {:idle_limit, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()}
+  | {:max_restarts, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()}
+  | {:max_seconds, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()}
+  | {:name, <a href="https://hexdocs.pm/elixir/GenServer.html#t:name/0">GenServer.name</a>()}
+  | {:pool, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>()}
+  | {:pool_size, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()}
+  | {:queue_interval, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()}
+  | {:queue_target, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()}
+  | {:show_sensitive_data_on_connection_error, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:status/0">
+
+  <div class="detail-header">
+    <a href="#t:status/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">status()</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L117" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> status() :: :idle | :transaction | :error</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:t/0">
+
+  <div class="detail-header">
+    <a href="#t:t/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">t()</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L111" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> t() :: %DBConnection{conn_mode: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), conn_ref: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">reference</a>(), pool_ref: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Run or transaction connection reference.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="callbacks" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#callbacks">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Callbacks</span>
+    </h1>
+
+    <div class="callbacks-list">
+<section class="detail" id="c:checkout/1">
+
+  <div class="detail-header">
+    <a href="#c:checkout/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">checkout(state)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L183" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> checkout(state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) ::
+  {:ok, new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()} | {:disconnect, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Checkouts the state from the connection process. Return <code class="inline">{:ok, state}</code>
+to allow the checkout or <code class="inline">{:disconnect, exception, state}</code> to disconnect.</p><p>This callback is called immediately after the connection is established
+and the state is never effectively checked in again. That's because
+DBConnection keeps the connection state in an ETS table that is moved
+between the different clients checking out connections. There is no
+<code class="inline">checkin</code> callback. The state is only handed back to the connection
+process during pings and (re)connects.</p><p>This callback is called in the connection process.</p>
+  </section>
+</section>
+<section class="detail" id="c:connect/1">
+
+  <div class="detail-header">
+    <a href="#c:connect/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">connect(opts)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L167" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> connect(opts :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) :: {:ok, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()} | {:error, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>()}</pre>
+
+      </div>
+
+<p>Connect to the database. Return <code class="inline">{:ok, state}</code> on success or
+<code class="inline">{:error, exception}</code> on failure.</p><p>If an error is returned it will be logged and another
+connection attempt will be made after a backoff interval.</p><p>This callback is called in the connection process.</p>
+  </section>
+</section>
+<section class="detail" id="c:disconnect/2">
+
+  <div class="detail-header">
+    <a href="#c:disconnect/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">disconnect(err, state)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L365" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> disconnect(err :: <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: :ok</pre>
+
+      </div>
+
+<p>Disconnect from the database. Return <code class="inline">:ok</code>.</p><p>This callback is called from the connection process. The first argument is
+either the exception from a <code class="inline">:disconnect</code> 3-tuple returned by a previous
+callback or an exception generated by the connection process.</p><p>If the state is controlled by a client and it exits or times out while
+processing a request, the last known state will be sent and the exception
+will be a <a href="DBConnection.ConnectionError.html"><code class="inline">DBConnection.ConnectionError</code></a>.</p><p>When the connection is stopped, this callback will be invoked from <code class="inline">terminate</code>.
+The last known state will be sent and the exception will be a <a href="DBConnection.ConnectionError.html"><code class="inline">DBConnection.ConnectionError</code></a>
+containing the reason for the exit. To have the same happen on unexpected
+shutdowns, you may trap exits from the <code class="inline">connect</code> callback.</p>
+  </section>
+</section>
+<section class="detail" id="c:handle_begin/2">
+
+  <div class="detail-header">
+    <a href="#c:handle_begin/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_begin(opts, state)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L217" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_begin(opts :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) ::
+  {:ok, <a href="#t:result/0">result</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+  | {:ok, <a href="#t:query/0">query</a>(), <a href="#t:result/0">result</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+  | {<a href="#t:status/0">status</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+  | {:disconnect | :disconnect_and_retry, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Handle the beginning of a transaction.</p><p>Return <code class="inline">{:ok, result, state}</code>/<code class="inline">{:ok, query, result, state}</code> to continue,
+<code class="inline">{status, state}</code> to notify caller that the transaction can not begin due
+to the transaction status <code class="inline">status</code>, or <code class="inline">{:disconnect | :disconnect_and_retry, exception, state}</code>
+to error and disconnect (and optionally retry). If <code class="inline">{:ok, query, result, state}</code>
+is returned, the query will be used to log the begin command. Otherwise,
+it will be logged as <code class="inline">begin</code>.</p><p>A callback implementation should only return <code class="inline">status</code> if it
+can determine the database's transaction status without side effect.</p><p>This callback is called in the client process.</p>
+  </section>
+</section>
+<section class="detail" id="c:handle_close/3">
+
+  <div class="detail-header">
+    <a href="#c:handle_close/3" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_close(query, opts, state)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L308" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_close(<a href="#t:query/0">query</a>(), opts :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) ::
+  {:ok, <a href="#t:result/0">result</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+  | {:error | :disconnect | :disconnect_and_retry, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>(),
+     new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Close a query prepared by <a href="#c:handle_prepare/3"><code class="inline">handle_prepare/3</code></a> with the database. Return
+<code class="inline">{:ok, result, state}</code> on success and to continue,
+<code class="inline">{:error, exception, state}</code> to return an error and continue, or
+<code class="inline">{:disconnect | :disconnect_and_retry, exception, state}</code> to
+error and disconnect (and optionally retry).</p><p>This callback is called in the client process.</p>
+  </section>
+</section>
+<section class="detail" id="c:handle_commit/2">
+
+  <div class="detail-header">
+    <a href="#c:handle_commit/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_commit(opts, state)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L234" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_commit(opts :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) ::
+  {:ok, <a href="#t:result/0">result</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+  | {<a href="#t:status/0">status</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+  | {:disconnect, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Handle committing a transaction. Return <code class="inline">{:ok, result, state}</code> on successfully
+committing transaction, <code class="inline">{status, state}</code> to notify caller that the
+transaction can not commit due to the transaction status <code class="inline">status</code>,
+or <code class="inline">{:disconnect, exception, state}</code> to error and disconnect.</p><p>A callback implementation should only return <code class="inline">status</code> if it
+can determine the database's transaction status without side effect.</p><p>This callback is called in the client process.</p>
+  </section>
+</section>
+<section class="detail" id="c:handle_deallocate/4">
+
+  <div class="detail-header">
+    <a href="#c:handle_deallocate/4" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_deallocate(query, cursor, opts, state)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L345" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_deallocate(<a href="#t:query/0">query</a>(), <a href="#t:cursor/0">cursor</a>(), opts :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) ::
+  {:ok, <a href="#t:result/0">result</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+  | {:error | :disconnect, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Deallocate a cursor declared by <a href="#c:handle_declare/4"><code class="inline">handle_declare/4</code></a> with the database. Return
+<code class="inline">{:ok, result, state}</code> on success and to continue,
+<code class="inline">{:error, exception, state}</code> to return an error and continue, or
+<code class="inline">{:disconnect, exception, state}</code> to return an error and disconnect.</p><p>This callback is called in the client process.</p>
+  </section>
+</section>
+<section class="detail" id="c:handle_declare/4">
+
+  <div class="detail-header">
+    <a href="#c:handle_declare/4" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_declare(query, params, opts, state)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L320" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_declare(<a href="#t:query/0">query</a>(), <a href="#t:params/0">params</a>(), opts :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) ::
+  {:ok, <a href="#t:query/0">query</a>(), <a href="#t:cursor/0">cursor</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+  | {:error | :disconnect, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Declare a cursor using a query prepared by <a href="#c:handle_prepare/3"><code class="inline">handle_prepare/3</code></a>. Return
+<code class="inline">{:ok, query, cursor, state}</code> to return altered query <code class="inline">query</code> and cursor
+<code class="inline">cursor</code> for a stream and continue, <code class="inline">{:error, exception, state}</code> to return an
+error and continue or <code class="inline">{:disconnect, exception, state}</code> to error and disconnect.</p><p>This callback is called in the client process.</p>
+  </section>
+</section>
+<section class="detail" id="c:handle_execute/4">
+
+  <div class="detail-header">
+    <a href="#c:handle_execute/4" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_execute(query, params, opts, state)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L295" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_execute(<a href="#t:query/0">query</a>(), <a href="#t:params/0">params</a>(), opts :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) ::
+  {:ok, <a href="#t:query/0">query</a>(), <a href="#t:result/0">result</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+  | {:error | :disconnect | :disconnect_and_retry, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>(),
+     new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Execute a query prepared by <a href="#c:handle_prepare/3"><code class="inline">handle_prepare/3</code></a>. Return
+<code class="inline">{:ok, query, result, state}</code> to return altered query <code class="inline">query</code> and result
+<code class="inline">result</code> and continue, <code class="inline">{:error, exception, state}</code> to return an error and
+continue or <code class="inline">{:disconnect | :disconnect_and_retry, exception, state}</code> to
+error and disconnect (and optionally retry).</p><p>This callback is called in the client process.</p>
+  </section>
+</section>
+<section class="detail" id="c:handle_fetch/4">
+
+  <div class="detail-header">
+    <a href="#c:handle_fetch/4" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_fetch(query, cursor, opts, state)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L333" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_fetch(<a href="#t:query/0">query</a>(), <a href="#t:cursor/0">cursor</a>(), opts :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) ::
+  {:cont | :halt, <a href="#t:result/0">result</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+  | {:error | :disconnect, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Fetch the next result from a cursor declared by <a href="#c:handle_declare/4"><code class="inline">handle_declare/4</code></a>. Return
+<code class="inline">{:cont, result, state}</code> to return the result <code class="inline">result</code> and continue using
+cursor, <code class="inline">{:halt, result, state}</code> to return the result <code class="inline">result</code> and close the
+cursor, <code class="inline">{:error, exception, state}</code> to return an error and close the
+cursor, <code class="inline">{:disconnect, exception, state}</code> to return an error and disconnect.</p><p>This callback is called in the client process.</p>
+  </section>
+</section>
+<section class="detail" id="c:handle_prepare/3">
+
+  <div class="detail-header">
+    <a href="#c:handle_prepare/3" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_prepare(query, opts, state)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L282" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_prepare(<a href="#t:query/0">query</a>(), opts :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) ::
+  {:ok, <a href="#t:query/0">query</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+  | {:error | :disconnect | :disconnect_and_retry, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>(),
+     new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Prepare a query with the database. Return <code class="inline">{:ok, query, state}</code> where
+<code class="inline">query</code> is a query to pass to <a href="#execute/4"><code class="inline">execute/4</code></a> or <a href="#close/3"><code class="inline">close/3</code></a>,
+<code class="inline">{:error, exception, state}</code> to return an error and continue or
+<code class="inline">{:disconnect | :disconnect_and_retry, exception, state}</code> to error and disconnect
+(and optionally retry).</p><p>This callback is intended for cases where the state of a connection is
+needed to prepare a query and/or the query can be saved in the
+database to call later.</p><p>This callback is called in the client process.</p>
+  </section>
+</section>
+<section class="detail" id="c:handle_rollback/2">
+
+  <div class="detail-header">
+    <a href="#c:handle_rollback/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_rollback(opts, state)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L250" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_rollback(opts :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) ::
+  {:ok, <a href="#t:result/0">result</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+  | {<a href="#t:status/0">status</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+  | {:disconnect, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Handle rolling back a transaction. Return <code class="inline">{:ok, result, state}</code> on successfully
+rolling back transaction, <code class="inline">{status, state}</code> to notify caller that the
+transaction can not rollback due to the transaction status <code class="inline">status</code> or
+<code class="inline">{:disconnect, exception, state}</code> to error and disconnect.</p><p>A callback implementation should only return <code class="inline">status</code> if it
+can determine the database' transaction status without side effect.</p><p>This callback is called in the client and connection process.</p>
+  </section>
+</section>
+<section class="detail" id="c:handle_status/2">
+
+  <div class="detail-header">
+    <a href="#c:handle_status/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">handle_status(opts, state)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L265" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> handle_status(opts :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) ::
+  {<a href="#t:status/0">status</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+  | {:disconnect | :disconnect_and_retry, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Handle getting the transaction status. Return <code class="inline">{:idle, state}</code> if outside a
+transaction, <code class="inline">{:transaction, state}</code> if inside a transaction,
+<code class="inline">{:error, state}</code> if inside an aborted transaction, or
+<code class="inline">{:disconnect | :disconnect_and_retry, exception, state}</code> to error and disconnect
+(and optionally retry).</p><p>If the callback returns a <code class="inline">:disconnect</code> tuples then <a href="#status/2"><code class="inline">status/2</code></a> will return
+<code class="inline">:error</code>.</p>
+  </section>
+</section>
+<section class="detail" id="c:ping/1">
+
+  <div class="detail-header">
+    <a href="#c:ping/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">ping(state)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L199" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> ping(state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) ::
+  {:ok, new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()} | {:disconnect, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>(), new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Called when the connection has been idle for a period of time. Return
+<code class="inline">{:ok, state}</code> to continue or <code class="inline">{:disconnect, exception, state}</code> to
+disconnect.</p><p>This callback is called if no callbacks have been called after the
+idle timeout and a client process is not using the state. The idle
+timeout can be configured by the <code class="inline">:idle_interval</code> and <code class="inline">:idle_limit</code>
+options. This function can be called whether the connection is checked
+in or checked out.</p><p>This callback is called in the connection process.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+
+    <div class="functions-list">
+<section class="detail" id="__using__/1">
+
+  <div class="detail-header">
+    <a href="#__using__/1" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">__using__(_)</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L373" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Use <a href="DBConnection.html"><code class="inline">DBConnection</code></a> to set the behaviour.</p>
+  </section>
+</section>
+<section class="detail" id="available_connection_options/0">
+
+  <div class="detail-header">
+    <a href="#available_connection_options/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">available_connection_options()</h1>
+
+        <span class="note">(since 2.6.0)</span>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L655" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> available_connection_options() :: [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), ...]</pre>
+
+      </div>
+
+<p>Returns the names of all possible options that you can pass to most functions
+in this module.</p><p>This is mostly useful for library authors that base their library on top of
+<a href="DBConnection.html"><code class="inline">DBConnection</code></a>, since they can use the return value of this function to perform
+validation on options only passing down these options to DBConnection.</p><p>See also <a href="#t:connection_option/0"><code class="inline">connection_option/0</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="available_start_options/0">
+
+  <div class="detail-header">
+    <a href="#available_start_options/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">available_start_options()</h1>
+
+        <span class="note">(since 2.6.0)</span>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L621" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> available_start_options() :: [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), ...]</pre>
+
+      </div>
+
+<p>Returns the names of all possible options that you can pass to <a href="#start_link/2"><code class="inline">start_link/2</code></a>.</p><p>This is mostly useful for library authors that base their library on top of
+<a href="DBConnection.html"><code class="inline">DBConnection</code></a>, since they can use the return value of this function to perform
+validation on options only passing down these options to DBConnection.</p><p>See also <a href="#t:start_option/0"><code class="inline">start_option/0</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="child_spec/2">
+
+  <div class="detail-header">
+    <a href="#child_spec/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">child_spec(conn_mod, opts)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L605" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> child_spec(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), [<a href="#t:start_option/0">start_option</a>()] | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) :: <a href="https://www.erlang.org/doc/apps/stdlib/supervisor.html#t:child_spec/0">:supervisor.child_spec</a>()</pre>
+
+      </div>
+
+<p>Creates a supervisor child specification for a pool of connections.</p><p>See <a href="#start_link/2"><code class="inline">start_link/2</code></a> for options.</p>
+  </section>
+</section>
+<section class="detail" id="close/3">
+
+    <span id="close/2"></span>
+
+  <div class="detail-header">
+    <a href="#close/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">close(conn, query, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L903" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> close(<a href="#t:conn/0">conn</a>(), <a href="#t:query/0">query</a>(), [<a href="#t:connection_option/0">connection_option</a>()] | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) ::
+  {:ok, <a href="#t:result/0">result</a>()} | {:error, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>()}</pre>
+
+      </div>
+
+<p>Close a prepared query on a database connection and return <code class="inline">{:ok, result}</code> on
+success or <code class="inline">{:error, exception}</code> on error.</p><p>This function should be used to free resources held by the connection
+process and/or the database server.</p><h2 id="close/3-options" class="section-heading"><a href="#close/3-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h2><ul><li><code class="inline">:queue</code> - Whether to block waiting in an internal queue for the
+connection's state (boolean, default: <code class="inline">true</code>). See &quot;Queue config&quot; in
+<a href="#start_link/2"><code class="inline">start_link/2</code></a> docs</li><li><code class="inline">:timeout</code> - The maximum time that the caller is allowed to perform
+this operation (default: <code class="inline">15_000</code>)</li><li><code class="inline">:deadline</code> - If set, overrides <code class="inline">:timeout</code> option and specifies absolute
+monotonic time in milliseconds by which caller must perform operation.
+See <a href="https://hexdocs.pm/elixir/System.html"><code class="inline">System</code></a> module documentation for more information on monotonic time
+(default: <code class="inline">nil</code>)</li><li><code class="inline">:log</code> - A function to log information about a call, either
+a 1-arity fun, <code class="inline">{module, function, args}</code> with <a href="DBConnection.LogEntry.html#t:t/0"><code class="inline">DBConnection.LogEntry.t/0</code></a>
+prepended to <code class="inline">args</code> or <code class="inline">nil</code>. See <a href="DBConnection.LogEntry.html"><code class="inline">DBConnection.LogEntry</code></a> (default: <code class="inline">nil</code>)</li></ul><p>The pool and connection module may support other options. All options
+are passed to <a href="#c:handle_close/3"><code class="inline">handle_close/3</code></a>.</p><p>See <a href="#prepare/3"><code class="inline">prepare/3</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="close!/3">
+
+    <span id="close!/2"></span>
+
+  <div class="detail-header">
+    <a href="#close!/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">close!(conn, query, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L916" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> close!(<a href="#t:conn/0">conn</a>(), <a href="#t:query/0">query</a>(), [<a href="#t:connection_option/0">connection_option</a>()] | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) :: <a href="#t:result/0">result</a>()</pre>
+
+      </div>
+
+<p>Close a prepared query on a database connection and return the result. Raises
+an exception on error.</p><p>See <a href="#close/3"><code class="inline">close/3</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="connection_module/1">
+
+  <div class="detail-header">
+    <a href="#connection_module/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">connection_module(conn)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L1297" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> connection_module(<a href="#t:conn/0">conn</a>()) :: {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>()} | :error</pre>
+
+      </div>
+
+<p>Returns the connection module used by the given connection pool.</p><p>When given a process that is not a connection pool, returns an <code class="inline">:error</code>.</p>
+  </section>
+</section>
+<section class="detail" id="disconnect_all/3">
+
+    <span id="disconnect_all/2"></span>
+
+  <div class="detail-header">
+    <a href="#disconnect_all/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">disconnect_all(conn, interval, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L677" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> disconnect_all(<a href="#t:conn/0">conn</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(), [<a href="#t:connection_option/0">connection_option</a>()] | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) ::
+  :ok</pre>
+
+      </div>
+
+<p>Forces all connections in the pool to disconnect within the given interval
+in milliseconds.</p><p>Once this function is called, the pool will disconnect all of its connections
+as they are checked in or as they are pinged. Checked in connections will be
+randomly disconnected within the given time interval. Pinged connections are
+immediately disconnected - as they are idle (according to <code class="inline">:idle_interval</code>).</p><p>If the connection has a backoff configured (which is the case by default),
+disconnecting means an attempt at a new connection will be done immediately
+after, without starting a new process for each connection. However, if backoff
+has been disabled, the connection process will terminate. In such cases,
+disconnecting all connections may cause the pool supervisor to restart
+depending on the max_restarts/max_seconds configuration of the pool,
+so you will want to set those carefully.</p>
+  </section>
+</section>
+<section class="detail" id="execute/4">
+
+    <span id="execute/3"></span>
+
+  <div class="detail-header">
+    <a href="#execute/4" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">execute(conn, query, params, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L840" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> execute(<a href="#t:conn/0">conn</a>(), <a href="#t:query/0">query</a>(), <a href="#t:params/0">params</a>(), [<a href="#t:connection_option/0">connection_option</a>()] | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) ::
+  {:ok, <a href="#t:query/0">query</a>(), <a href="#t:result/0">result</a>()} | {:error, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>()}</pre>
+
+      </div>
+
+<p>Execute a prepared query with a database connection and return
+<code class="inline">{:ok, query, result}</code> on success or <code class="inline">{:error, exception}</code> if there was an error.</p><p>If the query is not prepared on the connection an attempt may be made to
+prepare it and then execute again.</p><h3 id="execute/4-options" class="section-heading"><a href="#execute/4-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h3><ul><li><code class="inline">:queue</code> - Whether to block waiting in an internal queue for the
+connection's state (boolean, default: <code class="inline">true</code>). See &quot;Queue config&quot; in
+<a href="#start_link/2"><code class="inline">start_link/2</code></a> docs</li><li><code class="inline">:timeout</code> - The maximum time that the caller is allowed to perform
+this operation (default: <code class="inline">15_000</code>)</li><li><code class="inline">:deadline</code> - If set, overrides <code class="inline">:timeout</code> option and specifies absolute
+monotonic time in milliseconds by which caller must perform operation.
+See <a href="https://hexdocs.pm/elixir/System.html"><code class="inline">System</code></a> module documentation for more information on monotonic time
+(default: <code class="inline">nil</code>)</li><li><code class="inline">:log</code> - A function to log information about a call, either
+a 1-arity fun, <code class="inline">{module, function, args}</code> with <a href="DBConnection.LogEntry.html#t:t/0"><code class="inline">DBConnection.LogEntry.t/0</code></a>
+prepended to <code class="inline">args</code> or <code class="inline">nil</code>. See <a href="DBConnection.LogEntry.html"><code class="inline">DBConnection.LogEntry</code></a> (default: <code class="inline">nil</code>)</li></ul><p>The pool and connection module may support other options. All options
+are passed to <code class="inline">handle_execute/4</code>.</p><p>See <a href="#prepare/3"><code class="inline">prepare/3</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="execute!/4">
+
+    <span id="execute!/3"></span>
+
+  <div class="detail-header">
+    <a href="#execute!/4" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">execute!(conn, query, params, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L867" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> execute!(<a href="#t:conn/0">conn</a>(), <a href="#t:query/0">query</a>(), <a href="#t:params/0">params</a>(), [<a href="#t:connection_option/0">connection_option</a>()] | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) ::
+  <a href="#t:result/0">result</a>()</pre>
+
+      </div>
+
+<p>Execute a prepared query with a database connection and return the
+result. Raises an exception on error.</p><p>See <a href="#execute/4"><code class="inline">execute/4</code></a></p>
+  </section>
+</section>
+<section class="detail" id="get_connection_metrics/2">
+
+    <span id="get_connection_metrics/1"></span>
+
+  <div class="detail-header">
+    <a href="#get_connection_metrics/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_connection_metrics(conn, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L1317" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_connection_metrics(<a href="#t:conn/0">conn</a>(), <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) :: [
+  DBConnection.Pool.connection_metrics()
+]</pre>
+
+      </div>
+
+<p>Returns connection metrics as a list in the shape of:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="9138361179-1">[</span><span class="p" data-group-id="9138361179-2">%{</span><span class="w">
+  </span><span class="ss">source</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="9138361179-3">{</span><span class="ss">:pool</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="ss">:proxy</span><span class="p">,</span><span class="w"> </span><span class="n">pid</span><span class="p" data-group-id="9138361179-4">(</span><span class="p" data-group-id="9138361179-4">)</span><span class="p" data-group-id="9138361179-3">}</span><span class="p">,</span><span class="w">
+  </span><span class="ss">ready_conn_count</span><span class="p">:</span><span class="w"> </span><span class="n">non_neg_integer</span><span class="p" data-group-id="9138361179-5">(</span><span class="p" data-group-id="9138361179-5">)</span><span class="p">,</span><span class="w">
+  </span><span class="ss">checkout_queue_length</span><span class="p">:</span><span class="w"> </span><span class="n">non_neg_integer</span><span class="p" data-group-id="9138361179-6">(</span><span class="p" data-group-id="9138361179-6">)</span><span class="w">
+</span><span class="p" data-group-id="9138361179-2">}</span><span class="p" data-group-id="9138361179-1">]</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="prepare/3">
+
+    <span id="prepare/2"></span>
+
+  <div class="detail-header">
+    <a href="#prepare/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">prepare(conn, query, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L723" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> prepare(<a href="#t:conn/0">conn</a>(), <a href="#t:query/0">query</a>(), [<a href="#t:connection_option/0">connection_option</a>()] | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) ::
+  {:ok, <a href="#t:query/0">query</a>()} | {:error, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>()}</pre>
+
+      </div>
+
+<p>Prepare a query with a database connection for later execution.</p><p>It returns <code class="inline">{:ok, query}</code> on success or <code class="inline">{:error, exception}</code> if there was
+an error.</p><p>The returned <code class="inline">query</code> can then be passed to <a href="#execute/4"><code class="inline">execute/4</code></a> and/or <a href="#close/3"><code class="inline">close/3</code></a></p><h3 id="prepare/3-options" class="section-heading"><a href="#prepare/3-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h3><ul><li><code class="inline">:queue</code> - Whether to block waiting in an internal queue for the
+connection's state (boolean, default: <code class="inline">true</code>). See &quot;Queue config&quot; in
+<a href="#start_link/2"><code class="inline">start_link/2</code></a> docs</li><li><code class="inline">:timeout</code> - The maximum time that the caller is allowed to perform
+this operation (default: <code class="inline">15_000</code>)</li><li><code class="inline">:deadline</code> - If set, overrides <code class="inline">:timeout</code> option and specifies absolute
+monotonic time in milliseconds by which caller must perform operation.
+See <a href="https://hexdocs.pm/elixir/System.html"><code class="inline">System</code></a> module documentation for more information on monotonic time
+(default: <code class="inline">nil</code>)</li><li><code class="inline">:log</code> - A function to log information about a call, either
+a 1-arity fun, <code class="inline">{module, function, args}</code> with <a href="DBConnection.LogEntry.html#t:t/0"><code class="inline">DBConnection.LogEntry.t/0</code></a>
+prepended to <code class="inline">args</code> or <code class="inline">nil</code>. See <a href="DBConnection.LogEntry.html"><code class="inline">DBConnection.LogEntry</code></a> (default: <code class="inline">nil</code>)</li></ul><p>The pool and connection module may support other options. All options
+are passed to <a href="#c:handle_prepare/3"><code class="inline">handle_prepare/3</code></a>.</p><h3 id="prepare/3-example" class="section-heading"><a href="#prepare/3-example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Example</span></h3><pre><code class="makeup elixir" translate="no"><span class="nc">DBConnection</span><span class="o">.</span><span class="n">transaction</span><span class="p" data-group-id="7382027632-1">(</span><span class="n">pool</span><span class="p">,</span><span class="w"> </span><span class="k" data-group-id="7382027632-2">fn</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+  </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="7382027632-3">%</span><span class="nc" data-group-id="7382027632-3">Query</span><span class="p" data-group-id="7382027632-3">{</span><span class="ss">statement</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SELECT * FROM table&quot;</span><span class="p" data-group-id="7382027632-3">}</span><span class="w">
+  </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">prepare!</span><span class="p" data-group-id="7382027632-4">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">query</span><span class="p" data-group-id="7382027632-4">)</span><span class="w">
+  </span><span class="k">try</span><span class="w"> </span><span class="k" data-group-id="7382027632-5">do</span><span class="w">
+    </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">execute!</span><span class="p" data-group-id="7382027632-6">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">query</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7382027632-7">[</span><span class="p" data-group-id="7382027632-7">]</span><span class="p" data-group-id="7382027632-6">)</span><span class="w">
+  </span><span class="k" data-group-id="7382027632-5">after</span><span class="w">
+    </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">close</span><span class="p" data-group-id="7382027632-8">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">query</span><span class="p" data-group-id="7382027632-8">)</span><span class="w">
+  </span><span class="k" data-group-id="7382027632-5">end</span><span class="w">
+</span><span class="k" data-group-id="7382027632-2">end</span><span class="p" data-group-id="7382027632-1">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="prepare!/3">
+
+    <span id="prepare!/2"></span>
+
+  <div class="detail-header">
+    <a href="#prepare!/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">prepare!(conn, query, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L741" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> prepare!(<a href="#t:conn/0">conn</a>(), <a href="#t:query/0">query</a>(), [<a href="#t:connection_option/0">connection_option</a>()] | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) :: <a href="#t:query/0">query</a>()</pre>
+
+      </div>
+
+<p>Prepare a query with a database connection and return the prepared
+query. An exception is raised on error.</p><p>See <a href="#prepare/3"><code class="inline">prepare/3</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="prepare_execute/4">
+
+    <span id="prepare_execute/3"></span>
+
+  <div class="detail-header">
+    <a href="#prepare_execute/4" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">prepare_execute(conn, query, params, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L780" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> prepare_execute(<a href="#t:conn/0">conn</a>(), <a href="#t:query/0">query</a>(), <a href="#t:params/0">params</a>(), [<a href="#t:connection_option/0">connection_option</a>()] | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) ::
+  {:ok, <a href="#t:query/0">query</a>(), <a href="#t:result/0">result</a>()} | {:error, <a href="https://hexdocs.pm/elixir/Exception.html#t:t/0">Exception.t</a>()}</pre>
+
+      </div>
+
+<p>Prepare a query and execute it with a database connection and return both the
+prepared query and the result, <code class="inline">{:ok, query, result}</code> on success or
+<code class="inline">{:error, exception}</code> if there was an error.</p><p>The returned <code class="inline">query</code> can be passed to <a href="#execute/4"><code class="inline">execute/4</code></a> and <a href="#close/3"><code class="inline">close/3</code></a>.</p><h3 id="prepare_execute/4-options" class="section-heading"><a href="#prepare_execute/4-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h3><ul><li><code class="inline">:queue</code> - Whether to block waiting in an internal queue for the
+connection's state (boolean, default: <code class="inline">true</code>). See &quot;Queue config&quot; in
+<a href="#start_link/2"><code class="inline">start_link/2</code></a> docs</li><li><code class="inline">:timeout</code> - The maximum time that the caller is allowed to perform
+this operation (default: <code class="inline">15_000</code>)</li><li><code class="inline">:deadline</code> - If set, overrides <code class="inline">:timeout</code> option and specifies absolute
+monotonic time in milliseconds by which caller must perform operation.
+See <a href="https://hexdocs.pm/elixir/System.html"><code class="inline">System</code></a> module documentation for more information on monotonic time
+(default: <code class="inline">nil</code>)</li><li><code class="inline">:log</code> - A function to log information about a call, either
+a 1-arity fun, <code class="inline">{module, function, args}</code> with <a href="DBConnection.LogEntry.html#t:t/0"><code class="inline">DBConnection.LogEntry.t/0</code></a>
+prepended to <code class="inline">args</code> or <code class="inline">nil</code>. See <a href="DBConnection.LogEntry.html"><code class="inline">DBConnection.LogEntry</code></a> (default: <code class="inline">nil</code>)</li></ul><h3 id="prepare_execute/4-example" class="section-heading"><a href="#prepare_execute/4-example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Example</span></h3><pre><code class="makeup elixir" translate="no"><span class="n">query</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="3984279822-1">%</span><span class="nc" data-group-id="3984279822-1">Query</span><span class="p" data-group-id="3984279822-1">{</span><span class="ss">statement</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SELECT id FROM table WHERE id=$1&quot;</span><span class="p" data-group-id="3984279822-1">}</span><span class="w">
+</span><span class="p" data-group-id="3984279822-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">query</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p" data-group-id="3984279822-2">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">prepare_execute</span><span class="p" data-group-id="3984279822-3">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">query</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3984279822-4">[</span><span class="mi">1</span><span class="p" data-group-id="3984279822-4">]</span><span class="p" data-group-id="3984279822-3">)</span><span class="w">
+</span><span class="p" data-group-id="3984279822-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">result2</span><span class="p" data-group-id="3984279822-5">}</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">execute</span><span class="p" data-group-id="3984279822-6">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">query</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3984279822-7">[</span><span class="mi">2</span><span class="p" data-group-id="3984279822-7">]</span><span class="p" data-group-id="3984279822-6">)</span><span class="w">
+</span><span class="ss">:ok</span><span class="w">                  </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">close</span><span class="p" data-group-id="3984279822-8">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">query</span><span class="p" data-group-id="3984279822-8">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="prepare_execute!/4">
+
+    <span id="prepare_execute!/3"></span>
+
+  <div class="detail-header">
+    <a href="#prepare_execute!/4" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">prepare_execute!(conn, query, params, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L804" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Prepare a query and execute it with a database connection and return both the
+prepared query and result. An exception is raised on error.</p><p>See <a href="#prepare_execute/4"><code class="inline">prepare_execute/4</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="prepare_stream/4">
+
+    <span id="prepare_stream/3"></span>
+
+  <div class="detail-header">
+    <a href="#prepare_stream/4" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">prepare_stream(conn, query, params, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L1206" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> prepare_stream(<a href="#t:t/0">t</a>(), <a href="#t:query/0">query</a>(), <a href="#t:params/0">params</a>(), [<a href="#t:connection_option/0">connection_option</a>()] | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) ::
+  <a href="DBConnection.PrepareStream.html#t:t/0">DBConnection.PrepareStream.t</a>()</pre>
+
+      </div>
+
+<p>Create a stream that will prepare a query, execute it and stream results
+using a cursor.</p><h3 id="prepare_stream/4-options" class="section-heading"><a href="#prepare_stream/4-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h3><ul><li><code class="inline">:queue</code> - Whether to block waiting in an internal queue for the
+connection's state (boolean, default: <code class="inline">true</code>). See &quot;Queue config&quot; in
+<a href="#start_link/2"><code class="inline">start_link/2</code></a> docs</li><li><code class="inline">:timeout</code> - The maximum time that the caller is allowed to perform
+this operation (default: <code class="inline">15_000</code>)</li><li><code class="inline">:deadline</code> - If set, overrides <code class="inline">:timeout</code> option and specifies absolute
+monotonic time in milliseconds by which caller must perform operation.
+See <a href="https://hexdocs.pm/elixir/System.html"><code class="inline">System</code></a> module documentation for more information on monotonic time
+(default: <code class="inline">nil</code>)</li><li><code class="inline">:log</code> - A function to log information about a call, either
+a 1-arity fun, <code class="inline">{module, function, args}</code> with <a href="DBConnection.LogEntry.html#t:t/0"><code class="inline">DBConnection.LogEntry.t/0</code></a>
+prepended to <code class="inline">args</code> or <code class="inline">nil</code>. See <a href="DBConnection.LogEntry.html"><code class="inline">DBConnection.LogEntry</code></a> (default: <code class="inline">nil</code>)</li></ul><p>The pool and connection module may support other options. All options
+are passed to <a href="#c:handle_prepare/3"><code class="inline">handle_prepare/3</code></a>, <a href="#c:handle_close/3"><code class="inline">handle_close/3</code></a>, <a href="#c:handle_declare/4"><code class="inline">handle_declare/4</code></a>,
+and <a href="#c:handle_deallocate/4"><code class="inline">handle_deallocate/4</code></a>.</p><h3 id="prepare_stream/4-example" class="section-heading"><a href="#prepare_stream/4-example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Example</span></h3><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="8651895861-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="p" data-group-id="8651895861-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">transaction</span><span class="p" data-group-id="8651895861-2">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="k" data-group-id="8651895861-3">fn</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+  </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="8651895861-4">%</span><span class="nc" data-group-id="8651895861-4">Query</span><span class="p" data-group-id="8651895861-4">{</span><span class="ss">statement</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SELECT id FROM table&quot;</span><span class="p" data-group-id="8651895861-4">}</span><span class="w">
+  </span><span class="n">stream</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">prepare_stream</span><span class="p" data-group-id="8651895861-5">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">query</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8651895861-6">[</span><span class="p" data-group-id="8651895861-6">]</span><span class="p" data-group-id="8651895861-5">)</span><span class="w">
+  </span><span class="nc">Enum</span><span class="o">.</span><span class="n">to_list</span><span class="p" data-group-id="8651895861-7">(</span><span class="n">stream</span><span class="p" data-group-id="8651895861-7">)</span><span class="w">
+</span><span class="k" data-group-id="8651895861-3">end</span><span class="p" data-group-id="8651895861-2">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="reduce/3">
+
+  <div class="detail-header">
+    <a href="#reduce/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">reduce(stream, acc, fun)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L1254" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Reduces a previously built stream or prepared stream.</p>
+  </section>
+</section>
+<section class="detail" id="rollback/2">
+
+  <div class="detail-header">
+    <a href="#rollback/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">rollback(conn, reason)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L1123" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> rollback(<a href="#t:t/0">t</a>(), reason :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">no_return</a>()</pre>
+
+      </div>
+
+<p>Rollback a database transaction and release lock on connection.</p><p>When inside of a <a href="#transaction/3"><code class="inline">transaction/3</code></a> call does a non-local return, using a
+<a href="https://hexdocs.pm/elixir/Kernel.html#throw/1"><code class="inline">throw/1</code></a> to cause the transaction to enter a failed state and the
+<a href="#transaction/3"><code class="inline">transaction/3</code></a> call returns <code class="inline">{:error, reason}</code>. If <a href="#transaction/3"><code class="inline">transaction/3</code></a> calls are
+nested the connection is marked as failed until the outermost transaction call
+does the database rollback.</p><h3 id="rollback/2-example" class="section-heading"><a href="#rollback/2-example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Example</span></h3><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="5871724966-1">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:oops</span><span class="p" data-group-id="5871724966-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">transaction</span><span class="p" data-group-id="5871724966-2">(</span><span class="n">pool</span><span class="p">,</span><span class="w"> </span><span class="n">fun</span><span class="p" data-group-id="5871724966-3">(</span><span class="n">conn</span><span class="p" data-group-id="5871724966-3">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+  </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">rollback</span><span class="p" data-group-id="5871724966-4">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="ss">:oops</span><span class="p" data-group-id="5871724966-4">)</span><span class="w">
+</span><span class="k">end</span><span class="p" data-group-id="5871724966-2">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="run/3">
+
+    <span id="run/2"></span>
+
+  <div class="detail-header">
+    <a href="#run/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">run(conn, fun, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L966" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> run(<a href="#t:conn/0">conn</a>(), (<a href="#t:t/0">t</a>() -&gt; result), [<a href="#t:connection_option/0">connection_option</a>()] | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) :: result
+when result: var</pre>
+
+      </div>
+
+<p>Acquire a lock on a connection and run a series of requests on it.</p><p>The return value of this function is the return value of <code class="inline">fun</code>.</p><p>To use the locked connection call the request with the connection
+reference passed as the single argument to the <code class="inline">fun</code>. If the
+connection disconnects all future calls using that connection
+reference will fail.</p><p><a href="#run/3"><code class="inline">run/3</code></a> and <a href="#transaction/3"><code class="inline">transaction/3</code></a> can be nested multiple times but a
+<a href="#transaction/3"><code class="inline">transaction/3</code></a> call inside another <a href="#transaction/3"><code class="inline">transaction/3</code></a> will be treated
+the same as <a href="#run/3"><code class="inline">run/3</code></a>.</p><section role="note" class="admonition warning"><h4 class="admonition-title warning">Checkout failures</h4><p>If we cannot check out a connection from the pool, this function raises a
+<a href="DBConnection.ConnectionError.html"><code class="inline">DBConnection.ConnectionError</code></a> exception.
+If you want to handle these cases, you should rescue
+<a href="DBConnection.ConnectionError.html"><code class="inline">DBConnection.ConnectionError</code></a> exceptions when using <a href="#run/3"><code class="inline">run/3</code></a>.</p></section><h2 id="run/3-options" class="section-heading"><a href="#run/3-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h2><ul><li><code class="inline">:queue</code> - Whether to block waiting in an internal queue for the
+connection's state (boolean, default: <code class="inline">true</code>). See &quot;Queue config&quot; in
+<a href="#start_link/2"><code class="inline">start_link/2</code></a> docs</li><li><code class="inline">:timeout</code> - The maximum time that the caller is allowed to perform
+this operation (default: <code class="inline">15_000</code>)</li><li><code class="inline">:deadline</code> - If set, overrides <code class="inline">:timeout</code> option and specifies absolute
+monotonic time in milliseconds by which caller must perform operation.
+See <a href="https://hexdocs.pm/elixir/System.html"><code class="inline">System</code></a> module documentation for more information on monotonic time
+(default: <code class="inline">nil</code>)</li></ul><p>The pool may support other options.</p><h2 id="run/3-example" class="section-heading"><a href="#run/3-example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Example</span></h2><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="0832523242-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="p" data-group-id="0832523242-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">run</span><span class="p" data-group-id="0832523242-2">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="k" data-group-id="0832523242-3">fn</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+  </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">execute!</span><span class="p" data-group-id="0832523242-4">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">query</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0832523242-5">[</span><span class="p" data-group-id="0832523242-5">]</span><span class="p" data-group-id="0832523242-4">)</span><span class="w">
+</span><span class="k" data-group-id="0832523242-3">end</span><span class="p" data-group-id="0832523242-2">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="start_link/2">
+
+  <div class="detail-header">
+    <a href="#start_link/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">start_link(conn_mod, opts)</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L592" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> start_link(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), [<a href="#t:start_option/0">start_option</a>()] | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) :: <a href="https://hexdocs.pm/elixir/GenServer.html#t:on_start/0">GenServer.on_start</a>()</pre>
+
+      </div>
+
+<p>Starts and links to a database connection process.</p><p>By default the <a href="DBConnection.html"><code class="inline">DBConnection</code></a> starts a pool with a single connection.
+The size of the pool can be increased with <code class="inline">:pool_size</code>. A separate
+pool can be given with the <code class="inline">:pool</code> option.</p><h3 id="start_link/2-options" class="section-heading"><a href="#start_link/2-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h3><ul><li><p><code class="inline">:after_connect</code> - A function to run on connect using <a href="#run/3"><code class="inline">run/3</code></a>, either
+a 1-arity fun, <code class="inline">{module, function, args}</code> with <a href="#t:t/0"><code class="inline">DBConnection.t/0</code></a> prepended
+to <code class="inline">args</code> or <code class="inline">nil</code> (default: <code class="inline">nil</code>)</p></li><li><p><code class="inline">:after_connect_timeout</code> - The maximum time allowed to perform
+function specified by <code class="inline">:after_connect</code> option (default: <code class="inline">15_000</code>)</p></li><li><p><code class="inline">:backoff_min</code> - The minimum backoff interval (default: <code class="inline">1_000</code>)</p></li><li><p><code class="inline">:backoff_max</code> - The maximum backoff interval (default: <code class="inline">30_000</code>)</p></li><li><p><code class="inline">:backoff_type</code> - The backoff strategy, <code class="inline">:stop</code> for no backoff and
+to stop, <code class="inline">:exp</code> for exponential, <code class="inline">:rand</code> for random and <code class="inline">:rand_exp</code> for
+random exponential (default: <code class="inline">:rand_exp</code>)</p></li><li><p><code class="inline">:checkout_retries</code> - The number of times to checkout a new connection
+whenever the operation fails because the database disconnected. Note
+not all operations can be retried and each adapter specifies which
+operations are safe to retry</p></li><li><p><code class="inline">:configure</code> - A function to run before every connect attempt to
+dynamically configure the options, either a 1-arity fun,
+<code class="inline">{module, function, args}</code> or <code class="inline">nil</code>. This function is called <em>in the
+connection process</em>. For more details, see
+<a href="#start_link/2-connection-configuration-callback">Connection Configuration Callback</a></p></li><li><p><code class="inline">:connection_listeners</code> - A list of process destinations to send
+notification messages whenever a connection is connected or disconnected.
+See &quot;Connection listeners&quot; below</p></li><li><p><code class="inline">:idle_interval</code> - Controls the frequency we check for idle connections
+in the pool. We then notify each idle connection to ping the database.
+In practice, the ping happens within <code class="inline">idle_interval &lt;= ping &lt; 2 * idle_interval</code>.
+Defaults to 1000ms.</p></li><li><p><code class="inline">:idle_limit</code> - The number of connections to ping on each <code class="inline">:idle_interval</code>.
+Defaults to the pool size (all connections).</p></li><li><p><code class="inline">:max_restarts</code> and <code class="inline">:max_seconds</code> - Configures the <code class="inline">:max_restarts</code> and
+<code class="inline">:max_seconds</code> for the connection pool supervisor (see the <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a> docs).
+Typically speaking the connection process doesn't terminate, except due to
+faults in DBConnection. However, if backoff has been disabled, then they
+also terminate whenever a connection is disconnected (for instance, due to
+client or server errors)</p></li><li><p><code class="inline">:name</code> - A name to register the started process (see the <code class="inline">:name</code> option
+in <a href="https://hexdocs.pm/elixir/GenServer.html#start_link/3"><code class="inline">GenServer.start_link/3</code></a>)</p></li><li><p><code class="inline">:pool</code> - Chooses the pool to be started (default: <a href="DBConnection.ConnectionPool.html"><code class="inline">DBConnection.ConnectionPool</code></a>).
+See <a href="#module-connection-pools">&quot;Connection pools&quot;</a>.</p></li><li><p><code class="inline">:pool_size</code> - Chooses the size of the pool. Must be greater or equal to 1. (default: <code class="inline">1</code>)</p></li><li><p><code class="inline">:queue_target</code> and <code class="inline">:queue_interval</code> - See &quot;Queue config&quot; below</p></li><li><p><code class="inline">:show_sensitive_data_on_connection_error</code> - By default, <a href="DBConnection.html"><code class="inline">DBConnection</code></a>
+hides all information during connection errors to avoid leaking credentials
+or other sensitive information. You can set this option if you wish to
+see complete errors and stacktraces during connection errors</p></li></ul><h3 id="start_link/2-example" class="section-heading"><a href="#start_link/2-example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Example</span></h3><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="2624515230-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">conn</span><span class="p" data-group-id="2624515230-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">start_link</span><span class="p" data-group-id="2624515230-2">(</span><span class="n">mod</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2624515230-3">[</span><span class="ss">idle_interval</span><span class="p">:</span><span class="w"> </span><span class="mi">5_000</span><span class="p" data-group-id="2624515230-3">]</span><span class="p" data-group-id="2624515230-2">)</span></code></pre><h2 id="start_link/2-queue-config" class="section-heading"><a href="#start_link/2-queue-config" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Queue config</span></h2><p>Handling requests is done through a queue. When DBConnection is
+started, there are two relevant options to control the queue:</p><ul><li><code class="inline">:queue_target</code> in milliseconds, defaults to 50ms</li><li><code class="inline">:queue_interval</code> in milliseconds, defaults to 2000ms</li></ul><p>Our goal is to wait at most <code class="inline">:queue_target</code> for a connection.
+If all connections checked out during a <code class="inline">:queue_interval</code> takes
+more than <code class="inline">:queue_target</code>, then we double the <code class="inline">:queue_target</code>.
+If checking out connections take longer than the new target,
+then we start dropping messages.</p><p>For example, by default our target is 50ms. If all connections
+checkouts take longer than 50ms for a whole second, we double
+the target to 100ms and we start dropping messages if the
+time to checkout goes above the new limit.</p><p>This allows us to better plan for overloads as we can refuse
+requests before they are sent to the database, which would
+otherwise increase the burden on the database, making the
+overload worse.</p><h2 id="start_link/2-connection-listeners" class="section-heading"><a href="#start_link/2-connection-listeners" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Connection listeners</span></h2><p>The <code class="inline">:connection_listeners</code> option allows one or more processes to be notified
+whenever a connection is connected or disconnected. A listener may be a remote
+or local PID, a locally registered name, or a tuple in the form of
+<code class="inline">{registered_name, node}</code> for a registered name at another node.</p><p>Each listener process may receive the following messages where <code class="inline">pid</code>
+identifies the connection process:</p><ul><li><code class="inline">{:connected, pid}</code></li><li><code class="inline">{:disconnected, pid}</code></li></ul><p>If the value of <code class="inline">:connection_listeners</code> is a tuple like <code class="inline">{listeners, term}</code>, then
+the messages are these instead:</p><ul><li><code class="inline">{:connected, pid, term}</code></li><li><code class="inline">{:disconnected, pid, term}</code></li></ul><p>Note the disconnected messages are not guaranteed to be delivered if the
+<code class="inline">pid</code> for connection crashes. So it is recommended to monitor the connected
+<code class="inline">pid</code> if you want to track all disconnections.</p><p>Here is an example of a <code class="inline">:connection_listener</code> implementation:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">DBConnectionListener</span><span class="w"> </span><span class="k" data-group-id="3218069230-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">GenServer</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">start_link</span><span class="p" data-group-id="3218069230-2">(</span><span class="n">opts</span><span class="p" data-group-id="3218069230-2">)</span><span class="w"> </span><span class="k" data-group-id="3218069230-3">do</span><span class="w">
+    </span><span class="nc">GenServer</span><span class="o">.</span><span class="n">start_link</span><span class="p" data-group-id="3218069230-4">(</span><span class="bp">__MODULE__</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3218069230-5">[</span><span class="p" data-group-id="3218069230-5">]</span><span class="p">,</span><span class="w"> </span><span class="n">opts</span><span class="p" data-group-id="3218069230-4">)</span><span class="w">
+  </span><span class="k" data-group-id="3218069230-3">end</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">get_notifications</span><span class="p" data-group-id="3218069230-6">(</span><span class="n">pid</span><span class="p" data-group-id="3218069230-6">)</span><span class="w"> </span><span class="k" data-group-id="3218069230-7">do</span><span class="w">
+    </span><span class="nc">GenServer</span><span class="o">.</span><span class="n">call</span><span class="p" data-group-id="3218069230-8">(</span><span class="n">pid</span><span class="p">,</span><span class="w"> </span><span class="ss">:read_state</span><span class="p" data-group-id="3218069230-8">)</span><span class="w">
+  </span><span class="k" data-group-id="3218069230-7">end</span><span class="w">
+
+  </span><span class="na">@impl</span><span class="w"> </span><span class="no">true</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">init</span><span class="p" data-group-id="3218069230-9">(</span><span class="n">stack</span><span class="p" data-group-id="3218069230-9">)</span><span class="w"> </span><span class="ow">when</span><span class="w"> </span><span class="n">is_list</span><span class="p" data-group-id="3218069230-10">(</span><span class="n">stack</span><span class="p" data-group-id="3218069230-10">)</span><span class="w"> </span><span class="k" data-group-id="3218069230-11">do</span><span class="w">
+    </span><span class="p" data-group-id="3218069230-12">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">stack</span><span class="p" data-group-id="3218069230-12">}</span><span class="w">
+  </span><span class="k" data-group-id="3218069230-11">end</span><span class="w">
+
+  </span><span class="na">@impl</span><span class="w"> </span><span class="no">true</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_call</span><span class="p" data-group-id="3218069230-13">(</span><span class="ss">:read_state</span><span class="p">,</span><span class="w"> </span><span class="c">_from</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p" data-group-id="3218069230-13">)</span><span class="w"> </span><span class="k" data-group-id="3218069230-14">do</span><span class="w">
+    </span><span class="p" data-group-id="3218069230-15">{</span><span class="ss">:reply</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p" data-group-id="3218069230-15">}</span><span class="w">
+  </span><span class="k" data-group-id="3218069230-14">end</span><span class="w">
+
+  </span><span class="na">@impl</span><span class="w"> </span><span class="no">true</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_info</span><span class="p" data-group-id="3218069230-16">(</span><span class="p" data-group-id="3218069230-17">{</span><span class="ss">:connected</span><span class="p">,</span><span class="w"> </span><span class="c">_pid</span><span class="p" data-group-id="3218069230-17">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p" data-group-id="3218069230-16">)</span><span class="w"> </span><span class="k" data-group-id="3218069230-18">do</span><span class="w">
+    </span><span class="p" data-group-id="3218069230-19">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3218069230-20">[</span><span class="n">msg</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">state</span><span class="p" data-group-id="3218069230-20">]</span><span class="p" data-group-id="3218069230-19">}</span><span class="w">
+  </span><span class="k" data-group-id="3218069230-18">end</span><span class="w">
+
+  </span><span class="na">@impl</span><span class="w"> </span><span class="no">true</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_info</span><span class="p" data-group-id="3218069230-21">(</span><span class="p" data-group-id="3218069230-22">{</span><span class="c">_other_states</span><span class="p">,</span><span class="w"> </span><span class="c">_pid</span><span class="p" data-group-id="3218069230-22">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p" data-group-id="3218069230-21">)</span><span class="w"> </span><span class="k" data-group-id="3218069230-23">do</span><span class="w">
+    </span><span class="p" data-group-id="3218069230-24">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3218069230-25">[</span><span class="n">msg</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">state</span><span class="p" data-group-id="3218069230-25">]</span><span class="p" data-group-id="3218069230-24">}</span><span class="w">
+  </span><span class="k" data-group-id="3218069230-23">end</span><span class="w">
+</span><span class="k" data-group-id="3218069230-1">end</span></code></pre><p>You can then start it, pass the PID in the <code class="inline">connection_listeners</code>
+option on <a href="#start_link/2"><code class="inline">DBConnection.start_link/2</code></a> and, when needed, can query the notifications:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="8160164353-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">pid</span><span class="p" data-group-id="8160164353-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnectionListener</span><span class="o">.</span><span class="n">start_link</span><span class="p" data-group-id="8160164353-2">(</span><span class="p" data-group-id="8160164353-3">[</span><span class="p" data-group-id="8160164353-3">]</span><span class="p" data-group-id="8160164353-2">)</span><span class="w">
+</span><span class="p" data-group-id="8160164353-4">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="c">_conn</span><span class="p" data-group-id="8160164353-4">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">start_link</span><span class="p" data-group-id="8160164353-5">(</span><span class="nc">SomeModule</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8160164353-6">[</span><span class="ss">connection_listeners</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8160164353-7">[</span><span class="n">pid</span><span class="p" data-group-id="8160164353-7">]</span><span class="p" data-group-id="8160164353-6">]</span><span class="p" data-group-id="8160164353-5">)</span><span class="w">
+</span><span class="n">notifications</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnectionListener</span><span class="o">.</span><span class="n">get_notifications</span><span class="p" data-group-id="8160164353-8">(</span><span class="n">pid</span><span class="p" data-group-id="8160164353-8">)</span></code></pre><h3 id="start_link/2-tagging-messages" class="section-heading"><a href="#start_link/2-tagging-messages" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Tagging messages</span></h3><p>If you pass <code class="inline">{listeners, tag}</code> as an option, you can specify an arbitrary <code class="inline">tag</code> term that will
+be sent alongside all <code class="inline">:connected</code>/<code class="inline">:disconnected</code> messages. This is useful if you
+want to track information about the pool a connection belongs to or any other information.</p><p>This feature is available since v2.6.0. Before this version <code class="inline">:connection_listeners</code> only
+accepted a list of listener processes.</p><h2 id="start_link/2-connection-configuration-callback" class="section-heading"><a href="#start_link/2-connection-configuration-callback" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Connection Configuration Callback</span></h2><p>The <code class="inline">:configure</code> function will be called before each individual connection to the
+database is made. It receives all of the options provided to <a href="#start_link/2"><code class="inline">start_link/2</code></a> as well
+as an additional generated value named <code class="inline">:pool_index</code>. The returned value will be
+passed as the options into the appropriate <code class="inline">:connect</code> callback. This provides a way
+for the user to dynamically configure the connection options.</p><p><code class="inline">:pool_index</code> is an integer in <code class="inline">1..pool_size</code> that represents the current connection's
+place in the enumeration of all of the pool's connections. It can be used, for example,
+to configure a unique database per connection when asynchronous tests cannot be performed
+on a single database.</p><p>The allowed callbacks are:</p><ul><li>A 1-arity function that receives the options from <a href="#start_link/2"><code class="inline">start_link/2</code></a> as well as
+<code class="inline">:pool_index</code></li><li><code class="inline">{module, function, args}</code> where the options from <a href="#start_link/2"><code class="inline">start_link/2</code></a> as well as
+<code class="inline">:pool_index</code> are prepended to <code class="inline">args</code> before the function is called</li><li><code class="inline">nil</code> if you do not want to modify the existing options</li></ul><h2 id="start_link/2-telemetry" class="section-heading"><a href="#start_link/2-telemetry" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Telemetry</span></h2><p>A <code class="inline">[:db_connection, :connection_error]</code> event is published whenever a
+connection checkout receives a <code class="inline">%DBConnection.ConnectionError{}</code>.
+This event is emitted from the process that attempts to checkout the
+connection.</p><p>Measurements:</p><ul><li><code class="inline">:count</code> - A fixed-value measurement which always measures 1.</li></ul><p>Metadata</p><ul><li><p><code class="inline">:error</code> - The <a href="DBConnection.ConnectionError.html"><code class="inline">DBConnection.ConnectionError</code></a> struct which triggered the event.</p></li><li><p><code class="inline">:opts</code> - All options given to the pool operation</p></li></ul><p>You may also consume <code class="inline">[:db_connection, :connected]</code> and <code class="inline">[:db_connection, :disconnected]</code>
+events by spawning a <a href="DBConnection.TelemetryListener.html"><code class="inline">DBConnection.TelemetryListener</code></a> process that subscribes to the pool
+and emits them in a robust manner.</p>
+  </section>
+</section>
+<section class="detail" id="status/2">
+
+    <span id="status/1"></span>
+
+  <div class="detail-header">
+    <a href="#status/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">status(conn, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L1166" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> status(<a href="#t:conn/0">conn</a>(), opts :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) :: <a href="#t:status/0">status</a>()</pre>
+
+      </div>
+
+<p>Return the transaction status of a connection.</p><p>The callback implementation should return the transaction status according to
+the database, and not make assumptions based on client-side state.</p><p>This function will raise a <a href="DBConnection.ConnectionError.html"><code class="inline">DBConnection.ConnectionError</code></a> when called inside a
+deprecated <a href="#transaction/3"><code class="inline">transaction/3</code></a>.</p><h3 id="status/2-options" class="section-heading"><a href="#status/2-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h3><p>See module documentation. The pool and connection module may support other
+options. All options are passed to <a href="#c:handle_status/2"><code class="inline">handle_status/2</code></a>.</p><h3 id="status/2-example" class="section-heading"><a href="#status/2-example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Example</span></h3><pre><code class="makeup elixir" translate="no"><span class="c1"># outside of the transaction, the status is `:idle`</span><span class="w">
+</span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">status</span><span class="p" data-group-id="6906302738-1">(</span><span class="n">conn</span><span class="p" data-group-id="6906302738-1">)</span><span class="w"> </span><span class="c1">#=&gt; :idle</span><span class="w">
+
+</span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">transaction</span><span class="p" data-group-id="6906302738-2">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="k" data-group-id="6906302738-3">fn</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+  </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">status</span><span class="p" data-group-id="6906302738-4">(</span><span class="n">conn</span><span class="p" data-group-id="6906302738-4">)</span><span class="w"> </span><span class="c1">#=&gt; :transaction</span><span class="w">
+
+  </span><span class="c1"># run a query that will cause the transaction to rollback, e.g.</span><span class="w">
+  </span><span class="c1"># uniqueness constraint violation</span><span class="w">
+  </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">execute</span><span class="p" data-group-id="6906302738-5">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">bad_query</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6906302738-6">[</span><span class="p" data-group-id="6906302738-6">]</span><span class="p" data-group-id="6906302738-5">)</span><span class="w">
+
+  </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">status</span><span class="p" data-group-id="6906302738-7">(</span><span class="n">conn</span><span class="p" data-group-id="6906302738-7">)</span><span class="w"> </span><span class="c1">#=&gt; :error</span><span class="w">
+</span><span class="k" data-group-id="6906302738-3">end</span><span class="p" data-group-id="6906302738-2">)</span><span class="w">
+
+</span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">status</span><span class="p" data-group-id="6906302738-8">(</span><span class="n">conn</span><span class="p" data-group-id="6906302738-8">)</span><span class="w"> </span><span class="c1">#=&gt; :idle</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="stream/4">
+
+    <span id="stream/3"></span>
+
+  <div class="detail-header">
+    <a href="#stream/4" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">stream(conn, query, params, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L1247" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> stream(<a href="#t:t/0">t</a>(), <a href="#t:query/0">query</a>(), <a href="#t:params/0">params</a>(), [<a href="#t:connection_option/0">connection_option</a>()] | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) ::
+  <a href="DBConnection.Stream.html#t:t/0">DBConnection.Stream.t</a>()</pre>
+
+      </div>
+
+<p>Create a stream that will execute a prepared query and stream results using a
+cursor.</p><h3 id="stream/4-options" class="section-heading"><a href="#stream/4-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h3><ul><li><code class="inline">:queue</code> - Whether to block waiting in an internal queue for the
+connection's state (boolean, default: <code class="inline">true</code>). See &quot;Queue config&quot; in
+<a href="#start_link/2"><code class="inline">start_link/2</code></a> docs</li><li><code class="inline">:timeout</code> - The maximum time that the caller is allowed to perform
+this operation (default: <code class="inline">15_000</code>)</li><li><code class="inline">:deadline</code> - If set, overrides <code class="inline">:timeout</code> option and specifies absolute
+monotonic time in milliseconds by which caller must perform operation.
+See <a href="https://hexdocs.pm/elixir/System.html"><code class="inline">System</code></a> module documentation for more information on monotonic time
+(default: <code class="inline">nil</code>)</li><li><code class="inline">:log</code> - A function to log information about a call, either
+a 1-arity fun, <code class="inline">{module, function, args}</code> with <a href="DBConnection.LogEntry.html#t:t/0"><code class="inline">DBConnection.LogEntry.t/0</code></a>
+prepended to <code class="inline">args</code> or <code class="inline">nil</code>. See <a href="DBConnection.LogEntry.html"><code class="inline">DBConnection.LogEntry</code></a> (default: <code class="inline">nil</code>)</li></ul><p>The pool and connection module may support other options. All options
+are passed to <a href="#c:handle_declare/4"><code class="inline">handle_declare/4</code></a> and <a href="#c:handle_deallocate/4"><code class="inline">handle_deallocate/4</code></a>.</p><h3 id="stream/4-example" class="section-heading"><a href="#stream/4-example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Example</span></h3><pre><code class="makeup elixir" translate="no"><span class="nc">DBConnection</span><span class="o">.</span><span class="n">transaction</span><span class="p" data-group-id="0552049823-1">(</span><span class="n">pool</span><span class="p">,</span><span class="w"> </span><span class="k" data-group-id="0552049823-2">fn</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+  </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="0552049823-3">%</span><span class="nc" data-group-id="0552049823-3">Query</span><span class="p" data-group-id="0552049823-3">{</span><span class="ss">statement</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SELECT id FROM table&quot;</span><span class="p" data-group-id="0552049823-3">}</span><span class="w">
+  </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">prepare!</span><span class="p" data-group-id="0552049823-4">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">query</span><span class="p" data-group-id="0552049823-4">)</span><span class="w">
+  </span><span class="k">try</span><span class="w"> </span><span class="k" data-group-id="0552049823-5">do</span><span class="w">
+    </span><span class="n">stream</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">stream</span><span class="p" data-group-id="0552049823-6">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">query</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0552049823-7">[</span><span class="p" data-group-id="0552049823-7">]</span><span class="p" data-group-id="0552049823-6">)</span><span class="w">
+    </span><span class="nc">Enum</span><span class="o">.</span><span class="n">to_list</span><span class="p" data-group-id="0552049823-8">(</span><span class="n">stream</span><span class="p" data-group-id="0552049823-8">)</span><span class="w">
+  </span><span class="k" data-group-id="0552049823-5">after</span><span class="w">
+    </span><span class="c1"># Make sure query is closed!</span><span class="w">
+    </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">close</span><span class="p" data-group-id="0552049823-9">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">query</span><span class="p" data-group-id="0552049823-9">)</span><span class="w">
+  </span><span class="k" data-group-id="0552049823-5">end</span><span class="w">
+</span><span class="k" data-group-id="0552049823-2">end</span><span class="p" data-group-id="0552049823-1">)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="transaction/3">
+
+    <span id="transaction/2"></span>
+
+  <div class="detail-header">
+    <a href="#transaction/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">transaction(conn, fun, opts \\ [])</h1>
+
+
+        <a href="https://github.com/elixir-ecto/db_connection/blob/v2.9.0/lib/db_connection.ex#L1061" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> transaction(<a href="#t:conn/0">conn</a>(), (<a href="#t:t/0">t</a>() -&gt; result), [<a href="#t:connection_option/0">connection_option</a>()] | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) ::
+  {:ok, result} | {:error, reason :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}
+when result: var</pre>
+
+      </div>
+
+<p>Acquire a lock on a connection and run a series of requests inside a
+transaction. The result of the transaction fun is return inside an <code class="inline">:ok</code>
+tuple: <code class="inline">{:ok, result}</code>.</p><p>To use the locked connection call the request with the connection
+reference passed as the single argument to the <code class="inline">fun</code>. If the
+connection disconnects all future calls using that connection
+reference will fail.</p><p><a href="#run/3"><code class="inline">run/3</code></a> and <a href="#transaction/3"><code class="inline">transaction/3</code></a> can be nested multiple times. If a transaction is
+rolled back or a nested transaction <code class="inline">fun</code> raises the transaction is marked as
+failed. All calls except <a href="#run/3"><code class="inline">run/3</code></a>, <a href="#transaction/3"><code class="inline">transaction/3</code></a>, <a href="#rollback/2"><code class="inline">rollback/2</code></a>, <a href="#close/3"><code class="inline">close/3</code></a> and
+<a href="#close!/3"><code class="inline">close!/3</code></a> will raise an exception inside a failed transaction until the outer
+transaction call returns. All <a href="#transaction/3"><code class="inline">transaction/3</code></a> calls will return
+<code class="inline">{:error, :rollback}</code> if the transaction failed or connection closed and
+<a href="#rollback/2"><code class="inline">rollback/2</code></a> is not called for that <a href="#transaction/3"><code class="inline">transaction/3</code></a>.</p><h3 id="transaction/3-options" class="section-heading"><a href="#transaction/3-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h3><ul><li><code class="inline">:queue</code> - Whether to block waiting in an internal queue for the
+connection's state (boolean, default: <code class="inline">true</code>). See &quot;Queue config&quot; in
+<a href="#start_link/2"><code class="inline">start_link/2</code></a> docs</li><li><code class="inline">:timeout</code> - The maximum time that the caller is allowed to perform
+this operation (default: <code class="inline">15_000</code>)</li><li><code class="inline">:deadline</code> - If set, overrides <code class="inline">:timeout</code> option and specifies absolute
+monotonic time in milliseconds by which caller must perform operation.
+See <a href="https://hexdocs.pm/elixir/System.html"><code class="inline">System</code></a> module documentation for more information on monotonic time
+(default: <code class="inline">nil</code>)</li><li><code class="inline">:log</code> - A function to log information about begin, commit and rollback
+calls made as part of the transaction, either a 1-arity fun,
+<code class="inline">{module, function, args}</code> with <a href="DBConnection.LogEntry.html#t:t/0"><code class="inline">DBConnection.LogEntry.t/0</code></a> prepended to
+<code class="inline">args</code> or <code class="inline">nil</code>. See <a href="DBConnection.LogEntry.html"><code class="inline">DBConnection.LogEntry</code></a> (default: <code class="inline">nil</code>)</li></ul><p>The pool and connection module may support other options. All options
+are passed to <a href="#c:handle_begin/2"><code class="inline">handle_begin/2</code></a>, <a href="#c:handle_commit/2"><code class="inline">handle_commit/2</code></a> and
+<a href="#c:handle_rollback/2"><code class="inline">handle_rollback/2</code></a>.</p><h3 id="transaction/3-example" class="section-heading"><a href="#transaction/3-example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Example</span></h3><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="7551121149-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="p" data-group-id="7551121149-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">transaction</span><span class="p" data-group-id="7551121149-2">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="k" data-group-id="7551121149-3">fn</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+  </span><span class="nc">DBConnection</span><span class="o">.</span><span class="n">execute!</span><span class="p" data-group-id="7551121149-4">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="n">query</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7551121149-5">[</span><span class="p" data-group-id="7551121149-5">]</span><span class="p" data-group-id="7551121149-4">)</span><span class="w">
+</span><span class="k" data-group-id="7551121149-3">end</span><span class="p" data-group-id="7551121149-2">)</span></code></pre>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/db_connection/2.9.0" class="footer-hex-package">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/db_connection/2.9.0">Hex Preview</a>
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="db_connection.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.39.3) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

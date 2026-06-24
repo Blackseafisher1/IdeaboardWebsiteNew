@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.34.2">
+    <meta name="project" content="Comeonin v5.5.1">
+
+
+    <title>Comeonin — Comeonin v5.5.1</title>
+    <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
+
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-2752FD59.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-YIPIRHGU.js"></script>
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+Comeonin
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v5.5.1
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Comeonin</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <h1>
+
+      <a href="https://github.com/riverrun/comeonin/blob/v5.5.1/README.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+
+    <span>Comeonin</span>
+  </h1>
+
+<p><a href="https://travis-ci.com/riverrun/comeonin"><img src="https://travis-ci.com/riverrun/comeonin.svg?branch=master" alt="Build Status"/></a>
+<a href="https://hex.pm/packages/comeonin"><img src="https://img.shields.io/hexpm/v/comeonin.svg" alt="Module Version"/></a>
+<a href="https://hexdocs.pm/comeonin/"><img src="https://img.shields.io/badge/hex-docs-lightgreen.svg" alt="Hex Docs"/></a>
+<a href="https://hex.pm/packages/comeonin"><img src="https://img.shields.io/hexpm/dt/comeonin.svg" alt="Total Download"/></a>
+<a href="https://github.com/riverrun/comeonin/blob/master/LICENSE"><img src="https://img.shields.io/hexpm/l/comeonin.svg" alt="License"/></a>
+<a href="https://github.com/riverrun/comeonin/commits/master"><img src="https://img.shields.io/github/last-commit/riverrun/comeonin.svg" alt="Last Updated"/></a>
+<a href="https://gitter.im/comeonin/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img src="https://badges.gitter.im/comeonin/Lobby.svg" alt="Join the chat at https://gitter.im/comeonin/Lobby"/></a></p><p>Comeonin is a specification for password hashing libraries.</p><p>For information about hashing passwords in your app, see
+<a href="#password-hashing-libraries">Password hashing libraries</a>.</p><h2 id="changes-in-version-5" class="section-heading">
+  <a href="#changes-in-version-5" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Changes in version 5</span>
+</h2>
+<p>In version 5.0 and above, Comeonin now provides two behaviours, Comeonin and
+Comeonin.PasswordHash, which password hash libraries then implement.</p><p>With these changes, Comeonin is now a dependency of the password hashing
+library you choose to use, and in most cases, you will not use it
+directly.</p><p>See the <a href="https://github.com/riverrun/comeonin/blob/master/UPGRADE_v5.md">UPGRADE_v5 guide</a>
+for information about you can upgrade to version 5.</p><h2 id="password-hashing-libraries" class="section-heading">
+  <a href="#password-hashing-libraries" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Password hashing libraries</span>
+</h2>
+<p>The following libraries all implement the Comeonin and Comeonin.PasswordHash
+behaviours:</p><ul><li>Argon2 - argon2_elixir<ul><li><a href="https://hexdocs.pm/argon2_elixir">docs</a></li><li><a href="https://github.com/riverrun/argon2_elixir">source</a></li></ul></li><li>Bcrypt - bcrypt_elixir<ul><li><a href="https://hexdocs.pm/bcrypt_elixir">docs</a></li><li><a href="https://github.com/riverrun/bcrypt_elixir">source</a></li></ul></li><li>Pbkdf2 - pbkdf2_elixir<ul><li><a href="https://hexdocs.pm/pbkdf2_elixir">docs</a></li><li><a href="https://github.com/riverrun/pbkdf2_elixir">source</a></li></ul></li></ul><p>Argon2 is currently considered to be the strongest password hashing function,
+and it is the one we recommend.</p><p>Bcrypt and Pbkdf2 are viable alternatives, but they are less resistant than Argon2,
+to attacks using GPUs or dedicated hardware.</p><h3 id="windows-users" class="section-heading">
+  <a href="#windows-users" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Windows users</span>
+</h3>
+<p>On Windows, it can be time-consuming and problematic to setup the environment needed
+to compile the C code in Argon2 and Bcrypt. For this reason, it is often easier to install
+Pbkdf2, which has no C dependencies.</p><p>For more information, see
+<a href="https://github.com/riverrun/comeonin/wiki/Choosing-the-password-hashing-library">Choosing a library</a>.</p><h2 id="comeonin-wiki" class="section-heading">
+  <a href="#comeonin-wiki" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Comeonin wiki</span>
+</h2>
+<p>See the <a href="https://github.com/riverrun/comeonin/wiki">Comeonin wiki</a> for more
+information on the following topics:</p><ul><li><a href="https://github.com/riverrun/comeonin/wiki/Hashing-passwords">Hashing passwords</a> - a general guide to hashing passwords in your Elixir app</li><li><a href="https://github.com/riverrun/comeonin/wiki/Choosing-the-password-hashing-library">Password hashing libraries</a></li><li><a href="https://github.com/riverrun/comeonin/wiki/Requirements">Requirements</a></li><li><a href="https://github.com/riverrun/comeonin/wiki/Deployment">Deployment</a> - including information about using Docker</li><li><a href="https://github.com/riverrun/comeonin/wiki/References">References</a></li></ul><h2 id="contributing" class="section-heading">
+  <a href="#contributing" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Contributing</span>
+</h2>
+<p>There are many ways you can contribute to the development of Comeonin, including:</p><ul><li>Reporting issues</li><li>Improving documentation</li><li>Sharing your experiences with others</li></ul><h3 id="license" class="section-heading">
+  <a href="#license" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">License</span>
+</h3>
+<p>BSD. For full details, please read the LICENSE file.</p>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="api-reference.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+API Reference
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="upgrade_v5.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Upgrading to version 5
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/comeonin/5.5.1" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/comeonin/5.5.1">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/comeonin/5.5.1/show/README.md">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="Comeonin.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.2) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

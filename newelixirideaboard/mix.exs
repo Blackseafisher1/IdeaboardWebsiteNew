@@ -26,8 +26,7 @@ defmodule IdeaBoard.MixProject do
 
   defp aliases do
     [
-      setup: ["deps.get"],
-      test: ["test --no-start"]
+      setup: ["deps.get"]
     ]
   end
 

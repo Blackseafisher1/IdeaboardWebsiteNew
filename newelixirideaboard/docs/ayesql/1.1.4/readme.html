@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="AyeSQL v1.1.4">
+
+
+    <title>AyeSQL — AyeSQL v1.1.4</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-B011E228.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+AyeSQL
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.1.4
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="TOPICS"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of AyeSQL</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>AyeSQL</h1>
+
+<a href="readme.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+      <a href="https://github.com/alexdesousa/ayesql/blob/v1.1.4/README.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+<p><img src="https://github.com/alexdesousa/ayesql/actions/workflows/checks.yml/badge.svg" alt="Build status"/> <a href="https://hex.pm/packages/ayesql"><img src="http://img.shields.io/hexpm/v/ayesql.svg?style=flat" alt="Hex pm"/></a> <a href="https://hex.pm/packages/ayesql"><img src="https://img.shields.io/hexpm/dt/ayesql.svg?style=flat" alt="hex.pm downloads"/></a> <a href="https://coveralls.io/github/alexdesousa/ayesql?branch=master"><img src="https://coveralls.io/repos/github/alexdesousa/ayesql/badge.svg?branch=master" alt="Coverage Status"/></a></p><blockquote><p><strong>Aye</strong> <em>/ʌɪ/</em> <em>exclamation (archaic dialect)</em>: said to express assent; yes.</p></blockquote><p><em>AyeSQL</em> is a library for using raw SQL.</p><h2 id="overview" class="section-heading"><a href="#overview" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Overview</span></h2><p>Inspired by Clojure library <a href="https://github.com/krisajenkins/yesql">Yesql</a>,
+<em>AyeSQL</em> tries to find a middle ground between strings with raw SQL queries and
+SQL DSLs. This library aims to:</p><ul><li>Keep SQL in SQL files.</li><li>Generate easy to use Elixir functions for every query.</li><li>Parameterize queries using maps and keyword lists.</li><li>Allow query composablity.</li><li>Support loading from multiple files or glob patterns.</li><li>Work out-of-the-box with PostgreSQL using
+<a href="https://github.com/elixir-ecto/ecto_sql">Ecto</a> or
+<a href="https://github.com/elixir-ecto/postgrex">Postgrex</a>.</li><li>Work out-of-the-box with DuckDB using
+<a href="https://github.com/AlexR2D2/duckdbex">Duckdbex</a>.</li></ul><p>If you want to know more about AyeSQL:</p><ul><li><p><a href="#small-example">Small example</a></p></li><li><p><a href="#multi-file-support">Multi-file support</a></p></li><li><p><a href="#syntax">Syntax</a></p><ul><li><a href="#naming-queries">Naming queries</a></li><li><a href="#parameters">Parameters</a></li><li><a href="#mandatory-parameters">Mandatory parameters</a></li><li><a href="#query-composition">Query composition</a></li><li><a href="#optional-fragments">Optional fragments</a></li><li><a href="#in-statement">IN statement</a></li><li><a href="#subqueries-and-subfragments">Subqueries and subfragments</a></li></ul></li><li><p><a href="#installation">Installation</a></p></li></ul><p>And the following additional links provide more information about the library:</p><ul><li><a href="https://hexdocs.pm/ayesql">Full Documentation</a></li><li><a href="https://thebroken.link/ayesql-writing-raw-sql-in-elixir/">AyeSQL: Writing Raw SQL in Elixir</a></li><li><a href="https://hexdocs.pm/ayesql/why-raw-sql.html">Why raw SQL?</a></li><li><a href="https://hexdocs.pm/ayesql/dynamic-queries-with-eex.html">Dynamic queries with EEx</a></li><li><a href="https://hexdocs.pm/ayesql/query-runners.html">Adding support to other databases</a></li></ul><h2 id="small-example" class="section-heading"><a href="#small-example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Small Example</span></h2><p>In AyeSQL, the equivalent would be to create an SQL file with the query e.g.
+<code class="inline">queries.sql</code>:</p><pre><code class="sql">-- file: queries.sql
+-- name: get_avg_clicks
+-- docs: Gets average click count.
+    WITH computed_dates AS (
+      SELECT datetime::date AS date
+      FROM generate_series(
+        current_date - :days::interval, -- Named parameter :days
+        current_date - interval '1 day',
+        interval '1 day'
+      )
+    )
+  SELECT dates.date AS day, count(clicks.id) AS count
+    FROM computed_date AS dates
+         LEFT JOIN clicks AS clicks ON date(clicks.inserted_at) = dates.date
+   WHERE clicks.link_id = :link_id -- Named parameter :link_id
+GROUP BY dates.date
+ORDER BY dates.date;</code></pre><p>In Elixir, we would load all the queries in this file by creating the following
+module:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># file: lib/queries.ex</span><span class="w">
+</span><span class="kd">defmodule</span><span class="w"> </span><span class="nc">Queries</span><span class="w"> </span><span class="k" data-group-id="9690319519-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">AyeSQL</span><span class="p">,</span><span class="w"> </span><span class="ss">repo</span><span class="p">:</span><span class="w"> </span><span class="nc">MyRepo</span><span class="w">
+
+  </span><span class="n">defqueries</span><span class="p" data-group-id="9690319519-2">(</span><span class="s">&quot;queries.sql&quot;</span><span class="p" data-group-id="9690319519-2">)</span><span class="w"> </span><span class="c1"># File name with relative path to SQL file.</span><span class="w">
+</span><span class="k" data-group-id="9690319519-1">end</span></code></pre><p>or using the macro <code class="inline">defqueries/3</code>:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># file: lib/queries.ex</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nc">AyeSQL</span><span class="p">,</span><span class="w"> </span><span class="ss">only</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0633782776-1">[</span><span class="ss">defqueries</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="0633782776-1">]</span><span class="w">
+
+</span><span class="n">defqueries</span><span class="p" data-group-id="0633782776-2">(</span><span class="nc">Queries</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;queries.sql&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">repo</span><span class="p">:</span><span class="w"> </span><span class="nc">MyRepo</span><span class="p" data-group-id="0633782776-2">)</span></code></pre><blockquote><p><strong>Note</strong>: The file name used in <code class="inline">defqueries</code> macro should be relative to the
+file where the macro is used.</p></blockquote><p>Both approaches will create a module called <code class="inline">Queries</code> with all the queries
+defined in <code class="inline">queries.sql</code>.</p><p>And then we could execute the query as follows:</p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="6516380405-1">[</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="w">  </span><span class="ss">link_id</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="w">  </span><span class="ss">days</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6516380405-2">%</span><span class="nc" data-group-id="6516380405-2">Postgrex.Interval</span><span class="p" data-group-id="6516380405-2">{</span><span class="ss">secs</span><span class="p">:</span><span class="w"> </span><span class="mi">864_000</span><span class="p" data-group-id="6516380405-2">}</span><span class="w"> </span><span class="c1"># 10 days</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="p" data-group-id="6516380405-1">]</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Queries</span><span class="o">.</span><span class="n">get_avg_clicks</span><span class="p" data-group-id="6516380405-3">(</span><span class="n">params</span><span class="p" data-group-id="6516380405-3">)</span><span class="w">
+</span><span class="p" data-group-id="6516380405-4">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="6516380405-5">[</span><span class="w">
+    </span><span class="p" data-group-id="6516380405-6">%{</span><span class="ss">day</span><span class="p">:</span><span class="w"> </span><span class="n">...</span><span class="p">,</span><span class="w"> </span><span class="ss">count</span><span class="p">:</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="6516380405-6">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="6516380405-7">%{</span><span class="ss">day</span><span class="p">:</span><span class="w"> </span><span class="n">...</span><span class="p">,</span><span class="w"> </span><span class="ss">count</span><span class="p">:</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="6516380405-7">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="6516380405-8">%{</span><span class="ss">day</span><span class="p">:</span><span class="w"> </span><span class="n">...</span><span class="p">,</span><span class="w"> </span><span class="ss">count</span><span class="p">:</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="6516380405-8">}</span><span class="p">,</span><span class="w">
+    </span><span class="n">...</span><span class="w">
+  </span><span class="p" data-group-id="6516380405-5">]</span><span class="w">
+</span><span class="p" data-group-id="6516380405-4">}</span></code></pre><h2 id="multi-file-support" class="section-heading"><a href="#multi-file-support" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Multi-file Support</span></h2><p>For larger projects, you can organize your SQL queries across multiple files and
+load them all at once. AyeSQL supports both explicit file lists and glob patterns.</p><h3 id="loading-multiple-files" class="section-heading"><a href="#loading-multiple-files" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Loading Multiple Files</span></h3><p>You can pass a list of file paths to <code class="inline">defqueries</code>:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Queries</span><span class="w"> </span><span class="k" data-group-id="7707293360-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">AyeSQL</span><span class="p">,</span><span class="w"> </span><span class="ss">repo</span><span class="p">:</span><span class="w"> </span><span class="nc">MyApp.Repo</span><span class="w">
+
+  </span><span class="n">defqueries</span><span class="p" data-group-id="7707293360-2">(</span><span class="p" data-group-id="7707293360-3">[</span><span class="w">
+    </span><span class="s">&quot;sql/users.sql&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;sql/posts.sql&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;sql/comments.sql&quot;</span><span class="w">
+  </span><span class="p" data-group-id="7707293360-3">]</span><span class="p" data-group-id="7707293360-2">)</span><span class="w">
+</span><span class="k" data-group-id="7707293360-1">end</span></code></pre><h3 id="using-glob-patterns" class="section-heading"><a href="#using-glob-patterns" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Using Glob Patterns</span></h3><p>Or use glob patterns to automatically load all matching files:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Queries</span><span class="w"> </span><span class="k" data-group-id="4625653369-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">AyeSQL</span><span class="p">,</span><span class="w"> </span><span class="ss">repo</span><span class="p">:</span><span class="w"> </span><span class="nc">MyApp.Repo</span><span class="w">
+
+  </span><span class="c1"># Load all .sql files in the sql/ directory and subdirectories</span><span class="w">
+  </span><span class="n">defqueries</span><span class="p" data-group-id="4625653369-2">(</span><span class="s">&quot;sql/**/*.sql&quot;</span><span class="p" data-group-id="4625653369-2">)</span><span class="w">
+</span><span class="k" data-group-id="4625653369-1">end</span></code></pre><p>This is particularly useful for organizing queries by domain or feature:</p><pre><code class="makeup elixir" translate="no"><span class="n">sql</span><span class="o">/</span><span class="w">
+</span><span class="err">├</span><span class="err">─</span><span class="err">─</span><span class="w"> </span><span class="n">orders</span><span class="o">/</span><span class="w">
+</span><span class="err">│</span><span class="w">   </span><span class="err">├</span><span class="err">─</span><span class="err">─</span><span class="w"> </span><span class="n">reads</span><span class="o">.</span><span class="n">sql</span><span class="w">
+</span><span class="err">│</span><span class="w">   </span><span class="err">└</span><span class="err">─</span><span class="err">─</span><span class="w"> </span><span class="n">writes</span><span class="o">.</span><span class="n">sql</span><span class="w">
+</span><span class="err">├</span><span class="err">─</span><span class="err">─</span><span class="w"> </span><span class="n">clients</span><span class="o">/</span><span class="w">
+</span><span class="err">│</span><span class="w">   </span><span class="err">└</span><span class="err">─</span><span class="err">─</span><span class="w"> </span><span class="n">clients</span><span class="o">.</span><span class="n">sql</span><span class="w">
+</span><span class="err">└</span><span class="err">─</span><span class="err">─</span><span class="w"> </span><span class="n">payments</span><span class="o">/</span><span class="w">
+    </span><span class="err">└</span><span class="err">─</span><span class="err">─</span><span class="w"> </span><span class="n">payments</span><span class="o">.</span><span class="n">sql</span></code></pre><h3 id="multi-file-behavior" class="section-heading"><a href="#multi-file-behavior" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Multi-file Behavior</span></h3><p>When using multiple files:</p><ul><li><p><strong>Alphabetical ordering</strong>: Files are processed in alphabetical order by their
+full path, ensuring deterministic and predictable behavior.</p></li><li><p><strong>Unique query names</strong>: All query names must be unique across all loaded files.
+If duplicate names are found, a compile-time error will be raised with details
+about which files contain the duplicates.</p></li><li><p><strong>Cross-file composition</strong>: Queries can reference other queries from any loaded
+file using the <code class="inline">:query_name</code> syntax, enabling composition across your entire
+query library.</p></li><li><p><strong>Recompilation tracking</strong>: Each file is registered as an <code class="inline">@external_resource</code>,
+so your module will automatically recompile when any SQL file changes.</p></li></ul><h3 id="example-with-the-defqueries-3-macro" class="section-heading"><a href="#example-with-the-defqueries-3-macro" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Example with the <code class="inline">defqueries/3</code> Macro</span></h3><p>The standalone macro also supports multi-file loading:</p><pre><code class="makeup elixir" translate="no"><span class="kn">import</span><span class="w"> </span><span class="nc">AyeSQL</span><span class="p">,</span><span class="w"> </span><span class="ss">only</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0003540566-1">[</span><span class="ss">defqueries</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="0003540566-1">]</span><span class="w">
+
+</span><span class="c1"># List of files</span><span class="w">
+</span><span class="n">defqueries</span><span class="p" data-group-id="0003540566-2">(</span><span class="nc">Queries</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0003540566-3">[</span><span class="s">&quot;sql/users.sql&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;sql/posts.sql&quot;</span><span class="p" data-group-id="0003540566-3">]</span><span class="p">,</span><span class="w"> </span><span class="ss">repo</span><span class="p">:</span><span class="w"> </span><span class="nc">MyRepo</span><span class="p" data-group-id="0003540566-2">)</span><span class="w">
+
+</span><span class="c1"># Glob pattern</span><span class="w">
+</span><span class="n">defqueries</span><span class="p" data-group-id="0003540566-4">(</span><span class="nc">Queries</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;sql/**/*.sql&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">repo</span><span class="p">:</span><span class="w"> </span><span class="nc">MyRepo</span><span class="p" data-group-id="0003540566-4">)</span></code></pre><h2 id="syntax" class="section-heading"><a href="#syntax" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Syntax</span></h2><p>An SQL file can have as many queries as you want as long as they are named.</p><p>For the following sections we'll assume we have:</p><ul><li><p><code class="inline">lib/my_repo.ex</code> which is an <a href="https://hexdocs.pm/ecto/3.13.5/Ecto.html"><code class="inline">Ecto</code></a> repo called <code class="inline">MyRepo</code>.</p></li><li><p><code class="inline">lib/queries.sql</code> with SQL queries.</p></li><li><p><code class="inline">lib/queries.ex</code> with the following structure:</p><pre><code class="makeup elixir" translate="no"><span class="w">  </span><span class="kn">import</span><span class="w"> </span><span class="nc">AyeSQL</span><span class="p">,</span><span class="w"> </span><span class="ss">only</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2623686323-1">[</span><span class="ss">defqueries</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="2623686323-1">]</span><span class="w">
+
+  </span><span class="n">defqueries</span><span class="p" data-group-id="2623686323-2">(</span><span class="nc">Queries</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;queries.sql&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">repo</span><span class="p">:</span><span class="w"> </span><span class="nc">MyRepo</span><span class="p" data-group-id="2623686323-2">)</span></code></pre></li></ul><h3 id="naming-queries" class="section-heading"><a href="#naming-queries" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Naming Queries</span></h3><p>For naming queries, we add a comment with the keyword <code class="inline">-- name:</code> followed by
+the name of the function e.g the following query would generate the function
+<code class="inline">Queries.get_hostnames/2</code>:</p><pre><code class="sql">-- name: get_hostnames
+SELECT hostname FROM server</code></pre><p>Additionally, we could also add documentation for the query by adding a comment
+with the keyword <code class="inline">-- docs:</code> followed by the query's documentation e.g:</p><pre><code class="sql">-- name: get_hostnames
+-- docs: Gets hostnames from the servers.
+SELECT hostname FROM server</code></pre><blockquote><p>Important: if the function does not have <code class="inline">-- docs:</code> it won't have
+documentation e.g. <code class="inline">@doc false</code>.</p></blockquote><h3 id="parameters" class="section-heading"><a href="#parameters" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Parameters</span></h3><p>There are two types of parameters:</p><ul><li>Mandatory: for passing parameters to a query. They start with <code class="inline">:</code> e.g.
+<code class="inline">:hostname</code>.</li><li>Optional: for query composability. They start with <code class="inline">:_</code> e.g. <code class="inline">:_order_by</code>.</li></ul><p>Additionally, any query in a file can be accessed with its name adding <code class="inline">:</code> at
+the front e.g <code class="inline">:get_hostnames</code>.</p><h3 id="mandatory-parameters" class="section-heading"><a href="#mandatory-parameters" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Mandatory Parameters</span></h3><p>Let's say we want to get the name of an operative system by architecture:</p><pre><code class="sql">-- name: get_os_by_architecture
+-- docs: Gets operative system's name by a given architecture.
+SELECT name
+  FROM operative_system
+ WHERE architecture = :architecture</code></pre><p>The previous query would generate the function
+<code class="inline">Queries.get_os_by_architecture/2</code> that can be called as:</p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Queries</span><span class="o">.</span><span class="n">get_os_by_architecture</span><span class="p" data-group-id="8533022776-1">(</span><span class="ss">architecture</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AMD64&quot;</span><span class="p" data-group-id="8533022776-1">)</span><span class="w">
+</span><span class="p" data-group-id="8533022776-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="8533022776-3">[</span><span class="w">
+    </span><span class="p" data-group-id="8533022776-4">%{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Debian Buster&quot;</span><span class="p" data-group-id="8533022776-4">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="8533022776-5">%{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Windows 10&quot;</span><span class="p" data-group-id="8533022776-5">}</span><span class="p">,</span><span class="w">
+    </span><span class="n">...</span><span class="w">
+  </span><span class="p" data-group-id="8533022776-3">]</span><span class="w">
+</span><span class="p" data-group-id="8533022776-2">}</span></code></pre><h3 id="query-composition" class="section-heading"><a href="#query-composition" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Query Composition</span></h3><p>Now if we would like to get hostnames by architecture we could compose queries
+by doing the following:</p><pre><code class="sql">-- name: get_os_by_architecture
+-- docs: Gets operative system's name by a given architecture.
+SELECT name
+  FROM operative_system
+ WHERE architecture = :architecture
+
+-- name: get_hostnames_by_architecture
+-- docs: Gets hostnames by architecture.
+SELECT hostname
+  FROM servers
+ WHERE os_name IN ( :get_os_by_architecture )</code></pre><p>The previous query would generate the function
+<code class="inline">Queries.get_hostnames_by_architecture/2</code> that can be called as:</p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Queries</span><span class="o">.</span><span class="n">get_hostnames_by_architecture</span><span class="p" data-group-id="7808426278-1">(</span><span class="ss">architecture</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AMD64&quot;</span><span class="p" data-group-id="7808426278-1">)</span><span class="w">
+</span><span class="p" data-group-id="7808426278-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="7808426278-3">[</span><span class="w">
+    </span><span class="p" data-group-id="7808426278-4">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;server0&quot;</span><span class="p" data-group-id="7808426278-4">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="7808426278-5">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;server1&quot;</span><span class="p" data-group-id="7808426278-5">}</span><span class="p">,</span><span class="w">
+    </span><span class="n">...</span><span class="w">
+  </span><span class="p" data-group-id="7808426278-3">]</span><span class="w">
+</span><span class="p" data-group-id="7808426278-2">}</span></code></pre><h3 id="optional-fragments" class="section-heading"><a href="#optional-fragments" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Optional Fragments</span></h3><p>Let's say that now we need to order ascending or descending by hostname by
+using an optional <code class="inline">:_order_by</code> parameter e.g:</p><pre><code class="sql">-- name: get_os_by_architecture
+-- docs: Gets operative system's name by a given architecture.
+SELECT name
+  FROM operative_system
+ WHERE architecture = :architecture
+
+-- name: get_hostnames_by_architecture
+-- docs: Gets hostnames by architecture.
+SELECT hostname
+  FROM servers
+ WHERE os_name IN ( :get_os_by_architecture )
+ :_order_by
+
+-- name: ascending
+ORDER BY hostname ASC
+
+-- name: descending
+ORDER BY hostname DESC</code></pre><p>The previous query could be called as before:</p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Queries</span><span class="o">.</span><span class="n">get_hostnames_by_architecture</span><span class="p" data-group-id="1648236356-1">(</span><span class="ss">architecture</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AMD64&quot;</span><span class="p" data-group-id="1648236356-1">)</span><span class="w">
+</span><span class="p" data-group-id="1648236356-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="1648236356-3">[</span><span class="w">
+    </span><span class="p" data-group-id="1648236356-4">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Barcelona&quot;</span><span class="p" data-group-id="1648236356-4">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="1648236356-5">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Granada&quot;</span><span class="p" data-group-id="1648236356-5">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="1648236356-6">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Madrid&quot;</span><span class="p" data-group-id="1648236356-6">}</span><span class="p">,</span><span class="w">
+    </span><span class="n">...</span><span class="w">
+  </span><span class="p" data-group-id="1648236356-3">]</span><span class="w">
+</span><span class="p" data-group-id="1648236356-2">}</span></code></pre><p>or by order ascending:</p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="1589037081-1">[</span><span class="ss">architecture</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AMD64&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">_order_by</span><span class="p">:</span><span class="w"> </span><span class="ss">:ascending</span><span class="p" data-group-id="1589037081-1">]</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Queries</span><span class="o">.</span><span class="n">get_hostnames_by_architecture</span><span class="p" data-group-id="1589037081-2">(</span><span class="n">params</span><span class="p" data-group-id="1589037081-2">)</span><span class="w">
+</span><span class="p" data-group-id="1589037081-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="1589037081-4">[</span><span class="w">
+    </span><span class="p" data-group-id="1589037081-5">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Barcelona&quot;</span><span class="p" data-group-id="1589037081-5">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="1589037081-6">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Madrid&quot;</span><span class="p" data-group-id="1589037081-6">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="1589037081-7">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Granada&quot;</span><span class="p" data-group-id="1589037081-7">}</span><span class="p">,</span><span class="w">
+    </span><span class="n">...</span><span class="w">
+  </span><span class="p" data-group-id="1589037081-4">]</span><span class="w">
+</span><span class="p" data-group-id="1589037081-3">}</span></code></pre><p>or descending:</p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="6688564935-1">[</span><span class="ss">architecture</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AMD64&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">_order_by</span><span class="p">:</span><span class="w"> </span><span class="ss">:descending</span><span class="p" data-group-id="6688564935-1">]</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Queries</span><span class="o">.</span><span class="n">get_hostnames_by_architecture</span><span class="p" data-group-id="6688564935-2">(</span><span class="n">params</span><span class="p" data-group-id="6688564935-2">)</span><span class="w">
+</span><span class="p" data-group-id="6688564935-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="6688564935-4">[</span><span class="w">
+    </span><span class="p" data-group-id="6688564935-5">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Zaragoza&quot;</span><span class="p" data-group-id="6688564935-5">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="6688564935-6">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Madrid&quot;</span><span class="p" data-group-id="6688564935-6">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="6688564935-7">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Granada&quot;</span><span class="p" data-group-id="6688564935-7">}</span><span class="p">,</span><span class="w">
+    </span><span class="n">...</span><span class="w">
+  </span><span class="p" data-group-id="6688564935-4">]</span><span class="w">
+</span><span class="p" data-group-id="6688564935-3">}</span></code></pre><blockquote><p>Important: A query can be called by name e.g. <code class="inline">:descending</code> if it's defined
+in the same SQL file. Otherwise, we need to pass the function instead e.g.
+<code class="inline">Queries.descending/2</code></p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="7527435148-1">[</span><span class="ss">architecture</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AMD64&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">_order_by</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nc">Queries</span><span class="o">.</span><span class="n">descending</span><span class="o">/</span><span class="mi">2</span><span class="p" data-group-id="7527435148-1">]</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Queries</span><span class="o">.</span><span class="n">get_hostnames_by_architecture</span><span class="p" data-group-id="7527435148-2">(</span><span class="n">params</span><span class="p" data-group-id="7527435148-2">)</span><span class="w">
+</span><span class="p" data-group-id="7527435148-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="7527435148-4">[</span><span class="w">
+    </span><span class="p" data-group-id="7527435148-5">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Zaragoza&quot;</span><span class="p" data-group-id="7527435148-5">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="7527435148-6">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Madrid&quot;</span><span class="p" data-group-id="7527435148-6">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="7527435148-7">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Granada&quot;</span><span class="p" data-group-id="7527435148-7">}</span><span class="p">,</span><span class="w">
+    </span><span class="n">...</span><span class="w">
+  </span><span class="p" data-group-id="7527435148-4">]</span><span class="w">
+</span><span class="p" data-group-id="7527435148-3">}</span></code></pre></blockquote><h3 id="in-statement" class="section-heading"><a href="#in-statement" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">IN Statement</span></h3><p>Lists in SQL might be tricky. That's why AyeSQL supports a special type for
+them e.g:</p><p>Let's say we have the following query:</p><pre><code class="sql">-- name: get_os_by_hostname
+-- docs: Gets hostnames and OS names given a list of hostnames.
+SELECT hostname, os_name
+  FROM servers
+ WHERE hostname IN (:hostnames)</code></pre><p>It is possible to do the following:</p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="4775465813-1">[</span><span class="ss">hostnames</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="4775465813-2">{</span><span class="ss">:in</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4775465813-3">[</span><span class="s">&quot;server0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;server1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;server2&quot;</span><span class="p" data-group-id="4775465813-3">]</span><span class="p" data-group-id="4775465813-2">}</span><span class="p" data-group-id="4775465813-1">]</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Server</span><span class="o">.</span><span class="n">get_os_by_hostname</span><span class="p" data-group-id="4775465813-4">(</span><span class="n">params</span><span class="p" data-group-id="4775465813-4">)</span><span class="w">
+</span><span class="p" data-group-id="4775465813-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="4775465813-6">[</span><span class="w">
+    </span><span class="p" data-group-id="4775465813-7">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;server0&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">os_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Debian Buster&quot;</span><span class="p" data-group-id="4775465813-7">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="4775465813-8">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;server1&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">avg_ram</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Windows 10&quot;</span><span class="p" data-group-id="4775465813-8">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="4775465813-9">%{</span><span class="ss">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;server2&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">avg_ram</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Minix 3&quot;</span><span class="p" data-group-id="4775465813-9">}</span><span class="w">
+  </span><span class="p" data-group-id="4775465813-6">]</span><span class="w">
+</span><span class="p" data-group-id="4775465813-5">}</span></code></pre><h3 id="subqueries-and-subfragments" class="section-heading"><a href="#subqueries-and-subfragments" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Subqueries and Subfragments</span></h3><p>Subqueries can be composed directly, as show before, or via the <code class="inline">:inner</code> tuple
+e.g. let's say we need to get the adults order by name in ascending order and
+age in descending order:</p><pre><code class="sql">-- name: ascending
+ASC
+
+-- name: descending
+DESC
+
+-- name: by_age
+age :order_direction
+
+-- name: by_name
+name :order_direction
+
+-- name: get_adults
+-- docs: Gets adults.
+SELECT name, age
+  FROM person
+ WHERE age &gt;= 18
+ORDER BY :order_by</code></pre><p>Then our code in elixir would be:</p><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">order_by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="3656313693-1">[</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="w">  </span><span class="ss">by_name</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3656313693-2">[</span><span class="ss">order_direction</span><span class="p">:</span><span class="w"> </span><span class="ss">:ascending</span><span class="p" data-group-id="3656313693-2">]</span><span class="p">,</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="w">  </span><span class="ss">by_age</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3656313693-3">[</span><span class="ss">order_direction</span><span class="p">:</span><span class="w"> </span><span class="ss">:descending</span><span class="p" data-group-id="3656313693-3">]</span><span class="w">
+</span><span class="gp unselectable">...&gt; </span><span class="p" data-group-id="3656313693-1">]</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Queries</span><span class="o">.</span><span class="n">get_adults</span><span class="p" data-group-id="3656313693-4">(</span><span class="ss">order_by</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3656313693-5">{</span><span class="ss">:inner</span><span class="p">,</span><span class="w"> </span><span class="n">order_by</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;, &quot;</span><span class="p" data-group-id="3656313693-5">}</span><span class="p" data-group-id="3656313693-4">)</span><span class="w">
+</span><span class="p" data-group-id="3656313693-6">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="3656313693-7">[</span><span class="w">
+    </span><span class="p" data-group-id="3656313693-8">%{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Alice&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">age</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p" data-group-id="3656313693-8">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="3656313693-9">%{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Bob&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">age</span><span class="p">:</span><span class="w"> </span><span class="mi">21</span><span class="p" data-group-id="3656313693-9">}</span><span class="p">,</span><span class="w">
+    </span><span class="n">...</span><span class="w">
+  </span><span class="p" data-group-id="3656313693-7">]</span><span class="w">
+</span><span class="p" data-group-id="3656313693-6">}</span></code></pre><blockquote><p><strong>Note</strong>: If you're using this level of composability and it fits your use
+case, consider using either:</p><ul><li><a href="https://hexdocs.pm/ecto/Ecto.html">Ecto</a></li><li><a href="https://hexdocs.pm/ayesql/dynamic-queries-with-eex.html">EEx templates</a></li></ul></blockquote><h2 id="installation" class="section-heading"><a href="#installation" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Installation</span></h2><p>AyeSQL is available as a Hex package. To install, add it to your
+dependencies in your <code class="inline">mix.exs</code> file:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">deps</span><span class="w"> </span><span class="k" data-group-id="5006109099-1">do</span><span class="w">
+  </span><span class="p" data-group-id="5006109099-2">[</span><span class="p" data-group-id="5006109099-3">{</span><span class="ss">:ayesql</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;~&gt; 1.1&quot;</span><span class="p" data-group-id="5006109099-3">}</span><span class="p" data-group-id="5006109099-2">]</span><span class="w">
+</span><span class="k" data-group-id="5006109099-1">end</span></code></pre><p>If you're going to use any of the provided query runners, then you should add
+their dependencies as well:</p><ul><li>Add <code class="inline">:ecto_sql</code> for <a href="AyeSQL.Runner.Ecto.html"><code class="inline">AyeSQL.Runner.Ecto</code></a> (default runner).</li><li>Add <code class="inline">:postgrex</code> for <a href="AyeSQL.Runner.Postgrex.html"><code class="inline">AyeSQL.Runner.Postgrex</code></a>.</li><li>Add <code class="inline">duckdbex</code> for <a href="AyeSQL.Runner.Duckdbex.html"><code class="inline">AyeSQL.Runner.Duckdbex</code></a>.</li><li>Add <code class="inline">:ecto_sql</code> and <code class="inline">:postgrex</code> for running queries using <a href="https://hexdocs.pm/ecto/3.13.5/Ecto.html"><code class="inline">Ecto</code></a> in a
+<code class="inline">PostgreSQL</code> database.</li></ul><h2 id="author" class="section-heading"><a href="#author" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Author</span></h2><p>Alexander de Sousa.</p><h2 id="license" class="section-heading"><a href="#license" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">License</span></h2><p>AyeSQL is released under the MIT License. See the LICENSE file for further
+details.</p>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="why-raw-sql.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Why Raw SQL
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/ayesql/1.1.4">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/ayesql/1.1.4">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/ayesql/1.1.4/show/README.md">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="AyeSQL.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

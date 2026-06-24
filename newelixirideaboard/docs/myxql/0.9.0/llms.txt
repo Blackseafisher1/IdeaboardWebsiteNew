@@ -1,0 +1,20 @@
+# MyXQL v0.9.0 - Table of Contents
+
+MySQL 5.5+ driver for Elixir
+
+## Pages
+
+- [MyXQL](readme.md)
+
+## Modules
+
+- [MyXQL](MyXQL.md): MySQL driver for Elixir.
+
+- [MyXQL.GeometryCodec](MyXQL.GeometryCodec.md): Contract for encoding/decoding geometry types.
+- [MyXQL.Queries](MyXQL.Queries.md): A struct for a prepared statement that returns multiple results.
+- [MyXQL.Query](MyXQL.Query.md): A struct for a prepared statement that returns a single result.
+- [MyXQL.Result](MyXQL.Result.md): Result struct returned from any successful query.
+
+- Exceptions
+  - [MyXQL.Error](MyXQL.Error.md)
+

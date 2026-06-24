@@ -1,5 +1,7 @@
 import Config
 
+config :plug, :secret_key_base, "dev_secret_key_base_64_chars_minimum_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
 config :newelixirideaboard,
   dev_routes: true,
   db_host: "127.0.0.1",

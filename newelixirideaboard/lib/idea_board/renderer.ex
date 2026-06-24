@@ -1,30 +1,40 @@
 defmodule IdeaBoard.Renderer do
-  use Phoenix.Template, root: "priv/templates", namespace: IdeaBoard.Renderer
+  require Phoenix.Template
 
-  def render(template, assigns \\ [], conn \\ nil) do
-    assigns =
-      assigns
-      |> Enum.into(%{})
-      |> Map.put_new(:conn, conn)
-      |> Map.put_new(:user, get_user(conn))
+  root = "priv/templates"
 
-    inner = Phoenix.Template.render_to_string(__MODULE__, template, "heex", assigns)
-    assigns = Map.put(assigns, :inner_content, inner)
-    Phoenix.Template.render_to_string(__MODULE__, "layouts/root", "heex", assigns)
+  converter = fn path ->
+    path
+    |> Path.rootname(".html.heex")
+    |> Path.relative_to(root)
   end
 
-  def render_raw(template, assigns, conn \\ nil) do
-    assigns =
-      assigns
-      |> Enum.into(%{})
-      |> Map.put_new(:conn, conn)
-      |> Map.put_new(:user, get_user(conn))
+  Phoenix.Template.compile_all(converter, root, "**/*")
 
-    Phoenix.Template.render_to_string(__MODULE__, template, "heex", assigns)
+  def render_page(template, assigns, conn \\ nil) do
+    user = get_user(conn)
+    assigns = assigns |> Enum.into(%{}) |> Map.put(:user, user)
+    assigns = Map.put(assigns, :layout, {__MODULE__, "layouts/root"})
+    Phoenix.Template.render(__MODULE__, template, "heex", assigns)
+    |> Phoenix.HTML.safe_to_string()
+  end
+
+  def render_partial(template, assigns, conn \\ nil) do
+    user = get_user(conn)
+    assigns = assigns |> Enum.into(%{}) |> Map.put(:user, user)
+    Phoenix.Template.render(__MODULE__, template, "heex", assigns)
+    |> Phoenix.HTML.safe_to_string()
   end
 
   defp get_user(nil), do: nil
-  defp get_user(%Plug.Conn{} = conn), do: Plug.Conn.get_session(conn, :user)
-  defp get_user(%{assigns: %{user: user}}), do: user
+  defp get_user(%Plug.Conn{assigns: %{user: user}}), do: user
+  defp get_user(%Plug.Conn{} = conn) do
+    try do
+      Plug.Conn.get_session(conn, :user)
+    rescue
+      _ -> nil
+    end
+  end
+  defp get_user(%{user: user}), do: user
   defp get_user(_), do: nil
 end

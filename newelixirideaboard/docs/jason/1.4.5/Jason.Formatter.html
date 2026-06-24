@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="jason v1.4.5">
+
+
+    <title>Jason.Formatter — jason v1.4.5</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+      <link rel="canonical" href="http://hexdocs.pm/jason/Jason.Formatter.html" />
+
+    <script defer src="dist/sidebar_items-059FA00D.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+jason
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.4.5
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="Pages"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of jason</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Jason.<wbr>Formatter</span> 
+      <small class="app-vsn" translate="no">(jason v1.4.5)</small>
+
+    </h1>
+
+<a href="Jason.Formatter.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+
+      <a href="https://github.com/michalmuskala/jason/blob/v1.4.5/lib/formatter.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Pretty-printing and minimizing functions for JSON-encoded data.</p><p>Input is required to be in an 8-bit-wide encoding such as UTF-8 or Latin-1
+in <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types"><code class="inline">iodata/0</code></a> format. Input must have valid JSON, invalid JSON may produce
+unexpected results or errors.</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h2>
+<div class="summary-types summary">
+  <h3>
+    <a href="#types">Types</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:opts/0" data-no-tooltip="" translate="no">opts()</a>
+
+      </div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h3>
+    <a href="#functions">Functions</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#minimize/2" data-no-tooltip="" translate="no">minimize(input, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Minimizes JSON-encoded <code class="inline">input</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#minimize_to_iodata/2" data-no-tooltip="" translate="no">minimize_to_iodata(input, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Minimizes JSON-encoded <code class="inline">input</code> and returns iodata.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#pretty_print/2" data-no-tooltip="" translate="no">pretty_print(input, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Pretty-prints JSON-encoded <code class="inline">input</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#pretty_print_to_iodata/2" data-no-tooltip="" translate="no">pretty_print_to_iodata(input, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Pretty-prints JSON-encoded <code class="inline">input</code> and returns iodata.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h2>
+
+    <div class="types-list">
+<section class="detail" id="t:opts/0">
+
+  <div class="detail-header">
+    <a href="#t:opts/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">opts()</h1>
+
+
+        <a href="https://github.com/michalmuskala/jason/blob/v1.4.5/lib/formatter.ex#L10" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> opts() :: [
+  indent: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>(),
+  line_separator: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>(),
+  record_separator: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>(),
+  after_colon: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>()
+]</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h2>
+
+    <div class="functions-list">
+<section class="detail" id="minimize/2">
+
+    <span id="minimize/1"></span>
+
+  <div class="detail-header">
+    <a href="#minimize/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">minimize(input, opts \\ [])</h1>
+
+
+        <a href="https://github.com/michalmuskala/jason/blob/v1.4.5/lib/formatter.ex#L96" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> minimize(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>(), <a href="#t:opts/0">opts</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()</pre>
+
+      </div>
+
+<p>Minimizes JSON-encoded <code class="inline">input</code>.</p><p><code class="inline">input</code> may contain multiple JSON objects or arrays, optionally
+separated by whitespace (e.g., one object per line). Minimized
+output will contain one object per line. No trailing newline is emitted.</p><h2 id="minimize/2-options" class="section-heading"><a href="#minimize/2-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h2><ul><li><code class="inline">:record_separator</code> - controls the string used as newline (default: <code class="inline">&quot;\n&quot;</code>).</li></ul><h2 id="minimize/2-examples" class="section-heading"><a href="#minimize/2-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Jason.Formatter</span><span class="o">.</span><span class="n">minimize</span><span class="p" data-group-id="0981621570-1">(</span><span class="s">~s|{ &quot;a&quot; : &quot;b&quot; , &quot;c&quot;: </span><span class="se">\n</span><span class="se">\n</span><span class="s"> 2}|</span><span class="p" data-group-id="0981621570-1">)</span><span class="w">
+</span><span class="s">~s|{&quot;a&quot;:&quot;b&quot;,&quot;c&quot;:2}|</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="minimize_to_iodata/2">
+
+  <div class="detail-header">
+    <a href="#minimize_to_iodata/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">minimize_to_iodata(input, opts)</h1>
+
+
+        <a href="https://github.com/michalmuskala/jason/blob/v1.4.5/lib/formatter.ex#L112" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> minimize_to_iodata(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>(), <a href="#t:opts/0">opts</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>()</pre>
+
+      </div>
+
+<p>Minimizes JSON-encoded <code class="inline">input</code> and returns iodata.</p><p>This function should be preferred to <a href="#minimize/2"><code class="inline">minimize/2</code></a>, if the minimized
+JSON will be handed over to one of the IO functions or sent
+over the socket. The Erlang runtime is able to leverage vectorised
+writes and avoid allocating a continuous buffer for the whole
+resulting string, lowering memory use and increasing performance.</p>
+  </section>
+</section>
+<section class="detail" id="pretty_print/2">
+
+    <span id="pretty_print/1"></span>
+
+  <div class="detail-header">
+    <a href="#pretty_print/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">pretty_print(input, opts \\ [])</h1>
+
+
+        <a href="https://github.com/michalmuskala/jason/blob/v1.4.5/lib/formatter.ex#L51" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> pretty_print(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>(), <a href="#t:opts/0">opts</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()</pre>
+
+      </div>
+
+<p>Pretty-prints JSON-encoded <code class="inline">input</code>.</p><p><code class="inline">input</code> may contain multiple JSON objects or arrays, optionally separated
+by whitespace (e.g., one object per line). Objects in output will be
+separated by newlines. No trailing newline is emitted.</p><h2 id="pretty_print/2-options" class="section-heading"><a href="#pretty_print/2-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h2><ul><li><code class="inline">:indent</code> - used for nested objects and arrays (default: two spaces - <code class="inline">&quot; &quot;</code>);</li><li><code class="inline">:line_separator</code> - used in nested objects (default: <code class="inline">&quot;\n&quot;</code>);</li><li><code class="inline">:record_separator</code> - separates root-level objects and arrays
+(default is the value for <code class="inline">:line_separator</code> option);</li><li><code class="inline">:after_colon</code> - printed after a colon inside objects (default: one space - <code class="inline">&quot; &quot;</code>).</li></ul><h2 id="pretty_print/2-examples" class="section-heading"><a href="#pretty_print/2-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Jason.Formatter</span><span class="o">.</span><span class="n">pretty_print</span><span class="p" data-group-id="0759428444-1">(</span><span class="s">~s|{&quot;a&quot;:{&quot;b&quot;: [1, 2]}}|</span><span class="p" data-group-id="0759428444-1">)</span><span class="w">
+</span><span class="s">~s|{
+  &quot;a&quot;: {
+    &quot;b&quot;: [
+      1,
+      2
+    ]
+  }
+}|</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="pretty_print_to_iodata/2">
+
+    <span id="pretty_print_to_iodata/1"></span>
+
+  <div class="detail-header">
+    <a href="#pretty_print_to_iodata/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">pretty_print_to_iodata(input, opts \\ [])</h1>
+
+
+        <a href="https://github.com/michalmuskala/jason/blob/v1.4.5/lib/formatter.ex#L67" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> pretty_print_to_iodata(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>(), <a href="#t:opts/0">opts</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>()</pre>
+
+      </div>
+
+<p>Pretty-prints JSON-encoded <code class="inline">input</code> and returns iodata.</p><p>This function should be preferred to <a href="#pretty_print/2"><code class="inline">pretty_print/2</code></a>, if the pretty-printed
+JSON will be handed over to one of the IO functions or sent
+over the socket. The Erlang runtime is able to leverage vectorised
+writes and avoid allocating a continuous buffer for the whole
+resulting string, lowering memory use and increasing performance.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/jason/1.4.5">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/jason/1.4.5">Hex Preview</a>
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="jason.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

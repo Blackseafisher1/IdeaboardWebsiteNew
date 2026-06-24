@@ -1,0 +1,29 @@
+# db_connection v2.10.1 - Table of Contents
+
+> Database connection behaviour for database transactions and connection pooling
+
+## Pages
+
+- [Changelog](changelog.md)
+
+## Modules
+
+- [DBConnection](DBConnection.md): A behaviour module for implementing efficient database connection
+client processes, pools and transactions.
+- [DBConnection.ConnectionPool](DBConnection.ConnectionPool.md): The default connection pool.
+- [DBConnection.LogEntry](DBConnection.LogEntry.md): Struct containing log entry information.
+- [DBConnection.Ownership](DBConnection.Ownership.md): A DBConnection pool that requires explicit checkout and checkin
+as a mechanism to coordinate between processes.
+- [DBConnection.PrepareStream](DBConnection.PrepareStream.md)
+- [DBConnection.Query](DBConnection.Query.md): The `DBConnection.Query` protocol is responsible for preparing and
+encoding queries.
+- [DBConnection.Stream](DBConnection.Stream.md)
+- [DBConnection.TelemetryListener](DBConnection.TelemetryListener.md): A connection listener that emits telemetry events for connection and disconnection
+
+- Exceptions
+  - [DBConnection.ConnectionError](DBConnection.ConnectionError.md): A generic connection error exception.
+  - [DBConnection.EncodeError](DBConnection.EncodeError.md)
+  - [DBConnection.OwnershipError](DBConnection.OwnershipError.md): An exception for when errors with ownership occur.
+
+  - [DBConnection.TransactionError](DBConnection.TransactionError.md)
+
