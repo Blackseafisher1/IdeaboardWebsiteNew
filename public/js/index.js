@@ -33,7 +33,6 @@
   };
 })();
 
-// Globale Variablen zur Nachverfolgung ausgelagerter Elemente
 let navOriginalParent = null;
 let navMovedOut = false;
 let overlayOriginalParent = null;
@@ -84,7 +83,6 @@ function moveElementsBack() {
   if (nav && navMovedOut && headerRight) {
     if (window.innerWidth > 1024) {
       headerRight.appendChild(nav);
-      // restore ARIA and remove mobile inline styles now that nav is back in header
       try { nav.setAttribute('aria-hidden', 'false'); } catch (e) {}
       try {
         nav.style.position = '';
@@ -95,7 +93,6 @@ function moveElementsBack() {
         nav.style.transition = '';
         nav.style.zIndex = '';
       } catch (e) {}
-      // restore any tabindex/aria adjustments we made for mobile
       try { restoreNavFocusableElements(); } catch (e) {}
       navMovedOut = false;
     }
@@ -105,7 +102,6 @@ function moveElementsBack() {
     overlayMovedOut = false;
   }
   if (hamburger && hamburgerMovedOut && hamburgerOriginalParent) {
-    // Only move the hamburger back into the header on desktop; keep it in body on mobile
     if (window.innerWidth > 1024) {
       if (hamburgerOriginalNextSibling) {
         hamburgerOriginalParent.insertBefore(hamburger, hamburgerOriginalNextSibling);
@@ -115,7 +111,6 @@ function moveElementsBack() {
       hamburgerMovedOut = false;
       applyHamburgerFixed(false);
     } else {
-      // Keep hamburger fixed in body for mobile to avoid flicker/containment issues
       applyHamburgerFixed(true);
     }
   }
@@ -131,7 +126,6 @@ function moveElementsBack() {
     const overlay = document.querySelector('.menu-overlay');
     if (!nav || !overlay || !hamburger) return;
 
-    // Move elements to body on mobile to avoid containing block issues from header filters
     if (window.innerWidth <= 1024) {
       moveElementsToBody();
     }
@@ -141,11 +135,9 @@ function moveElementsBack() {
     hamburger.classList.toggle('active');
     overlay.classList.toggle('active');
 
-    // ARIA and focus handling
     if (willOpen) {
       try { hamburger.setAttribute('aria-expanded', 'true'); } catch (e) {}
       try { nav.setAttribute('aria-hidden', 'false'); } catch (e) {}
-      // sanitize decorative elements and trap focus
       sanitizeNavFocusableElements();
       trapFocus(nav);
     } else {
@@ -154,23 +146,18 @@ function moveElementsBack() {
       releaseFocus();
     }
 
-    // Force inline positioning so menu opens even if header/top changed
     nav.style.position = 'fixed';
-    // Vorzugsweise das Seitenheader-Element per Klasse verwenden, um andere Header zu vermeiden
     const headerEl = document.querySelector('.page-header');
-    // If the header is hidden, align nav to the viewport top; otherwise place below header
     const topOffset = (headerEl && !headerHidden) ? (headerEl.offsetHeight || 0) + 'px' : '0';
     nav.style.top = '0'; // Always start from top to avoid gaps when header is hidden
     nav.style.width = nav.style.width || '85%';
     nav.style.height = nav.style.height || '100vh';
     nav.style.transition = 'right 0.32s ease';
     // Sicherstellen, dass die Navigation über Header und Overlay liegt
-    // nav.style.zIndex = '1000002'; // Handled by CSS !important
 
     // Sicherstellen, dass das Hamburger-Icon über der Navigation liegt und stets anklickbar ist
     hamburger.style.position = hamburger.style.position || 'fixed';
     hamburger.style.zIndex = '10000005';
-    // Center hamburger vertically inside the header when header is visible
     const hbHeight = hamburger.offsetHeight || 40;
     const headerHeight = headerEl ? (headerEl.offsetHeight || 0) : 0;
     if (headerHidden || !headerHeight) {
@@ -180,19 +167,15 @@ function moveElementsBack() {
       hamburger.style.top = centered + 'px';
     }
 
-    // Overlay zwischen Navigation und Inhalt platzieren
     overlay.style.position = 'fixed';
     overlay.style.top = '0';
     overlay.style.left = '0';
     overlay.style.right = '0';
     overlay.style.bottom = '0';
-    // Put overlay below nav but above the rest of the page
     overlay.style.zIndex = '1000001';
 
     if (willOpen) {
-      // sichtbar machen und einblenden
       overlay.style.display = 'block';
-      // small timeout to allow display/block then transition
 
       requestAnimationFrame(() => { nav.style.right = '0'; });
     } else {
@@ -240,24 +223,19 @@ function closeMenu() {
   hamburger.classList.remove('active');
   overlay.classList.remove('active');
 
-  // slide out then hide overlay
   nav.style.right = '-100%';
-  // delay hiding overlay a bit to match nav transition
 
   setTimeout(() => { 
     overlay.style.display = 'none'; 
-    // If header is visible, move elements back to their original place
     if (!headerHidden) {
       moveElementsBack();
     }
-    // ARIA and focus restore
     try { hamburger.setAttribute('aria-expanded', 'false'); } catch (e) {}
     try { nav.setAttribute('aria-hidden', 'true'); } catch (e) {}
     releaseFocus();
   }, 320);
 }
 
-// Close menu on overlay click
 if (typeof globalThis.__menuOverlayEl === 'undefined') {
   globalThis.__menuOverlayEl = document.querySelector('.menu-overlay');
 }
@@ -266,7 +244,6 @@ if (globalThis.__menuOverlayEl && !globalThis.__menuOverlayEl.__menuBound) {
   globalThis.__menuOverlayEl.__menuBound = true;
 }
 
-// Accessibility: focus trap variables
 let __prevFocusedElement = null;
 let __focusTrapHandler = null;
 
@@ -283,7 +260,6 @@ function trapFocus(container) {
   const first = focusable[0] || container;
   const last = focusable[focusable.length - 1] || container;
 
-  // focus the first focusable element in the nav
   try { first.focus(); } catch (e) {}
 
   __focusTrapHandler = function(e) {
@@ -304,7 +280,6 @@ function trapFocus(container) {
         }
       }
     } else if (e.key === 'Escape' || e.key === 'Esc') {
-      // close on escape
       closeMenu();
     }
   };
@@ -325,7 +300,6 @@ function releaseFocus() {
   __prevFocusedElement = null;
 }
 
-// Remove tabindex from decorative/non-interactive elements inside the nav
 /**
  * Entfernt tabindex/ARIA von dekorativen Elementen in der Navigation.
  * @returns {void}
@@ -337,7 +311,6 @@ function sanitizeNavFocusableElements() {
   
   const allowedRoles = new Set(['button','link','menuitem','tab','switch','checkbox','textbox','option']);
 
-  // Remove tabindex on elements that are not interactive and don't declare an interactive role
 
   nav.querySelectorAll('[tabindex]').forEach(el => {
     const tag = (el.tagName || '').toUpperCase();
@@ -349,18 +322,15 @@ function sanitizeNavFocusableElements() {
     }
   });
 
-  // Ebenso sicherstellen, dass rein dekorative `span`/`img` vor Hilfstechnologien verborgen werden, falls sie `role` oder `tabindex` gesetzt haben
 
   nav.querySelectorAll('span[role="img"], span[aria-hidden="false"]').forEach(el => {
     try {
-      // mark that we changed aria-hidden so we can restore it later
       el.dataset.__ariaSanitized = '1';
       el.setAttribute('aria-hidden','true');
     } catch (e) {}
   });
 }
 
-// Restore any tabindex/aria adjustments previously applied by sanitizeNavFocusableElements
 /**
  * Stellt zuvor geänderte tabindex/ARIA-Eigenschaften in der Navigation wieder her.
  * @returns {void}
@@ -368,7 +338,6 @@ function sanitizeNavFocusableElements() {
 function restoreNavFocusableElements() {
   const nav = document.getElementById('main-nav');
   if (!nav) return;
-  // Restore tabindex for elements we sanitized
 
   nav.querySelectorAll('[data-__tabindex-sanitized="1"]').forEach(el => {
     try {
@@ -379,18 +348,15 @@ function restoreNavFocusableElements() {
     } catch (e) {}
   });
 
-  // Restore aria-hidden for elements we adjusted
 
   nav.querySelectorAll('[data-__aria-sanitized="1"]').forEach(el => {
     try {
-      // remove the aria-hidden we added; if it had a previous explicit value we can't recover it reliably
       el.removeAttribute('aria-hidden');
       delete el.dataset.__ariaSanitized;
     } catch (e) {}
   });
 }
 
-// Close menu on window resize to desktop
 window.addEventListener('resize', function() {
   if (window.innerWidth > 1024) {
     closeMenu();
@@ -421,12 +387,10 @@ if (openCreateModalBtn && createIdeaModal) {
   openCreateModalBtn.addEventListener('click', () => createIdeaModal.showModal());
 }
 
-// Header hide on scroll for mobile (JS-only; no CSS changes required)
 let lastScrollTop = 0;
 const header = document.querySelector('.page-header');
 const hamburgerEl = document.querySelector('.hamburger');
 let headerHidden = false;
-// Kennzeichen zum Ignorieren programmgesteuerter Scrolls (von anderen Modulen gesetzt)
 window.__suppressHeaderHide = false;
 
 /**
@@ -436,34 +400,26 @@ window.__suppressHeaderHide = false;
  */
 function setHeaderHidden(hide) {
   if (!header) return;
-  // Hide header by moving it out of the viewport using `top` and `position: fixed`.
-  // Avoid `transform` because transformed ancestors cause `position: fixed` children
-  // (like the hamburger) to be positioned relative to the ancestor instead of the viewport.
   const transitionMs = 280;
   if (hide) {
-    // Move hamburger, nav, and overlay out of header if not already moved so they stay visible/functional
     if (window.innerWidth <= 1024) {
       moveElementsToBody();
     }
-    // set fixed positioning so the header can be moved without affecting document flow
     header.style.position = 'fixed';
     header.style.left = '0';
     header.style.right = '0';
     header.style.transition = `top ${transitionMs}ms ease`;
     header.style.top = `-${header.offsetHeight || 80}px`;
     headerHidden = true;
-    // Footer reveal/hide is handled separately by a dedicated footer reveal handler.
   } else {
     header.style.transition = `top ${transitionMs}ms ease`;
     header.style.top = '';
-    // after the transition, restore positioning to its original state
 
     setTimeout(() => {
       header.style.position = '';
       header.style.left = '';
       header.style.right = '';
       header.style.transition = '';
-      // Move nav, overlay, and hamburger back into header if the menu is not currently open
       const nav = document.getElementById('main-nav');
       const menuOpen = nav && nav.classList.contains('active');
       if (!menuOpen) {
@@ -471,7 +427,6 @@ function setHeaderHidden(hide) {
       }
     }, transitionMs + 30);
     headerHidden = false;
-    // Footer reveal/hide is handled separately by a dedicated footer reveal handler.
   }
 }
 
@@ -487,7 +442,6 @@ function applyHamburgerFixed(enable) {
     hamburgerEl.style.top = '20px';
     hamburgerEl.style.right = '10px';
     hamburgerEl.style.zIndex = '10000005';
-    // Use CSS class for box-shadow so it respects theme changes immediately
     hamburgerEl.classList.add('hamburger--fixed');
   } else {
     hamburgerEl.style.position = '';
@@ -499,18 +453,13 @@ function applyHamburgerFixed(enable) {
 }
 
 
-// Sicherstellen, dass Konto/Logo bei Bedarf beim Initialisieren in die mobile Navigation verschoben werden
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.innerWidth <= 1024) moveElementsToBody();
-  // sanitize nav to avoid focusing decorative elements
   sanitizeNavFocusableElements();
 
-  // Footer reveal/auto-hide removed — footer remains visible at all times.
-  // No JavaScript is required for footer visibility; control it with CSS/HTML if needed.
 
 
-  // Global keyboard shortcut: Ctrl+Y or Cmd+Y -> teleport to top (site-wide)
   (function initGlobalScrollShortcut() {
     
     function onKeydown(e) {
@@ -519,19 +468,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (key !== 'y' || !(e.ctrlKey || e.metaKey)) return;
         const target = e.target;
         const tag = target && target.tagName;
-        // Ignorieren, wenn Fokus auf Formularsteuerelementen oder editierbaren Inhalten liegt
         if (target && (target.isContentEditable || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT')) return;
 
-        // Prevent header-hide reactions during our programmatic scrolls if other modules listen
         try { window.__suppressHeaderHide = true; } catch (_) {}
 
-        // Instant teleport to top
         window.scrollTo({ top: 0, behavior: 'auto' });
         try { document.documentElement.scrollTop = 0; } catch (_) {}
         try { document.body.scrollTop = 0; } catch (_) {}
         e.preventDefault();
 
-        // Short delay before re-enabling header hide logic
 
         setTimeout(() => { try { window.__suppressHeaderHide = false; } catch (_) {} }, 50);
       } catch (err) {
@@ -542,6 +487,5 @@ document.addEventListener('DOMContentLoaded', () => {
   })();
 });
 
-// Desktop header open/close behavior removed — header remains static on desktop.
 
 

@@ -2,12 +2,15 @@
  * @fileoverview Client-Logik für Surveys/Projects Seite (Filter, Infinite Scroll, URL-Sync).
  * @module public/js/surveysClient
  */
-  // Surveys page
 /**
  * DOMContentLoaded-Initialisierung: synchronisiert URL-Parameter mit UI-Feldern (Status, Type, Search).
  * @returns {void}
  */
 (function() {
+// UI-Interaktionen verarbeiten
+// DOM-Zustand verwalten
+// Benutzereingaben behandeln
+// Daten aktualisieren und anzeigen
   const surveyInput = document.getElementById('surveySearchInput');
   if (surveyInput) {
     surveyInput.value = '';
@@ -19,7 +22,6 @@
     return;
   }
 
-  // Projects page (legacy)
   const projectInput = document.getElementById('projectSearchInput');
   if (projectInput) {
     projectInput.value = '';
@@ -38,12 +40,10 @@
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  // URL Params → UI
   const urlParams = new URLSearchParams(window.location.search);
   const status = urlParams.get('status') || 'all';
   const search = urlParams.get('search') || '';
 
-  // Surveys: type param
   
   const type = urlParams.get('type') || 'all';
 
@@ -52,14 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('currentType')?.setAttribute('value', type);
 
-  // Active Filter Button
   document.querySelectorAll('.filter-btn').forEach(btn => {
     if (btn.dataset.status !== undefined) btn.classList.toggle('active', btn.dataset.status === status);
     if (btn.dataset.type !== undefined) btn.classList.toggle('active', btn.dataset.type === type);
   });
 
-  // Filter Buttons (reset to page 1)
-  // Project filter buttons (existing behavior)
   document.querySelectorAll('.filter-btn[data-status]').forEach(button => {
     button.addEventListener('click', function() {
       
@@ -79,9 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // No client-side interception for survey filter buttons — HTMX handles requests via button attributes.
 
-  // Sicherstellen, dass angeklickter Survey-Filter den aktiven Zustand zeigt
   document.querySelectorAll('.filter-btn[data-type]').forEach(btn => {
     btn.addEventListener('click', function() {
 /**
@@ -93,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Prevent form submit via Enter key in the surveys search form
   const searchForm = document.getElementById('searchForm');
   if (searchForm) {
     searchForm.addEventListener('submit', function(e) {
@@ -109,9 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// URL sync after HTMX (like Surveys)
 document.body.addEventListener('htmx:afterRequest', function(event) {
-  // Sync URL for Projects
   if (event.target.id === 'projectsList' || event.target.closest('#projectsList')) {
     const status = document.getElementById('currentStatus')?.value || 'all';
     const search = document.getElementById('projectSearchInput')?.value || '';
@@ -133,7 +125,6 @@ document.body.addEventListener('htmx:afterRequest', function(event) {
     window.history.replaceState({}, '', url);
   }
 
-  // Sync URL for Surveys
   if (event.target.id === 'surveysList' || event.target.closest('#surveysList')) {
     const type = document.getElementById('currentType')?.value || 'all';
     const search = document.getElementById('surveySearchInput')?.value || '';
@@ -143,7 +134,6 @@ document.body.addEventListener('htmx:afterRequest', function(event) {
     if (search) url.searchParams.set('search', search);
     else url.searchParams.delete('search');
 
-    // Server-seitigen `HX-Push`-Header bevorzugen, wenn vorhanden (verhindert, dass `/fragment` in die History gelangt)
     try {
       const hxPush = event.detail.xhr && event.detail.xhr.getResponseHeader && event.detail.xhr.getResponseHeader('HX-Push');
       if (hxPush) {
@@ -164,7 +154,6 @@ document.body.addEventListener('htmx:afterRequest', function(event) {
 });
 
 
-// Simple inactivity-based polling control for HTMX polling
 (function() {
   const INACTIVITY_TIMEOUT = 120000; // 2 minutes
   let timeoutId = null;
@@ -200,7 +189,6 @@ document.body.addEventListener('htmx:afterRequest', function(event) {
  * @function resetTimer
  */
     function resetTimer() {
-      // reset HTMX 'every' timer by removing and re-adding the 'every' part
       try {
         disablePolling();
 /**

@@ -8,6 +8,10 @@
  * @returns {HTMLElement|null}
  */
 
+// UI-Interaktionen verarbeiten
+// DOM-Zustand verwalten
+// Benutzereingaben behandeln
+// Daten aktualisieren und anzeigen
 function getMessagesContainer() {
     return document.getElementById('messagesContainer');
 }
@@ -92,7 +96,6 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
     }
 });
 
-// Prevent duplicate messages if SSE already added them
 /**
  * HTMX `beforeSwap`-Handler: verhindert, dass HTMX eine Nachricht einfügt, die bereits vorhanden ist.
  * @param {CustomEvent} event - HTMX-Ereignis mit `detail`-Metadaten.
@@ -127,13 +130,11 @@ document.body.addEventListener('htmx:afterRequest', (event) => {
     }
 });
 
-// Expose helpers for dmLive.js
 window.isNearBottom = isNearBottom;
 window.updateLastMessageId = updateLastMessageId;
 window.scrollToBottom = scrollToBottom;
 window.removeNoMessages = removeNoMessages;
 
-// --- Modal & Context Menu Logic ---
 let currentEditingId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -141,17 +142,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const contextMenu = document.getElementById('chatContextMenu');
   const editField = document.getElementById('chatEditField');
   
-  // Close menu and modal on backdrop clicks
   window.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
     if (!contextMenu.contains(e.target)) contextMenu.style.display = 'none';
   });
 
-  // Save/Cancel buttons
   document.getElementById('cancelEditBtn').addEventListener('click', closeModal);
   document.getElementById('saveEditBtn').addEventListener('click', saveEdit);
 
-  // Context Menu Actions
   document.getElementById('ctxEditBtn').addEventListener('click', () => {
     contextMenu.style.display = 'none';
     if (currentEditingId) openEditModal(currentEditingId);
@@ -198,7 +196,6 @@ async function saveEdit() {
     return;
   }
 
-  // Optimistic update
   const originalHtml = contentEl.innerHTML;
   contentEl.textContent = newText;
   let marker = msgEl.querySelector('.edited-marker');
@@ -312,7 +309,6 @@ async function deleteMessage(messageId) {
     const msgEl = document.querySelector(`[data-message-id="${messageId}"]`);
     if (!msgEl) return;
 
-    // Optimistic update
     const originalContent = msgEl.innerHTML;
     msgEl.classList.add('deleted');
     msgEl.querySelector('.message-content').innerHTML = '<i>Diese Nachricht wurde gelöscht.</i>';
@@ -343,7 +339,6 @@ async function deleteMessage(messageId) {
     }
 }
 
-// Image loading logic
 /**
  * Hydratiert Bilder: Ersetzt den Platzhalter durch das eigentliche Bild (data-src -> src).
  * @async
@@ -360,7 +355,6 @@ async function hydrateImages() {
     }
 }
 
-// Watch for new images
 
 const imageObserver = new MutationObserver(() => hydrateImages());
 
@@ -412,11 +406,9 @@ function initPaginationObserver() {
         observer.observe(target);
     };
 
-    // Watch for new content (prepended messages + new load-more button)
     const mut = new MutationObserver(setupObserver);
     mut.observe(container, { childList: true });
     
-    // Also re-run on HTMX swap just in case
     document.body.addEventListener('htmx:afterSwap', (evt) => {
         if (evt.detail.target.id === 'messagesContainer' || evt.detail.elt.classList.contains('load-more-container')) {
             setupObserver();
@@ -426,14 +418,11 @@ function initPaginationObserver() {
     setupObserver();
 }
 
-// Preserve scroll position when loading history (prepending content)
 document.body.addEventListener('htmx:beforeSwap', (event) => {
-    // Check if the swapped element is the load-more button
     const container = getMessagesContainer();
     const isHistoryLoad = event.detail.elt.classList.contains('load-more-container');
     
     if (isHistoryLoad && container) {
-        // Save the current scroll position state
         event.detail.prevScrollHeight = container.scrollHeight;
         event.detail.prevScrollTop = container.scrollTop;
     }
@@ -444,7 +433,6 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
     const isHistoryLoad = event.detail.elt.classList.contains('load-more-container');
 
     if (isHistoryLoad && container && event.detail.prevScrollHeight) {
-        // Restore scroll position relative to the bottom content
         const newHeight = container.scrollHeight;
         const diff = newHeight - event.detail.prevScrollHeight;
         container.scrollTop = event.detail.prevScrollTop + diff;
@@ -454,7 +442,6 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
 window.openEditMessage = openEditMessage;
 window.deleteMessage = deleteMessage;
 
-// Render a structured message record into HTML (used when loading from IndexedDB)
 /**
  * Escaped HTML-Entities in einem String.
  * @param {string} str
@@ -495,7 +482,6 @@ function renderMessage(rec) {
             const src = escapeHtml(f.url || (`${fileBase}/${cleanConvId}/` + escapeHtml(f.filename) + '?inline=1'));
             const name = escapeHtml(f.originalName || f.filename || 'file');
             const size = escapeHtml(f.sizeKB || '');
-            // Use data-src to prevent browser from pre-loading before hydration
             contentHtml = `\n  <div class="message-content file-row file-row-image">\n    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${src}" alt="${name}" class="chat-image js-open-image-modal" data-full-src="${src}">\n    <div class="file-text">\n      <a href="${src}" class="file-link js-open-image-modal" data-full-src="${src}">${name}</a>\n      <span class="file-size">(${size} KB)</span>\n    </div>\n  </div>`;
         } else {
             const href = escapeHtml(f.url || (`${fileBase}/${cleanConvId}/` + escapeHtml(f.filename)));
@@ -508,13 +494,11 @@ function renderMessage(rec) {
         contentHtml = `<div class="message-content">${text}</div>`;
     }
 
-    // time and markers
     const timeText = rec.createdAt ? (new Date(rec.createdAt)).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '';
     const editedMarker = (rec.is_edited && !rec.is_deleted) ? '<span class="edited-marker">(bearbeitet)</span>' : '';
     const readStatus = (!isGroup && rec.sent && rec.is_read) ? '<span class="read-status">Gelesen</span>' : (!isGroup && rec.sent ? '<span class="read-status">Gesendet</span>' : '');
     const senderHtml = (isGroup && !rec.sent && rec.senderName) ? `<span class="message-sender" style="font-size: 0.7rem; opacity: 0.8; margin-left: 5px;">- ${escapeHtml(rec.senderName)}</span>` : '';
 
-    // actions only for sent, not deleted and not a file
     const actionsHtml = (rec.sent && !rec.is_deleted && rec.type !== 'file') ? `\n  <div class="message-actions">\n    <button class="edit-btn" onclick="openEditMessage('${msgId}')">Bearbeiten</button>\n    <button class="delete-btn" onclick="deleteMessage('${msgId}')">Löschen</button>\n  </div>` : '';
 
     return `<div class="message ${sentClass} ${deletedClass} ${groupClass}" data-message-id="${msgId}" data-conversation-id="${convId}">\n${contentHtml}\n  <div class="message-time">\n    ${timeText} ${editedMarker} ${readStatus} ${senderHtml}\n  </div>${actionsHtml}\n</div>`;

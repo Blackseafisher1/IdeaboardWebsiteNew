@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     try { fileInput.value = ''; } catch (e) {}
   }
 
-  // Drag&Drop: Standardverhalten verhindern
   ['dragenter','dragover','dragleave','drop'].forEach(ev => {
     /**
      * Verhindert Standardverhalten für Drag&Drop-Ereignisse innerhalb der Input-Bar.
@@ -111,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form) clearPreviewAndFiles();
   });
 
-  // Clear preview/files on form reset (this happens after a successful fetch send that calls form.reset())
     /**
      * Referenz zum Message-Formular, falls vorhanden.
      * @type {HTMLFormElement|null}
@@ -123,8 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
   formEl.addEventListener('reset', () => clearPreviewAndFiles());
   }
 
-  // Send button is type="submit", so it triggers form naturally.
-  // Manual trigger removed to prevent potential double-submit issues with HTMX.
 
   /**
    * HTMX `confirm` Hook: Verhindert das Absenden, wenn sowohl Textnachricht (getrimmt) als auch Dateien leer sind.

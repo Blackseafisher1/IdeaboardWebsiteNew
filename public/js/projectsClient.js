@@ -1,7 +1,8 @@
-// Client-side filtering removed — server-side HTMX fragment handles filtering.
-
-// Ensure clicked project filter shows active state and keep hidden input in sync
 document.addEventListener('click', (e) => {
+// UI-Interaktionen verarbeiten
+// DOM-Zustand verwalten
+// Benutzereingaben behandeln
+// Daten aktualisieren und anzeigen
   const btn = e.target.closest && e.target.closest('.filter-btn[data-status]');
   if (!btn) return;
   document.querySelectorAll('.filter-btn[data-status]').forEach(b => b.classList.remove('active'));
@@ -10,7 +11,6 @@ document.addEventListener('click', (e) => {
   if (cur) cur.value = btn.dataset.status;
 });
 
-// Progress bar animation
 function animateProgressBars() {
   document.querySelectorAll('.progress-fill').forEach(bar => {
     const progress = bar.dataset.progress;
@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
   animateProgressBars();
   maybeAutoOpenCreateModalFromQuery();
 
-  // Unified Search Logic for all contact fields
   function setupUserSearch(inputId, hiddenId, resultsId) {
     const input = document.getElementById(inputId);
     const hidden = document.getElementById(hiddenId);
@@ -74,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Close when clicking outside
     document.addEventListener('click', (ev) => {
       if (!ev.target.closest(`#${inputId}`) && !ev.target.closest(`#${resultsId}`)) {
         results.style.display = 'none';
@@ -83,22 +81,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Initialize all searches
   setupUserSearch('contactSearch', 'contactPersonId', 'contactSearchResults');
   setupUserSearch('editContactSearch', 'editContactPersonId', 'editContactSearchResults');
   setupUserSearch('userSearchInput', null, 'userSearchResults'); // for Team Modal
 
-  // --- Modal Logic ---
   const createProjectModal = document.getElementById('createProjectModal');
   const editProjectModal = document.getElementById('editProjectModal');
   const teamModal = document.getElementById('teamModal');
 
-  // Ensure modals don't clip dropdowns (backup to CSS)
   [createProjectModal, editProjectModal, teamModal].forEach(m => {
     if (m) m.style.overflow = 'visible';
   });
 
-  // Re-bind click for team search specifically because it uses a global 'selectedUserId'
   const teamResults = document.getElementById('userSearchResults');
   if (teamResults) {
     teamResults.addEventListener('click', (e) => {
@@ -108,15 +102,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Re-animate after HTMX swaps
 document.addEventListener('htmx:afterSwap', (e) => {
   if (e.detail.target.id === 'projectsList' || e.detail.target.closest('#projectsList')) {
     animateProgressBars();
   }
 });
 
-// Modal handling
-// ... (Removing old standalone search listeners to avoid double bindings) ...
 const openCreateModalBtns = document.querySelectorAll('#openCreateModal, #openCreateModalEmpty');
 const createProjectModal = document.getElementById('createProjectModal');
 const editProjectModal = document.getElementById('editProjectModal');
@@ -193,7 +184,6 @@ if (createProjectModal) {
     });
 }
 
-// Edit project logic
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('edit-project')) {
     const projectId = e.target.dataset.id;
@@ -201,19 +191,15 @@ document.addEventListener('click', (e) => {
       
       if (projectCard) {
         const title = projectCard.querySelector('.project-title').textContent;
-        // ... (Rest of your edit logic) ...
-        // Ensure you grab fields correctly
         const descEl = projectCard.querySelector('.project-desc');
         const description = descEl ? descEl.textContent.trim() : '';
         
         document.getElementById('edit-project-name').value = title;
         document.getElementById('edit-project-desc').value = description === 'Keine Beschreibung verfügbar' ? '' : description;
         
-        // Status & Progress logic...
         const status = projectCard.dataset.status || 'Konzeption';
         document.getElementById('edit-project-status').value = status;
         
-        // Fix for progress grabbing
         const progressFill = projectCard.querySelector('.progress-fill');
         const progress = progressFill ? progressFill.dataset.progress : 0;
         document.getElementById('edit-project-progress').value = progress;
@@ -227,7 +213,6 @@ document.addEventListener('click', (e) => {
 
         document.getElementById('editProjectForm').action = `/projects/${projectId}/edit`;
         
-        // Setup delete button in modal
         const deleteBtn = document.getElementById('deleteProjectBtn');
         if (deleteBtn) {
            deleteBtn.onclick = () => {
@@ -246,22 +231,18 @@ document.addEventListener('click', (e) => {
     }
   });
 
-    // Delete is handled via HTMX attributes on the delete button (no JS needed)
 
-  // Clear search (like Surveys)
 function clearSearch() {
   const searchInput = document.getElementById('projectSearchInput');
   if (searchInput) searchInput.value = '';
   
   const status = document.getElementById('currentStatus')?.value || 'all';
-  // Request the fragment endpoint to avoid the full page HTML being returned
   htmx.ajax('GET', `/projects/fragment?status=${encodeURIComponent(status)}&search=&page=1`, {
     target: '#projectsList', 
     swap: 'innerHTML'
   });
 }
 
-// --- Team Management Logic ---
 const teamModal = document.getElementById('teamModal');
 const teamListBody = document.getElementById('teamListBody');
 const teamProjectName = document.getElementById('teamProjectName');
@@ -286,7 +267,6 @@ document.addEventListener('click', (e) => {
     currentProjectId = projectId;
     if (teamProjectName) teamProjectName.textContent = projectName;
     
-    // Parse team data from attribute
     try {
       const teamData = JSON.parse(projectCard.dataset.team || '[]');
       const canManage = projectCard.dataset.canManageTeam === 'true';
@@ -304,17 +284,14 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// We keep loadTeam for refreshing after actions (Add/Remove)
 async function loadTeam(projectId) {
   try {
     const res = await fetch(`/projects/${projectId}/team`);
     const data = await res.json();
     
-    // Update the card's data attribute so it's fresh if reopened
     const projectCard = document.getElementById(`project-${projectId}`);
     if (projectCard) {
       projectCard.dataset.team = JSON.stringify(data.team);
-      // canManage is usually static for a project-user pair but let's update just in case
       projectCard.dataset.canManageTeam = String(data.canManage);
     }
 
@@ -345,7 +322,6 @@ function renderTeam(team, canManage) {
     return;
   }
 
-  // Hole die Kontakt-ID des Projekts vom aktuellen Card-Dataset
   const projectCard = document.getElementById(`project-${currentProjectId}`);
   const contactId = projectCard ? parseInt(projectCard.dataset.contactId) : null;
 
@@ -383,7 +359,6 @@ function renderTeam(team, canManage) {
   }).join('');
 }
 
-// User Search Logic
 let searchTimeout;
 userSearchInput?.addEventListener('input', (e) => {
   clearTimeout(searchTimeout);
@@ -429,7 +404,6 @@ userSearchResults?.addEventListener('click', (e) => {
   }
 });
 
-// Add Member
 addMemberBtn?.addEventListener('click', async () => {
   if (!selectedUserId || !currentProjectId) {
     alert('Bitte wählen Sie einen Nutzer aus der Liste aus.');
@@ -459,7 +433,6 @@ addMemberBtn?.addEventListener('click', async () => {
   }
 });
 
-// Remove Member (Global function for onclick)
 window.removeMember = async (userId) => {
   if (!confirm('Mitglied wirklich aus dem Team entfernen?')) return;
   
@@ -479,7 +452,6 @@ window.removeMember = async (userId) => {
   }
 };
 
-// Close search results when clicking outside
 document.addEventListener('click', (e) => {
   if (userSearchResults && !e.target.closest('#userSearchInput') && !e.target.closest('#userSearchResults')) {
     userSearchResults.style.display = 'none';
@@ -489,7 +461,6 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Simple inactivity-based polling control for HTMX polling
 (function() {
   const INACTIVITY_TIMEOUT = 120000; // 2 minutes
   let timeoutId = null;
@@ -497,7 +468,6 @@ document.addEventListener('click', (e) => {
     const el = document.getElementById(containerId);
     if (!el) return;
 
-    // Save original hx-trigger
     if (!el.dataset.originalHxTrigger) el.dataset.originalHxTrigger = el.getAttribute('hx-trigger') || '';
 
     function disablePolling() {
@@ -514,7 +484,6 @@ document.addEventListener('click', (e) => {
     }
 
     function resetTimer() {
-      // reset HTMX 'every' timer by removing and re-adding the 'every' part
       try {
         disablePolling();
         setTimeout(() => { enablePolling(); }, 50);

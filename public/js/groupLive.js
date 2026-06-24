@@ -8,7 +8,6 @@
   const conversationId = window.currentConversationId; // e.g. "group:123"
   if (!container || !groupId) return;
 
-  // Mobile Menu Toggle
   const toggleBtn = document.getElementById('toggleMembersBtn');
   const dropdown = document.getElementById('mobileMembersDropdown');
   if (toggleBtn && dropdown) {
@@ -49,7 +48,6 @@
   const startSSE = async () => {
     if (eventSource) eventSource.close();
     
-    // Always use the latest message from the DOM as the starting point
     const msgNodes = container.querySelectorAll('.message');
     if (msgNodes.length > 0) {
       const lastNode = msgNodes[msgNodes.length - 1];
@@ -82,7 +80,6 @@
 
   // EventSource: Verbindung geöffnet
   eventSource.onopen = () => setStatus('Verbunden', 'status-online');
-  // EventSource Fehler: markiere Verbindung als offline und versuche Reconnect
   eventSource.onerror = () => {
     setStatus('Verbindung verloren...', 'status-offline');
     if (eventSource) {
@@ -120,7 +117,6 @@
       } catch (e) {}
     };
 
-  // Marker-Event: ersetze vorhandene Nachricht mit aktualisierter Variante
   eventSource.addEventListener('marker', (ev) => {
         try {
             const data = JSON.parse(ev.data);
@@ -139,13 +135,11 @@
         } catch (e) {}
     });
 
-  // Presence-Event: aktualisiert die Online-State-Klassen der Mitgliederliste
   eventSource.addEventListener('presence', (ev) => {
         try {
             const data = JSON.parse(ev.data);
             
             const onlineIds = data.online || [];
-      // Markiere Mitglieder je nach Presence-Liste als online/nicht-online
       document.querySelectorAll('.member-item').forEach(el => {
                 const uid = parseInt(el.dataset.userId, 10);
                 el.classList.toggle('online', onlineIds.includes(uid));
@@ -175,9 +169,7 @@
   });
 
   // Send-Vorgang wird per HTMX gehandhabt; bei Bedarf kann manuell eine SSE-Benachrichtigung ausgelöst werden
-  // (Der Server benachrichtigt bereits wartende Clients im /send-Endpunkt)
 
-  // Attach to window for global access
   /**
    * Globale API für Gruppen-Live-Funktionen.
    * @readonly

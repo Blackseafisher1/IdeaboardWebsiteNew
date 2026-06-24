@@ -94,7 +94,6 @@
     if (eventSource) eventSource.close();
     console.log('Attempting SSE connection for DM...');
     
-    // Use the latest message from DOM as sync starting point
     const msgNodes = container.querySelectorAll('.message');
     if (msgNodes.length > 0) {
       const lastNode = msgNodes[msgNodes.length - 1];
@@ -108,7 +107,6 @@
     // EventSource: Verbindung geöffnet
     eventSource.onopen = () => setStatus('Online', 'status-online');
 
-    // EventSource: Nachricht empfangen (Neues HTML oder Metadaten)
     eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
@@ -152,7 +150,6 @@
       } catch (e) { console.error('SSE onmessage error', e); }
     };
 
-  // Marker-Event: z. B. Nachricht aktualisiert oder editiert; ersetzt bestehenden DOM-Knoten
   eventSource.addEventListener('marker', (ev) => {
         try {
             const data = JSON.parse(ev.data);
@@ -173,7 +170,6 @@
         }
     });
 
-  // Presence-Event: Liste online/nicht-online; aktualisiert Statusanzeige
   eventSource.addEventListener('presence', (ev) => {
       try {
         const data = JSON.parse(ev.data);
@@ -212,7 +208,6 @@
         if (statusEl && statusEl.textContent === 'Gesendet') {
           statusEl.textContent = 'Gelesen';
           statusEl.classList.add('read');
-          // HTMX-Polling entfernen, falls vorhanden
           statusEl.removeAttribute('hx-get');
           statusEl.removeAttribute('hx-trigger');
         }
@@ -259,12 +254,10 @@
     } catch (e) { /* ignorieren */ }
   }
 
-  // Beacon senden, bevor Verbindungen geschlossen werden
 
   window.addEventListener('pagehide', () => { sendLeaveBeacon(); stopAll(); });
 
   window.addEventListener('beforeunload', () => { sendLeaveBeacon(); stopAll(); });
 
-  // Mit SSE starten
   startSSE();
 })();
