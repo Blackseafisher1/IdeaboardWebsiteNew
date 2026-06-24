@@ -34,20 +34,24 @@
   <footer class="idea-actions">
     <button class="btn outline expand-card" type="button" aria-expanded="false"
       data-idea-id="<%= @idea.idea_id %>"
+      onclick="expandCard(this.closest('.idea-card'))"
       hx-get="/ideas/<%= @idea.idea_id %>/comments"
       hx-trigger="click once"
       hx-target="#comments-section-<%= @idea.idea_id %>"
       hx-swap="outerHTML">Kommentare</button>
-    <div id="stats-<%= @idea.idea_id %>" hx-get="/ideas/<%= @idea.idea_id %>/stats" hx-trigger="load" hx-target="#stats-<%= @idea.idea_id %>" hx-swap="outerHTML">
+    <div id="stats-<%= @idea.idea_id %>" hx-get="/ideas/<%= @idea.idea_id %>/stats" hx-trigger="load" hx-target="#idea-stats-<%= @idea.idea_id %>" hx-swap="outerHTML">
       <%= IdeaBoard.Renderer.render_partial_string("ideas/_idea_stats", %{stats: %{like_count: 0, dislike_count: 0, comment_count: 0, idea_id: @idea.idea_id}}) %>
     </div>
   </footer>
 
-  <div class="idea-expanded" style="display:none">
+  <div class="idea-expanded">
     <div id="comments-section-<%= @idea.idea_id %>"></div>
+    <h4>Kommentare</h4>
     <%= if @user do %>
-      <form class="comment-form" method="POST" hx-post="/ideas/<%= @idea.idea_id %>/comments"
-        hx-target="#comment-list-<%= @idea.idea_id %>" hx-swap="afterbegin"
+      <form class="comment-form" method="POST" action="/ideas/<%= @idea.idea_id %>/comments"
+        hx-post="/ideas/<%= @idea.idea_id %>/comments"
+        hx-target="#comments-section-<%= @idea.idea_id %>"
+        hx-swap="beforeend"
         data-idea-id="<%= @idea.idea_id %>">
         <textarea name="text" rows="3" class="input-comment"
           placeholder="Kommentar... (Max. 200 Zeichen)" maxlength="200" required></textarea>

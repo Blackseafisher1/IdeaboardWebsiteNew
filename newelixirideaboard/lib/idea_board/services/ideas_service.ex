@@ -1,11 +1,12 @@
 defmodule IdeaBoard.IdeasService do
-  def list(_user, filters) do
+  def list(user, filters) do
     page = Map.get(filters, :page, 1)
 
     try do
       per_page = 20
       offset = (page - 1) * per_page
       category_id = filters[:category_id]
+      owned_only = filters[:owned_only] == "true"
 
       sort_sql = case filters[:sort] do
         "oldest" -> "i.created_at ASC"
@@ -14,11 +15,7 @@ defmodule IdeaBoard.IdeasService do
         _ -> "i.created_at DESC"
       end
 
-      {where_clause, params} = if category_id && category_id != "" do
-        {"WHERE i.category_id = ?", [category_id]}
-      else
-        {"", []}
-      end
+      {where_clause, params} = build_filters(category_id, owned_only, user)
 
       result = IdeaBoard.Repo.query_maps(
         "SELECT i.*, u.username AS author_username FROM ideas i JOIN users u ON u.user_id = i.user_id #{where_clause} ORDER BY #{sort_sql} LIMIT ? OFFSET ?",
@@ -103,7 +100,7 @@ defmodule IdeaBoard.IdeasService do
   def delete(user, idea_id) do
     try do
       case fetch(idea_id) do
-        {:ok, %{"user_id" => uid}} ->
+        {:ok, %{user_id: uid}} ->
           if uid == user.user_id || IdeaBoard.RoleHelpers.is_admin?(user) do
             IdeaBoard.Repo.query("DELETE FROM ideas WHERE idea_id = ?", [idea_id])
             :ok
@@ -116,5 +113,27 @@ defmodule IdeaBoard.IdeasService do
     rescue
       _e in [DBConnection.ConnectionError, ArgumentError, MyXQL.Error] -> {:error, "DB nicht verfügbar"}
     end
+  end
+
+  defp build_filters(category_id, owned_only, user) do
+    acc = {[], []}
+
+    acc = if category_id && category_id != "" do
+      {conds, ps} = acc
+        {conds ++ ["i.category_id = ?"], ps ++ [category_id]}
+    else
+      acc
+    end
+
+    acc = if owned_only && user do
+      {conds, ps} = acc
+        {conds ++ ["i.user_id = ?"], ps ++ [user.user_id]}
+    else
+      acc
+    end
+
+    {conds, ps} = acc
+    where = if conds == [], do: "", else: "WHERE " <> Enum.join(conds, " AND ")
+    {where, ps}
   end
 end
