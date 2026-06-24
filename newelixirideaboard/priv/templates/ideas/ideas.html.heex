@@ -1,60 +1,105 @@
 <link rel="stylesheet" href="/css/ideas.css">
+<script>window.ideaLiveVersion = 0;</script>
 
-<div class="ideas-page">
-  <div class="ideas-hero">
-    <h1>Ideen</h1>
-    <button class="btn primary" onclick="document.getElementById('create-modal').showModal()">Neue Idee</button>
-  </div>
+<main class="ideas-page">
+  <section class="ideas-header">
+    <div class="hero-box ideas-hero-container">
+      <h1>Ideenboard</h1>
+      <p class="subtitle">Teilen Sie Ihre Visionen und gestalten Sie die Zukunft mit</p>
+      <button class="btn accent" id="openCreateModal" onclick="document.getElementById('createIdeaModal').showModal()">
+        <span class="btn-icon">+</span> Neue Idee
+      </button>
+    </div>
+  </section>
 
-  <form class="ideas-filters" hx-get="/ideas" hx-target="#ideas-content" hx-trigger="change, keyup delay:500ms" hx-push-url="true">
-    <input type="text" name="q" placeholder="Suche..." value="<%= @filters.q %>">
-    <select name="category_id">
-      <option value="">Alle Kategorien</option>
-      <%= for cat <- @categories do %>
-        <option value="<%= cat.category_id %>" <%= if @filters.category_id == cat.category_id, do: "selected" %>><%= cat.name %></option>
-      <% end %>
-    </select>
-    <select name="sort">
-      <option value="latest" <%= if @filters.sort == "latest", do: "selected" %>>Neueste</option>
-      <option value="oldest" <%= if @filters.sort == "oldest", do: "selected" %>>Älteste</option>
-      <option value="likes" <%= if @filters.sort == "likes", do: "selected" %>>Meiste Likes</option>
-    </select>
-  </form>
-
-  <div id="ideas-content" aria-live="polite">
-    <%= if @ideas == [] do %>
-      <div class="empty-state"><p>Keine Ideen gefunden.</p></div>
-    <% else %>
-      <div class="ideas-grid">
-        <%= for idea <- @ideas do %>
-          <%= IdeaBoard.Renderer.render_partial("ideas/_idea_card", %{idea: idea, user: @user}) %>
-        <% end %>
+  <section class="ideas-filters hero-overlap-next" aria-label="Filter und Suche">
+    <form id="filterForm" class="filter-form">
+      <div class="filter-row search-row">
+        <div class="search-field">
+          <input id="q" name="q" type="text" value="<%= @filters.q %>"
+            placeholder="Suche nach Titel, Autor oder Beschreibung" class="input"
+            aria-label="Suche"
+            hx-get="/ideas" hx-trigger="keyup changed delay:1000ms, search"
+            hx-target="#ideas-content" hx-swap="outerHTML"
+            hx-push-url="true" hx-indicator="#loading-indicator"
+            hx-vals='{"page":1}' hx-include="#filterForm">
+          <button type="button" id="q-clear" class="clear-search" aria-label="Suche löschen" title="Suche löschen"
+            hx-on:click="const q = document.getElementById('q'); q.value=''; htmx.trigger(q, 'search'); q.focus();">×</button>
+        </div>
       </div>
-    <% end %>
+
+      <div class="filter-row options-row">
+        <select id="category_id" name="category_id" class="input"
+          hx-get="/ideas" hx-target="#ideas-content" hx-swap="outerHTML"
+          hx-push-url="true" hx-indicator="#loading-indicator"
+          hx-vals='{"page":1}' hx-include="#filterForm">
+          <option value="">Alle Kategorien</option>
+          <%= for cat <- @categories do %>
+            <option value="<%= cat.category_id %>" <%= if @filters.category_id == cat.category_id, do: "selected" %>><%= cat.name %></option>
+          <% end %>
+        </select>
+
+        <select id="sort" name="sort" class="input"
+          hx-get="/ideas" hx-target="#ideas-content" hx-swap="outerHTML"
+          hx-push-url="true" hx-indicator="#loading-indicator"
+          hx-vals='{"page":1}' hx-include="#filterForm">
+          <option value="latest" <%= if @filters.sort == "latest", do: "selected" %>>Neueste zuerst</option>
+          <option value="oldest" <%= if @filters.sort == "oldest", do: "selected" %>>Älteste zuerst</option>
+          <option value="likes" <%= if @filters.sort == "likes", do: "selected" %>>Meiste Likes</option>
+          <option value="comments" <%= if @filters.sort == "comments", do: "selected" %>>Meiste Kommentare</option>
+          <option value="score" <%= if @filters.sort == "score", do: "selected" %>>Nur Score</option>
+        </select>
+
+        <select id="owned_only" name="owned_only" class="input"
+          hx-get="/ideas" hx-target="#ideas-content" hx-swap="outerHTML"
+          hx-push-url="true" hx-indicator="#loading-indicator"
+          hx-vals='{"page":1}' hx-include="#filterForm">
+          <option value="false" <%= if @filters.owned_only != "true", do: "selected" %>>Alle Ideen</option>
+          <option value="true" <%= if @filters.owned_only == "true", do: "selected" %>>Meine Ideen</option>
+        </select>
+
+        <input id="tags" name="tags" type="text" value="<%= @filters.tags %>"
+          placeholder="Tags (Komma-getrennt)" class="input"
+          hx-get="/ideas" hx-trigger="keyup changed delay:1000ms"
+          hx-target="#ideas-content" hx-swap="outerHTML"
+          hx-push-url="true" hx-indicator="#loading-indicator"
+          hx-vals='{"page":1}' hx-include="#filterForm">
+      </div>
+
+      <span id="loading-indicator" class="htmx-indicator">Suchen...</span>
+    </form>
+  </section>
+
+  <%= IdeaBoard.Renderer.render_partial("ideas/_content", Map.merge(%{ideas: @ideas, has_next: @has_next, page: @page, user: @user}, %{})) %>
+
+  <dialog id="createIdeaModal" aria-modal="true" aria-labelledby="createIdeaTitle">
+    <form method="dialog" class="modal-close">
+      <button class="btn outline" value="cancel">Schließen</button>
+    </form>
+    <form id="createIdeaForm" action="/ideas" method="POST">
+      <h3 id="createIdeaTitle">Neue Idee</h3>
+      <label class="form-label" for="new-title">Titel</label>
+      <input id="new-title" class="input" type="text" name="title" placeholder="Kurzer, prägnanter Titel" required maxlength="50">
+      <label class="form-label" for="new-desc">Beschreibung</label>
+      <textarea id="new-desc" class="input" name="description" rows="4" placeholder="Beschreibe die Idee, Problem und Lösung"></textarea>
+      <label class="form-label" for="new-cat">Kategorie</label>
+      <select id="new-cat" class="input" name="category_id">
+        <%= for cat <- @categories do %>
+          <option value="<%= cat.category_id %>"><%= cat.name %></option>
+        <% end %>
+      </select>
+      <label class="form-label" for="new-tags">Tags</label>
+      <input id="new-tags" class="input" type="text" name="tags" placeholder="z. B. ux, performance, kosten">
+      <div class="dialog-actions">
+        <button class="btn outline" type="reset">Zurücksetzen</button>
+        <button class="btn" type="submit">Erstellen</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="idea-edit-modal">
+    <div id="idea-edit-modal-content"></div>
   </div>
-
-  <%= if @has_next do %>
-    <button class="btn load-more" data-page="<%= @page + 1 %>" data-url="/ideas/chunk" onclick="loadMoreChunk(this)">Mehr laden</button>
-  <% end %>
-</div>
-
-<dialog id="create-modal">
-  <form action="/ideas" method="POST" hx-post="/ideas" hx-target="#ideas-content" hx-swap="afterbegin">
-    <h2>Neue Idee</h2>
-    <input type="text" name="title" placeholder="Titel" required>
-    <textarea name="description" placeholder="Beschreibung"></textarea>
-    <select name="category_id">
-      <option value="">Kategorie wählen</option>
-      <%= for cat <- @categories do %>
-        <option value="<%= cat.category_id %>"><%= cat.name %></option>
-      <% end %>
-    </select>
-    <input type="text" name="tags" placeholder="Tags (kommagetrennt)">
-    <button type="submit" class="btn primary">Erstellen</button>
-    <button type="button" onclick="this.closest('dialog').close()">Abbrechen</button>
-  </form>
-</dialog>
-
-<div id="idea-edit-modal"></div>
+</main>
 
 <script src="/js/ideasClient.js" defer></script>

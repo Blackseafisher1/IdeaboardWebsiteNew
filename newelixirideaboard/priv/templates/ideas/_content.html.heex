@@ -1,14 +1,21 @@
-<div id="ideas-content" aria-live="polite">
-  <%= if @ideas == [] do %>
-    <div class="empty-state"><p>Keine Ideen gefunden.</p></div>
-  <% else %>
-    <div class="ideas-grid">
+<!-- Fragment rendered by controller on initial load and HTMX swaps -->
+<div id="ideas-content">
+  <section class="ideas-grid" aria-live="polite">
+    <%= if @ideas == [] || is_nil(@ideas) do %>
+      <p class="muted ideas-empty-state">Keine Ergebnisse gefunden.</p>
+    <% else %>
       <%= for idea <- @ideas do %>
         <%= IdeaBoard.Renderer.render_partial("ideas/_idea_card", %{idea: idea, user: @user}) %>
       <% end %>
-    </div>
-  <% end %>
+    <% end %>
+  </section>
 </div>
-<%= if @has_next do %>
-  <button class="btn load-more" data-page="<%= @page + 1 %>" data-url="/ideas/chunk" onclick="loadMoreChunk(this)">Mehr laden</button>
+
+<%= if @ideas != [] && @has_next do %>
+  <div style="text-align:center; margin:2rem 0;">
+    <button id="load-more-chunk" class="btn accent" style="display:block; margin:auto;"
+      onclick="loadMoreChunk(this)"
+      data-page="<%= @page + 1 %>"
+      data-url="/ideas/chunk">Mehr laden</button>
+  </div>
 <% end %>

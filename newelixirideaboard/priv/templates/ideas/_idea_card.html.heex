@@ -1,36 +1,55 @@
-<article class="idea-card" data-idea-id="<%= @idea.idea_id %>"
+<article class="idea-card"
+  id="idea-<%= @idea.idea_id %>"
+  data-id="<%= @idea.idea_id %>"
   data-title="<%= @idea.title %>"
-  data-description="<%= @idea.description %>"
-  data-category="<%= @idea.category_id %>"
-  data-owner="<%= if @user, do: @user.user_id == @idea.user_id %>">
-  <div class="idea-card-header">
-    <h3><a href="/ideas/<%= @idea.idea_id %>" onclick="event.preventDefault(); expandCard(this.closest('.idea-card'))"><%= @idea.title %></a></h3>
-    <div class="idea-meta">
-      <span class="idea-author"><%= @idea.author_username %></span>
-      <span class="idea-category"><%= @idea.category_id %></span>
-      <span class="idea-status"><%= @idea.status || "eingereicht" %></span>
+  data-category-id="<%= @idea.category_id %>"
+  data-is-owner="<%= @user && @user.user_id == @idea.user_id %>"
+  data-user-role="<%= if @user, do: @user.role_name %>"
+  data-status="<%= @idea.status || '' %>"
+  data-user-id="<%= @idea.user_id %>">
+  <header class="idea-header">
+    <div>
+      <h3 class="idea-title"><%= @idea.title %></h3>
+      <div class="idea-meta">
+        <span class="idea-category"><%= @idea.category_id %></span>
+        <span class="muted" style="margin-left:0.6rem;font-size:0.85rem;">von <%= @idea.author_username %></span>
+        <%= if @idea.status == "umgesetzt" do %>
+          <span class="tag" style="margin-left:0.6rem;">Status: umgesetzt</span>
+        <% end %>
+        <%= if @user && @user.user_id == @idea.user_id do %>
+          <span class="tag" style="margin-left:0.6rem;">Status: <%= @idea.status || "neu" %></span>
+        <% end %>
+      </div>
     </div>
-  </div>
-  <p class="idea-description"><%= @idea.description %></p>
+  </header>
+
+  <p class="idea-desc"><%= @idea.description || "Keine Beschreibung" %></p>
+
   <div class="idea-tags">
     <%= for tag <- (@idea.tags || []) do %>
-      <span class="tag"><%= tag.name %></span>
+      <span class="tag">#<%= tag.name %></span>
     <% end %>
   </div>
-  <div class="idea-card-footer">
-    <div id="stats-<%= @idea.idea_id %>" hx-get="/ideas/<%= @idea.idea_id %>/stats" hx-trigger="load"></div>
-    <button class="btn small" onclick="expandCard(this.closest('.idea-card'))">Kommentare</button>
-  </div>
-  <div class="idea-expanded" style="display:none">
-    <div id="comments-section-<%= @idea.idea_id %>" class="comments-section">
-      <h4>Kommentare</h4>
-      <div id="comments-list-<%= @idea.idea_id %>"></div>
-      <%= if @user do %>
-        <form class="comment-form" hx-post="/ideas/<%= @idea.idea_id %>/comment" hx-target="#comments-list-<%= @idea.idea_id %>" hx-swap="beforeend">
-          <input type="text" name="text" placeholder="Kommentar..." required>
-          <button type="submit">Senden</button>
-        </form>
-      <% end %>
+
+  <footer class="idea-actions">
+    <button class="btn outline expand-card" type="button" aria-expanded="false"
+      data-idea-id="<%= @idea.idea_id %>"
+      onclick="expandCard(this.closest('.idea-card'))">Kommentare</button>
+    <div id="stats-<%= @idea.idea_id %>" hx-get="/ideas/<%= @idea.idea_id %>/stats" hx-trigger="load" hx-target="#stats-<%= @idea.idea_id %>" hx-swap="outerHTML">
+      <%= IdeaBoard.Renderer.render_partial_string("ideas/_idea_stats", %{stats: %{like_count: 0, dislike_count: 0, comment_count: 0, idea_id: @idea.idea_id}}) %>
     </div>
+  </footer>
+
+  <div class="idea-expanded" style="display:none">
+    <div id="comments-section-<%= @idea.idea_id %>"></div>
+    <%= if @user do %>
+      <form class="comment-form" method="POST" hx-post="/ideas/<%= @idea.idea_id %>/comments"
+        hx-target="#comment-list-<%= @idea.idea_id %>" hx-swap="afterbegin"
+        data-idea-id="<%= @idea.idea_id %>">
+        <textarea name="text" rows="3" class="input-comment"
+          placeholder="Kommentar... (Max. 200 Zeichen)" maxlength="200" required></textarea>
+        <button class="btn" type="submit">Kommentieren</button>
+      </form>
+    <% end %>
   </div>
 </article>
