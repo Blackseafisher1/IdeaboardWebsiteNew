@@ -10,6 +10,8 @@ defmodule IdeaBoard.IdeasController do
       :like -> handle_like(conn)
       :stats -> handle_stats(conn)
       :chunk -> handle_chunk(conn)
+      :card -> handle_card(conn)
+      :modal -> handle_modal(conn)
       :ws_dispatch -> ws_dispatch(conn)
       :search -> handle_search(conn)
     end
@@ -131,6 +133,28 @@ defmodule IdeaBoard.IdeasController do
     stats = IdeaBoard.IdeasStatsService.get_stats(idea_id)
     html = IdeaBoard.Renderer.render_partial_string("ideas/_idea_stats", %{stats: stats}, conn)
     send_resp(conn, 200, html)
+  end
+
+  defp handle_card(conn) do
+    user = get_session(conn, :user)
+    idea_id = Map.get(conn.params, "idea_id")
+    case IdeaBoard.IdeasService.fetch(idea_id) do
+      {:ok, idea} when not is_nil(idea) ->
+        html = IdeaBoard.Renderer.render_partial_string("ideas/_idea_card", %{idea: idea, user: user}, conn)
+        send_resp(conn, 200, html)
+      _ -> send_resp(conn, 404, "not found")
+    end
+  end
+
+  defp handle_modal(conn) do
+    user = get_session(conn, :user)
+    idea_id = Map.get(conn.params, "idea_id")
+    case IdeaBoard.IdeasService.fetch(idea_id) do
+      {:ok, idea} when not is_nil(idea) ->
+        html = IdeaBoard.Renderer.render_partial_string("ideas/_idea_modal", %{idea: idea, user: user}, conn)
+        send_resp(conn, 200, html)
+      _ -> send_resp(conn, 404, "not found")
+    end
   end
 
   defp ws_dispatch(conn) do

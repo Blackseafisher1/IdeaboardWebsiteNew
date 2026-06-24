@@ -68,24 +68,44 @@ defmodule IdeaBoard.Router do
     IdeaBoard.IdeasController.call(conn, :create)
   end
 
-  post "/ideas/:idea_id/edit" do
-    IdeaBoard.IdeasController.call(conn, :edit)
+  get "/ideas/chunk" do
+    IdeaBoard.IdeasController.call(conn, :chunk)
   end
 
-  post "/ideas/:idea_id/delete" do
-    IdeaBoard.IdeasController.call(conn, :delete)
+  get "/ideas/:idea_id/card" do
+    IdeaBoard.IdeasController.call(conn, :card)
   end
 
-  post "/ideas/:idea_id/like" do
-    IdeaBoard.IdeasController.call(conn, :like)
+  get "/ideas/:idea_id/modal" do
+    IdeaBoard.IdeasController.call(conn, :modal)
   end
 
   get "/ideas/:idea_id/stats" do
     IdeaBoard.IdeasController.call(conn, :stats)
   end
 
-  get "/ideas/chunk" do
-    IdeaBoard.IdeasController.call(conn, :chunk)
+  get "/ideas/:idea_id/comments" do
+    IdeaBoard.CommentsController.call(conn, :list)
+  end
+
+  post "/ideas/:idea_id/comments" do
+    IdeaBoard.CommentsController.call(conn, :create)
+  end
+
+  post "/ideas/:idea_id/comments/:comment_id/delete" do
+    IdeaBoard.CommentsController.call(conn, :delete)
+  end
+
+  post "/ideas/:idea_id/like" do
+    IdeaBoard.IdeasController.call(conn, :like)
+  end
+
+  post "/ideas/:idea_id/edit" do
+    IdeaBoard.IdeasController.call(conn, :edit)
+  end
+
+  post "/ideas/:idea_id/delete" do
+    IdeaBoard.IdeasController.call(conn, :delete)
   end
 
   get "/ideas/files/:file_id/download" do

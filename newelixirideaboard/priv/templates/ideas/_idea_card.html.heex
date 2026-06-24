@@ -34,7 +34,10 @@
   <footer class="idea-actions">
     <button class="btn outline expand-card" type="button" aria-expanded="false"
       data-idea-id="<%= @idea.idea_id %>"
-      onclick="expandCard(this.closest('.idea-card'))">Kommentare</button>
+      hx-get="/ideas/<%= @idea.idea_id %>/comments"
+      hx-trigger="click once"
+      hx-target="#comments-section-<%= @idea.idea_id %>"
+      hx-swap="outerHTML">Kommentare</button>
     <div id="stats-<%= @idea.idea_id %>" hx-get="/ideas/<%= @idea.idea_id %>/stats" hx-trigger="load" hx-target="#stats-<%= @idea.idea_id %>" hx-swap="outerHTML">
       <%= IdeaBoard.Renderer.render_partial_string("ideas/_idea_stats", %{stats: %{like_count: 0, dislike_count: 0, comment_count: 0, idea_id: @idea.idea_id}}) %>
     </div>

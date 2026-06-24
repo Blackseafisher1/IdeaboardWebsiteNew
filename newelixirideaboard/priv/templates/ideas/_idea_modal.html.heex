@@ -1,0 +1,24 @@
+<div class="idea-modal-content" id="idea-edit-modal-content">
+  <h3>Idee bearbeiten</h3>
+
+  <form class="edit-form-modal"
+    hx-post="/ideas/<%= @idea.idea_id %>/edit"
+    hx-target="#idea-<%= @idea.idea_id %>"
+    hx-swap="outerHTML">
+    <label class="form-label" for="modal-title-<%= @idea.idea_id %>">Titel</label>
+    <input id="modal-title-<%= @idea.idea_id %>" type="text" name="title" class="input"
+      value="<%= @idea.title %>" required maxlength="50">
+
+    <label class="form-label" for="modal-desc-<%= @idea.idea_id %>">Beschreibung</label>
+    <textarea id="modal-desc-<%= @idea.idea_id %>" name="description" rows="4" class="input"><%= @idea.description %></textarea>
+
+    <label class="form-label" for="modal-cat-<%= @idea.idea_id %>">Kategorie</label>
+    <select id="modal-cat-<%= @idea.idea_id %>" name="category_id" class="input">
+      <option value="<%= @idea.category_id %>"><%= @idea.category_id %></option>
+    </select>
+
+    <div class="form-actions">
+      <button class="btn" type="submit">Änderungen speichern</button>
+    </div>
+  </form>
+</div>
