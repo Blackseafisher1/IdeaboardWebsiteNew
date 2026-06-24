@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <script src="/js/dist/early-theme-blur.min.js" defer></script>
 </head>
-<body data-user-id="<%= if user = assigns[:user] do %><%= user.user_id %><% end %>">
+<body data-user-id="<%= if user = assigns[:user] do %><%= Map.get(user, :user_id) %><% end %>">
   <input type="checkbox" id="site-blur-toggle" class="site-blur-toggle" hidden aria-hidden="true">
 
   <header id="page-header" class="page-header">
@@ -24,7 +24,7 @@
         <% end %>
 
         <%= if user do %>
-          <script>window.currentUserId = <%= user.user_id %>;</script>
+          <script>window.currentUserId = <%= Map.get(user, :user_id) %>;</script>
         <% end %>
 
         <button class="theme-toggle" onclick="toggleTheme()">🌙/☀️</button>

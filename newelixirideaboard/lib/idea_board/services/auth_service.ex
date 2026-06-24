@@ -4,7 +4,7 @@ defmodule IdeaBoard.AuthService do
       {:ok, %{rows: [user | _]}} ->
         if Argon2.verify_pass(password, user.password_hash) do
           role = get_role_name(user.role_id)
-          {:ok, Map.put(user, :role_name, role)}
+          {:ok, user |> Map.take([:user_id, :username, :email, :role_id]) |> Map.put(:role_name, role)}
         else
           {:error, "Falsches Passwort"}
         end
@@ -14,15 +14,22 @@ defmodule IdeaBoard.AuthService do
     end
   end
 
-  def register(username, email, password) when is_binary(password) do
+  def register(username, email, password) when is_binary(password) and password != "" do
     with :ok <- validate_registration(username, email) do
       hash = Argon2.hash_pwd_salt(password)
-      case IdeaBoard.Repo.query("INSERT INTO users (username, email, password_hash, role_id) VALUES (?, ?, ?, 3)", [username, email, hash]) do
-        {:ok, _} -> {:ok, %{username: username, email: email, role_name: "Mitarbeiter"}}
-        {:error, reason} -> {:error, "Registrierung fehlgeschlagen: #{inspect(reason)}"}
+      case IdeaBoard.Repo.query(
+             "INSERT INTO users (username, email, password_hash, role_id) VALUES (?, ?, ?, 3)",
+             [username, email, hash]
+           ) do
+        {:ok, %{last_insert_id: id}} ->
+          {:ok, %{user_id: id, username: username, email: email, role_id: 3, role_name: "Mitarbeiter"}}
+
+        {:error, reason} ->
+          {:error, "Registrierung fehlgeschlagen: #{inspect(reason)}"}
       end
     end
   end
+
   def register(_, _, _), do: {:error, "Ungültige Eingabe"}
 
   defp validate_registration(username, email) do
