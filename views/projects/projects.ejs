@@ -26,7 +26,13 @@
     </div>
   </section>
 
-<!-- Suche & Filter Bar (KORRIGIERT) -->
+<form id="projectFilterForm"
+  hx-get="/projects/fragment"
+  hx-target="#projectsList"
+  hx-swap="innerHTML"
+  hx-trigger="submit">
+
+<!-- Suche & Filter Bar -->
 <section class="projects-filters hero-overlap-next">
   <div class="filter-controls" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
     <div class="search-wrapper" style="flex-grow: 1;">
@@ -36,82 +42,50 @@
            name="search"  
            placeholder="Suche Projekte..."
            value="<%= currentSearch || '' %>"
-           hx-get="/projects"
-          hx-trigger="keyup changed delay:1000ms"
-           hx-target="#projectsList"
-           hx-include="#currentStatus, #isUserOnlyInput" 
-           hx-push-url="true">
+           oninput="document.getElementById('currentPage').value='1'; htmx.trigger('#projectFilterForm', 'submit')">
         
         <button type="button" onclick="clearSearch()" class="btn" style="white-space: nowrap; max-width: 30px;">
           ✕
         </button>
       </div>
-      <!-- EINZIGES currentStatus (keine Doppelung!) -->
       <input type="hidden" id="currentStatus" name="status" value="<%= currentStatus || 'all' %>">
       <input type="hidden" id="isUserOnlyInput" name="userOnly" value="<%= isUserOnly ? 'true' : 'false' %>">
+      <input type="hidden" id="currentPage" name="page" value="1">
     </div>
     
     <div class="filter-buttons">
-      <!-- hx-get statt onclick + KEIN setActiveFilter nötig! -->
-            <button class="filter-btn <%= (currentStatus === 'all' && !isUserOnly) ? 'active' : '' %>" 
-              data-status="all"
-              hx-get="/projects"
-              hx-target="#projectsList"
-              hx-include="#projectSearchInput"
-              hx-vals='{"status":"all","page":1,"userOnly":"false"}'
-              hx-push-url="true">
+      <button type="button" class="filter-btn <%= (currentStatus === 'all' && !isUserOnly) ? 'active' : '' %>" 
+        onclick="document.getElementById('currentStatus').value='all'; document.getElementById('isUserOnlyInput').value='false'; document.getElementById('currentPage').value='1'; htmx.trigger('#projectFilterForm', 'submit')">
         Alle Projekte
       </button>
-            <button class="filter-btn <%= isUserOnly ? 'active' : '' %>" 
-              data-status="my"
-              hx-get="/projects"
-              hx-target="#projectsList"
-              hx-include="#projectSearchInput"
-              hx-vals='{"status":"all","page":1,"userOnly":"true"}'
-              hx-push-url="true">
+      <button type="button" class="filter-btn <%= isUserOnly ? 'active' : '' %>" 
+        onclick="document.getElementById('currentStatus').value='all'; document.getElementById('isUserOnlyInput').value='true'; document.getElementById('currentPage').value='1'; htmx.trigger('#projectFilterForm', 'submit')">
         Meine Projekte
       </button>
-            <button class="filter-btn <%= currentStatus === 'Konzeption' ? 'active' : '' %>" 
-              data-status="Konzeption"
-              hx-get="/projects"
-              hx-target="#projectsList"
-              hx-include="#projectSearchInput"
-              hx-vals='{"status":"Konzeption","page":1,"userOnly":"false"}'
-              hx-push-url="true">
+      <button type="button" class="filter-btn <%= currentStatus === 'Konzeption' ? 'active' : '' %>" 
+        onclick="document.getElementById('currentStatus').value='Konzeption'; document.getElementById('isUserOnlyInput').value='false'; document.getElementById('currentPage').value='1'; htmx.trigger('#projectFilterForm', 'submit')">
         Konzeption
       </button>
-            <button class="filter-btn <%= currentStatus === 'Umsetzung' ? 'active' : '' %>" 
-              data-status="Umsetzung"
-              hx-get="/projects"
-              hx-target="#projectsList"
-              hx-include="#projectSearchInput"
-              hx-vals='{"status":"Umsetzung","page":1,"userOnly":"false"}'
-              hx-push-url="true">
+      <button type="button" class="filter-btn <%= currentStatus === 'Umsetzung' ? 'active' : '' %>" 
+        onclick="document.getElementById('currentStatus').value='Umsetzung'; document.getElementById('isUserOnlyInput').value='false'; document.getElementById('currentPage').value='1'; htmx.trigger('#projectFilterForm', 'submit')">
         Umsetzung
       </button>
-            <button class="filter-btn <%= currentStatus === 'Abgeschlossen' ? 'active' : '' %>" 
-              data-status="Abgeschlossen"
-              hx-get="/projects"
-              hx-target="#projectsList"
-              hx-include="#projectSearchInput"
-              hx-vals='{"status":"Abgeschlossen","page":1,"userOnly":"false"}'
-              hx-push-url="true">
+      <button type="button" class="filter-btn <%= currentStatus === 'Abgeschlossen' ? 'active' : '' %>" 
+        onclick="document.getElementById('currentStatus').value='Abgeschlossen'; document.getElementById('isUserOnlyInput').value='false'; document.getElementById('currentPage').value='1'; htmx.trigger('#projectFilterForm', 'submit')">
         Abgeschlossen
       </button>
     </div>
   </div>
 </section>
 
+</form>
 
-  <!-- Projects Grid mit Polling -->
-<!-- Projects Grid (wie Surveys) -->
+  <!-- Projects Grid -->
 <section class="projects-grid" aria-live="polite">
       <div id="projectsList"
         hx-get="/projects/fragment"
-        data-page="<%= currentPage || 1 %>"
-        data-poll-interval="11000"
-        hx-include="#projectSearchInput, #currentStatus, #isUserOnlyInput"
-        hx-trigger="load, every 11s"
+        hx-include="#projectFilterForm"
+        hx-trigger="every 11s"
         hx-swap="innerHTML">
     <div class="loading-state skeleton-grid" aria-hidden="true">
       <!-- Skeleton placeholders to reserve layout space and avoid CLS on first load -->
