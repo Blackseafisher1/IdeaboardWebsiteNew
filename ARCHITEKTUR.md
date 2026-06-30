@@ -79,41 +79,99 @@ app.use('/projects', pageCache(15), require('./routes/projects'));
 8. Route-Handler (asyncHandler wrappt try/catch)
 9. 404-Fallback
 
-## Datenbank-Zugriff
+## Datenbank-Zugriff (`config/db.js`)
 
-### Pool + Query
+Der MariaDB-Pool wird einmal beim Start erstellt und stellt drei Methoden bereit:
 
-`config/db.js` stellt einen MariaDB-Pool bereit:
-
-```js
-const pool = await driver.createPool({ host, user, database, ... });
-```
-
-Drei Exporte:
-- `db.query(sql, params)` — gibt normalisierte Ergebnisse zurück (BigInt → Number, Date-Parsing)
-- `db.execute(sql, params)` — nutzt Prepared Statements
-- `db.getConnection()` — gibt eine Connection für Transaktionen
-
-### Typische Query in Services
+### `db.query(sql, params)` — SELECT, INSERT, UPDATE, DELETE
 
 ```js
-const rows = await db.query('SELECT * FROM ideas WHERE idea_id = ?', [id]);
+const db = require('../config/db');
+
+// Alle Spalten, eine Zeile
+const rows = await db.query('SELECT * FROM ideas WHERE idea_id = ?', [1]);
+// → rows = [{ idea_id: 1, title: '...', description: '...', ... }]
+
+// Bestimmte Spalten
+const rows = await db.query('SELECT title, like_count FROM ideas');
+// → rows = [{ title: '...', like_count: 5 }, { title: '...', like_count: 3 }]
+
+// Erste Zeile (oder null)
+const idea = rows[0]; // undefined wenn keine Zeile
+
+// Bestimmte Spalte der ersten Zeile
+const title = rows[0]?.title; // "Meine Idee"
+const likes = rows[0]?.like_count; // 5
+
+// COUNT / Aggregat
+const [{ total }] = await db.query('SELECT COUNT(*) AS total FROM ideas');
+// → total = 42
+
+// INSERT + insertId
+const result = await db.query('INSERT INTO ideas (title) VALUES (?)', ['Neu']);
+const newId = result.insertId; // z.B. 123
+
+// UPDATE / DELETE — affectedRows
+const result = await db.query('UPDATE ideas SET title = ? WHERE idea_id = ?', ['Neu', 1]);
+// result.affectedRows → 1
+
+// Mit mehreren Parametern
+const rows = await db.query(
+  'SELECT * FROM ideas WHERE category_id = ? AND like_count > ? ORDER BY created_at DESC LIMIT ?',
+  [catId, minLikes, limit]
+);
 ```
 
-### Transaktionen
+### `db.execute(sql, params)` — Prepared Statements (bei häufigen Wiederholungen)
+
+```js
+await db.execute(
+  'INSERT INTO sessions (sid, sess, expires) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE sess = VALUES(sess)',
+  [sid, sessJson, expires]
+);
+```
+
+### `db.getConnection()` — Transaktionen
+
+Für Operationen, die atomar sein müssen (mehrere INSERT/UPDATE zusammen):
 
 ```js
 const conn = await db.getConnection();
 try {
   await conn.beginTransaction();
-  await conn.query('INSERT ...', [...]);
-  await conn.commit();
-} catch (e) {
+
+  const result = await conn.query('INSERT INTO ideas (user_id, title, description) VALUES (?, ?, ?)', [userId, title, desc]);
+  const ideaId = result.insertId;
+
+  await conn.query('INSERT INTO idea_tag_links (idea_id, tag_id) VALUES (?, ?)', [ideaId, tagId]);
+
+  await conn.commit(); // alles oder nichts
+} catch (err) {
   await conn.rollback();
-  throw e;
+  throw err;
 } finally {
-  conn.release(); // wichtig!
+  conn.release(); // ← Connection zurück in den Pool
 }
+```
+
+### Normalisierung
+
+`db.query` normalisiert automatisch:
+- **BigInt** → Number (solange innerhalb von SAFE_INTEGER)
+- **ISO-Datumsstrings** → Date-Objekte
+
+```js
+const rows = await db.query('SELECT like_count, created_at FROM ideas LIMIT 1');
+rows[0].like_count     // → Number (nie BigInt)
+rows[0].created_at     // → Date (nie String)
+```
+
+### Retry bei Deadlocks
+
+```js
+const { executeWithRetry } = require('../lib/dbHelpers');
+await executeWithRetry(db, 'UPDATE ideas SET status = ? WHERE idea_id = ?', [status, id]);
+// Wiederholt bei Lock-Timeout/Deadlock (errno 1205/1213) bis zu 3× mit Backoff
 ```
 
 ## Live-Updates (SSE)
