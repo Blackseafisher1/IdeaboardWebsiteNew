@@ -96,12 +96,24 @@ const rows = await db.query('SELECT * FROM ideas WHERE idea_id = ?', [1]);
 const rows = await db.query('SELECT title, like_count FROM ideas');
 // → rows = [{ title: '...', like_count: 5 }, { title: '...', like_count: 3 }]
 
-// Erste Zeile (oder null)
+// Erste Zeile (oder undefined wenn leer)
 const idea = rows[0]; // undefined wenn keine Zeile
 
 // Bestimmte Spalte der ersten Zeile
 const title = rows[0]?.title; // "Meine Idee"
 const likes = rows[0]?.like_count; // 5
+
+// Nur eine Spalte — rows.map
+const titles = rows.map(r => r.title);
+// → ['Idea 1', 'Idea 2', ...]
+
+// Nur ein Wert (erste Spalte, erste Zeile) — Destructuring
+const [{ title }] = await db.query('SELECT title FROM ideas LIMIT 1');
+// → title = "Meine Idee"  (Achtung: wirft Fehler wenn kein Ergebnis!)
+
+// Sicher mit Fallback:
+const [{ title } = {}] = await db.query('SELECT title FROM ideas WHERE id = ?', [999]);
+// → title = undefined (kein Fehler)
 
 // COUNT / Aggregat
 const [{ total }] = await db.query('SELECT COUNT(*) AS total FROM ideas');
