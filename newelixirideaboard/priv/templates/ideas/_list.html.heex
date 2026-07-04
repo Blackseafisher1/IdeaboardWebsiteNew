@@ -1,3 +1,0 @@
-<%= for idea <- @ideas do %>
-  <%= IdeaBoard.Renderer.render_partial("ideas/_idea_card", %{idea: idea, user: @user}) %>
-<% end %>

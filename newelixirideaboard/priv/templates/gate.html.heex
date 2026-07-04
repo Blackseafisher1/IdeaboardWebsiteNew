@@ -1,9 +1,0 @@
-<h2>Zugangscode erforderlich</h2>
-<form action="/gate" method="POST">
-  <input type="hidden" name="back" value="<%= assigns[:back] || "/" %>">
-  <%= if assigns[:error] do %>
-    <div class="error"><%= assigns[:error] %></div>
-  <% end %>
-  <input type="password" name="password" placeholder="Passwort" required>
-  <button type="submit">Bestätigen</button>
-</form>

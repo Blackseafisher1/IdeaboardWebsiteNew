@@ -1,8 +1,0 @@
-<div id="comments-section-<%= @idea_id %>">
-  <h4>Kommentare</h4>
-  <ul>
-    <%= for comment <- @comments do %>
-      <%= IdeaBoard.Renderer.render_partial("ideas/_comment_item", %{comment: comment, user: @user}) %>
-    <% end %>
-  </ul>
-</div>

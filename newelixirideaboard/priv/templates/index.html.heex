@@ -1,9 +1,0 @@
-<div class="hero">
-  <h1>Ideenboard</h1>
-  <p>Willkommen beim digitalen Ideenboard. Teilen Sie Ihre Ideen und gestalten Sie die Zukunft mit.</p>
-  <%= if !assigns[:user] do %>
-    <a href="/users/auth" class="btn">Login / Registrieren</a>
-  <% else %>
-    <a href="/ideas" class="btn">Zu den Ideen</a>
-  <% end %>
-</div>
