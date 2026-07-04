@@ -11,5 +11,5 @@
     "skipLibCheck": true
   },
   "include": ["**/*.js", "**/*.d.ts"],
-  "exclude": ["node_modules", "dokumentation", "data", "logs", "coverage", "dist"]
+  "exclude": ["node_modules", "dokumentation", "data", "logs", "coverage", "dist", "**/dist", "**/dist/**"]
 }

@@ -8,6 +8,16 @@ function getIdeaIdFromHash() {
   return m ? Number(m[1]) : null;
 }
 
+/** @param {Element | null} value @returns {HTMLElement | null} */
+function asHTMLElement(value) {
+  return /** @type {HTMLElement | null} */ (value);
+}
+
+/** @param {Node | null} value @returns {HTMLElement | null} */
+function asHTMLElementNode(value) {
+  return /** @type {HTMLElement | null} */ (value);
+}
+
 /**
  * Öffnet beim Hash-Change die referenzierte Karte (falls vorhanden).
  * @returns {void}
@@ -16,7 +26,7 @@ function expandCardFromHash() {
   const ideaId = getIdeaIdFromHash();
   if (!ideaId) return;
 
-  const card = document.getElementById(`idea-${ideaId}`);
+  const card = asHTMLElement(document.getElementById(`idea-${ideaId}`));
   if (!card) return;
 
   card.classList.add('expanded');
@@ -43,7 +53,7 @@ function checkDeepLink() {
   const targetId = hash.replace('#idea-', '');
 
   // Prüfen, ob die Idee bereits im DOM vorhanden ist
-  const existingCard = document.querySelector(`.idea-card[data-id="${targetId}"]`);
+  const existingCard = asHTMLElement(document.querySelector(`.idea-card[data-id="${targetId}"]`));
 
   if (existingCard) {
     if (!existingCard.classList.contains('expanded')) {
@@ -92,9 +102,9 @@ async function loadSingleIdeaCard(targetId) {
       const parsedCard = temp2.querySelector('.idea-card');
 
       // Klon-basierte Einfügung für korrekte Styles und HTMX-Bindungen
-      const template = document.querySelector('.idea-card');
+      const template = asHTMLElement(document.querySelector('.idea-card'));
       if (template && parsedCard) {
-        const clone = template.cloneNode(true);
+        const clone = /** @type {HTMLElement} */ (template.cloneNode(true));
         clone.id = `idea-${targetId}`;
         clone.setAttribute('data-id', String(targetId));
         try { clone.innerHTML = parsedCard.innerHTML; } catch (e) {}
@@ -102,7 +112,7 @@ async function loadSingleIdeaCard(targetId) {
         // Versteckt einfügen, dann einblenden für flüssige Animation
         try { clone.style.visibility = 'hidden'; } catch (e) {}
 
-        const firstCard = ideasGrid.querySelector('.idea-card');
+        const firstCard = asHTMLElement(ideasGrid.querySelector('.idea-card'));
         if (firstCard) ideasGrid.insertBefore(clone, firstCard);
         else ideasGrid.appendChild(clone);
 
@@ -144,7 +154,7 @@ async function loadSingleIdeaCard(targetId) {
 
       // Nach DOM-Update: expandieren, Kommentare laden
       setTimeout(() => {
-        const card = document.querySelector(`.idea-card[data-id="${targetId}"]`);
+        const card = asHTMLElement(document.querySelector(`.idea-card[data-id="${targetId}"]`));
         if (card) {
           expandCard(card, targetId);
 
@@ -189,15 +199,15 @@ async function loadMoreChunk(btn) {
     const baseUrl = btn.getAttribute('data-url') || '/ideas/chunk';
 
     // Aktuelle Filter-Parameter mitschicken
-    const filterForm = document.getElementById('filterForm');
+      const filterForm = /** @type {HTMLFormElement | null} */ (document.getElementById('filterForm'));
     const params = new URLSearchParams();
     if (filterForm) {
       const fd = new FormData(filterForm);
       for (const [k, v] of fd.entries()) {
-        if (v) params.append(k, v);
+          if (v) params.append(k, String(v));
       }
     }
-    params.set('page', page);
+    params.set('page', String(page));
     params.set('partial_json', '1');
 
     const url = `${baseUrl}?${params.toString()}`;
@@ -220,7 +230,7 @@ async function loadMoreChunk(btn) {
       const temp = document.createElement('div');
       temp.innerHTML = data.html;
 
-      const newNodes = Array.from(temp.childNodes).filter(n => n.nodeType === 1);
+      const newNodes = Array.from(temp.childNodes).filter(n => n.nodeType === 1).map(n => /** @type {HTMLElement} */ (n));
       insertedCount = newNodes.length;
 
       newNodes.forEach(node => {
@@ -279,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const m = location.pathname.match(/\/ideas\/(\d+)/);
     if (m) {
       const id = m[1];
-      const card = document.querySelector(`#idea-${id}`) || document.querySelector(`.idea-card[data-id="${id}"]`);
+      const card = asHTMLElement(document.querySelector(`#idea-${id}`) || document.querySelector(`.idea-card[data-id="${id}"]`));
       if (card) {
         if (!card.classList.contains('expanded')) expandCard(card, id);
       } else {
@@ -310,7 +320,7 @@ document.addEventListener('htmx:historyCacheError', function (evt) {
 // Load-More-Button nach HTMX-Swap zurücksetzen (Suche/Filter)
 document.body.addEventListener('htmx:afterSwap', function(event) {
   try {
-    const target = event.detail?.target;
+    const target = /** @type {HTMLElement | null | undefined} */ (event.detail?.target);
     if (!target) return;
 
     if (target.id === 'ideas-content' || target.closest && target.closest('#ideas-content')) {

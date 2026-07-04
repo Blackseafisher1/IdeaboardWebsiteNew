@@ -19,7 +19,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "smoke-test": "node scripts/smoke_test.js",
-    "minify:js": "node scripts/minify-js.js",
+    "build": "node scripts/minify-js.js",
     "doc:gen": "jsdoc -c jsdoc.config.json"
   },
   "keywords": [],

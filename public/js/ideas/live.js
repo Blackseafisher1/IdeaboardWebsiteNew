@@ -10,6 +10,16 @@ const COMMENT_ACTIONS = ['comment_added', 'comment_reacted'];
 const CARD_REFRESH_ACTIONS = ['idea_edited', 'file_uploaded', 'file_deleted', 'tags_updated', 'status_changed'];
 const STATS_ONLY_ACTIONS = ['idea_liked', 'idea_disliked', 'idea_unliked', 'idea_undisliked'];
 
+/** @param {Element | null} value @returns {HTMLElement | null} */
+function asHTMLElement(value) {
+  return /** @type {HTMLElement | null} */ (value);
+}
+
+/** @param {Element | null} value @returns {HTMLInputElement | null} */
+function asHTMLInputElement(value) {
+  return /** @type {HTMLInputElement | null} */ (value);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   if (!document.querySelector('.ideas-page')) {
     return;
@@ -178,7 +188,7 @@ function handleSmartUpdate(payload = {}) {
  * @returns {void}
  */
 function handleIdeaDeletion(ideaId, currentlyExpandedCardId) {
-  const cardToRemove = document.querySelector(`.idea-card[data-id="${ideaId}"]`);
+  const cardToRemove = asHTMLElement(document.querySelector(`.idea-card[data-id="${ideaId}"]`));
   if (!cardToRemove) return;
 
   if (ideaId === currentlyExpandedCardId) {
@@ -224,7 +234,7 @@ async function fetchNewIdeaAndPrepend(ideaId) {
     const html = await response.text();
     const temp = document.createElement('div');
     temp.innerHTML = html;
-    const newCard = temp.querySelector('.idea-card');
+    const newCard = asHTMLElement(temp.querySelector('.idea-card'));
 
     if (newCard) {
       const newId = newCard.dataset.id || newCard.getAttribute('data-id');
@@ -235,7 +245,7 @@ async function fetchNewIdeaAndPrepend(ideaId) {
       }
 
       // Prüfen, ob die neue Idee zum aktuellen Suchfilter passt
-      const searchInput = document.querySelector('input[name="q"]');
+      const searchInput = asHTMLInputElement(document.querySelector('input[name="q"]'));
       const currentQuery = searchInput ? searchInput.value.toLowerCase() : "";
       const cardText = newCard.textContent.toLowerCase();
 
@@ -320,8 +330,8 @@ async function updateSingleCard(ideaId, keepExpanded = false) {
     const html = await response.text();
     const temp = document.createElement('div');
     temp.innerHTML = html;
-    const newCard = temp.querySelector('.idea-card');
-    const existingCard = document.querySelector(`.idea-card[data-id="${ideaId}"]`);
+    const newCard = asHTMLElement(temp.querySelector('.idea-card'));
+    const existingCard = asHTMLElement(document.querySelector(`.idea-card[data-id="${ideaId}"]`));
 
     if (!newCard || !existingCard) return;
 
@@ -336,7 +346,7 @@ async function updateSingleCard(ideaId, keepExpanded = false) {
     // Expandierten Zustand nach Refresh wiederherstellen
     if (keepExpanded && wasExpanded) {
       updatedCard.classList.add('expanded');
-      const expandedArea = updatedCard.querySelector('.idea-expanded');
+      const expandedArea = asHTMLElement(updatedCard.querySelector('.idea-expanded'));
       if (expandedArea) expandedArea.hidden = false;
 
       const expandBtn = updatedCard.querySelector('.expand-card');
@@ -375,7 +385,7 @@ function refreshAllCards() {
   } else {
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.set('page', urlParams.get('page') || '1');
-    urlParams.set('refresh', Date.now());
+    urlParams.set('refresh', String(Date.now()));
     window.location.href = `/ideas?${urlParams.toString()}`;
   }
 
@@ -419,7 +429,7 @@ async function updateNonExpandedCards() {
     const temp = document.createElement('div');
     temp.innerHTML = html;
 
-    const newCards = Array.from(temp.querySelectorAll('.idea-card'));
+    const newCards = /** @type {HTMLElement[]} */ (Array.from(temp.querySelectorAll('.idea-card')));
     
     let updatedCount = 0;
 
@@ -494,17 +504,19 @@ window.localActionCooldowns = new Set();
 
 // Sofort zur Cooldown-Liste hinzufügen, sobald eine Anfrage startet (SSE-Race-Conditions vermeiden)
 document.addEventListener('htmx:beforeRequest', function (event) {
-  if (!event.detail || !event.detail.elt) return;
-  const card = event.detail.elt.closest('.idea-card');
+  const htmxEvent = /** @type {HtmxRequestEvent} */ (event);
+  if (!htmxEvent.detail || !htmxEvent.detail.elt) return;
+  const card = asHTMLElement(htmxEvent.detail.elt.closest('.idea-card'));
   if (card && card.dataset.id) {
     window.localActionCooldowns.add(String(card.dataset.id));
   }
 });
 
 document.addEventListener('htmx:afterRequest', function (event) {
-  if (!event.detail || !event.detail.elt) return;
+  const htmxEvent = /** @type {HtmxRequestEvent} */ (event);
+  if (!htmxEvent.detail || !htmxEvent.detail.elt) return;
   
-  const card = event.detail.elt.closest('.idea-card');
+  const card = asHTMLElement(htmxEvent.detail.elt.closest('.idea-card'));
   if (card && card.dataset.id) {
     
     const ideaId = String(card.dataset.id);
@@ -513,9 +525,9 @@ document.addEventListener('htmx:afterRequest', function (event) {
 
     setTimeout(() => window.localActionCooldowns.delete(ideaId), 100);
 
-    if (!event.detail.successful) return;
+    if (!htmxEvent.detail.successful) return;
 
-    const config = event.detail.requestConfig;
+    const config = htmxEvent.detail.requestConfig;
     const path = config ? (config.path || "") : "";
     const verb = config ? (config.verb || "").toLowerCase() : "";
 

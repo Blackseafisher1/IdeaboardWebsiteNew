@@ -202,7 +202,7 @@ document.addEventListener('click', (e) => {
         
         const progressFill = projectCard.querySelector('.progress-fill');
         const progress = progressFill ? progressFill.dataset.progress : 0;
-        document.getElementById('edit-project-progress').value = progress;
+        document.getElementById('edit-project-progress').value = String(progress);
 
         const editContactSearch = document.getElementById('editContactSearch');
         const editContactHidden = document.getElementById('editContactPersonId');
