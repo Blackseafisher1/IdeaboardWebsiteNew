@@ -306,16 +306,11 @@
   }
 }
 
-/* ==========================================================================
- 3. Idee CARD BASE
- ========================================================================== */
-/* Nur Layout fuer Idee cards; Darstellung verschoben zu public/css/style.css */
 .idea-card {
   grid-column: span 4;
   position: relative;
   display: flex;
   flex-direction: column;
-
 }
 
 .fresh-card {
@@ -854,52 +849,19 @@ dialog::backdrop {
   transition: backdrop-filter 0.3s ease;
 }
 
-/* Bearbeiten-Modal (benutzerdefiniertes Div) */
-#idea-edit-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: light-dark(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.75));
-  z-index: 10000010;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.2s ease;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-#idea-edit-modal>div {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text);
+/* Bearbeiten-Modal (Dialog-Element) */
+dialog#idea-edit-modal {
   padding: 2.5rem;
   border-radius: 16px;
   max-width: 720px;
   width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  animation: slideIn 0.3s ease;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-}
-
-.site-blur-toggle:checked ~ main #idea-edit-modal>div,
-html:not(.no-blur):not(.blur-disabled) #idea-edit-modal>div {
+  max-height: 85vh;
   background: var(--surface);
-  backdrop-filter: none;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  border: 1px solid var(--border);
+  color: var(--text);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  animation: slideIn 0.3s ease;
 }
 
 @keyframes slideIn {
@@ -1025,8 +987,7 @@ html:not(.no-blur):not(.blur-disabled) #idea-edit-modal>div {
   transform: translateY(-2px);
 }
 
-/* Style nur der outer Schliessen Button (direct child) zu vermeiden Stil inneren Buttons */
-#idea-edit-modal > div > button[onclick*="closeIdeaEditModal"] {
+dialog#idea-edit-modal .close-btn {
   position: absolute;
   top: 15px;
   right: 15px;
@@ -1040,11 +1001,10 @@ html:not(.no-blur):not(.blur-disabled) #idea-edit-modal>div {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 10000011;
   transition: all 0.2s ease;
 }
 
-#idea-edit-modal > div > button[onclick*="closeIdeaEditModal"]:hover {
+dialog#idea-edit-modal .close-btn:hover {
   background: var(--accent);
   color: white;
   border-color: var(--accent);
@@ -1055,7 +1015,7 @@ html:not(.no-blur):not(.blur-disabled) #idea-edit-modal>div {
 @media (max-width: 768px) {
 
   dialog#createIdeaModal,
-  #idea-edit-modal>div {
+  dialog#idea-edit-modal {
     width: 95%;
     padding: 1.2rem;
     border-radius: 12px;

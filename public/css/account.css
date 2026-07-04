@@ -87,6 +87,33 @@
     }
 }
 
+.setting-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.setting-card label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+}
+
+.setting-card select {
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.9rem;
+    min-width: 80px;
+}
+
 .account-nav {
     display: flex;
     gap: 0.5rem;

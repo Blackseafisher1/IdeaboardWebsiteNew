@@ -159,7 +159,7 @@ function bindCreateAndDeleteHandlers() {
       if (removed) {
         document.querySelectorAll(`.idea-card[data-id="${ideaId}"]`).forEach(c => c.remove());
         const modal = document.getElementById('idea-edit-modal');
-        if (modal && modal.style.display === 'flex') {
+        if (modal && modal.open) {
           closeIdeaEditModal();
         }
       }
@@ -177,8 +177,7 @@ function bindCreateAndDeleteHandlers() {
 window.openIdeaModal = async function(ideaId) {
   const modal = document.getElementById('idea-edit-modal');
   const container = document.getElementById('idea-edit-modal-content');
-  modal.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
+  modal.showModal();
 
   try {
     container.innerHTML = '<p>Lade...</p>';
@@ -206,9 +205,8 @@ window.openIdeaModal = async function(ideaId) {
  */
 window.closeIdeaEditModal = function() {
   const modal = document.getElementById('idea-edit-modal');
-  modal.style.display = 'none';
+  modal.close();
   document.getElementById('idea-edit-modal-content').innerHTML = '';
-  document.body.style.overflow = '';
 };
 
 // Initialisierung nach DOM-Ready
@@ -225,23 +223,6 @@ document.addEventListener('DOMContentLoaded', function() {
       try { createIdeaModal.showModal(); } catch (_) { createIdeaModal.style.display = 'block'; }
       document.getElementById('new-title')?.focus();
     });
-  }
-});
-
-// Modal per ESC schließen
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    const modal = document.getElementById('idea-edit-modal');
-    if (modal.style.display === 'flex') {
-      closeIdeaEditModal();
-    }
-  }
-});
-
-// Modal bei Klick außerhalb schließen
-document.getElementById('idea-edit-modal')?.addEventListener('click', function(e) {
-  if (e.target === this) {
-    closeIdeaEditModal();
   }
 });
 

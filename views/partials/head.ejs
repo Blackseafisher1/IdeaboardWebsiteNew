@@ -8,8 +8,11 @@
 			}
 			document.documentElement.setAttribute('data-theme', theme);
 			document.documentElement.style.colorScheme = theme;
-			// Use the exact background colors from style.css to prevent flash
 			document.documentElement.style.backgroundColor = (theme === 'dark' ? '#1e1e1e' : '#f2f4f7');
+			var blur = localStorage.getItem('settings:blur');
+			if (blur === 'false') {
+				document.documentElement.dataset.blur = 'false';
+			}
 		} catch (e) { /* fail silently */ }
 	})();
 </script>

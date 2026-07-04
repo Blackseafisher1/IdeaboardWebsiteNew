@@ -56,6 +56,17 @@ function ensureCommentsLoaded(ideaId) {
   }
 }
 
+// Karten-pro-Reihe-Einstellung anwenden
+(function() {
+  try {
+    var cols = localStorage.getItem('settings:cardsPerRow');
+    if (cols) {
+      var grid = document.querySelector('.ideas-grid');
+      if (grid) grid.style.setProperty('--cards-per-row', cols);
+    }
+  } catch (e) {}
+})();
+
 /**
  * Bereitet neu eingefügte Karten für CSS-Transitionen vor.
  * @param {HTMLElement} card
