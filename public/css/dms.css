@@ -159,8 +159,6 @@ body.dm-chat footer {
 .conversation-item:focus {
   background-color: color-mix(in srgb, var(--text) 8%, transparent);
   color: var(--text);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   transform: translateY(-2px);
 }
 
@@ -194,10 +192,6 @@ body.dm-chat footer {
 .dms-search input[type="search"] {
   width: 100%;
   max-width: 720px;
-  background: color-mix(in srgb, var(--bg) 2%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
-  padding: 10px 14px;
-  border-radius: 14px;
 }
 
 /* Dynamische Nachrichten-Aktionen (Bearbeiten/Loeschen) */
@@ -258,15 +252,7 @@ body.dm-chat footer {
 
 .dms-search .search-box::placeholder,
 .dms-search input[type="search"]::placeholder {
-  color: color-mix(in srgb, var(--accent) 60%, transparent);
   background: none !important;
-}
-
-.dms-search .search-box:focus,
-.dms-search input[type="search"]:focus {
-  border: 2px solid var(--accent);
-  box-shadow: 0 18px 48px color-mix(in srgb, var(--accent) 30%, transparent), 0 0 22px color-mix(in srgb, var(--accent) 16%, transparent);
-  outline: none;
 }
 
 .dms-search .clear-btn {
@@ -487,7 +473,7 @@ body.dm-chat footer {
 
 /*Status Stil*/
 .status-online {
-  color: #10b981 !important;
+  color: var(--online-status) !important;
   border-color: rgba(16,185,129,0.22) !important;
   background: rgba(16,185,129,0.06);
   box-shadow: 0 10px 26px rgba(16,185,129,0.18), 0 0 28px rgba(16,185,129,0.28);
@@ -538,8 +524,6 @@ body.dm-chat footer {
   border-top: none !important;
   display: flex;
   align-items: center;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
 }
 
 .chat-input form {
@@ -551,25 +535,14 @@ body.dm-chat footer {
 /* Eingabe: stark Blur Effekt und dezent translucent Hintergrund */
 .chat-input input {
   flex: 1;
-  padding: clamp(3px, 1.5vw, 12px) clamp(6px, 1vw, 8px);
-  border-radius: 10px !important;
-  font-size: clamp(14px, 2vw, 20px);
-  outline: none;
-  background: light-dark(color-mix(in srgb, var(--text) 5%, transparent), color-mix(in srgb, var(--bg) 3%, transparent)) !important;
-  color: var(--text) !important;
-  border: 1px solid color-mix(in srgb, var(--accent) 12%, transparent) !important;
-  box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 8%, transparent) !important;
-  transition: box-shadow .22s, border-color .16s, transform .12s;
   corner-shape: squircle;
   -webkit-corner-shape: squircle;
 }
 
 .chat-input input::placeholder {
-  color: color-mix(in srgb, var(--text) 60%, transparent) !important;
   background: none !important;
 }
 
-/* klein preview bar angezeigt ueber der Eingabe wenn Dateien are attached */
 .chat-upload-preview {
   color: light-dark(#fff, #fff) !important;
   padding: 6px 12px;
@@ -625,13 +598,6 @@ body.dm-chat footer {
   background: color-mix(in srgb, var(--text) 8%, transparent) !important;
   border-color: color-mix(in srgb, var(--accent) 60%, transparent) !important;
   box-shadow: 0 10px 30px color-mix(in srgb, var(--accent) 12%, transparent) !important;
-}
-
-.chat-input input:focus,
-.chat-input input:focus-visible {
-  border: 2px solid var(--accent) !important;
-  box-shadow: 0 12px 36px color-mix(in srgb, var(--accent) 20%, transparent) !important;
-  outline: none !important;
 }
 
 .chat-input button:focus,
@@ -774,42 +740,7 @@ body.dm-search .dm-search-container {
 }
 
 /* 🧪 DMS Ueberschreibungen fuer den Blur-Umschalter */
-.site-blur-toggle:checked ~ main .chat-input input,
-html:not(.no-blur) .chat-input input,
-.site-blur-toggle:checked ~ main .chat-input button,
-html:not(.no-blur) .chat-input button {
-  backdrop-filter: blur(18px) !important;
-  -webkit-backdrop-filter: blur(18px) !important;
-  color: var(--text) !important;
-}
 
-.site-blur-toggle:checked ~ main .chat-header,
-html:not(.no-blur) .chat-header,
-.site-blur-toggle:checked ~ main #connectionStatus,
-html:not(.no-blur) #connectionStatus {
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-}
-
-.site-blur-toggle:checked ~ main .chat-container::before,
-html:not(.no-blur) .chat-container::before {
-  backdrop-filter: blur(3px) !important;
-  -webkit-backdrop-filter: blur(3px) !important;
-}
-
-.site-blur-toggle:checked ~ main .conversation-item::before,
-html:not(.no-blur) .conversation-item::before {
-  backdrop-filter: blur(4px) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
-}
-
-.site-blur-toggle:checked ~ main .dmsIndexHeader,
-html:not(.no-blur) .dmsIndexHeader,
-.site-blur-toggle:checked ~ main .dm-search-title,
-html:not(.no-blur) .dm-search-title {
-  backdrop-filter: blur(6px) !important;
-  -webkit-backdrop-filter: blur(6px) !important;
-}
 
 /* sicherstellen der Suche Container sitzt tightly unter der Header even wenn zoomed */
 body.dm-search .dm-search-container {
@@ -893,8 +824,6 @@ body.dm-search .dm-search-user-list-container {
   font-size: clamp(14.5px, 1.5vw, 16px);
   line-height: 1.35;
   position: relative;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
   transition: transform .2s ease;
   white-space: pre-wrap;
@@ -1021,7 +950,7 @@ body.dm-search .dm-search-user-list-container {
 }
 
 .message.sent .message-time:has(.read-status) .read-status {
-  color: #53bdeb;
+  color: var(--file-link);
 }
 
 .message-btn {
@@ -1036,8 +965,6 @@ body.dm-search .dm-search-user-list-container {
   font-size: clamp(12.5px, 2vw, 13px);
   font-weight: 600;
   border-radius: 10px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 2px 8px rgba(0, 0, 255, 0.12);
   transition: transform .18s, box-shadow .18s;
   margin: 2px 0;
@@ -1124,7 +1051,7 @@ body.dm-search .dm-search-user-list-container {
 
 /* Dateiname */
 .file-link {
-  color: #53bdeb;
+  color: var(--file-link);
   text-decoration: none;
   font-weight: 600;
   white-space: nowrap;
@@ -1177,7 +1104,7 @@ body.dm-search .dm-search-user-list-container {
 
 
 /* Chat-Bearbeiten-Modal und Kontextmenue */
-.chat-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(12px); z-index: 10000; display: flex; align-items: center; justify-content: center; }
+.chat-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.2); z-index: 10000; display: flex; align-items: center; justify-content: center; }
 .chat-modal-content { width: 90%; max-width: 500px; padding: 24px; background: var(--bg); border: 1px solid var(--card-border); box-shadow: 0 10px 40px rgba(0,0,0,0.3); border-radius: 16px; animation: modalPop 0.2s ease-out; }
 
 /* sicherstellen Chat Modal verwendet an opak surface Farbe (overrides global .card Glas-bg) */
@@ -1187,64 +1114,19 @@ body.dm-search .dm-search-user-list-container {
   border: 1px solid var(--card-border);
 
 }
-.chat-modal-overlay textarea{
-  background: var(--bg-secondary);
-}
-
 /* In Blur/Glas mode verwenden a groesstenteils-opak Glas surface so Modal is lesbar */
-.site-blur-toggle:checked ~ main .chat-modal-content.card,
-html:not(.no-blur):not(.blur-disabled) .chat-modal-content.card {
-  background: light-dark(rgba(255,255,255,0.6), rgba(30,30,30,0.6));
-  backdrop-filter: blur(var(--blur-amount, 20px));
-}
+/* sicherstellen inneren form controls bleiben opak/deckend so Inhalt is lesbar */
 
-/* sicherstellen inneren form controls bleiben opak/deckend so Inhalt is lesbar
- even wenn der Modal Container verwendet translucent Glas. */
-.chat-modal-content.card textarea,
-.chat-modal-content.card input,
-.chat-modal-content.card select,
-.chat-modal-content.card .input-field {
-  /* 80% opak surface so fields read well but still feel part of Glas Modal */
-  background: light-dark(rgba(255,255,255,0.8), rgba(30,30,30,0.8)) !important;
-  color: var(--text) !important;
-  border: 1px solid var(--border) !important;
-  box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 18%, transparent) !important;
-  transition: box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-  backdrop-filter: none !important;
-  padding: 12px !important;
-  border-radius: 8px !important;
-}
 
-.chat-modal-content.card .chat-modal-actions .btn {
-  background: var(--surface) !important;
-  color: var(--text) !important;
-  border: 1px solid var(--border) !important;
-  box-shadow: none !important;
-}
-
-.chat-modal-content.card textarea:focus,
-.chat-modal-content.card .input-field:focus,
-.chat-modal-content.card input:focus,
-.chat-modal-content.card select:focus {
-  outline: none;
-  border-color: var(--accent) !important;
-  box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent) !important;
-}
-
-/* In no-Blur mode behalten der Modal fully opak */
-html.no-blur .chat-modal-content.card,
-.site-blur-toggle:not(:checked) ~ main .chat-modal-content.card {
-  background: var(--surface) !important;
-}
 @keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .chat-modal-content h3 { margin-top: 0; margin-bottom: 20px; font-size: 1.25rem; }
-.chat-modal-content textarea { width: 100%; min-height: 120px; margin-bottom: 20px; resize: vertical; font-family: inherit; font-size: 1rem; padding: 12px; border-radius: 8px; background: var(--bg-secondary); color: var(--text); border: 1px solid var(--border); }
+.chat-modal-content textarea { width: 100%; min-height: 120px; margin-bottom: 20px; resize: vertical; }
 .chat-modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
 .chat-context-menu { min-width: 130px; padding: 4px 0; position: fixed; z-index: 10001; background: var(--bg); border: 1px solid var(--card-border); box-shadow: 0 5px 25px rgba(0,0,0,0.2); border-radius: 8px; overflow: hidden; min-width: 150px; animation: menuPop 0.15s ease-out; }
 @keyframes menuPop { from { transform: translateY(5px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 .chat-context-menu button { padding: 8px 12px; font-size: 0.85rem; display: block; width: 100%; padding: 12px 16px; text-align: left; background: none; border: none; font-size: 0.95rem; color: var(--text); cursor: pointer; transition: background 0.2s; }
 .chat-context-menu button:hover { background: var(--bg-secondary); }
-.chat-context-menu button#ctxDeleteBtn { color: #ff5252; border-top: 1px solid var(--border); }
+.chat-context-menu button#ctxDeleteBtn {   color: var(--delete); border-top: 1px solid var(--border); }
 
 /* Hover Effekt zu indicate interactability */
 .message.sent:not(.deleted) { cursor: pointer; transition: transform 0.1s ease; }
@@ -1255,7 +1137,7 @@ html.no-blur .chat-modal-content.card,
 .message.sent.long-press-active { animation: pulseHint 0.5s infinite; }
 
 .chat-context-menu button#ctxEditBtn:hover { background: rgba(52, 152, 219, 0.1); color: #3498db; }
-.chat-context-menu button#ctxDeleteBtn:hover { background: rgba(255, 82, 82, 0.1); color: #ff5252; }
+.chat-context-menu button#ctxDeleteBtn:hover { background: rgba(255, 82, 82, 0.1);   color: var(--delete); }
 
 /* Mobiles Dropdown fuer Gruppenmitglieder */
 .mobile-group-menu { position: relative; margin-left: auto; }

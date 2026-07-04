@@ -64,49 +64,10 @@
     </div>
   </section>
 
-  <section class="account-settings">
-    <h2>Einstellungen</h2>
-    <div class="settings-grid">
-      <div class="setting-card">
-        <label for="setting-blur">Glas-Effekte</label>
-        <select id="setting-blur">
-          <option value="true">An</option>
-          <option value="false">Aus</option>
-        </select>
-      </div>
-      <div class="setting-card">
-        <label for="setting-columns">Ideen-Karten pro Reihe</label>
-        <select id="setting-columns">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-        </select>
-      </div>
-    </div>
   </section>
 </main>
 
 <%- include('../partials/footer') %>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const blurEl = document.getElementById('setting-blur');
-  const colsEl = document.getElementById('setting-columns');
-  if (blurEl) {
-    blurEl.value = localStorage.getItem('settings:blur') ?? 'true';
-    blurEl.addEventListener('change', function() {
-      localStorage.setItem('settings:blur', this.value);
-      document.documentElement.dataset.blur = this.value;
-    });
-  }
-  if (colsEl) {
-    colsEl.value = localStorage.getItem('settings:cardsPerRow') ?? '3';
-    colsEl.addEventListener('change', function() {
-      localStorage.setItem('settings:cardsPerRow', this.value);
-    });
-  }
-});
-</script>
 </body>
 </html>
 

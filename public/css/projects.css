@@ -34,25 +34,20 @@
   min-width: 0;
 }
 
+.projects-filters .filter-controls {
+  gap: 0.5rem !important;
+}
+
 /* Filterabschnitt */
 .projects-filters {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  /* dezent Akzent-tinted transparent Hintergrund zu angleichen Hero */
-  border-radius: 12px;
-  border: 1px solid light-dark(color-mix(in srgb, var(--accent) 12%, transparent), color-mix(in srgb, var(--accent) 18%, transparent));
-  background: light-dark(transparent, color-mix(in srgb, var(--accent) 6%, transparent));
-  backdrop-filter: light-dark(none, blur(8px) saturate(110%));
-  -webkit-backdrop-filter: light-dark(none, blur(8px) saturate(110%));
-}
-
-.filter-buttons {
-  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  background: var(--bg);
 }
 
 .projects-count {
@@ -73,10 +68,6 @@
 }
 
 /* Verbesserungen an Projektkarten */
-:root {
-  --shimmer-color: light-dark(rgb(230, 126, 34), rgb(26, 188, 156));
-}
-
 .project-card {
   /* Nur Layout: behalten spacing und sizing local zu Projekte Seite */
   margin-bottom: 24px;
@@ -132,22 +123,7 @@
 
 
 
-/* Eingaben und selects */
-.projects-filters input {
-  flex: 1 1 50px; /* grow but don't shrink unter 50px */
-  width: 100%;
-  padding: 0.6rem 0.8rem;
 
-  border-radius: 8px;
-  border: 1px solid color-mix(in srgb, var(--text) 6%, transparent);
-  /* Transparente Eingabe mit staerkerem Blur fuer bessere Lesbarkeit */
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px) saturate(115%);
-  -webkit-backdrop-filter: blur(10px) saturate(115%);
-  color: var(--text);
-  font-size: 0.95rem;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
 
 /* Loeschen/Suche Button inside Filter */
 .projects-filters .btn {
@@ -205,8 +181,6 @@
   border-radius: 20px;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--text) 6%, transparent);
-  backdrop-filter: blur(6px) saturate(105%);
-  -webkit-backdrop-filter: blur(6px) saturate(105%);
   position: relative;
 }
 
@@ -223,8 +197,6 @@
   position: relative;
   /* staerkere inneren Tiefe und outer Akzent Glow */
   box-shadow: inset 0 0 22px color-mix(in srgb, black 8%, transparent), 0 6px 30px color-mix(in srgb, var(--accent) 45%, transparent);
-  backdrop-filter: blur(14px) saturate(130%);
-  -webkit-backdrop-filter: blur(14px) saturate(130%);
 }
 
 .progress-fill::after {
@@ -438,8 +410,6 @@ dialog[open]#editProjectModal {
 dialog#createProjectModal::backdrop,
 dialog#editProjectModal::backdrop { 
   background: color-mix(in srgb, black 65%, transparent);
-  backdrop-filter: none;
-  transition: backdrop-filter 0.3s ease;
 }
 
 /* Header in Projekt Modals */
@@ -468,27 +438,8 @@ dialog#editProjectModal::backdrop {
 #editProjectModal .input,
 #editProjectModal textarea,
 #editProjectModal select {
-  width: 100%;
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  transition: border-color 0.2s ease;
   width: 95%;
-}
-
-#createProjectModal .input:focus,
-#createProjectModal textarea:focus,
-#createProjectModal select:focus,
-#editProjectModal .input:focus,
-#editProjectModal textarea:focus,
-#editProjectModal select:focus {
-  border-color: var(--accent);
-  outline: none;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent);
+  margin-bottom: 1rem;
 }
 
 /* Form Row für nebeneinander liegende Felder */
@@ -648,12 +599,10 @@ dialog#editProjectModal::backdrop {
   background: color-mix(in srgb, var(--bg) 95%, white);
   overflow: hidden;
   color: var(--text);
-  backdrop-filter: blur(20px);
 }
 
 .team-modal::backdrop {
   background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
 }
 
 .team-modal-container {
@@ -713,14 +662,6 @@ dialog#editProjectModal::backdrop {
   display: grid;
   grid-template-columns: 1fr auto auto;
   gap: 10px;
-}
-
-.team-search-input, .role-select {
-  padding: 10px 12px;
-  background: color-mix(in srgb, var(--bg) 92%, var(--text));
-  border: 1px solid color-mix(in srgb, var(--text) 15%, transparent);
-  border-radius: 8px;
-  color: var(--text);
 }
 
 /* Vereinheitlichtes Dropdown */
@@ -814,7 +755,6 @@ dialog#editProjectModal::backdrop {
     top: 0;
     z-index: 10;
     background: color-mix(in srgb, var(--bg) 98%, transparent);
-    backdrop-filter: blur(10px);
   }
 
   .team-modal-body {
@@ -986,7 +926,6 @@ dialog#editProjectModal::backdrop {
 
 #teamModal::backdrop {
   background: light-dark(rgba(0,0,0,0.4), rgba(0,0,0,0.7));
-  backdrop-filter: blur(3px);
 }
 
 @keyframes modal-fade-in {
@@ -1070,19 +1009,6 @@ dialog#editProjectModal::backdrop {
 
 #userSearchInput {
   width: 100%;
-  padding: 12px 16px;
-  border-radius: 60px;
-  border: 1px solid var(--card-border);
-  background: var(--bg);
-  color: var(--text);
-  font-size: 1rem;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-#userSearchInput:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 /* Such-Dropdown */
@@ -1171,13 +1097,6 @@ dialog#editProjectModal::backdrop {
 
 /* Rolle-Auswahl und Hinzufügen-Button */
 #newMemberRole {
-  padding: 12px 16px;
-  border-radius: 60px;
-  border: 1px solid var(--card-border);
-  background: var(--bg);
-  color: var(--text);
-  font-size: 1rem;
-  outline: none;
   flex: 0 1 auto;
   min-width: 140px;
 }

@@ -49,30 +49,6 @@
 
 .manual-points-form input {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
-  background: var(--bg);
-  color: var(--text);
-}
-
-.manual-points-form input:focus-visible {
-  border-color: color-mix(in srgb, var(--accent) 90%, transparent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
-  outline: none;
-}
-
-/* Hilfsklasse nur fuer Screenreader (safe zu behalten local) */
-.sr-only {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
 }
 
 /* -----------------------------
@@ -99,13 +75,13 @@
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  min-width: 780px; /* haelt columns lesbar; Wrapper scrolls falls needed */
+  min-width: 780px;
   background: var(--bg);
   color: var(--text);
 }
 
 .admin-table thead th {
-  position: sticky; /* praktisch auf lange lists */
+  position: sticky;
   top: 0;
   z-index: 2;
   background: var(--bg);
@@ -119,7 +95,6 @@
   border-bottom: 2px solid var(--accent);
 }
 
-/* Rundet die Ecken des Tabellenkopfs innerhalb des Wrapper ab */
 .admin-table thead th:first-child { border-top-left-radius: 12px; }
 .admin-table thead th:last-child  { border-top-right-radius: 12px; }
 
@@ -129,12 +104,10 @@
   border-bottom: 1px solid var(--card-border);
 }
 
-/* dezent Streifenoptik */
 .admin-table tbody tr:nth-child(even) td {
   background: color-mix(in srgb, var(--text) 3%, transparent);
 }
 
-/* Hover-Stile nur anwenden, wenn Hover verfuegbar ist (Desktop/Laptop) */
 @media (hover: hover) and (pointer: fine) {
   .admin-table tbody tr:hover td {
     background: color-mix(in srgb, var(--accent) 14%, transparent);
@@ -161,18 +134,7 @@
 }
 
 .role-select {
-  padding: 9px 10px;
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
-  background: var(--bg);
-  color: var(--text);
   min-width: 180px;
-  outline: none;
-}
-
-.role-select:focus-visible {
-  border-color: color-mix(in srgb, var(--accent) 90%, transparent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 
 .action-button {
@@ -229,7 +191,6 @@
   color: var(--text);
 }
 
-/* optional: klein dot indicator */
 .role-tag::before {
   content: "";
   width: 8px;
@@ -251,7 +212,6 @@
   background: color-mix(in srgb, var(--text) 10%, transparent);
 }
 
-/* Empty Zustand */
 .no-users {
   text-align: center;
   padding: 18px 14px;
@@ -269,10 +229,9 @@
   }
 
   .admin-table {
-    min-width: 0; /* no forced horizontal Breite */
+    min-width: 0;
   }
 
-  /* Blendet den Kopfbereich visuell aus, laesst ihn aber im DOM */
   .admin-table thead {
     position: absolute;
     width: 1px;
@@ -284,7 +243,6 @@
     border: 0;
   }
 
-  /* Jede Zeile wird zu einer Karte */
   .admin-table tbody tr {
     display: block;
     margin: 12px;
@@ -295,7 +253,7 @@
   }
 
   .admin-table tbody tr:nth-child(even) td {
-    background: transparent; /* Karten wirken ohne Streifenoptik sauberer */
+    background: transparent;
   }
 
   .admin-table td {
@@ -321,7 +279,6 @@
     padding-top: 2px;
   }
 
-  /* Aktionszelle: ordnet Steuerelemente sauber untereinander an */
   .admin-actions {
     width: 100%;
     gap: 10px;
@@ -339,7 +296,7 @@
 
   .action-button {
     width: 100%;
-    padding: 12px 12px; /* thumb-freundlich */
+    padding: 12px 12px;
   }
 
   .admin-table-wrap {

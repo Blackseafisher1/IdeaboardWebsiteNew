@@ -42,7 +42,6 @@
     box-sizing: border-box;
 }
 
-/* Sicherstellen, dass Steuerelemente auch transformiert anklickbar bleiben */
 .auth-card, .auth-face, .auth-face * {
     pointer-events: auto;
 }
@@ -64,7 +63,6 @@
     opacity: 1 !important;
 }
 
-/* Sicherstellen, dass das Stacking beim Umdrehen der Karte korrekt bleibt */
 .auth-card.flipped .auth-face.auth-front { z-index: 1; }
 .auth-card.flipped .auth-face.auth-back  { z-index: 2; }
 
@@ -75,7 +73,6 @@
     color: var(--text);
 }
 
-/* Ausrichtung des Login-Titels */
 .auth-face.auth-front h2.auth-title-right {
     text-align: right;
     margin-right: 0.5rem;
@@ -89,17 +86,9 @@
 
 .auth-face .input {
     width: 100%;
-    padding: 0.8rem;
-    border-radius: 8px;
-    border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
-    background: color-mix(in srgb, var(--text) 3%, transparent);
-    color: var(--text);
-    box-sizing: border-box;
 }
 
 .auth-face .btn {
-    padding: 0.8rem;
-    font-weight: 600;
     margin-top: 0.5rem;
 }
 
@@ -129,9 +118,6 @@
     font-size: 0.85rem;
 }
 
-
-
-/* Mobiles Responsivs Verhalten */
 @media (max-width: 480px) {
     .auth-section { padding: 1rem; }
     .auth-card { min-height: 480px; }

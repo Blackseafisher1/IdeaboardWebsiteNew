@@ -14,7 +14,6 @@
   text-align: center;
 }
 
-/* Formular-Layout */
 #survey-form {
   background: var(--bg);
   border-radius: 12px;
@@ -26,14 +25,6 @@
   margin-bottom: 1.5rem;
 }
 
-.form-label {
-  display: block;
-  color: var(--text);
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
-}
-
 .input {
   width: 90%;
   margin: 5px;
@@ -43,7 +34,6 @@
 textarea.input {
   min-height: 80px;
   resize: vertical;
-  font-family: inherit;
 }
 
 .form-hint {
@@ -53,7 +43,6 @@ textarea.input {
   margin-top: 0.25rem;
 }
 
-/* Checkbox-Stil */
 .checkbox-label {
   display: flex;
   align-items: center;
@@ -68,7 +57,6 @@ textarea.input {
   accent-color: var(--accent);
 }
 
-/* Container fuer Fragen */
 #questions-container {
   margin: 2rem 0;
   border-top: 2px solid color-mix(in srgb, var(--text) 10%, transparent);
@@ -126,7 +114,6 @@ textarea.input {
   background: color-mix(in srgb, var(--danger) 20%, transparent);
 }
 
-/* Stil der Optionen */
 .options-container {
   margin: 1.5rem 0;
 }
@@ -186,7 +173,6 @@ textarea.input {
   width: 100%;
 }
 
-/* Responsivs Design */
 @media (max-width: 768px) {
   .create-survey-page {
     padding: 1rem;

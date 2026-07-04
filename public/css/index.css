@@ -1,6 +1,5 @@
 /* --- Hero Abschnitt --- */
 
-
 .body, html{
    overflow-x: hidden;
 }
@@ -8,41 +7,11 @@
 .hero {
   position: relative;
   width: 100%;
-  /* Begrenzt die Höhe Responsiv, aber groß genug für Video-Impact */
   height: clamp(450px, 80vh, 900px);
   overflow: hidden;
-  /* Wichtig: Hintergrundfarbe setzen, falls Video lädt */
   background-color: var(--bg); 
 }
 
-/* Fix fuer deckend Mode: sicherstellen video stays sichtbar und Loeschen auf landing Seite */
-html.no-blur .hero,
-html.no-blur .hero-overlay,
-html.no-blur .hero::after {
-  background-color: transparent !important;
-  background-image: none !important;
-}
-
-/* Overlay im deckenden Modus dezent reduzieren, damit Text lesbar bleibt, ohne das Video zu blockieren */
-html.no-blur .hero-overlay {
-  background: radial-gradient(
-    circle at center,
-    color-mix(in srgb, var(--bg) 0%, transparent) 20%,    
-    color-mix(in srgb, var(--bg) 40%, transparent) 100%  
-  ) !important;
-}
-
-/* verringert unten fade fuer deckend Mode */
-html.no-blur .hero::after {
-  height: 30vh !important;
-  background: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--bg) 0%, transparent) 0%,
-    var(--bg) 100%
-  ) !important;
-}
-
-/* Video im Hintergrund */
 .hero-video {
   position: absolute;
   top: 0; left: 0;
@@ -50,11 +19,9 @@ html.no-blur .hero::after {
   height: 100%;
   object-fit: cover;
   object-position: center;
-  z-index: 0; /* Basis-Level */
+  z-index: 0;
 }
 
-
-/* Overlay für Text & Abdunklung des Videos */
 .hero-overlay {
   position: absolute;
   top: 0; left: 0;
@@ -65,12 +32,9 @@ html.no-blur .hero::after {
   align-items: center;
   text-align: center;
   color: var(--text);
-  /* Responsiv vertical Padding und balanced horizontal Padding */
   padding: clamp(0.75rem, 4%, 2.5rem);
   padding-inline: clamp(1rem, 4%, 3rem);
-  z-index: 2; /* Über Video */
-
-  /* Kombinierter Verlauf: Vignette + generelle Abdunklung */
+  z-index: 2;
   background: 
     linear-gradient(
       to bottom,
@@ -87,7 +51,6 @@ html.no-blur .hero::after {
   pointer-events: none;
 }
 
-/* Interaktive Elemente im Overlay wieder aktivieren */
 .hero-overlay h1,
 .hero-overlay p,
 .hero-overlay .btn {
@@ -107,72 +70,52 @@ html.no-blur .hero::after {
   margin-bottom: 2rem;
 }
 
-/* sicherstellen Hero Overlay Inhalt is perfectly zentriert und never overflows
- - limit inneren Breite, zentrieren children, und erzwingen safe word-Umbruch */
 .hero-overlay > * {
   box-sizing: border-box;
   max-width: min(1100px, 95%);
   margin: 0 auto;
 }
 
-/* behalten Buttons kompakt instead of stretching full Breite */
 .hero-overlay .btn {
   display: inline-block;
   width: auto;
   max-width: 320px;
   white-space: nowrap;
-  margin: 0.5rem auto; /* behalten Buttons zentriert und balanced */
+  margin: 0.5rem auto;
 }
 
-/* --- DER WICHTIGE ÜBERGANG (FADE OUT) --- */
-
-/* 1. Der Haupt-Verlauf am Boden der Hero-Sektion */
-/* --- 1. DER EXTREME FADE --- */
 .hero::after {
   content: "";
   position: absolute;
-  bottom: -5px; /* Kleiner Überlapp nach unten, um "Ritzer" zu vermeiden */
+  bottom: -5px;
   left: 0;
   width: 100%;
-  
-  /* Deckt die unteren 75% des Videos ab = sehr weicher Verlauf */
   height: 75vh; 
-  
   background: linear-gradient(
     to bottom,
-    color-mix(in srgb, var(--bg) 0%, transparent) 0%,      /* Oben transparent */
-    color-mix(in srgb, var(--bg) 10%, transparent) 20%,   /* Langsamer Start */
-    color-mix(in srgb, var(--bg) 50%, transparent) 50%,   /* Mitte: Video noch sichtbar, aber dunkel */
-    color-mix(in srgb, var(--bg) 90%, transparent) 85%,   /* Unten: Fast komplett Farbe */
-    var(--bg) 100%                  /* Harter Abschluss in Hintergrundfarbe */
+    color-mix(in srgb, var(--bg) 0%, transparent) 0%,
+    color-mix(in srgb, var(--bg) 10%, transparent) 20%,
+    color-mix(in srgb, var(--bg) 50%, transparent) 50%,
+    color-mix(in srgb, var(--bg) 90%, transparent) 85%,
+    var(--bg) 100%
   );
-  
-  z-index: 1; /* Über dem Video */
+  z-index: 1;
   pointer-events: none;
 }
 
-
-/* --- Buttons --- */
-/* visuell Button Stile verschoben zu public/css/style.css (zentralisiert).
- Seite-spezifisch Layout/placement bleibt here wenn needed. */
-
-/* --- FEATURES Abschnitt --- */
 .features {
   position: relative;
-  max-width: 1200px; /* Begrenzte Breite für bessere Lesbarkeit */
-  margin: 0 auto;    /* Zentriert den Container */
-  margin-top: -2rem; /* Zieht die Sektion leicht in den Hero-Bereich rein */
-  padding: clamp(2rem, 8vh, 4rem) clamp(1.5rem, 4%, 4rem); /* dynamic vertical & balanced horizontal Padding */
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top: -2rem;
+  padding: clamp(2rem, 8vh, 4rem) clamp(1.5rem, 4%, 4rem);
   display: flex;
   flex-direction: column;
   gap: 6rem;
-  z-index: 0; /* Über dem Hero-Fade liegen */
+  z-index: 0;
 }
 
-/* optional: Ein Verlauf OBEN in der Features Sektion */
 .features::before {
-  /* full-bleed Hintergrund behind .features while keeping inneren Inhalt
- constrained by existing max-Breite rules (no Layout changes) */
   content: "";
   position: absolute;
   top: 0;
@@ -232,7 +175,6 @@ html.no-blur .hero::after {
   box-shadow: 0 10px 30px color-mix(in srgb, black 10%, var(--accent) 60%);
 }
 
-
 @media (max-width: 768px) {
   .features {
     margin-top: 0;
@@ -251,7 +193,6 @@ html.no-blur .hero::after {
   }
 }
 
-/* Extra safeguard fuer very schmalen Bildschirmen so Text never touches edges */
 @media (max-width: 420px) {
   .hero-overlay {
     padding-left: 1rem;
@@ -263,7 +204,6 @@ html.no-blur .hero::after {
   }
 }
 
-/* Extra tiny-Bildschirm tweaks fuer perfect centering und spacing */
 @media (max-width: 480px) {
   .hero-overlay {
     align-items: center;
@@ -300,7 +240,6 @@ html.no-blur .hero::after {
   }
 }
 
-/* Landing-Seite: Margin zwischen Features und Footer entfernen, Padding beibehalten */
 body.hero-under-header .features {
   margin-bottom: 0 !important;
 }
@@ -308,5 +247,5 @@ body.hero-under-header .features {
 body.hero-under-header footer,
 body.hero-under-header .site-footer {
   margin-top: 0 !important;
-  padding-top: 0.5rem; /* behalten einigen internal Padding so Footer Inhalt isn't cramped */
+  padding-top: 0.5rem;
 }

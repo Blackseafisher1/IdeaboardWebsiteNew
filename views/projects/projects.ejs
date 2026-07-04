@@ -37,10 +37,11 @@
   <div class="filter-controls" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
     <div class="search-wrapper" style="flex-grow: 1;">
       <div style="display: flex; gap: 8px;">
-         <input type="text" 
-           id="projectSearchInput"
-           name="search"  
-           placeholder="Suche Projekte..."
+          <input type="text" 
+            id="projectSearchInput"
+            name="search"  
+            class="input"
+            placeholder="Suche Projekte..."
            value="<%= currentSearch || '' %>"
            oninput="document.getElementById('currentPage').value='1'; htmx.trigger('#projectFilterForm', 'submit')">
         

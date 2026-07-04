@@ -104,7 +104,8 @@
         data-idea-id="<%= idea.idea_id %>">
     <textarea name="text" rows="3" class="input-comment"
               placeholder="Kommentar... (Max. 200 Zeichen)"
-              maxlength="200" required></textarea>
+              maxlength="200" required
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();this.closest('form').requestSubmit()}"></textarea>
     <button class="btn" type="submit">Kommentieren</button>
   </form>
 </div>

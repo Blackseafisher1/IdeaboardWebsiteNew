@@ -1,0 +1,109 @@
+:root {
+  --blur-header: 0px;
+  --blur-nav: 0px;
+  --blur-hero: 0px;
+  --blur-search: 0px;
+}
+
+html:not(.no-blur) {
+  --blur-header: 24px;
+  --blur-nav: 12px;
+  --blur-hero: 20px;
+  --blur-search: 12px;
+}
+
+html:not(.no-blur) {
+  --glass-bg: light-dark(color-mix(in srgb, black 8%, transparent), transparent);
+}
+
+.page-header {
+  backdrop-filter: blur(var(--blur-header)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--blur-header)) saturate(140%);
+}
+
+@media (max-width: 1024px) {
+  #main-nav {
+    backdrop-filter: blur(var(--blur-nav)) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(var(--blur-nav)) saturate(140%) !important;
+  }
+
+  .hamburger {
+    backdrop-filter: blur(8px) saturate(110%);
+    -webkit-backdrop-filter: blur(8px) saturate(110%);
+  }
+}
+
+html:not(.no-blur) .hero-box {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(var(--blur-hero)) !important;
+  -webkit-backdrop-filter: blur(var(--blur-hero)) !important;
+  border-color: color-mix(in srgb, var(--accent) 12%, transparent) !important;
+}
+
+html:not(.no-blur) .search-wrapper,
+html:not(.no-blur) .ideas-filters,
+html:not(.no-blur) .projects-filters,
+html:not(.no-blur) .filter-controls,
+html:not(.no-blur) .dms-search {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-search)) saturate(115%);
+  -webkit-backdrop-filter: blur(var(--blur-search)) saturate(115%);
+  border-radius: 12px;
+}
+
+html.no-blur .page-header {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  border-bottom: 1px solid var(--card-border) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.no-blur #main-nav {
+  background: var(--bg) !important;
+  background-color: var(--bg) !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: -2px 0 12px color-mix(in srgb, black 14%, transparent) !important;
+  border-left: 1px solid color-mix(in srgb, var(--text) 8%, transparent) !important;
+}
+
+html.no-blur .hamburger {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.no-blur .page-header *:not(.blur-toggle) {
+  color: var(--text) !important;
+}
+
+html.no-blur .page-header #main-nav a:hover::before {
+  background-color: color-mix(in srgb, var(--text) 8%, transparent) !important;
+}
+
+html.no-blur .blur-toggle {
+  background: var(--accent) !important;
+  color: var(--bg) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 4px 15px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+html.no-blur .search-wrapper,
+html.no-blur .ideas-filters,
+html.no-blur .projects-filters,
+html.no-blur .filter-controls,
+html.no-blur .dms-search {
+  background: var(--bg) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 0;
+}
+
+html.no-blur .hero-box {
+  background: var(--bg) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: color-mix(in srgb, var(--text) 6%, transparent) !important;
+}

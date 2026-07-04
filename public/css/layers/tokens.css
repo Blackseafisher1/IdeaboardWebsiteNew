@@ -1,0 +1,52 @@
+:root {
+  color-scheme: light dark;
+
+  --accent: light-dark(#1abc9c, #e67e22);
+  --accent-dark: light-dark(#15a78c, #c5651c);
+  --danger: light-dark(#d63031, #ff5c5c);
+  --error-red: light-dark(#d63031, #ff5c5c);
+
+  --bg: light-dark(#f2f4f7, #1e1e1e);
+  --text: light-dark(#000000, #ecf0f1);
+  --surface: light-dark(#ffffff, #1e1e1e);
+  --border: color-mix(in srgb, var(--text) 6%, transparent);
+  --muted: color-mix(in srgb, var(--text) 60%, transparent);
+
+  --header-height: 64px;
+
+  --glass-bg: light-dark(color-mix(in srgb, black 8%, transparent), transparent);
+  --text-shadow: light-dark(0 1px 0 color-mix(in srgb, var(--accent) 6%, transparent), none);
+  --card-border: var(--border);
+  --card-hover-border: var(--accent);
+
+  --cube-accent: light-dark(color-mix(in srgb, var(--accent) 12%, transparent), color-mix(in srgb, var(--accent) 3%, transparent));
+  --cube-text: light-dark(color-mix(in srgb, var(--text) 7%, transparent), color-mix(in srgb, var(--text) 2%, transparent));
+
+  --blur-header: 0px;
+  --blur-nav: 0px;
+
+  --footer-bg: #2c3e50;
+  --footer-text: #ecf0f1;
+  --footer-bottom-bg: #243342;
+  --footer-bottom-text: #7f8c8d;
+  --footer-border: #34495e;
+  --account-link-bg: #4CAF50;
+  --account-link-hover: #45a049;
+  --stats-error: #ef4444;
+  --placeholder-gray: #6b7280;
+  --positive-delta: #166534;
+  --negative-delta: #991b1b;
+  --positive-bg: #1f9d55;
+  --negative-bg: #dc2626;
+  --progress-green: #2ecc71;
+  --progress-green-dark: #27ae60;
+  --role-designer: #3498db;
+  --role-manager: #9b59b6;
+  --role-tester: #e67e22;
+  --file-link: #53bdeb;
+  --bar-fill: #2980b9;
+  --no-data-color: #e74c3c;
+  --online-status: #10b981;
+  --delete: #ff5252;
+  --shimmer-color: light-dark(rgb(230, 126, 34), rgb(26, 188, 156));
+}

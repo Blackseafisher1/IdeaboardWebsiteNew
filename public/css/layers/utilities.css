@@ -1,0 +1,77 @@
+/* --- Skeleton / Loading --- */
+.skeleton-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.card.skeleton,
+.project-card.skeleton,
+.survey-card.skeleton,
+.idea-card.skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.card.skeleton > *,
+.project-card.skeleton > *,
+.survey-card.skeleton > *,
+.idea-card.skeleton > * {
+  color: transparent !important;
+}
+
+.card.skeleton::after,
+.project-card.skeleton::after,
+.survey-card.skeleton::after,
+.idea-card.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--text) 4%, transparent) 0%, color-mix(in srgb, var(--text) 6%, transparent) 50%, color-mix(in srgb, var(--text) 4%, transparent) 100%);
+  transform: translateX(-100%);
+  animation: skeleton-shimmer 1.2s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes skeleton-shimmer {
+  to { transform: translateX(100%); }
+}
+
+/* --- Screen Reader Only --- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Muted Text --- */
+.muted {
+  color: color-mix(in srgb, var(--text) 60%, transparent);
+}
+
+/* --- Min-width fix for flex children --- */
+.search-wrapper,
+.projects-filters,
+.project-card,
+.hero-box,
+.hero-box * {
+  min-width: 0 !important;
+}
+
+/* --- Performance: content-visibility --- */
+.project-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 500px;
+}
+
+/* --- Tiny button modifier --- */
+.btn.tiny {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
