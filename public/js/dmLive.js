@@ -40,9 +40,11 @@
   };
 
   /**
+   * @deprecated wird nicht genutzt
    * Fügt HTML-Nachrichten in den Container ein.
    * @param {string} html - HTML-Markup mit Nachrichten.
    * @returns {void}
+   * 
    */
   const appendMessages = (html) => {
     if (!html) return;
@@ -69,7 +71,7 @@
       if (insertBefore) container.insertBefore(node, insertBefore);
       else container.appendChild(node);
     };
-
+     
     const stickToBottom = window.isNearBottom ? window.isNearBottom(container) : true;
     
     // Hänge neue Nachrichtknoten an oder aktualisiere bestehende

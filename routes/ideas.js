@@ -55,7 +55,7 @@ router.use(htmxDetector.middleware);
 
 // Kommentare und Reaktionen als verschachtelte Routen
 router.use('/:id/comments', require('./comments'));
-router.use('/eigen', require('./comments-likes'));
+router.use('/comment-likes', require('./comments-likes'));
 
 /**
  * GET /ideas

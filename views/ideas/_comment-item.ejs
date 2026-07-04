@@ -19,7 +19,7 @@
         </button>
         <div class="emoji-popover" data-comment-id="<%= comment.comment_id %>">
          <form class="emoji-popover-form"
-                hx-post="/ideas/eigen/<%= comment.comment_id %>/react?idea_id=<%= comment.idea_id %>"
+                hx-post="/ideas/comment-likes/<%= comment.comment_id %>/react?idea_id=<%= comment.idea_id %>"
                 hx-target="#comment-<%= comment.comment_id %>"
                 hx-swap="outerHTML">
             <% ['❤️','😂','😮','😢','😡','🎉','🙏','👀','🤔'].forEach(function(em){ %>
@@ -30,7 +30,7 @@
       </div>
 
       <a
-  hx-post="/ideas/eigen/<%= comment.comment_id %>/like?idea_id=<%= comment.idea_id %>"
+  hx-post="/ideas/comment-likes/<%= comment.comment_id %>/like?idea_id=<%= comment.idea_id %>"
   hx-trigger="click"
   hx-target="#comment-<%= comment.comment_id %>"
   hx-swap="outerHTML"
