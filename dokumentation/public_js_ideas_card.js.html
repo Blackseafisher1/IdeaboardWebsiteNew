@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: public/js/ideas/card.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: public/js/ideas/card.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Globaler Zustand: ID der aktuell expandierten Karte (null = keine).
+ * @type {string|null}
+ */
+window.currentlyExpandedCardId = null;
+
+/**
+ * Bindet globale Karten-Handler: Expand-Buttons und Beschreibungs-Doppelklick.
+ * @returns {void}
+ */
+function setupCardHandlers() {
+  // Einfachklick auf Erweitern-Button
+  document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.expand-card');
+    if (!btn) return;
+    const card = btn.closest('.idea-card');
+    const ideaId = card.dataset.id;
+
+    const isExpanded = card.classList.contains('expanded');
+
+    if (!isExpanded) {
+      // Andere offene Karten schließen, dann diese öffnen
+   document.querySelectorAll('.idea-card.expanded').forEach(c => {
+        if (c.dataset.id !== ideaId) collapseCard(c);
+      });
+      expandCard(card, ideaId);
+    } else {
+      collapseCard(card, ideaId);
+    }
+  });
+
+  // Zeichenbasierte Beschreibungskürzung
+  const TRUNCATE_CHARS = 140;
+
+  /** @param {HTMLElement} desc */
+  function _getContentEl(desc) {
+    return desc.querySelector('.idea-desc-text') || desc;
+  }
+
+  /** Klappt eine Beschreibung auf die ersten N Zeichen ein. */
+  function collapseDesc(desc) {
+    const el = _getContentEl(desc);
+    if (!desc.dataset.fullHtml) desc.dataset.fullHtml = el.innerHTML;
+    const fullText = el.textContent || '';
+    if (fullText.length &lt;= TRUNCATE_CHARS) {
+      desc.dataset.truncated = 'false';
+      desc.classList.remove('desc-expanded');
+      desc.setAttribute('aria-expanded', 'false');
+      return;
+    }
+    const truncated = fullText.trim().slice(0, TRUNCATE_CHARS).replace(/\s+$/, '') + '\u2026';
+    el.textContent = truncated;
+    desc.dataset.truncated = 'true';
+    desc.classList.remove('desc-expanded');
+    desc.setAttribute('aria-expanded', 'false');
+  }
+
+  /** Zeigt die vollständige Beschreibung an. */
+  function expandDesc(desc) {
+    const el = _getContentEl(desc);
+    if (desc.dataset.fullHtml) el.innerHTML = desc.dataset.fullHtml;
+    desc.dataset.truncated = 'false';
+    desc.classList.add('desc-expanded');
+    desc.setAttribute('aria-expanded', 'true');
+  }
+
+  // Alle Beschreibungen initial einklappen
+  document.querySelectorAll('.idea-desc').forEach(d => collapseDesc(d));
+
+  // Doppelklick auf Beschreibung zum Expandieren/Einklappen
+  document.addEventListener('dblclick', function (e) {
+    if (e.target.closest('.expand-card') || e.target.closest('.idea-actions')) return;
+    const desc = e.target.closest('.idea-desc') || (e.target.closest('.idea-desc-text') &amp;&amp; e.target.closest('.idea-desc-text').closest('.idea-desc'));
+    if (!desc) return;
+    e.stopPropagation();
+    if (desc.classList.contains('desc-expanded')) collapseDesc(desc);
+    else expandDesc(desc);
+  });
+}
+
+/**
+ * Öffnet eine Idea-Karte (expandieren, Hash setzen, ggf. scrollen).
+ * @param {HTMLElement} card
+ * @param {string|number} ideaId
+ * @returns {void}
+ */
+function expandCard(card, ideaId) {
+  card.classList.add('expanded');
+  card.querySelector('.expand-card').setAttribute('aria-expanded', 'true');
+  window.currentlyExpandedCardId = ideaId;
+
+  history.replaceState(null, null, `#idea-${ideaId}`);
+
+  // Sanftes Scrollen nur wenn Karte nicht voll sichtbar
+  setTimeout(() => {
+    try {
+      const rect = card.getBoundingClientRect();
+      const margin = 12;
+      if (rect.top &lt; margin || rect.bottom > (window.innerHeight - margin)) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    } catch (e) {}
+  }, 60);
+}
+
+/**
+ * Schließt eine Idea-Karte und entfernt Hash/Auswahl.
+ * @param {HTMLElement} card
+ * @param {string|number|null} [ideaId]
+ * @returns {void}
+ */
+function collapseCard(card, ideaId = null) {
+  if (!ideaId) ideaId = card.dataset.id;
+  card.classList.remove('expanded');
+  card.querySelector('.expand-card').setAttribute('aria-expanded', 'false');
+  if (window.currentlyExpandedCardId === ideaId) {
+    window.currentlyExpandedCardId = null;
+    history.replaceState(null, null, ' ');
+  }
+}
+
+// Initialisierung nach DOM-Ready
+document.addEventListener('DOMContentLoaded', function() {
+  if (!document.querySelector('.ideas-page')) return;
+  setupCardHandlers();
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_cacheHelper.html">lib/cacheHelper</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li><li><a href="public_js_ideas_live.module_js.html">public/js/ideas/live.js</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bindCreateAndDeleteHandlers">bindCreateAndDeleteHandlers</a></li><li><a href="global.html#checkDeepLink">checkDeepLink</a></li><li><a href="global.html#collapseCard">collapseCard</a></li><li><a href="global.html#ensureCommentsLoaded">ensureCommentsLoaded</a></li><li><a href="global.html#ensureSingleCard">ensureSingleCard</a></li><li><a href="global.html#escapeHtml">escapeHtml</a></li><li><a href="global.html#expandCard">expandCard</a></li><li><a href="global.html#expandCardFromHash">expandCardFromHash</a></li><li><a href="global.html#getIdeaIdFromHash">getIdeaIdFromHash</a></li><li><a href="global.html#initCommentReactionPopovers">initCommentReactionPopovers</a></li><li><a href="global.html#isSubmittingIdea">isSubmittingIdea</a></li><li><a href="global.html#loadMoreChunk">loadMoreChunk</a></li><li><a href="global.html#loadSingleIdeaCard">loadSingleIdeaCard</a></li><li><a href="global.html#reactionHandlersBound">reactionHandlersBound</a></li><li><a href="global.html#setupCardHandlers">setupCardHandlers</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat Jul 04 2026 16:28:00 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

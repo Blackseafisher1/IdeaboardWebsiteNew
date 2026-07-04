@@ -12,6 +12,7 @@ const adminService = require('../lib/services/adminService');
 const authService = require('../lib/services/authService');
 const { errorHtml } = require('../lib/http');
 const { isLoggedIn, isAdmin } = require('./middleware');
+const { isAdmin: hasAdminRole } = require('../lib/roleHelpers');
 
 const hashService = authService.hashService;
 

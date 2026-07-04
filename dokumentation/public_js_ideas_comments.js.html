@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: public/js/ideas/comments.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: public/js/ideas/comments.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Verhindert mehrfaches Binden der Popover-Handler.
+ * @type {boolean}
+ */
+let reactionHandlersBound = false;
+
+/**
+ * Initialisiert Popover-Logik für Kommentar-Reaktionen (Portal, Positionierung).
+ * @returns {void}
+ */
+function initCommentReactionPopovers() {
+  if (reactionHandlersBound) return;
+  reactionHandlersBound = true;
+
+  const PORTAL_ATTR = 'data-portal-parent';
+
+  /**
+   * Schließt alle offenen Emoji-Popover.
+   * @returns {void}
+   */
+  const closeAllPopovers = () => {
+    document.querySelectorAll('.emoji-popover.open').forEach(p => {
+      p.classList.remove('open');
+
+      // Zurück zum ursprünglichen Elternelement verschieben
+      const parentSelector = p.getAttribute(PORTAL_ATTR);
+      if (parentSelector) {
+        const originalParent = document.querySelector(parentSelector);
+        if (originalParent) originalParent.appendChild(p);
+        p.removeAttribute(PORTAL_ATTR);
+      }
+
+      p.style.position = '';
+      p.style.top = '';
+      p.style.left = '';
+      p.style.right = '';
+    });
+
+    document
+      .querySelectorAll('.comment-reaction-btn[aria-expanded="true"]')
+      .forEach(btn => btn.setAttribute('aria-expanded', 'false'));
+  };
+
+  // Klick auf Reaktions-Button → Popover öffnen
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.comment-reaction-btn');
+
+    if (!btn) {
+      if (!e.target.closest('.emoji-popover')) closeAllPopovers();
+      return;
+    }
+
+    e.preventDefault();
+
+    const commentId = btn.dataset.commentId;
+    const popover = document.querySelector(`.emoji-popover[data-comment-id="${commentId}"]`);
+    if (!popover) return;
+
+    const wasOpen = popover.classList.contains('open');
+    closeAllPopovers();
+    if (wasOpen) return;
+
+    // Popover nach &lt;body> portieren (umgeht transformierte Vorfahren)
+    const originalParent = popover.parentElement;
+    if (originalParent) {
+      if (!originalParent.id) originalParent.id = `emoji-popover-host-${commentId}`;
+      popover.setAttribute(PORTAL_ATTR, `#${originalParent.id}`);
+      document.body.appendChild(popover);
+popover.classList.remove('open');
+void popover.offsetWidth;
+popover.classList.add('open');
+
+    }
+
+    popover.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+
+    // Viewport-relative Positionierung
+    try {
+      const btnRect = btn.getBoundingClientRect();
+      const popRect = popover.getBoundingClientRect();
+
+      const GAP = 10;
+      let top = Math.round(btnRect.top);
+      let left = Math.round(btnRect.left - popRect.width - GAP);
+
+      left = Math.max(8, left);
+      top = Math.max(8, top);
+      if (top + popRect.height > window.innerHeight - 8) {
+        top = Math.max(8, window.innerHeight - popRect.height - 8);
+      }
+
+      popover.style.position = 'fixed';
+      popover.style.top = `${top}px`;
+      popover.style.left = `${left}px`;
+      popover.style.right = 'auto';
+    } catch (_) {}
+  });
+
+  // ESC schließt Popover
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeAllPopovers();
+  });
+
+  // HTMX-Requests schließen Popover
+  document.body.addEventListener('htmx:beforeRequest', function (evt) {
+    if (evt.detail?.elt?.closest('.emoji-popover')) closeAllPopovers();
+  });
+
+  document.body.addEventListener('htmx:afterSwap', function () {
+    closeAllPopovers();
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (!document.querySelector('.ideas-page')) return;
+  initCommentReactionPopovers();
+});
+
+// Kommentar-Formular nach HTMX-Swap zurücksetzen
+document.addEventListener('htmx:afterSwap', function(event) {
+  const elt = event.detail?.elt;
+  if (elt &amp;&amp; elt.classList.contains('comment-form')) {
+    const ideaId = elt.getAttribute('data-idea-id');
+    const list = ideaId ? document.getElementById(`comment-list-${ideaId}`) : null;
+    if (list) list.scrollTop = 0;
+    const textarea = elt.querySelector('textarea');
+    if (textarea) textarea.value = '';
+  }
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_cacheHelper.html">lib/cacheHelper</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li><li><a href="public_js_ideas_live.module_js.html">public/js/ideas/live.js</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bindCreateAndDeleteHandlers">bindCreateAndDeleteHandlers</a></li><li><a href="global.html#checkDeepLink">checkDeepLink</a></li><li><a href="global.html#collapseCard">collapseCard</a></li><li><a href="global.html#ensureCommentsLoaded">ensureCommentsLoaded</a></li><li><a href="global.html#ensureSingleCard">ensureSingleCard</a></li><li><a href="global.html#escapeHtml">escapeHtml</a></li><li><a href="global.html#expandCard">expandCard</a></li><li><a href="global.html#expandCardFromHash">expandCardFromHash</a></li><li><a href="global.html#getIdeaIdFromHash">getIdeaIdFromHash</a></li><li><a href="global.html#initCommentReactionPopovers">initCommentReactionPopovers</a></li><li><a href="global.html#isSubmittingIdea">isSubmittingIdea</a></li><li><a href="global.html#loadMoreChunk">loadMoreChunk</a></li><li><a href="global.html#loadSingleIdeaCard">loadSingleIdeaCard</a></li><li><a href="global.html#reactionHandlersBound">reactionHandlersBound</a></li><li><a href="global.html#setupCardHandlers">setupCardHandlers</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat Jul 04 2026 16:28:00 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

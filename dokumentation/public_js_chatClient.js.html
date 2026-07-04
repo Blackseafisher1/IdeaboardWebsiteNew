@@ -36,6 +36,10 @@
  * @returns {HTMLElement|null}
  */
 
+// UI-Interaktionen verarbeiten
+// DOM-Zustand verwalten
+// Benutzereingaben behandeln
+// Daten aktualisieren und anzeigen
 function getMessagesContainer() {
     return document.getElementById('messagesContainer');
 }
@@ -120,7 +124,6 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
     }
 });
 
-// Prevent duplicate messages if SSE already added them
 /**
  * HTMX `beforeSwap`-Handler: verhindert, dass HTMX eine Nachricht einfügt, die bereits vorhanden ist.
  * @param {CustomEvent} event - HTMX-Ereignis mit `detail`-Metadaten.
@@ -155,13 +158,11 @@ document.body.addEventListener('htmx:afterRequest', (event) => {
     }
 });
 
-// Expose helpers for dmLive.js
 window.isNearBottom = isNearBottom;
 window.updateLastMessageId = updateLastMessageId;
 window.scrollToBottom = scrollToBottom;
 window.removeNoMessages = removeNoMessages;
 
-// --- Modal &amp; Context Menu Logic ---
 let currentEditingId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -169,17 +170,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const contextMenu = document.getElementById('chatContextMenu');
   const editField = document.getElementById('chatEditField');
   
-  // Close menu and modal on backdrop clicks
   window.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
     if (!contextMenu.contains(e.target)) contextMenu.style.display = 'none';
   });
 
-  // Save/Cancel buttons
   document.getElementById('cancelEditBtn').addEventListener('click', closeModal);
   document.getElementById('saveEditBtn').addEventListener('click', saveEdit);
 
-  // Context Menu Actions
   document.getElementById('ctxEditBtn').addEventListener('click', () => {
     contextMenu.style.display = 'none';
     if (currentEditingId) openEditModal(currentEditingId);
@@ -226,7 +224,6 @@ async function saveEdit() {
     return;
   }
 
-  // Optimistic update
   const originalHtml = contentEl.innerHTML;
   contentEl.textContent = newText;
   let marker = msgEl.querySelector('.edited-marker');
@@ -340,7 +337,6 @@ async function deleteMessage(messageId) {
     const msgEl = document.querySelector(`[data-message-id="${messageId}"]`);
     if (!msgEl) return;
 
-    // Optimistic update
     const originalContent = msgEl.innerHTML;
     msgEl.classList.add('deleted');
     msgEl.querySelector('.message-content').innerHTML = '&lt;i>Diese Nachricht wurde gelöscht.&lt;/i>';
@@ -371,7 +367,6 @@ async function deleteMessage(messageId) {
     }
 }
 
-// Image loading logic
 /**
  * Hydratiert Bilder: Ersetzt den Platzhalter durch das eigentliche Bild (data-src -> src).
  * @async
@@ -388,7 +383,6 @@ async function hydrateImages() {
     }
 }
 
-// Watch for new images
 
 const imageObserver = new MutationObserver(() => hydrateImages());
 
@@ -440,11 +434,9 @@ function initPaginationObserver() {
         observer.observe(target);
     };
 
-    // Watch for new content (prepended messages + new load-more button)
     const mut = new MutationObserver(setupObserver);
     mut.observe(container, { childList: true });
     
-    // Also re-run on HTMX swap just in case
     document.body.addEventListener('htmx:afterSwap', (evt) => {
         if (evt.detail.target.id === 'messagesContainer' || evt.detail.elt.classList.contains('load-more-container')) {
             setupObserver();
@@ -454,14 +446,11 @@ function initPaginationObserver() {
     setupObserver();
 }
 
-// Preserve scroll position when loading history (prepending content)
 document.body.addEventListener('htmx:beforeSwap', (event) => {
-    // Check if the swapped element is the load-more button
     const container = getMessagesContainer();
     const isHistoryLoad = event.detail.elt.classList.contains('load-more-container');
     
     if (isHistoryLoad &amp;&amp; container) {
-        // Save the current scroll position state
         event.detail.prevScrollHeight = container.scrollHeight;
         event.detail.prevScrollTop = container.scrollTop;
     }
@@ -472,7 +461,6 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
     const isHistoryLoad = event.detail.elt.classList.contains('load-more-container');
 
     if (isHistoryLoad &amp;&amp; container &amp;&amp; event.detail.prevScrollHeight) {
-        // Restore scroll position relative to the bottom content
         const newHeight = container.scrollHeight;
         const diff = newHeight - event.detail.prevScrollHeight;
         container.scrollTop = event.detail.prevScrollTop + diff;
@@ -482,7 +470,6 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
 window.openEditMessage = openEditMessage;
 window.deleteMessage = deleteMessage;
 
-// Render a structured message record into HTML (used when loading from IndexedDB)
 /**
  * Escaped HTML-Entities in einem String.
  * @param {string} str
@@ -523,7 +510,6 @@ function renderMessage(rec) {
             const src = escapeHtml(f.url || (`${fileBase}/${cleanConvId}/` + escapeHtml(f.filename) + '?inline=1'));
             const name = escapeHtml(f.originalName || f.filename || 'file');
             const size = escapeHtml(f.sizeKB || '');
-            // Use data-src to prevent browser from pre-loading before hydration
             contentHtml = `\n  &lt;div class="message-content file-row file-row-image">\n    &lt;img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${src}" alt="${name}" class="chat-image js-open-image-modal" data-full-src="${src}">\n    &lt;div class="file-text">\n      &lt;a href="${src}" class="file-link js-open-image-modal" data-full-src="${src}">${name}&lt;/a>\n      &lt;span class="file-size">(${size} KB)&lt;/span>\n    &lt;/div>\n  &lt;/div>`;
         } else {
             const href = escapeHtml(f.url || (`${fileBase}/${cleanConvId}/` + escapeHtml(f.filename)));
@@ -536,13 +522,11 @@ function renderMessage(rec) {
         contentHtml = `&lt;div class="message-content">${text}&lt;/div>`;
     }
 
-    // time and markers
     const timeText = rec.createdAt ? (new Date(rec.createdAt)).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '';
     const editedMarker = (rec.is_edited &amp;&amp; !rec.is_deleted) ? '&lt;span class="edited-marker">(bearbeitet)&lt;/span>' : '';
     const readStatus = (!isGroup &amp;&amp; rec.sent &amp;&amp; rec.is_read) ? '&lt;span class="read-status">Gelesen&lt;/span>' : (!isGroup &amp;&amp; rec.sent ? '&lt;span class="read-status">Gesendet&lt;/span>' : '');
     const senderHtml = (isGroup &amp;&amp; !rec.sent &amp;&amp; rec.senderName) ? `&lt;span class="message-sender" style="font-size: 0.7rem; opacity: 0.8; margin-left: 5px;">- ${escapeHtml(rec.senderName)}&lt;/span>` : '';
 
-    // actions only for sent, not deleted and not a file
     const actionsHtml = (rec.sent &amp;&amp; !rec.is_deleted &amp;&amp; rec.type !== 'file') ? `\n  &lt;div class="message-actions">\n    &lt;button class="edit-btn" onclick="openEditMessage('${msgId}')">Bearbeiten&lt;/button>\n    &lt;button class="delete-btn" onclick="deleteMessage('${msgId}')">Löschen&lt;/button>\n  &lt;/div>` : '';
 
     return `&lt;div class="message ${sentClass} ${deletedClass} ${groupClass}" data-message-id="${msgId}" data-conversation-id="${convId}">\n${contentHtml}\n  &lt;div class="message-time">\n    ${timeText} ${editedMarker} ${readStatus} ${senderHtml}\n  &lt;/div>${actionsHtml}\n&lt;/div>`;
@@ -581,13 +565,13 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_cacheHelper.html">lib/cacheHelper</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li><li><a href="public_js_ideas_live.module_js.html">public/js/ideas/live.js</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bindCreateAndDeleteHandlers">bindCreateAndDeleteHandlers</a></li><li><a href="global.html#checkDeepLink">checkDeepLink</a></li><li><a href="global.html#collapseCard">collapseCard</a></li><li><a href="global.html#ensureCommentsLoaded">ensureCommentsLoaded</a></li><li><a href="global.html#ensureSingleCard">ensureSingleCard</a></li><li><a href="global.html#escapeHtml">escapeHtml</a></li><li><a href="global.html#expandCard">expandCard</a></li><li><a href="global.html#expandCardFromHash">expandCardFromHash</a></li><li><a href="global.html#getIdeaIdFromHash">getIdeaIdFromHash</a></li><li><a href="global.html#initCommentReactionPopovers">initCommentReactionPopovers</a></li><li><a href="global.html#isSubmittingIdea">isSubmittingIdea</a></li><li><a href="global.html#loadMoreChunk">loadMoreChunk</a></li><li><a href="global.html#loadSingleIdeaCard">loadSingleIdeaCard</a></li><li><a href="global.html#reactionHandlersBound">reactionHandlersBound</a></li><li><a href="global.html#setupCardHandlers">setupCardHandlers</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat Jul 04 2026 16:28:00 GMT+0200 (Mitteleuropäische Sommerzeit)
 </footer>
 
 <script> prettyPrint(); </script>

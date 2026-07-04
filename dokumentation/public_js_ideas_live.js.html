@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: public/js/ideas/live.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: public/js/ideas/live.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Live-Update (SSE) Logik für die Ideen-Liste.
+ * @module public/js/ideas/live.js
+ */
+
+
+let isRefreshing = false;
+let currentVersion = Number(window.ideaLiveVersion || document.body?.dataset?.liveVersion || 0) || 0;
+const COMMENT_ACTIONS = ['comment_added', 'comment_reacted'];
+const CARD_REFRESH_ACTIONS = ['idea_edited', 'file_uploaded', 'file_deleted', 'tags_updated', 'status_changed'];
+const STATS_ONLY_ACTIONS = ['idea_liked', 'idea_disliked', 'idea_unliked', 'idea_undisliked'];
+
+document.addEventListener('DOMContentLoaded', function () {
+  if (!document.querySelector('.ideas-page')) {
+    return;
+  }
+
+  startSSE();
+});
+
+let eventSource = null;
+
+/**
+ * Startet die SSE-Verbindung für Ideen-Updates.
+ * @returns {void}
+ */
+function startSSE() {
+  stopAll();
+  console.log('Attempting SSE connection for Ideas...');
+  
+  const url = `/ideas/updates?since=${encodeURIComponent(currentVersion)}`;
+  eventSource = new EventSource(url);
+
+  // EventSource geöffnet: Verbindung wurde hergestellt
+  eventSource.onopen = () => {
+    console.log('SSE connection established for Ideas.');
+  };
+
+  // Nachricht empfangen: verarbeite Incoming-Payload (Version, Änderungen)
+  eventSource.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      if (typeof data.version === 'number') currentVersion = data.version;
+      // Jede Änderung individuell intelligent behandeln
+      (data.changes || []).forEach(change => handleSmartUpdate(change || {}));
+    } catch (e) {
+      // Heartbeat-Ereignisse oder fehlerhafte Nachrichten ignorieren
+    }
+  };
+
+  // Fehler-Handler: bei Fehlern Verbindung schließen und später neu verbinden
+  eventSource.onerror = (err) => {
+    console.warn('SSE error for Ideas, will retry shortly:', err);
+    stopAll();
+    setTimeout(startSSE, 5000); // Einfache Wiederverbindungslogik für SSE
+  };
+}
+
+/**
+ * Stoppt alle laufenden SSE-Verbindungen und räumt auf.
+ * @returns {void}
+ */
+function stopAll() {
+  if (eventSource) {
+    eventSource.close();
+    eventSource = null;
+  }
+}
+
+window.addEventListener('pagehide', stopAll);
+window.addEventListener('beforeunload', stopAll);
+// Sichtbarkeitswechsel: bei Verbergen Verbindungen schließen, beim Wieder-Anzeigen neu starten
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) stopAll();
+  else if (!eventSource) {
+    startSSE();
+  }
+});
+
+// ============================================
+// INTELLIGENTE AKTUALISIERUNGS-LOGIK (erweitert)
+// ============================================
+
+/**
+ * Intelligente Aktualisierungs-Logik: wertet SSE-Payloads aus und entscheidet, welche UI-Aktionen nötig sind.
+ * @param {Object} [payload={}]
+ * @returns {void}
+ */
+function handleSmartUpdate(payload = {}) {
+  if (isRefreshing) return;
+
+  const action = payload.action || payload.reason;
+  const idea_id = payload.idea_id;
+
+  if (!idea_id) return;
+
+  // SSE-Aktualisierungen für lokal ausgeführte Aktionen ignorieren, um Race-Conditions zu vermeiden
+  if (window.localActionCooldowns &amp;&amp; window.localActionCooldowns.has(String(idea_id))) {
+    console.log('SSE: Ignoring local action to prevent race condition:', action, idea_id);
+    return;
+  }
+
+  // Defensive Prüfung: Sicherstellen, dass die Idea-Karte im DOM vorhanden ist.
+  // Ausnahme: Bei `new_idea` wird die Karte geladen und eingefügt, auch wenn sie fehlt.
+  if (action !== 'new_idea' &amp;&amp; !document.querySelector(`.idea-card[data-id="${idea_id}"]`)) {
+    return;
+  }
+
+  const currentlyExpandedCardId = window.getCurrentlyExpandedCard
+    ? window.getCurrentlyExpandedCard()
+    : null;
+
+  const isExpandedCard =
+    currentlyExpandedCardId !== null &amp;&amp;
+    String(currentlyExpandedCardId) === String(idea_id);
+
+  if (action === 'idea_deleted') {
+    if (!idea_id) return;
+    handleIdeaDeletion(idea_id, currentlyExpandedCardId);
+    return;
+  }
+
+  if (action === 'new_idea') {
+    console.log('SSE: Received new_idea event for idea_id:', idea_id);
+    if (window.isLocalIdeaCreation) {
+      window.isLocalIdeaCreation = false;
+      return;
+    }
+    // Bevorzugt die exakte Idee per ID abrufen, um Rennen zu vermeiden, bei denen `/latest-card`
+    // eine andere (ältere/neue) Idee zurückliefern könnte, wenn Erstellungen zeitnah stattfinden.
+    if (idea_id) fetchNewIdeaAndPrepend(idea_id);
+    return;
+  }
+
+  // Comment-Aktionen:
+  // - Wenn Kommentarbereich offen: einzelnen Kommentar aktualisieren.
+  // - Immer: Stats refreshen, damit comment_count auch für zugeklappte Karten aktuell ist.
+  if (idea_id &amp;&amp; COMMENT_ACTIONS.includes(action)) {
+    if (payload &amp;&amp; payload.comment_id) {
+      updateSingleComment(idea_id, payload.comment_id, action === 'comment_added');
+    }
+
+    // Stats refreshen (comment_count / like_count / dislike_count etc.),
+    // da nicht-expandierte Karten kein #comment-list-... im DOM haben.
+    if (window.htmx) {
+      htmx.trigger(document.body, `idea_updated_${idea_id}`, payload);
+    }
+
+    return;
+  }
+
+  if (idea_id &amp;&amp; CARD_REFRESH_ACTIONS.includes(action)) {
+    updateSingleCard(idea_id, isExpandedCard);
+    return;
+  }
+
+  if (idea_id &amp;&amp; STATS_ONLY_ACTIONS.includes(action)) {
+    if (window.htmx) htmx.trigger(document.body, `idea_updated_${idea_id}`, payload);
+    return;
+  }
+
+  if (currentlyExpandedCardId) {
+    updateNonExpandedCards();
+  } else {
+    refreshAllCards();
+  }
+}
+
+
+// ============================================================================
+// Hilfsfunktionen für UI-Aktualisierungen
+// ============================================================================
+
+/**
+ * Entfernt eine Idee aus der UI (mit sanftem Fade-Out).
+ * @param {string|number} ideaId
+ * @param {string|number|null} currentlyExpandedCardId
+ * @returns {void}
+ */
+function handleIdeaDeletion(ideaId, currentlyExpandedCardId) {
+  const cardToRemove = document.querySelector(`.idea-card[data-id="${ideaId}"]`);
+  if (!cardToRemove) return;
+
+  if (ideaId === currentlyExpandedCardId) {
+    window.currentlyExpandedCardId = null;
+    if (window.location.hash === `#idea-${ideaId}`) {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }
+
+  // Sanft ausblenden vor dem Entfernen
+  cardToRemove.style.opacity = '0.5';
+  cardToRemove.style.transition = 'opacity 0.3s ease';
+
+  setTimeout(() => {
+    if (cardToRemove.parentElement) {
+      cardToRemove.parentElement.removeChild(cardToRemove);
+    }
+  }, 300);
+}
+/**
+ * Holt eine neue Idee per Fetch und fügt sie oben ein.
+ * @async
+ * @param {string|number} ideaId
+ * @returns {Promise&lt;void>}
+ */
+async function fetchNewIdeaAndPrepend(ideaId) {
+  if (isRefreshing) {
+    console.log('SSE: Already refreshing, skipping fetch/prepend for idea:', ideaId);
+    return;
+  }
+  // Doppelte Karten vermeiden, wenn lokale Erstellung und SSE gleichzeitig auslösen
+  if (document.querySelector(`.idea-card[data-id="${ideaId}"]`)) {
+    console.log('SSE: Idea card already exists, skipping prepend:', ideaId);
+    return;
+  }
+  isRefreshing = true;
+
+  try {
+    if (!ideaId) return;
+    const response = await fetch(`/ideas/${encodeURIComponent(ideaId)}/card?_=${Date.now()}`);
+    if (response.status === 404 || !response.ok) return;
+
+    const html = await response.text();
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+    const newCard = temp.querySelector('.idea-card');
+
+    if (newCard) {
+      const newId = newCard.dataset.id || newCard.getAttribute('data-id');
+      // Endprüfung, um Rennen mit der POST-Antwort oder anderen SSE-Ereignissen zu vermeiden
+      if (newId &amp;&amp; document.querySelector(`.idea-card[data-id="${newId}"]`)) {
+        console.log('SSE: Idea card appeared during fetch, skipping insert:', newId);
+        return;
+      }
+
+      // Prüfen, ob die neue Idee zum aktuellen Suchfilter passt
+      const searchInput = document.querySelector('input[name="q"]');
+      const currentQuery = searchInput ? searchInput.value.toLowerCase() : "";
+      const cardText = newCard.textContent.toLowerCase();
+
+      if (currentQuery &amp;&amp; !cardText.includes(currentQuery)) return;
+
+      const ideasGrid = document.querySelector('#ideas-content .ideas-grid');
+      if (!ideasGrid) return;
+
+      // Leeren-Zustand-Platzhalter entfernen, wenn die erste Idee per Live-Update eintrifft
+      const emptyState = ideasGrid.querySelector('.ideas-empty-state');
+      if (emptyState) emptyState.remove();
+
+      if (newId) {
+        // Ungewollte Duplikate durch schnelle SSE-Ereignisse verhindern
+        if (window.ensureSingleCard) window.ensureSingleCard(String(newId));
+
+        // Versteckt einfügen, kurz warten und dann anzeigen, damit CSS und Pseudo-Zustände greifen
+        newCard.style.visibility = 'hidden';
+        
+        const firstCard = ideasGrid.querySelector('.idea-card');
+        if (firstCard) ideasGrid.insertBefore(newCard, firstCard);
+        else ideasGrid.appendChild(newCard);
+
+        // HTMX-Verarbeitung aktivieren (für hx-*-Attribute)
+        try { if (window.htmx) window.htmx.process(newCard); } catch (e) {}
+
+
+        setTimeout(() => {
+          newCard.style.visibility = 'visible';
+
+          // Einblend-Animation: einblenden / verschieben
+          newCard.style.opacity = '0';
+          newCard.style.transform = 'translateY(-20px)';
+          newCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+
+
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            newCard.style.opacity = '1';
+            newCard.style.transform = 'translateY(0)';
+          }));
+
+          // Inline-Styles nach der Animation entfernen
+
+          setTimeout(() => {
+            newCard.style.opacity = '';
+            newCard.style.transform = '';
+            newCard.style.transition = '';
+          }, 600);
+        }, 50);
+
+      } else {
+          // Fallback: Falls `dataset.id` aus irgendeinem Grund fehlt
+        const firstCard = ideasGrid.querySelector('.idea-card');
+        if (firstCard) ideasGrid.insertBefore(newCard, firstCard);
+        else ideasGrid.appendChild(newCard);
+
+        try { if (window.htmx) window.htmx.process(newCard); } catch (e) {}
+      }
+    }
+    } catch (error) {
+    // Fehler beim Abrufen der neuen Karte
+  } finally {
+    isRefreshing = false;
+  }
+}
+
+/**
+ * Aktualisiert eine einzelne Idee (HTML-Karte ersetzen).
+ * @async
+ * @param {string|number} ideaId
+ * @param {boolean} [keepExpanded=false]
+ * @returns {Promise&lt;void>}
+ */
+async function updateSingleCard(ideaId, keepExpanded = false) {
+  if (isRefreshing) return;
+  isRefreshing = true;
+
+  try {
+    const response = await fetch(`/ideas/${ideaId}/card?_=${Date.now()}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const html = await response.text();
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+    const newCard = temp.querySelector('.idea-card');
+    const existingCard = document.querySelector(`.idea-card[data-id="${ideaId}"]`);
+
+    if (!newCard || !existingCard) return;
+
+    const wasExpanded = existingCard.classList.contains('expanded');
+    const scrollTop = wasExpanded ? document.documentElement.scrollTop : null;
+
+    existingCard.outerHTML = newCard.outerHTML;
+
+    const updatedCard = document.querySelector(`.idea-card[data-id="${ideaId}"]`);
+    if (!updatedCard) return;
+
+    // Expandierten Zustand nach Refresh wiederherstellen
+    if (keepExpanded &amp;&amp; wasExpanded) {
+      updatedCard.classList.add('expanded');
+      const expandedArea = updatedCard.querySelector('.idea-expanded');
+      if (expandedArea) expandedArea.hidden = false;
+
+      const expandBtn = updatedCard.querySelector('.expand-card');
+      if (expandBtn) expandBtn.setAttribute('aria-expanded', 'true');
+
+      window.currentlyExpandedCardId = ideaId;
+
+      if (scrollTop !== null) {
+
+        setTimeout(() => {
+          document.documentElement.scrollTop = scrollTop;
+        }, 50);
+      }
+    }
+
+    if (window.htmx) htmx.process(updatedCard);
+  } catch (error) {
+    // Fehler bei der Einzelkarten-Aktualisierung
+  } finally {
+
+    setTimeout(() => { isRefreshing = false; }, 100);
+  }
+}
+
+/**
+ * Löst ein komplettes Refresh der Karten aus (HTMX oder Page-Navigate).
+ * @returns {void}
+ */
+function refreshAllCards() {
+  if (isRefreshing) return;
+  isRefreshing = true;
+
+  const form = document.getElementById('filterForm');
+  if (form &amp;&amp; window.htmx) {
+    htmx.trigger(form, 'submit');
+  } else {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('page', urlParams.get('page') || '1');
+    urlParams.set('refresh', Date.now());
+    window.location.href = `/ideas?${urlParams.toString()}`;
+  }
+
+
+  setTimeout(() => { isRefreshing = false; }, 1000);
+}
+
+/**
+ * Aktualisiert alle nicht-expandierten Karten via Partial-Request.
+ * @async
+ * @returns {Promise&lt;void>}
+ */
+async function updateNonExpandedCards() {
+  if (isRefreshing) return;
+  isRefreshing = true;
+
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const page = urlParams.get('page') || '1';
+    const q = urlParams.get('q') || '';
+    const category_id = urlParams.get('category_id') || '';
+    const tags = urlParams.get('tags') || '';
+    const globalFlag = urlParams.get('global') || '';
+    const search_scope = urlParams.get('search_scope') || '';
+
+    const currentlyExpandedCardId = window.getCurrentlyExpandedCard ? window.getCurrentlyExpandedCard() : null;
+
+    const parts = [];
+    parts.push(`page=${page}`);
+    parts.push(`q=${encodeURIComponent(q)}`);
+    parts.push(`category_id=${category_id}`);
+    parts.push(`tags=${encodeURIComponent(tags)}`);
+    if (search_scope) parts.push(`search_scope=${encodeURIComponent(search_scope)}`);
+    if (globalFlag === 'on') parts.push(`global=on`);
+    parts.push(`_=${Date.now()}`);
+    const url = `/ideas/partial?${parts.join('&amp;')}`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const html = await response.text();
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+
+    const newCards = Array.from(temp.querySelectorAll('.idea-card'));
+    
+    let updatedCount = 0;
+
+
+    newCards.forEach(newCard => {
+      const ideaId = newCard.dataset.id;
+      if (!ideaId || ideaId === currentlyExpandedCardId) return;
+
+      const existingCard = document.querySelector(`.idea-card[data-id="${ideaId}"]`);
+      // Nur Karten aktualisieren, die gerade nicht vom Benutzer bearbeitet werden
+      if (existingCard &amp;&amp; !existingCard.classList.contains('expanded')) {
+        existingCard.outerHTML = newCard.outerHTML;
+        updatedCount++;
+      }
+    });
+
+    if (window.htmx) htmx.process(document.body);
+  
+  } catch (error) {
+    // Error during partial update
+  } finally {
+    isRefreshing = false;
+  }
+}
+
+/**
+ * Aktualisiert einen einzelnen Kommentar innerhalb einer Idee.
+ * @async
+ * @param {string|number} ideaId
+ * @param {string|number} commentId
+ * @param {boolean} [isNew=false]
+ * @returns {Promise&lt;void>}
+ */
+async function updateSingleComment(ideaId, commentId, isNew = false) {
+  const list = document.getElementById(`comment-list-${ideaId}`);
+  if (!list) return;
+
+  try {
+    const response = await fetch(`/ideas/${ideaId}/comments/${commentId}?_=${Date.now()}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const html = await response.text();
+    const temp = document.createElement('div');
+    temp.innerHTML = html.trim();
+    const newItem = temp.firstElementChild;
+    if (!newItem) return;
+
+    const existing = document.getElementById(`comment-${commentId}`);
+    if (existing) {
+      existing.replaceWith(newItem);
+    } else {
+      list.insertBefore(newItem, list.firstChild);
+    }
+
+    if (isNew) {
+      list.scrollTop = 0;
+      const section = document.getElementById(`comments-section-${ideaId}`);
+      if (section) section.scrollTop = 0;
+    }
+
+    if (window.htmx) htmx.process(newItem);
+  } catch (error) {
+    // Einzelne Kommentar-Aktualisierungsfehler ignorieren
+  }
+}
+
+// ============================================================================
+// Lokale HTMX-Trigger
+// ============================================================================
+
+window.localActionCooldowns = new Set();
+
+// Sofort zur Cooldown-Liste hinzufügen, sobald eine Anfrage startet (SSE-Race-Conditions vermeiden)
+document.addEventListener('htmx:beforeRequest', function (event) {
+  if (!event.detail || !event.detail.elt) return;
+  const card = event.detail.elt.closest('.idea-card');
+  if (card &amp;&amp; card.dataset.id) {
+    window.localActionCooldowns.add(String(card.dataset.id));
+  }
+});
+
+document.addEventListener('htmx:afterRequest', function (event) {
+  if (!event.detail || !event.detail.elt) return;
+  
+  const card = event.detail.elt.closest('.idea-card');
+  if (card &amp;&amp; card.dataset.id) {
+    
+    const ideaId = String(card.dataset.id);
+    
+    // Kurz in Cooldown lassen, damit HTMX den Swap abschließen kann
+
+    setTimeout(() => window.localActionCooldowns.delete(ideaId), 100);
+
+    if (!event.detail.successful) return;
+
+    const config = event.detail.requestConfig;
+    const path = config ? (config.path || "") : "";
+    const verb = config ? (config.verb || "").toLowerCase() : "";
+
+    // Nur bei POST-Requests triggern (Aktionen), um Endlosschleifen bei GET-Updates zu vermeiden
+    if (verb !== 'post') return;
+    
+    // Bei Like/Dislike/Kommentar wurde das UI bereits durch die POST-Antwort aktualisiert
+    if (path.includes('/like') || path.includes('/dislike') || path.includes('/comments') || path.includes('/stats')) {
+      return;
+    }
+
+    if (window.htmx) {
+      // Stats sofort lokal für andere Aktionen aktualisieren
+      htmx.trigger(document.body, `idea_updated_${ideaId}`, {
+        idea_id: ideaId,
+        action: 'local_update'
+      });
+    }
+  }
+});
+
+// Globale APIs für Debugging oder manuelle Aufrufe bereitstellen
+window.refreshAllCards = refreshAllCards;
+window.updateNonExpandedCards = updateNonExpandedCards;
+window.updateSingleCard = updateSingleCard;
+window.phoenixIntegration = { handleSmartUpdate, fetchNewIdeaAndPrepend, updateSingleCard };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_cacheHelper.html">lib/cacheHelper</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li><li><a href="public_js_ideas_live.module_js.html">public/js/ideas/live.js</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bindCreateAndDeleteHandlers">bindCreateAndDeleteHandlers</a></li><li><a href="global.html#checkDeepLink">checkDeepLink</a></li><li><a href="global.html#collapseCard">collapseCard</a></li><li><a href="global.html#ensureCommentsLoaded">ensureCommentsLoaded</a></li><li><a href="global.html#ensureSingleCard">ensureSingleCard</a></li><li><a href="global.html#escapeHtml">escapeHtml</a></li><li><a href="global.html#expandCard">expandCard</a></li><li><a href="global.html#expandCardFromHash">expandCardFromHash</a></li><li><a href="global.html#getIdeaIdFromHash">getIdeaIdFromHash</a></li><li><a href="global.html#initCommentReactionPopovers">initCommentReactionPopovers</a></li><li><a href="global.html#isSubmittingIdea">isSubmittingIdea</a></li><li><a href="global.html#loadMoreChunk">loadMoreChunk</a></li><li><a href="global.html#loadSingleIdeaCard">loadSingleIdeaCard</a></li><li><a href="global.html#reactionHandlersBound">reactionHandlersBound</a></li><li><a href="global.html#setupCardHandlers">setupCardHandlers</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat Jul 04 2026 16:28:00 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

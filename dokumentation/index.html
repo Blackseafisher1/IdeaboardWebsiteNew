@@ -78,42 +78,36 @@
 <h3>1.2 Szenario A: Einfacher Single-Process (Entwicklung)</h3>
 <p>Ideal für die schnelle lokale Entwicklung. Da nun alle Vorbereitungen (Geheimschlüssel-Generierung und Datenbank-Migrationen) in die Start-Befehle integriert sind, ist der Start extrem einfach.</p>
 <ol>
-<li>
-<p><strong>Abhängigkeiten installieren:</strong></p>
-<pre class="prettyprint source lang-bash"><code>npm install  # oder: bun install
+<li><strong>Abhängigkeiten installieren:</strong><pre class="prettyprint source lang-bash"><code>npm install  # oder: bun install
 </code></pre>
 </li>
-<li>
-<p><strong>Konfiguration (.env):</strong> Erstellen Sie eine <code>.env</code> Datei (Basis: <code>.env.example</code>).</p>
-<pre class="prettyprint source lang-dotenv"><code>PORT=3000
+<li><strong>Konfiguration (.env):</strong> Erstellen Sie eine <code>.env</code> Datei (Basis: <code>.env.example</code>).<pre class="prettyprint source lang-dotenv"><code>PORT=3000
 TRUST_PROXIES=0  # WICHTIG: 0 bei direktem Zugriff ohne Proxy
 # SESSION_SECRET wird automatisch generiert, falls nicht gesetzt
 DB_HOST=localhost
 REDIS_URL=redis://127.0.0.1:6379
 </code></pre>
 </li>
-<li>
-<p><strong>Starten:</strong>
-Wählen Sie Ihren bevorzugten Befehl (alle integrieren Migrationen &amp; Secret-Gen):</p>
-<pre class="prettyprint source lang-bash"><code>npm run devStart   # Node.js + Nodemon (Watch-Mode)
+<li><strong>Starten:</strong>
+Wählen Sie Ihren bevorzugten Befehl (alle integrieren Migrationen &amp; Secret-Gen):<pre class="prettyprint source lang-bash"><code>npm run devStart   # Node.js + Nodemon (Watch-Mode)
 npm run bunStart   # Bun (Watch-Mode)
 npm start         # Standard Node.js Start (Produktion/Einfach)
 </code></pre>
+</li>
+</ol>
 <ul>
 <li><strong>Ergebnis:</strong> Die Website ist unter <code>http://localhost:3000</code> erreichbar.</li>
+<li><strong>Einordnung:</strong> Dieser Single-Process-Betrieb funktioniert bewusst auch komplett ohne Caddy und ist der einfachste Weg für lokale Entwicklung, schnelle Tests und funktionale Checks.</li>
 </ul>
-</li>
-<li>
-<p><strong>Datenbank-Import (Optional):</strong>
-Wenn Sie direkt mit einem fertigen Datensatz (inkl. Testdaten) starten möchten, können Sie die bereitgestellte <a href="backup.sql">backup.sql</a> importieren:</p>
-<pre class="prettyprint source lang-bash"><code>mysql -u [user] -p ideaboard &lt; backup.sql
+<ol start="4">
+<li><strong>Datenbank-Import (Optional):</strong>
+Wenn Sie direkt mit einem fertigen Datensatz (inkl. Testdaten) starten möchten, können Sie die bereitgestellte <a href="backup.sql">backup.sql</a> importieren:<pre class="prettyprint source lang-bash"><code>mysql -u [user] -p ideaboard &lt; backup.sql
 </code></pre>
-<p><em>Hinweis:</em> Der normale Start (<code>npm run devStart</code>) führt automatisch alle nötigen Migrationen für eine leere Datenbank aus.</p>
-</li>
+<em>Hinweis:</em> Der normale Start (<code>npm run devStart</code>) führt automatisch alle nötigen Migrationen für eine leere Datenbank aus.</li>
 </ol>
 <hr>
 <h3>1.3 Szenario B: Multi-Process mit Caddy &amp; HTTPS (Produktion/Professional)</h3>
-<p>Dieses Setup nutzt Caddy für TLS-Terminierung (HTTPS), HTTP/3 und erlaubt den Betrieb mehrerer Kerne via PM2.</p>
+<p>Dieses Setup nutzt Caddy für TLS-Terminierung (HTTPS), HTTP/3 und erlaubt den Betrieb mehrerer Kerne via PM2. Wichtig: Multi-Process funktioniert in dieser Anwendung nicht korrekt ohne Caddy oder einen anderen Reverse Proxy, weil die Session-/Cookie-Konfiguration in diesem Modus ausdrücklich auf Proxy- und HTTPS-Betrieb ausgelegt ist.</p>
 <ol>
 <li><strong>PM2 Installation:</strong><pre class="prettyprint source lang-bash"><code>npm install -g pm2
 </code></pre>
@@ -128,17 +122,24 @@ REDIS_URL=redis://127.0.0.1:6379
 <li><strong>Caddy starten (Lokale HTTPS-Zertifikate):</strong>
 Nutzen Sie die <a href="Caddyfile.local">Caddyfile.local</a> für automatisches HTTPS auf localhost (<code>tls internal</code>).<pre class="prettyprint source lang-bash"><code>caddy run --config Caddyfile.local
 </code></pre>
-<em>Hinweis:</em> Bestätigen Sie die Installation des lokalen CA-Zertifikats, wenn Ihr OS danach fragt. Dies ermöglicht eine verschlüsselte Verbindung via <code>https://localhost</code>.</li>
+<em>Hinweis:</em> Bestätigen Sie die Installation des lokalen CA-Zertifikats, wenn Ihr OS danach fragt. Rufen Sie die Anwendung im Caddy-Betrieb im Browser einfach als <code>localhost</code> auf; Caddy stellt lokal automatisch HTTPS bereit.</li>
 <li><strong>Cluster-Start via PM2:</strong>
 Wählen Sie je nach gewünschter Runtime:
 <ul>
-<li><strong>Node.js Cluster-Mode (empfohlen):</strong> Verteilt die Last auf alle CPU-Kerne.<pre class="prettyprint source lang-bash"><code>pm2 start ecosystem.config.js --env production --only &quot;Ideaboard-Node&quot;
-</code></pre>
+<li><strong>Node.js Cluster-Mode (empfohlen):</strong> Verteilt die Last auf alle CPU-Kerne.<pre class="prettyprint source lang-bash"><code></code></pre>
 </li>
-<li><strong>Bun Fork-Mode:</strong> Nutzt die Bun-Laufzeit für maximale Performance.<pre class="prettyprint source lang-bash"><code>pm2 start ecosystem.config.js --env production --only &quot;Ideaboard-Bun&quot;
-</code></pre>
+</ul>
+pm2 start ecosystem.config.js --env production --only &quot;ideenboard-node-cluster&quot;
+```
+<ul>
+<li><strong>Bun Fork-Mode:</strong> Nutzt die Bun-Laufzeit für maximale Performance.<pre class="prettyprint source lang-bash"><code></code></pre>
 </li>
+</ul>
+pm2 start ecosystem.config.js --env production --only &quot;ideenboard-bun-fork&quot;
+```
+<ul>
 <li><strong>Vorteil:</strong> TLS-Terminierung durch Caddy sorgt für sichere Cookies (<code>Secure</code>, <code>SameSite=None</code>), während Redis die Live-Updates zwischen allen Instanzen synchronisiert.</li>
+<li><strong>Wichtig:</strong> Ein lokaler Multi-Process-Start ohne Caddy oder einen anderen Reverse Proxy ist hier kein unterstützter Betriebsweg und funktioniert nicht zuverlässig, weil Cookies, Proxy-Header und Session-Verhalten dann nicht zum erwarteten Betriebsmodell passen.</li>
 </ul>
 </li>
 </ol>
@@ -259,12 +260,12 @@ Wählen Sie je nach gewünschter Runtime:
 <ul>
 <li><a href="lib/services/ideasService.js">ideasService.js</a>: CRUD, Filterung, Versionierung.</li>
 <li><a href="lib/services/ideasCommentsService.js">ideasCommentsService.js</a>: Verwaltung der Diskussionsstränge.</li>
-<li><a href="lib/services/ideasSearchService.js">ideasSearchService.js</a>: Hybrid-Suche (SQL + Fuse.js).</li>
-<li><a href="lib/services/ideasStatsService.js">ideasStatsService.js</a>: Performance-optimierte Zähler.</li>
-<li><a href="lib/services/reactionsService.js">reactionsService.js</a>: Verarbeitet Emojis (Whitelist-basiert).</li>
-<li><a href="lib/services/ideasEnrichmentService.js">ideasEnrichmentService.js</a>: Anreicherung der Ideen-Daten für die Anzeige.</li>
 </ul>
 </li>
+<li><a href="lib/services/ideasSearchService.js">ideasSearchService.js</a>: SQL-/Fulltext-Suche für Titel, Autor und Beschreibung.
+*   <a href="lib/services/ideasStatsService.js">ideasStatsService.js</a>: Performance-optimierte Zähler.
+*   <a href="lib/services/reactionsService.js">reactionsService.js</a>: Verarbeitet Emojis (Whitelist-basiert).
+*   <a href="lib/services/ideasEnrichmentService.js">ideasEnrichmentService.js</a>: Anreicherung der Ideen-Daten für die Anzeige.</li>
 <li><strong>Frontend-JS:</strong>
 <ul>
 <li><a href="public/js/ideasClient.js">ideasClient.js</a>: Zentrales UI-Skript für Modals &amp; Listenaktionen.</li>
@@ -395,8 +396,9 @@ Das System nutzt einen hocheffizienten Streaming-Mechanismus für DMs und Gruppe
 <p><strong>Cookie-Sicherheit:</strong>
 In <code>server.js</code> wird die Cookie-Konfiguration dynamisch basierend auf <code>TRUST_PROXIES</code> gesetzt:</p>
 <ul>
-<li><strong>Bei <code>TRUST_PROXIES=0</code> (Single Process):</strong> Cookies nutzen <code>SameSite: 'Lax'</code> und benötigen kein HTTPS.</li>
+<li><strong>Bei <code>TRUST_PROXIES=0</code> (Single Process):</strong> Cookies nutzen <code>SameSite: 'Lax'</code> und benötigen kein HTTPS. Das ist der richtige Modus für direkten lokalen Zugriff auf <code>localhost:3000</code>, etwa für Entwicklung und Tests ohne Caddy.</li>
 <li><strong>Bei <code>TRUST_PROXIES=1</code> (Proxy/Caddy):</strong> Cookies nutzen <code>Secure: true</code> und <code>SameSite: 'None'</code>. Dies ist zwingend für den Betrieb hinter einem Reverse Proxy und für Cross-Site-Szenarien notwendig.</li>
+<li><strong>Praxisregel:</strong> Single Process kann direkt ohne Caddy betrieben werden; Multi-Process sollte lokal wie produktionsnah nur über Caddy laufen, damit Cookie- und Proxy-Verhalten korrekt bleiben.</li>
 </ul>
 <h3>5.1 Technischer Unterbau (SQL &amp; Performance)</h3>
 <p>Um die Fehleranfälligkeit bei komplexen, dynamischen Abfragen zu minimieren, wird das Modul <code>lib/sqlFragmentBuilder.js</code> eingesetzt:</p>
@@ -411,54 +413,41 @@ In <code>server.js</code> wird die Cookie-Konfiguration dynamisch basierend auf 
 <p><strong>Vorteil</strong>: Verhindert das manuelle Zählen von Platzhaltern (<code>?</code>) und garantiert, dass die Parameter-Reihenfolge immer exakt mit dem SQL übereinstimmt.</p>
 </li>
 <li>
-<p>UI-Entscheidung: Wenn <code>q</code> leer → kein Search (klassischer SQL-Listenpfad). Wenn <code>q</code> nicht leer → SQL-Fulltext-Suche über <code>executeFulltextSearch</code>; der <code>global</code>-Toggle beeinflusst Sortierung und Exact-Title-Handling, schaltet aber keinen separaten Fuse-Pfad zu.</p>
+<p>UI-Entscheidung: Wenn <code>q</code> leer ist, läuft die Ideas-Seite über den normalen SQL-Listenpfad in <code>fetchIdeas</code>. Wenn <code>q</code> gesetzt ist, wird immer <code>executeFulltextSearch</code> verwendet. Es gibt auf <code>/ideas</code> keinen separaten Fuse-/Fuzzy-Pfad mehr.</p>
 </li>
 <li>
-<p>Gatekeeper: <code>category_id</code> und <code>tags</code> werden als Vorfilter angewendet. Diese Basis-Filter werden in der Fulltext-CTE als <code>s.</code>-präfixierte Bedingungen eingesetzt, damit Index-Prefiltering effektiv ist.</p>
+<p>Filterung: <code>category_id</code>, <code>tags</code> und <code>owned_only</code> werden serverseitig als Basis-Filter aufgebaut und sowohl auf Listen als auch auf Suchanfragen angewendet.</p>
 </li>
 </ul>
 <p>Kernbestandteile:</p>
 <ol>
-<li>
-<p><code>buildBaseFilters</code></p>
-<ul>
-<li>Liefert <code>baseWhere</code> (SQL-Teilsätze) und <code>baseParams</code> (Array). Bei Prefiltering auf <code>ideas_search</code> werden Spalten mit <code>s.</code> statt <code>i.</code> referenziert.</li>
-</ul>
-</li>
-<li>
-<p>Fulltext-Pfad — <code>executeFulltextSearch</code></p>
-<ul>
-<li>Ziel: möglichst viel Relevanz-Scoring in SQL (MATCH ... AGAINST) berechnen und nach <code>combinedScore</code> sortieren.</li>
-<li>Aufbau: CTE <code>candidate_ids</code> (MATCH NATURAL / BOOLEAN, WHERE (MATCH BOOLEAN AND <baseWhere>) LIMIT <code>MAX_INNER_LIMIT</code>), danach JOIN auf <code>ideas</code>/<code>users</code> mit zusätzlichen Boost-Ausdrücken und <code>ORDER BY combinedScore DESC</code> + <code>LIMIT ? OFFSET ?</code>.</li>
-<li>Parameterregeln: <code>baseParams</code> werden genau einmal in der CTE-WHERE eingebracht; die letzten zwei Parameter sind immer numerische <code>LIMIT</code> und <code>OFFSET</code> (vor Ausführung gezwungen/konvertiert zu Zahlen). Kein doppeltes Anhängen von <code>baseParams</code> am Ende.</li>
-<li>Fallbacks: Sehr kurze oder nur-numerische Queries können auf einen LIKE-basierten Pfad umschalten.</li>
-</ul>
-</li>
-<li>
-<p>Autor-Merge &amp; Beschreibungsspezialfälle</p>
-</li>
+<li><code>buildBaseFilters</code></li>
 </ol>
 <ul>
-<li>Nach Suchlauf wird eine Autor-Token-Abfrage ausgeführt, um Author-Matches ggf. einzumischen.</li>
-<li><code>search_scope</code> steuert Feldauswahl (<code>title</code>, <code>author</code>, <code>description</code>/<code>desc</code>/<code>full</code>). <code>descriptionMode</code> aktiviert ergänzende CTE-Logik für umfangreiche Description-Scoring.</li>
+<li>Baut die serverseitigen Vorfilter für Kategorie, Owner und Tags auf und liefert dazu passende SQL-Parameter.</li>
+</ul>
+<ol start="2">
+<li>Suchpfad — <code>executeFulltextSearch</code></li>
+</ol>
+<ul>
+<li>Für Titel-/Autor-Suchen wird <code>ideas_search</code> mit <code>MATCH ... AGAINST</code> sowie Exact- und Prefix-Boosts verwendet.</li>
+<li>Für <code>search_scope=desc|description</code> läuft ein Beschreibungspfad über den Fulltext-Index der Beschreibung plus Tag-Fallback.</li>
+<li>Die Ergebniszeilen werden per Late-Row-Lookup erst als IDs ermittelt und danach mit <code>ideas</code> und <code>users</code> zusammengeführt, damit JOINs erst nach dem eigentlichen Ranking stattfinden.</li>
+</ul>
+<ol start="3">
+<li>Listenpfad ohne Suche</li>
+</ol>
+<ul>
+<li>Wenn kein Suchbegriff gesetzt ist, lädt <code>fetchIdeas</code> die Listenansicht direkt aus <code>ideas</code>.</li>
+<li>Für nicht-globale Sortierungen mit engerem Scope wird die interne Vorauswahl über <code>MAX_INNER_LIMIT</code> begrenzt, bevor Batch-Enrichment für Tags, Dateien, Reaktionen und Kommentare läuft.</li>
 </ul>
 <ol start="4">
-<li>
-<p>Debugging &amp; Robustheit</p>
-<ul>
-<li>Nach Suchlauf wird eine Autor-Token-Abfrage ausgeführt, um Author-Matches ggf. einzumischen.</li>
-<li><code>search_scope</code> steuert Feldauswahl (<code>title</code>, <code>author</code>, <code>description</code>/<code>desc</code>/<code>full</code>). <code>descriptionMode</code> aktiviert ergänzende CTE-Logik für umfangreiche Description-Scoring.</li>
-</ul>
-</li>
-<li>
-<p>Debugging &amp; Robustheit</p>
-<ul>
-<li>Aktivierbar via <code>debug_search=1</code> oder <code>SEARCH_DEBUG=1</code> (nur für Diagnose): gibt <code>placeholder-&gt;param</code>-Mapping, <code>params</code>-Array und <code>sqlPreview</code> aus.</li>
-<li>Vor Ausführung wird geprüft, ob Platzhalteranzahl und <code>params.length</code> stimmen; bei Abweichung schlägt die Abfrage fehl (fail-fast) oder es wird ein diag. Reconciliation-Mechanismus genutzt.</li>
-<li>LIMIT/OFFSET werden vor Bindung numerisch erzwungen, um Syntaxfehler durch Strings zu vermeiden.</li>
-</ul>
-</li>
+<li>Scope &amp; Robustheit</li>
 </ol>
+<ul>
+<li><code>search_scope</code> steuert, ob Titel/Autor oder Beschreibung priorisiert durchsucht werden.</li>
+<li><code>LIMIT</code> und <code>OFFSET</code> werden vor der Ausführung numerisch normalisiert; zusätzlich wird ein exakter Titel-Treffer bei Bedarf nach vorne gezogen.</li>
+</ul>
 <hr>
 <h2>6. Betriebs-Handbuch</h2>
 <p>Dieser Abschnitt behandelt fortgeschrittene Themen wie Echtzeit-Zustände, Caching und manuelle Eingriffe.</p>
@@ -687,21 +676,27 @@ npm start
 <ul>
 <li><strong>Aria-Suchtabelle:</strong> Die Anwendung nutzt eine dedizierte Aria-Tabelle (<code>ideas_search</code>), die speziell für Fulltext-Suchen optimiert ist. Aria bietet im Vergleich zu InnoDB oft schnellere Lesezugriffe bei Fulltext-Indizes.</li>
 <li><strong>Echtzeit-Synchronisation:</strong> Ein MariaDB-Event (<code>ideas_search_upsert</code>) spiegelt Änderungen jede Sekunde in den Suchindex. Ein <code>AFTER DELETE</code>-Trigger garantiert, dass Löschungen sofort wirksam werden.</li>
-<li><strong>Fulltext-Modus (skalierbar):</strong> Für Suchanfragen auf der Ideas-Seite verwendet die Anwendung MariaDB-FULLTEXT-Indizes auf der Aria-Tabelle mit SQL-basiertem Ranking und Exact-/Prefix-Boosts.</li>
 </ul>
 </li>
-<li><strong>Suchraum‑Capping:</strong>
+</ol>
 <ul>
-<li>Für nicht suchende Listen und globale Sortierfälle wird die Kandidatenmenge serverseitig begrenzt; <code>MAX_INNER_LIMIT</code> (1000) verhindert dabei unnötig breite Vorselektionen.</li>
+<li><strong>Fulltext-Modus (skalierbar):</strong> Für Suchanfragen auf der Ideas-Seite verwendet die Anwendung MariaDB-FULLTEXT-Indizes auf der Aria-Tabelle mit SQL-basiertem Ranking für Titel, Autor und Beschreibung. Ein separater Fuzzy-/Fuse-Pfad ist dort derzeit nicht aktiv.</li>
+</ul>
+<ol start="2">
+<li><strong>Suchraum‑Capping:</strong></li>
+</ol>
+<ul>
+<li>Für nicht suchende Listen mit nicht-globalen Sortierungen wird die interne Vorauswahl serverseitig begrenzt; <code>MAX_INNER_LIMIT</code> (1000) verhindert dabei unnötig breite Vorselektionen vor dem Enrichment.</li>
 <li>Die Sortier‑Optionen können mit dem <strong>Global-Toggle</strong> kombiniert werden. Wenn der Toggle aktiviert ist, wird im Backend auf die <code>all_*</code>-Varianten der Sortierung umgeschaltet; Suchanfragen bleiben dabei im SQL-Fulltext-Pfad.</li>
 </ul>
-</li>
-<li><strong>Gewichtetes Ranking:</strong>
+<ol start="3">
+<li><strong>Gewichtetes Ranking:</strong></li>
+</ol>
 <ul>
-<li>Die Relevanz wird durch mathematische Gewichtung berechnet: <code>Titel (15) &gt; Autor (5) &gt; Beschreibung (1)</code>.</li>
-<li>In SQL wird hierfür eine Kombination aus <code>NATURAL LANGUAGE MODE</code> (für exakte Treffer) und <code>BOOLEAN MODE</code> (für Präfix-Suche) verwendet.</li>
+<li>Titel-/Autor-Suchen nutzen SQL-Ranking mit Exact-Match-, Prefix- und Fulltext-Komponenten.</li>
+<li>Der Beschreibungspfad nutzt den Fulltext-Index der Beschreibung und ergänzt Tags als einfaches Fallback-Signal.</li>
 </ul>
-</li>
+<ol start="4">
 <li><strong>Batch-Enrichment:</strong>
 <ul>
 <li>Anstatt für jede Idee einzeln Tags, Likes und Dateien abzufragen (N+1 Problem), werden alle Daten für die sichtbare Seite (50 Items) in einem einzigen Batch-Query geladen und im Speicher zugeordnet.</li>
@@ -839,6 +834,9 @@ npm start
 </ul>
 </li>
 </ol>
+<ul>
+<li>Im Caddy-Betrieb: einfach <code>localhost</code> in die Adresszeile eingeben; Caddy uebernimmt die lokale HTTPS-Auslieferung.</li>
+</ul>
 <!-- Hinweis: Index-warmup scripts were removed from the recommended workflow. If you previously used warmup scripts, they are deprecated and not required for normal operation. -->
 <h3>8.5 Alternative: Bun (optionale Laufzeit)</h3>
 <ol>
@@ -1151,7 +1149,7 @@ npm start
 <p><strong>Ranking &amp; Scope:</strong> Titel-/Autor-Suchen sowie der Description-Only-Modus laufen ueber <code>executeFulltextSearch</code>. <code>search_scope</code> steuert dabei, ob eher Titel/Autor oder Beschreibung gewichtet abgefragt werden.</p>
 </li>
 <li>
-<p><strong>Performance‑Capping / Prefiltering:</strong> Fuer Listen ohne Suchbegriff und fuer bestimmte Sortierfaelle wird die interne Vorselektion begrenzt; <code>MAX_INNER_LIMIT</code> (1000) verhindert uebergrosse Zwischenmengen vor dem Batch-Enrichment.</p>
+<p><strong>Performance‑Capping / Prefiltering:</strong> Fuer Listen ohne Suchbegriff und fuer nicht-globale Sortierfaelle wird die interne Vorselektion begrenzt; <code>MAX_INNER_LIMIT</code> (1000) verhindert uebergrosse Zwischenmengen vor dem Batch-Enrichment.</p>
 </li>
 <li>
 <p><strong>Sortierung:</strong> Unterstützt <code>latest</code>, <code>all_latest</code> (ohne 9999er Limit), <code>oldest</code>, <code>likes</code>, <code>comments</code> und <code>dislikes</code>. Validierung erfolgt gegen eine <code>SORT_WHITELIST</code>.</p>
@@ -1740,13 +1738,13 @@ Die detaillierte technische Beschreibung des Live-Update-Systems wurde in Abschn
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dashboardService.html">lib/services/dashboardService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_ideasClient.html">public/js/ideasClient</a></li><li><a href="module-public_js_ideasLive.html">public/js/ideasLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_asyncHandler.html">lib/asyncHandler</a></li><li><a href="module-lib_cacheHelper.html">lib/cacheHelper</a></li><li><a href="module-lib_dbHelpers.html">lib/dbHelpers</a></li><li><a href="module-lib_htmxDetector.html">lib/htmxDetector</a></li><li><a href="module-lib_http.html">lib/http</a></li><li><a href="module-lib_keyManager.html">lib/keyManager</a></li><li><a href="module-lib_liveUpdates.html">lib/liveUpdates</a></li><li><a href="module-lib_mariadb-session-store.html">lib/mariadb-session-store</a></li><li><a href="module-lib_queries_ideaQueries.html">lib/queries/ideaQueries</a></li><li><a href="module-lib_redis.html">lib/redis</a></li><li><a href="module-lib_roleHelpers.html">lib/roleHelpers</a></li><li><a href="module-lib_services_adminService.html">lib/services/adminService</a></li><li><a href="module-lib_services_authService.html">lib/services/authService</a></li><li><a href="module-lib_services_categoriesService.html">lib/services/categoriesService</a></li><li><a href="module-lib_services_dmFilesService.html">lib/services/dmFilesService</a></li><li><a href="module-lib_services_dmMessagingService.html">lib/services/dmMessagingService</a></li><li><a href="module-lib_services_dmPresenceService.html">lib/services/dmPresenceService</a></li><li><a href="module-lib_services_groupPresenceService.html">lib/services/groupPresenceService</a></li><li><a href="module-lib_services_groupService.html">lib/services/groupService</a></li><li><a href="module-lib_services_ideasCommentsService.html">lib/services/ideasCommentsService</a></li><li><a href="module-lib_services_ideasEnrichmentService.html">lib/services/ideasEnrichmentService</a></li><li><a href="module-lib_services_ideasFilesService.html">lib/services/ideasFilesService</a></li><li><a href="module-lib_services_ideasSearchService.html">lib/services/ideasSearchService</a></li><li><a href="module-lib_services_ideasService.html">lib/services/ideasService</a></li><li><a href="module-lib_services_ideasStatsService.html">lib/services/ideasStatsService</a></li><li><a href="module-lib_services_ideasTagsService.html">lib/services/ideasTagsService</a></li><li><a href="module-lib_services_pointsService.html">lib/services/pointsService</a></li><li><a href="module-lib_services_projectService.html">lib/services/projectService</a></li><li><a href="module-lib_services_reactionsService.html">lib/services/reactionsService</a></li><li><a href="module-lib_services_surveyService.html">lib/services/surveyService</a></li><li><a href="module-lib_services_userService.html">lib/services/userService</a></li><li><a href="module-lib_sqlFragmentBuilder.html">lib/sqlFragmentBuilder</a></li><li><a href="module-lib_timing.html">lib/timing</a></li><li><a href="module-lib_types.html">lib/types</a></li><li><a href="module-lib_upload_quarantine.html">lib/upload_quarantine</a></li><li><a href="module-lib_viewHelpers.html">lib/viewHelpers</a></li><li><a href="module-public_js_auth-flip.html">public/js/auth-flip</a></li><li><a href="module-public_js_blur-toggle.html">public/js/blur-toggle</a></li><li><a href="module-public_js_chatClient.html">public/js/chatClient</a></li><li><a href="module-public_js_chatDragnDrop.html">public/js/chatDragnDrop</a></li><li><a href="module-public_js_dmLive.html">public/js/dmLive</a></li><li><a href="module-public_js_early-theme-blur.html">public/js/early-theme-blur</a></li><li><a href="module-public_js_groupLive.html">public/js/groupLive</a></li><li><a href="module-public_js_index.html">public/js/index</a></li><li><a href="module-public_js_surveysClient.html">public/js/surveysClient</a></li><li><a href="module-routes_adminPage.html">routes/adminPage</a></li><li><a href="module-routes_comments.html">routes/comments</a></li><li><a href="module-routes_comments-likes.html">routes/comments-likes</a></li><li><a href="module-routes_dashboard.html">routes/dashboard</a></li><li><a href="module-routes_dms.html">routes/dms</a></li><li><a href="module-routes_groups.html">routes/groups</a></li><li><a href="module-routes_ideas.html">routes/ideas</a></li><li><a href="module-routes_load_test.html">routes/load_test</a></li><li><a href="module-routes_middleware.html">routes/middleware</a></li><li><a href="module-routes_projects.html">routes/projects</a></li><li><a href="module-routes_surveys.html">routes/surveys</a></li><li><a href="module-routes_users.html">routes/users</a></li><li><a href="public_js_ideas_live.module_js.html">public/js/ideas/live.js</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_mariadb-session-store-MariaDBStore.html">MariaDBStore</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bindCreateAndDeleteHandlers">bindCreateAndDeleteHandlers</a></li><li><a href="global.html#checkDeepLink">checkDeepLink</a></li><li><a href="global.html#collapseCard">collapseCard</a></li><li><a href="global.html#ensureCommentsLoaded">ensureCommentsLoaded</a></li><li><a href="global.html#ensureSingleCard">ensureSingleCard</a></li><li><a href="global.html#escapeHtml">escapeHtml</a></li><li><a href="global.html#expandCard">expandCard</a></li><li><a href="global.html#expandCardFromHash">expandCardFromHash</a></li><li><a href="global.html#getIdeaIdFromHash">getIdeaIdFromHash</a></li><li><a href="global.html#initCommentReactionPopovers">initCommentReactionPopovers</a></li><li><a href="global.html#isSubmittingIdea">isSubmittingIdea</a></li><li><a href="global.html#loadMoreChunk">loadMoreChunk</a></li><li><a href="global.html#loadSingleIdeaCard">loadSingleIdeaCard</a></li><li><a href="global.html#reactionHandlersBound">reactionHandlersBound</a></li><li><a href="global.html#setupCardHandlers">setupCardHandlers</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Mar 11 2026 22:30:53 GMT+0100 (Mitteleuropäische Normalzeit)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat Jul 04 2026 16:28:00 GMT+0200 (Mitteleuropäische Sommerzeit)
 </footer>
 
 <script> prettyPrint(); </script>
