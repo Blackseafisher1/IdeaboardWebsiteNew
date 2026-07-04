@@ -2,6 +2,7 @@
 node_modules/
 bun.lockb
 ## Node / package artifacts
+/node_modules
 node_modules/
 bun.lockb
 package-lock.json
@@ -70,6 +71,9 @@ scripts/debug_search.js
 /dokuBilder
 
 /Levensthein
+Levensthein/
+/elixirideaboard
+elixirideaboard/
 
-/newelixirideaboard
-
+/newPlan
+newPlan/
