@@ -23,7 +23,7 @@ router.use(htmxDetector.middleware);
  * @async
  */
 async function renderProjectsFragment(req, res) {
-    const page = parseInt(req.query.page, 10) || 1;
+    const page = parseInt(String(req.query.page || '1'), 10) || 1;
     const { status, search, userOnly } = req.query;
 
     const result = await ProjectService.getProjectsList(req.session.user, {
@@ -60,7 +60,7 @@ router.get('/', asyncHandler(async (req, res) => {
     const status = req.query.status || 'all';
     const search = req.query.search || '';
     const userOnly = req.query.userOnly === 'on' || req.query.userOnly === 'true';
-    const page = parseInt(req.query.page, 10) || 1;
+    const page = parseInt(String(req.query.page || '1'), 10) || 1;
 
     const contactOptions = await ProjectService.getContactOptions(req.session.user);
 
@@ -97,10 +97,10 @@ router.get('/contact-search', asyncHandler(async (req, res) => {
     return res.json(users);
 }));
 
-// POST /projects - Projekt erstellen (nur Admin)
+// POST /projects - Projekt erstellen (Admin oder Projektleiter)
 /**
  * POST /
- * Erstellt ein neues Projekt. Nur für berechtigte Nutzer (Admins).
+ * Erstellt ein neues Projekt. Nur für berechtigte Nutzer.
  * @name POST /
  * @function
  * @inner

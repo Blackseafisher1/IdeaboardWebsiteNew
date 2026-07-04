@@ -4,6 +4,7 @@
     "checkJs": true,
     "module": "commonjs",
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "target": "es2022",
     "strict": false,
     "noEmit": true,

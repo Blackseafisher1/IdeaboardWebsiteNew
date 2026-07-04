@@ -13,14 +13,10 @@ const liveUpdates = require('../lib/liveUpdates');
 const asyncHandler = require('../lib/asyncHandler');
 const { firstQueryValue } = require('../lib/dbHelpers');
 const { userRender } = require('../lib/viewHelpers');
-const { sendErrorPage } = require('../lib/http');
+const { sendErrorPage, errorHtml } = require('../lib/http');
 const { isAdmin: hasAdminRole } = require('../lib/roleHelpers');
 
 // Logik in `ideasService` ausgelagert: `enrichIdeasBatch`, `normalizeAuthor` wurden aus den Route-Imports entfernt
-
-const {
-  loadSingleCommentWithReactions
-} = require('../lib/services/ideasCommentsService');
 
 const {
   getIdeaFile,
@@ -30,11 +26,6 @@ const {
   deleteIdeaFile,
   deriveKeyForIdeas
 } = require('../lib/services/ideasFilesService');
-
-const {
-  SORT_WHITELIST,
-  normalizeSort
-} = require('../lib/services/ideasSearchService');
 
 const { getWeeklyRemaining } = require('../lib/services/ideasStatsService');
 const categoriesService = require('../lib/services/categoriesService');
@@ -105,10 +96,7 @@ router.get('/', asyncHandler(async (req, res) => {
       // das komplette Session-User-Objekt (Rolle/Benutzername) liefern, verbleibende Zähler aus dem Fetch-Ergebnis übernehmen
       user: userRender(req.session.user, user),
       // Variablen, die von den Views erwartet werden
-      q: filters.q,
-      category_id: filters.category_id,
       tags: filters.tags,
-      sort: filters.sort,
       search_scope: firstQueryValue(req.query.search_scope, ''),
       currentPage: page,
       nextPage,
@@ -226,7 +214,7 @@ router.get('/chunk', async (req, res) => {
  * @param {Object} opts - Suchoptionen.
  * @returns {Promise<Object>} Suchergebnis oder Fehler.
  */
-router.testSearch = async function(opts = {}) {
+/** @type {any} */ (router).testSearch = async function(opts = {}) {
   try {
     const __routeStart = Date.now();
     const userId = opts.userId || 0;
@@ -258,7 +246,7 @@ router.testSearch = async function(opts = {}) {
  */
 router.get('/updates', async (req, res) => {
   try {
-    const sinceParam = parseInt(req.query.since, 10);
+    const sinceParam = parseInt(String(firstQueryValue(req.query.since, '0')), 10);
     let since = Number.isFinite(sinceParam) ? sinceParam : 0;
 
     // SSE-Unterstützung
@@ -486,22 +474,24 @@ router.post('/:id/delete', async (req, res) => {
  */
 router.post('/:id/files', ideasUpload.single('file'), async (req, res) => {
   try {
-    const { id } = req.params;
+    const ideaId = Number.parseInt(String(req.params.id), 10);
     const userId = req.session.user.id;
+
+    if (!Number.isInteger(ideaId)) return sendErrorPage(res, 'Ungültige Idee-ID', 400);
 
     if (!req.file) return sendErrorPage(res, 'Keine Datei ausgewählt', 400);
 
-    const saved = await uploadIdeaFile(id, userId, req.file);
+    const saved = await uploadIdeaFile(ideaId, userId, req.file);
     if (!saved) {
       // Die Logik im Service übernimmt den DB-Insert; false bedeutet, dass der Insert fehlgeschlagen ist
       // Normalerweise wird jedoch bei ernsten Fehlern eine Exception geworfen.
     }
 
     const categoriesRows = await categoriesService.getAll();
-    const data = await renderIdeaCard(id, userId, categoriesRows);
+    const data = await renderIdeaCard(ideaId, userId, categoriesRows);
     if (!data) return sendErrorPage(res, 'Idee nicht gefunden', 404);
 
-    liveUpdates.recordChange(id, 'file_uploaded');
+    liveUpdates.recordChange(ideaId, 'file_uploaded');
 
     const hxTarget = req.get('HX-Target');
     const renderModal = req.query.render === 'modal' || hxTarget === 'idea-edit-modal-content' || hxTarget === '#idea-edit-modal-content';

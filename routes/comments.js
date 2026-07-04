@@ -19,6 +19,14 @@ router.use(isLoggedIn);
 const htmxDetector = require('../lib/htmxDetector');
 router.use(htmxDetector.middleware);
 
+function parseRouteId(value, label) {
+  const parsed = Number.parseInt(String(Array.isArray(value) ? value[value.length - 1] : value), 10);
+  if (!Number.isInteger(parsed)) {
+    throw new Error(`Ungültige ${label}`);
+  }
+  return parsed;
+}
+
 /**
  * POST /comments (innerhalb /ideas/:id)
  * Erstellt einen neuen Kommentar zu einer Idee.
@@ -27,7 +35,7 @@ router.use(htmxDetector.middleware);
  * @inner
  */
 router.post('/', asyncHandler(async (req, res) => {
-  const { id: ideaId } = req.params;
+  const ideaId = parseRouteId(req.params.id, 'Idee-ID');
   const userId = req.session.user.id;
   const { text } = req.body;
 
@@ -77,7 +85,7 @@ router.post('/', asyncHandler(async (req, res) => {
  * @inner
  */
 router.get('/:commentId', asyncHandler(async (req, res) => {
-  const { commentId } = req.params;
+  const commentId = parseRouteId(req.params.commentId, 'Kommentar-ID');
   const userId = req.session.user.id;
 
   const single = await loadSingleCommentWithReactions(commentId, userId);
@@ -98,7 +106,7 @@ router.get('/:commentId', asyncHandler(async (req, res) => {
  * @inner
  */
 router.get('/', asyncHandler(async (req, res) => {
-  const { id: ideaId } = req.params;
+  const ideaId = parseRouteId(req.params.id, 'Idee-ID');
   const userId = req.session.user.id;
 
   const { comments, commentLikes } = await loadCommentsWithReactions(ideaId, userId);

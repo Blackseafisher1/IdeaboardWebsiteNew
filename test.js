@@ -11,4 +11,4 @@ function print(n){
     console.log(`Called with ${n}. Result: ${fib2(n)} `)
 }
 
-print(6)
+print(10)

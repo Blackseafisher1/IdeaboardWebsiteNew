@@ -4,6 +4,7 @@ declare global {
   namespace Express {
     interface Request {
       isHtmx?: boolean;
+      csrfToken?: () => string;
     }
 
     interface SessionUser {
