@@ -1,4 +1,4 @@
-// config/db.js - simplified, driver-managed prepared statements + normalization
+// config/db.js - simple treiber basierte prepared stmnt und normalisierung der datenbank resultate
 const driver = require('mariadb');
 
 const dbName = process.env.DB_NAME || 'ideaboard';

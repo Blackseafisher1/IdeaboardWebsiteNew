@@ -37,7 +37,7 @@ async function test() {
   // 5. Real-world: fuzzy search ideas
   console.log('\n=== Fuzzy Search in Ideas ===');
   const searchTerm = 'Inovation'; // typo
-  r = await db.query(`
+  r = await db.query(`-- sql 
     SELECT i.idea_id, i.title, i.description,
            edit_dist(LOWER(i.title), ?) AS dist
     FROM ideas i

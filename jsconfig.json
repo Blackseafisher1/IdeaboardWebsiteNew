@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es2022",
+    "strict": false,
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": ["**/*.js", "**/*.d.ts"],
+  "exclude": ["node_modules", "dokumentation", "data", "logs", "coverage", "dist"]
+}
