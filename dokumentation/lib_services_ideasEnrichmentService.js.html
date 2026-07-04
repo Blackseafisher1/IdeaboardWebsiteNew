@@ -59,13 +59,13 @@ async function enrichIdeasBatch(paginatedIdeas, userId) {
   for (const r of liveCountsRows) liveCountsMap.set(r.idea_id, r);
 
   const [tagsRows, filesRows, likedRows, dislikedRows] = await Promise.all([
-    db.query(`
+    db.query(`-- sql
       SELECT l.idea_id, t.name
       FROM idea_tag_links l
       JOIN idea_tags t ON t.tag_id = l.tag_id
       WHERE l.idea_id IN (?)
     `, [visibleIds]),
-    db.query(`
+    db.query(`-- sql
       SELECT file_id, idea_id, file_path, original_name
       FROM idea_files
       WHERE idea_id IN (?)

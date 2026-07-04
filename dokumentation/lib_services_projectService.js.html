@@ -89,8 +89,8 @@ const ProjectService = {
     // --- Data Fetching ---
 
     async getContactOptions(user) {
-        const users = await db.query(`
-            SELECT u.user_id, u.username, u.email
+        const users = await db.query(`-- sql
+        SELECT u.user_id, u.username, u.email
             FROM users u
             JOIN roles r ON u.role_id = r.role_id
             WHERE r.name = 'Projektleiter'
@@ -122,8 +122,8 @@ const ProjectService = {
         const q = String(query || '').trim();
         if (q.length &lt; 2) return [];
 
-        return await db.query(`
-            SELECT u.user_id, u.username, u.email, r.name AS role
+        return await db.query(`-- sql
+        SELECT u.user_id, u.username, u.email, r.name AS role
             FROM users u
             JOIN roles r ON u.role_id = r.role_id
             WHERE u.username LIKE ? OR u.email LIKE ?
@@ -144,8 +144,8 @@ const ProjectService = {
         const searchQuery = Array.isArray(search) ? String(search[search.length - 1]) : String(search);
         const isUserOnly = userOnly === 'on' || userOnly === 'true' || userOnly === true;
 
-        let sql = `
-            SELECT DISTINCT p.*, u.username as contact_person_name, u.email as contact_email, g.id as group_id
+        let sql = `--sql
+        SELECT DISTINCT p.*, u.username as contact_person_name, u.email as contact_email, g.id as group_id
             FROM projects p
             LEFT JOIN users u ON p.contact_person_id = u.user_id
             LEFT JOIN group_chats g ON g.project_id = p.project_id
@@ -185,8 +185,8 @@ const ProjectService = {
         
         if (projectIds.length > 0) {
             const placeholders = projectIds.map(() => '?').join(',');
-            const allTeams = await db.query(`
-                SELECT pt.project_id, u.user_id, u.username, u.email, pt.role, pt.joined_at
+            const allTeams = await db.query(`-- sql
+        SELECT pt.project_id, u.user_id, u.username, u.email, pt.role, pt.joined_at
                 FROM project_teams pt
                 JOIN users u ON pt.user_id = u.user_id
                 WHERE pt.project_id IN (${placeholders})
@@ -279,8 +279,8 @@ const ProjectService = {
             }
 
             if (finalContactPersonId) {
-                const contactRows = await conn.query(`
-                    SELECT r.name as role, u.user_id
+                const contactRows = await conn.query(`--sql
+        SELECT r.name as role, u.user_id
                     FROM users u
                     JOIN roles r ON u.role_id = r.role_id
                     WHERE u.user_id = ?
@@ -380,8 +380,8 @@ const ProjectService = {
             let finalContactPersonId = project.contact_person_id;
             
             if (hasAdminRole(user) &amp;&amp; contact_person_id &amp;&amp; String(contact_person_id).trim() !== '') {
-                const contactRows = await conn.query(`
-                    SELECT r.name as role, u.user_id
+                const contactRows = await conn.query(`--sql
+        SELECT r.name as role, u.user_id
                     FROM users u 
                     JOIN roles r ON u.role_id = r.role_id 
                     WHERE u.user_id = ?
@@ -501,8 +501,8 @@ const ProjectService = {
     },
 
     async getProjectTeam(user, projectId) {
-        const team = await db.query(`
-            SELECT u.user_id, u.username, u.email, pt.role, pt.joined_at
+        const team = await db.query(`-- sql
+        SELECT u.user_id, u.username, u.email, pt.role, pt.joined_at
             FROM project_teams pt
             JOIN users u ON pt.user_id = u.user_id
             WHERE pt.project_id = ?
@@ -523,8 +523,8 @@ const ProjectService = {
         const searchStr = (query || '').trim();
         if (!searchStr) return [];
 
-        return await db.query(`
-            SELECT user_id, username, email
+        return await db.query(`-- sql
+        SELECT user_id, username, email
             FROM users
             WHERE username LIKE ? OR email LIKE ?
             LIMIT 10
@@ -540,7 +540,7 @@ const ProjectService = {
             throw new Error('FORBIDDEN');
         }
 
-        await db.query(`
+        await db.query(`-- sql
             INSERT INTO project_teams (project_id, user_id, role)
             VALUES (?, ?, ?)
             ON DUPLICATE KEY UPDATE role = VALUES(role)

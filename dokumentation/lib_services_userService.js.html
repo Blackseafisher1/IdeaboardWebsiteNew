@@ -55,7 +55,7 @@ async function getUserProfile(userId) {
      * @param {number|string} userId
      * @returns {Promise&lt;object|null>} Profilobjekt oder `null` wenn nicht gefunden.
      */
-    const userRows = await db.query(`
+    const userRows = await db.query(`-- sql
         SELECT u.user_id, u.username, u.email, u.role_id, r.name as role_name,
                up.current_points, up.pending_delta
         FROM users u

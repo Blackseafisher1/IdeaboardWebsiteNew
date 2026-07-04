@@ -40,7 +40,7 @@ const db = require('../../config/db.js');
  * @returns {Promise&lt;Array&lt;Object>>}
  */
 async function fetchNewMessages(conversationId, afterId) {
-    const rows = await db.query(`
+    const rows = await db.query(`-- sql
         SELECT m.*, u.username as sender_name
         FROM dm_messages m
         JOIN users u ON u.user_id = m.sender_id
@@ -65,7 +65,7 @@ async function fetchNewMessages(conversationId, afterId) {
  * @returns {Promise&lt;Array&lt;Object>>}
  */
 async function fetchLatestMessages(conversationId, limit = 20) {
-    const rows = await db.query(`
+    const rows = await db.query(`-- sql
         SELECT m.*, u.username as sender_name
         FROM dm_messages m
         JOIN users u ON u.user_id = m.sender_id
@@ -99,7 +99,7 @@ async function ensureConversationAccess(conversationId, userId) {
  * @returns {Promise&lt;Array&lt;Object>>}
  */
 async function getConversations(userId) {
-    return await db.query(`
+    return await db.query(`-- sql
         SELECT 
             c.conversation_id,
             c.updated_at,
@@ -125,7 +125,7 @@ async function getConversations(userId) {
  */
 async function searchUsersForDms(currentUserId, query, limit = 20, all = false) {
     const likeParam = `${query || ''}%`;
-    const sql = `
+    const sql = `--sql
         SELECT
             u.user_id,
             u.username,
@@ -136,11 +136,11 @@ async function searchUsersForDms(currentUserId, query, limit = 20, all = false) 
         LEFT JOIN dm_conversations c
             ON ( (c.user1_id = u.user_id OR c.user2_id = u.user_id)
                      AND (c.user1_id = ? OR c.user2_id = ?) )
-        LEFT JOIN (
-            SELECT m1.conversation_id, m1.message, m1.created_at
+        LEFT JOIN (`--sql
+        SELECT m1.conversation_id, m1.message, m1.created_at
             FROM dm_messages m1
-            JOIN (
-                SELECT conversation_id, MAX(created_at) AS max_created
+            JOIN (`--sql
+        SELECT conversation_id, MAX(created_at) AS max_created
                 FROM dm_messages
                 GROUP BY conversation_id
             ) mx ON m1.conversation_id = mx.conversation_id AND m1.created_at = mx.max_created
@@ -173,7 +173,7 @@ async function getOrCreateConversation(userId1, userId2) {
     const minId = Math.min(u1, u2);
     const maxId = Math.max(u1, u2);
 
-    const conversationRows = await db.query(`
+    const conversationRows = await db.query(`-- sql
         SELECT * FROM dm_conversations 
         WHERE (user1_id = ? AND user2_id = ?) OR (user1_id = ? AND user2_id = ?)
     `, [u1, u2, u2, u1]);
@@ -218,7 +218,7 @@ async function markMessagesAsRead(conversationId, userId) {
  * @returns {Promise&lt;Array&lt;Object>>}
  */
 async function getConversationMessages(conversationId, limit = 1000) {
-    const rows = await db.query(`
+    const rows = await db.query(`-- sql
         SELECT m.*, u.username as sender_name FROM dm_messages m
         JOIN users u ON u.user_id = m.sender_id
         WHERE m.conversation_id = ? 
@@ -237,7 +237,7 @@ async function getConversationMessages(conversationId, limit = 1000) {
  * @returns {Promise&lt;Array&lt;Object>>}
  */
 async function getConversationMessagesBefore(conversationId, beforeId, limit = 20) {
-    const rows = await db.query(`
+    const rows = await db.query(`-- sql
         SELECT m.*, u.username as sender_name FROM dm_messages m
         JOIN users u ON u.user_id = m.sender_id
         WHERE m.conversation_id = ? AND m.message_id &lt; ?
@@ -268,7 +268,7 @@ async function saveMessage(conversationId, senderId, text) {
         [conversationId]
     );
 
-    const rows = await db.query(`
+    const rows = await db.query(`-- sql
         SELECT m.*, u.username AS sender_name
         FROM dm_messages m
         JOIN users u ON u.user_id = m.sender_id
@@ -361,7 +361,7 @@ async function deleteMessage(messageId, userId) {
  * @returns {Promise&lt;Object|undefined>}
  */
 async function getMessageById(messageId) {
-    const rows = await db.query(`
+    const rows = await db.query(`-- sql
         SELECT m.*, u.username AS sender_name
         FROM dm_messages m
         JOIN users u ON u.user_id = m.sender_id

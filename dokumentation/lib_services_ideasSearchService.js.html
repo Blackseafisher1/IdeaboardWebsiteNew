@@ -171,7 +171,7 @@ function buildBaseFilters(categoryId, tagsRaw, userId = null, ownedOnly = false)
     // Baue Platzhalter-Liste für IN(...) und ergänze WHERE-Existenz-Subquery
     const placeholders = inputTags.map(() => '?').join(', ');
     baseWhere.push(`
-      EXISTS (
+      EXISTS (`--sql
         SELECT 1
         FROM idea_tag_links l
         JOIN idea_tags t ON t.tag_id = l.tag_id
@@ -243,10 +243,10 @@ async function executeFulltextSearch(q, booleanQuery, whereSql, baseParams, limi
       const whereClause = whereSql ? `${whereSql} AND ${phraseCond}` : `WHERE ${phraseCond}`;
 
       // Use Late Row Lookup for description search
-      const listSql = `
+      const listSql = `--sql
         SELECT i.*, u.username AS author_username
-        FROM (
-          SELECT s.idea_id
+        FROM (`--sql
+        SELECT s.idea_id
           FROM ideas_search s
           JOIN ideas i ON i.idea_id = s.idea_id
           ${whereClause}
@@ -279,7 +279,7 @@ async function executeFulltextSearch(q, booleanQuery, whereSql, baseParams, limi
     const listSql = `
       SELECT i.*, u.username AS author_username,
              top.title_match_score, top.title_exact_boost, top.title_prefix_boost, top.author_prefix_boost
-      FROM (
+      FROM (`--sql
         SELECT s.idea_id,
           (MATCH(s.title) AGAINST(? IN BOOLEAN MODE)) AS title_match_score,
           (CASE WHEN s.title = ? THEN 1000000 ELSE 0 END) AS title_exact_boost,

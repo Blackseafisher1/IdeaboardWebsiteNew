@@ -39,16 +39,16 @@ const categoriesService = require('./categoriesService');
  * @returns {Promise&lt;Object>} Objekt mit `newIdeasCount`, `activeUsersCount`, `activeCategoriesCount`.
  */
 async function getMetrics() {
-    const newIdeasRows = await db.query(`
+    const newIdeasRows = await db.query(`-- sql
       SELECT COALESCE(SUM(idea_count), 0) as new_ideas_count 
       FROM monthly_stats 
       WHERE month >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m')
     `);
     const new_ideas_count = newIdeasRows[0]?.new_ideas_count || 0;
 
-    const activeUsersRows = await db.query(`
+    const activeUsersRows = await db.query(`-- sql
       SELECT COUNT(DISTINCT user_id) as active_users_count
-      FROM (
+      FROM (`--sql
         SELECT user_id FROM ideas WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
         UNION SELECT user_id FROM likes WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
         UNION SELECT user_id FROM comments WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
@@ -56,7 +56,7 @@ async function getMetrics() {
     `);
     const active_users_count = activeUsersRows[0]?.active_users_count || 0;
 
-    const activeCategoriesRows = await db.query(`
+    const activeCategoriesRows = await db.query(`-- sql
       SELECT COUNT(DISTINCT c.category_id) as active_categories_count
       FROM categories c JOIN ideas i ON c.category_id = i.category_id
     `);
@@ -76,7 +76,7 @@ async function getMetrics() {
  * @returns {Promise&lt;Array&lt;Object>>} Array von Ideen-Objekten mit Metadaten.
  */
 async function getTopIdeas(limit = 3) {
-    const topIdeas = await db.query(`
+    const topIdeas = await db.query(`-- sql
       SELECT i.idea_id, i.title, i.description, i.category_id,
              u.username as author, c.name as category_name,
              i.like_count, i.dislike_count, i.comment_count,
@@ -100,8 +100,8 @@ async function getTopIdeas(limit = 3) {
 
     const ideaIds = result.map(i => i.idea_id);
     if (ideaIds.length > 0) {
-        const tags = await db.query(`
-          SELECT itl.idea_id, t.name 
+        const tags = await db.query(`-- sql
+        SELECT itl.idea_id, t.name 
           FROM idea_tag_links itl JOIN idea_tags t ON itl.tag_id = t.tag_id
           WHERE itl.idea_id IN (?)
         `, [ideaIds]);
@@ -128,15 +128,15 @@ async function getTopIdeas(limit = 3) {
  * @returns {Promise&lt;Array&lt;Object>>}
  */
 async function getActiveUsers(limit = 10) {
-    const activeUsers = await db.query(`
+    const activeUsers = await db.query(`-- sql
       SELECT u.user_id, u.username,
            (SELECT COUNT(*) FROM ideas WHERE user_id = u.user_id) as ideas_count,
            (SELECT COUNT(*) FROM comments WHERE user_id = u.user_id) as comments_count,
            up.current_points
       FROM users u
         LEFT JOIN user_points up ON u.user_id = up.user_id
-        WHERE u.user_id IN (
-            SELECT user_id FROM ideas WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        WHERE u.user_id IN (`--sql
+        SELECT user_id FROM ideas WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
             UNION SELECT user_id FROM comments WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
         )
         ORDER BY up.current_points DESC
@@ -164,7 +164,7 @@ module.exports = {
  * @returns {Promise&lt;number>} Anzahl neuer Ideen.
  */
 async function getNewIdeasCount() {
-    const result = await db.query(`
+    const result = await db.query(`-- sql
       SELECT COALESCE(SUM(idea_count), 0) as new_ideas_count
       FROM monthly_stats 
       WHERE month >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 30 DAY), '%Y-%m')
@@ -179,7 +179,7 @@ async function getNewIdeasCount() {
  * @returns {Promise&lt;Array&lt;Object>>}
  */
 async function getPopularCategories(limit = 5) {
-    const popularCategories = await db.query(`
+    const popularCategories = await db.query(`-- sql
       SELECT c.category_id, c.name as category_name, COUNT(i.idea_id) as idea_count,
       ROUND((COUNT(i.idea_id) / (SELECT COUNT(*) FROM ideas WHERE category_id IS NOT NULL)) * 100, 1) as percentage
       FROM categories c LEFT JOIN ideas i ON c.category_id = i.category_id
@@ -200,7 +200,7 @@ async function getPopularCategories(limit = 5) {
  * @returns {Promise&lt;Array&lt;Object>>}
  */
 async function getProjectStats() {
-    const projectStats = await db.query(`
+    const projectStats = await db.query(`-- sql
       SELECT status, COUNT(*) as count, ROUND(AVG(progress), 1) as avg_progress
       FROM projects GROUP BY status
     `);
@@ -222,7 +222,7 @@ async function getProjectStats() {
  * @returns {Promise&lt;Array&lt;Object>>}
  */
 async function getMonthlyStats(months = 6) {
-    const monthlyStats = await db.query(`
+    const monthlyStats = await db.query(`-- sql
       SELECT month, idea_count, active_users 
       FROM monthly_stats 
       WHERE month >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL ? MONTH), '%Y-%m')
@@ -244,7 +244,7 @@ async function getMonthlyStats(months = 6) {
  * @returns {Promise&lt;Array&lt;Object>>}
  */
 async function getTopUsers(limit = 5) {
-    const topUsers = await db.query(`
+    const topUsers = await db.query(`-- sql
       SELECT u.username, COUNT(i.idea_id) as ideas_submitted,
       COALESCE(SUM(i.like_count), 0) as total_likes_received
       FROM users u LEFT JOIN ideas i ON u.user_id = i.user_id
@@ -275,7 +275,7 @@ async function getAllCategories() {
  * @returns {Promise.&lt;Object>|null} Card-Daten oder `null`, wenn Idee nicht gefunden.
  */
 async function getIdeaCardData(ideaId) {
-    const ideaRows = await db.query(`
+    const ideaRows = await db.query(`-- sql
       SELECT 
         i.idea_id,
         i.title,
@@ -295,7 +295,7 @@ async function getIdeaCardData(ideaId) {
     const idea = Array.isArray(ideaRows) ? ideaRows[0] : ideaRows;
     if (!idea) return null;
 
-    const tagsRows = await db.query(`
+    const tagsRows = await db.query(`-- sql
       SELECT t.name 
       FROM idea_tag_links itl
       JOIN idea_tags t ON itl.tag_id = t.tag_id
@@ -307,7 +307,7 @@ async function getIdeaCardData(ideaId) {
     idea.tag_count = Number(idea.tags?.length || 0);
     idea.file_count = 0; // Placeholder as in original code
 
-    const comments = await db.query(`
+    const comments = await db.query(`-- sql
       SELECT c.*, u.username as author
       FROM comments c
       JOIN users u ON c.user_id = u.user_id

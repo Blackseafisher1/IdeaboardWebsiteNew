@@ -122,8 +122,8 @@
         if (!xhr || !select) return;
 
         var currentRoleId = String(select.dataset.currentRoleId || '');
-        if (currentRoleId) {
-          select.value = currentRoleId;
+        if (currentRoleId) {`-- sql
+        SELECT.value = currentRoleId;
         }
 
         if (xhr.status === 409) {
