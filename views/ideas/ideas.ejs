@@ -15,7 +15,12 @@
   <script>
     window.ideaLiveVersion = <%= Number(liveVersion || 0) %>;
   </script>
-  <script src="/js/dist/ideasLive.min.js"></script>
+  <script src="/js/dist/ideas/live.min.js"></script>
+  <script src="/js/dist/ideas/shared.min.js"></script>
+  <script src="/js/dist/ideas/card.min.js"></script>
+  <script src="/js/dist/ideas/nav.min.js"></script>
+  <script src="/js/dist/ideas/interactions.min.js"></script>
+  <script src="/js/dist/ideas/comments.min.js"></script>
   
 </head>
 <body data-live-version="<%= Number(liveVersion || 0) %>">
@@ -188,8 +193,6 @@
 </main>
 
  <%- include('../partials/footer') %>
-
-<script src="/js/dist/ideasClient.min.js"></script>
 
 </body>
 </html>

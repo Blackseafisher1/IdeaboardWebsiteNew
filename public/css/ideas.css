@@ -282,7 +282,9 @@
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 1rem;
-  align-items: start;
+  align-items: center;
+  align-content: center;
+
 }
 
 @media (max-width: 1600px) {
@@ -313,11 +315,9 @@
   position: relative;
   display: flex;
   flex-direction: column;
+
 }
 
-/* Freshly inserted cards are ausgeblendet briefly und prepared fuer GPU-accelerated
- Uebergaenge. JS will add/remove der `sichtbar` class zu toggle visibility
- after performing der Hover-simulation; this avoids flashing/snapping. */
 .fresh-card {
   visibility: hidden;
   will-change: box-shadow, transform;

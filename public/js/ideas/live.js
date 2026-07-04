@@ -1,7 +1,8 @@
 /**
  * @fileoverview Live-Update (SSE) Logik für die Ideen-Liste.
- * @module public/js/ideasLive
+ * @module public/js/ideas/live.js
  */
+
 
 let isRefreshing = false;
 let currentVersion = Number(window.ideaLiveVersion || document.body?.dataset?.liveVersion || 0) || 0;
@@ -79,6 +80,7 @@ document.addEventListener('visibilitychange', () => {
 // ============================================
 // INTELLIGENTE AKTUALISIERUNGS-LOGIK (erweitert)
 // ============================================
+
 /**
  * Intelligente Aktualisierungs-Logik: wertet SSE-Payloads aus und entscheidet, welche UI-Aktionen nötig sind.
  * @param {Object} [payload={}]
@@ -130,16 +132,16 @@ function handleSmartUpdate(payload = {}) {
     return;
   }
 
-  // Comment actions:
-  // - If the comment section is open: update the individual comment.
-  // - Always: refresh stats so `comment_count` is updated for collapsed cards as well.
+  // Comment-Aktionen:
+  // - Wenn Kommentarbereich offen: einzelnen Kommentar aktualisieren.
+  // - Immer: Stats refreshen, damit comment_count auch für zugeklappte Karten aktuell ist.
   if (idea_id && COMMENT_ACTIONS.includes(action)) {
     if (payload && payload.comment_id) {
       updateSingleComment(idea_id, payload.comment_id, action === 'comment_added');
     }
 
-    // Refresh stats (comment_count / like_count / dislike_count etc.),
-    // because non-expanded cards don't have #comment-list-... in the DOM.
+    // Stats refreshen (comment_count / like_count / dislike_count etc.),
+    // da nicht-expandierte Karten kein #comment-list-... im DOM haben.
     if (window.htmx) {
       htmx.trigger(document.body, `idea_updated_${idea_id}`, payload);
     }
@@ -247,7 +249,7 @@ async function fetchNewIdeaAndPrepend(ideaId) {
       if (emptyState) emptyState.remove();
 
       if (newId) {
-        // Prevent accidental duplicates from rapid SSE firing
+        // Ungewollte Duplikate durch schnelle SSE-Ereignisse verhindern
         if (window.ensureSingleCard) window.ensureSingleCard(String(newId));
 
         // Versteckt einfügen, kurz warten und dann anzeigen, damit CSS und Pseudo-Zustände greifen
@@ -257,14 +259,14 @@ async function fetchNewIdeaAndPrepend(ideaId) {
         if (firstCard) ideasGrid.insertBefore(newCard, firstCard);
         else ideasGrid.appendChild(newCard);
 
-        // Enable HTMX processing (for hx-* attributes)
+        // HTMX-Verarbeitung aktivieren (für hx-*-Attribute)
         try { if (window.htmx) window.htmx.process(newCard); } catch (e) {}
 
 
         setTimeout(() => {
           newCard.style.visibility = 'visible';
 
-          // Entry animation: fade / translate
+          // Einblend-Animation: einblenden / verschieben
           newCard.style.opacity = '0';
           newCard.style.transform = 'translateY(-20px)';
           newCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
@@ -275,7 +277,7 @@ async function fetchNewIdeaAndPrepend(ideaId) {
             newCard.style.transform = 'translateY(0)';
           }));
 
-          // Remove inline styles after the entry animation
+          // Inline-Styles nach der Animation entfernen
 
           setTimeout(() => {
             newCard.style.opacity = '';
@@ -294,7 +296,7 @@ async function fetchNewIdeaAndPrepend(ideaId) {
       }
     }
     } catch (error) {
-    // Error fetching the new card
+    // Fehler beim Abrufen der neuen Karte
   } finally {
     isRefreshing = false;
   }
@@ -331,7 +333,7 @@ async function updateSingleCard(ideaId, keepExpanded = false) {
     const updatedCard = document.querySelector(`.idea-card[data-id="${ideaId}"]`);
     if (!updatedCard) return;
 
-    // Restore expanded state after refresh
+    // Expandierten Zustand nach Refresh wiederherstellen
     if (keepExpanded && wasExpanded) {
       updatedCard.classList.add('expanded');
       const expandedArea = updatedCard.querySelector('.idea-expanded');
@@ -352,7 +354,7 @@ async function updateSingleCard(ideaId, keepExpanded = false) {
 
     if (window.htmx) htmx.process(updatedCard);
   } catch (error) {
-    // Error during single-card update
+    // Fehler bei der Einzelkarten-Aktualisierung
   } finally {
 
     setTimeout(() => { isRefreshing = false; }, 100);
@@ -427,7 +429,7 @@ async function updateNonExpandedCards() {
       if (!ideaId || ideaId === currentlyExpandedCardId) return;
 
       const existingCard = document.querySelector(`.idea-card[data-id="${ideaId}"]`);
-      // Only update cards that are not currently being viewed or edited by the user
+      // Nur Karten aktualisieren, die gerade nicht vom Benutzer bearbeitet werden
       if (existingCard && !existingCard.classList.contains('expanded')) {
         existingCard.outerHTML = newCard.outerHTML;
         updatedCount++;
@@ -485,12 +487,12 @@ async function updateSingleComment(ideaId, commentId, isNew = false) {
 }
 
 // ============================================================================
-// Local HTMX triggers
+// Lokale HTMX-Trigger
 // ============================================================================
 
 window.localActionCooldowns = new Set();
 
-// Add to cooldown IMMEDIATELY when a request starts to prevent SSE race conditions
+// Sofort zur Cooldown-Liste hinzufügen, sobald eine Anfrage startet (SSE-Race-Conditions vermeiden)
 document.addEventListener('htmx:beforeRequest', function (event) {
   if (!event.detail || !event.detail.elt) return;
   const card = event.detail.elt.closest('.idea-card');
@@ -507,7 +509,7 @@ document.addEventListener('htmx:afterRequest', function (event) {
     
     const ideaId = String(card.dataset.id);
     
-    // Keep in cooldown for a very short time to let HTMX finish the swap
+    // Kurz in Cooldown lassen, damit HTMX den Swap abschließen kann
 
     setTimeout(() => window.localActionCooldowns.delete(ideaId), 100);
 
@@ -517,16 +519,16 @@ document.addEventListener('htmx:afterRequest', function (event) {
     const path = config ? (config.path || "") : "";
     const verb = config ? (config.verb || "").toLowerCase() : "";
 
-    // Trigger only for POST requests (actions) to avoid infinite loops on GET updates
+    // Nur bei POST-Requests triggern (Aktionen), um Endlosschleifen bei GET-Updates zu vermeiden
     if (verb !== 'post') return;
     
-    // If it's a like/dislike or comment, we already updated the UI via the POST response
+    // Bei Like/Dislike/Kommentar wurde das UI bereits durch die POST-Antwort aktualisiert
     if (path.includes('/like') || path.includes('/dislike') || path.includes('/comments') || path.includes('/stats')) {
       return;
     }
 
     if (window.htmx) {
-      // Immediately update stats locally for other actions
+      // Stats sofort lokal für andere Aktionen aktualisieren
       htmx.trigger(document.body, `idea_updated_${ideaId}`, {
         idea_id: ideaId,
         action: 'local_update'
@@ -535,7 +537,7 @@ document.addEventListener('htmx:afterRequest', function (event) {
   }
 });
 
-// Expose APIs for debugging or manual calls
+// Globale APIs für Debugging oder manuelle Aufrufe bereitstellen
 window.refreshAllCards = refreshAllCards;
 window.updateNonExpandedCards = updateNonExpandedCards;
 window.updateSingleCard = updateSingleCard;
