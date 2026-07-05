@@ -1,10 +1,13 @@
 const timing = require('./lib/timing');
 
 
-// server.js - PERFECT Hybrid (Bun + Node + mariadb 44ms - NO CRASH!)
+
 require('dotenv').config();
 
-// Robust logger: duplicate all stdout/stderr to logs/server.log while keeping console output
+/*
+ * Robuster Logger: Dupliziert alle stdout/stderr-Ausgaben in logs/server.log,
+ * während die Konsolenausgabe erhalten bleibt.
+ */
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -14,14 +17,14 @@ try {
   if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
   const logPath = path.join(logDir, 'server.log');
 
-  // Append stream for raw stdout/stderr capture
+  // Append-Stream für die Roh-Erfassung von stdout/stderr
   const logStream = fs.createWriteStream(logPath, { flags: 'a', encoding: 'utf8' });
 
-  // Preserve originals
+  // Originale Funktionen sichern
   const origStdoutWrite = process.stdout.write.bind(process.stdout);
   const origStderrWrite = process.stderr.write.bind(process.stderr);
 
-  // Write chunk to file then forward to original stream
+  // Schreibe Chunk in Datei und leite dann an Original-Stream weiter
   function writeAndFile(origWrite, chunk, encoding, cb) {
     try {
       if (typeof chunk === 'string' || chunk instanceof String) {
@@ -32,7 +35,7 @@ try {
         logStream.write(String(chunk));
       }
     } catch (e) {
-      // Swallow file write errors so stdout is never blocked
+      // Datei-Schreibfehler schlucken, damit stdout nie blockiert wird
     }
     return origWrite(chunk, encoding, cb);
   }
@@ -40,14 +43,14 @@ try {
   process.stdout.write = (chunk, encoding, cb) => writeAndFile(origStdoutWrite, chunk, encoding, cb);
   process.stderr.write = (chunk, encoding, cb) => writeAndFile(origStderrWrite, chunk, encoding, cb);
 
-  // Ensure the stream is closed on exit
+  // Sicherstellen, dass der Stream beim Beenden geschlossen wird
   const closeLogStream = () => { try { logStream.end(); } catch (e) {} };
   process.on('exit', closeLogStream);
   process.on('SIGINT', () => { closeLogStream(); process.exit(0); });
   process.on('SIGTERM', () => { closeLogStream(); process.exit(0); });
 
 } catch (e) {
-  try { console.error('Logger init failed:', e && e.message ? e.message : e); } catch (_) {}
+  try { console.error('Logger-Initialisierung fehlgeschlagen:', e && e.message ? e.message : e); } catch (_) {}
 }
 
 const express = require('express');
@@ -57,7 +60,7 @@ const db = require('./config/db.js');
 const MariaDBStore = require('./lib/mariadb-session-store');
 const { redis, redisSub } = require('./lib/redis');
 
-// Detect runtime
+// Laufzeitumgebung erkennen
 const isBun = typeof Bun !== 'undefined' || process.versions.bun;
 console.log('🚀 Starte mit', isBun ? 'BUN + MariaDB' : 'Node + MariaDB');
 
@@ -66,9 +69,11 @@ const PORT = process.env.PORT || 3000;
 // Views
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-// Mount timing and request-logging early so static files and all routes are measured
 
-// Request logger: ensures every HTTP request is logged (method, url, status, duration)
+/*
+ * Request-Logger: Stellt sicher, dass jede HTTP-Anfrage protokolliert wird
+ * (Methode, URL, Status, Dauer)
+ */
 app.use((req, res, next) => {
   const start = Date.now();
   res.on('finish', () => {
@@ -85,7 +90,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Error logging middleware: log uncaught route errors
+/*
+ * Fehler-Logging-Middleware: Protokolliert unbehandelte Routen-Fehler
+ */
 app.use((err, req, res, next) => {
   try { console.error('[route-error] ', err && err.stack ? err.stack : err); } catch (e) {}
   next(err);
@@ -99,17 +106,21 @@ if (!process.env.SESSION_SECRET) {
 const keyManager = require('./lib/keyManager');
 const { pageCache } = require('./lib/cacheHelper');
 
-
-// If behind a proxy (ngrok, reverse proxy), trust first proxy for secure cookies
+/*
+ * Wenn hinter einem Proxy (ngrok, Reverse Proxy), vertrauen wir dem ersten Proxy
+ * für sichere Cookies
+ */
 if (process.env.TRUST_PROXIES === '1') app.set('trust proxy', 1);
 
 const sessionStore = new MariaDBStore();
 
-// Determine secure cookie behavior
-// Fixed: In development mode (localhost), cookies should never be 'secure: true' 
-// unless we are specifically testing with local TLS (Caddy).
-// However, many browsers block SameSite=None without Secure.
-// We only use Secure=true if TRUST_PROXIES is active, which implies a proxy handles TLS.
+/*
+ * Bestimmung des Secure-Cookie-Verhaltens:
+ * - Im Entwicklungsmodus (localhost) niemals `secure: true` setzen,
+ *   außer bei explizitem lokalen TLS-Test (Caddy).
+ * - Many browsers blockieren SameSite=None ohne Secure.
+ * - Secure=true nur bei aktivem TRUST_PROXIES (Proxy handhabt TLS).
+ */
 const isSecure = (process.env.TRUST_PROXIES === '1');
 
 app.use(session({
@@ -119,11 +130,11 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    // If we are behind a proxy (Caddy/Cloudflare), we use SameSite=None + Secure.
-    // Locally (direct access), we use Lax and Secure=false.
+    // Hinter Proxy (Caddy/Cloudflare) → SameSite=None + Secure
+    // Lokal (direkter Zugriff) → Lax und Secure=false
     sameSite: isSecure ? 'none' : 'lax',
     secure: isSecure,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    maxAge: 24 * 60 * 60 * 1000 // 24 Stunden
   }
 }));
 
@@ -132,7 +143,9 @@ console.log('SESSION COOKIE CONFIG:', {
   secure: isSecure
 });
 
-// Optional session debug logging (enable with DEBUG_SESSIONS=1)
+/*
+ * Optionales Session-Debug-Logging (aktivieren mit DEBUG_SESSIONS=1)
+ */
 if (process.env.DEBUG_SESSIONS === '1') {
   app.use((req, res, next) => {
     try { console.log('SESSION DEBUG:', { id: req.sessionID, cookie: req.session && req.session.cookie }); } catch (e) {}
@@ -140,7 +153,7 @@ if (process.env.DEBUG_SESSIONS === '1') {
   });
 }
 
-// Locals
+// Locals für Templates
 app.use((req, res, next) => {
   res.locals.user = roleHelpers.normalizeUser(req.session.user);
   res.locals.authz = roleHelpers;
@@ -148,7 +161,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health endpoint for readiness/liveness checks
+// Health-Endpoint für Readiness/Liveness-Checks
 app.get('/healthz', async (req, res) => {
   const status = { ok: true };
   try {
@@ -156,8 +169,8 @@ app.get('/healthz', async (req, res) => {
   } catch (e) {
     status.redis = 'error';
   }
-    try {
-    // quick DB ping
+  try {
+    // schneller DB-Ping
     await db.execute('SELECT 1');
     status.db = 'ok';
   } catch (e) {
@@ -167,16 +180,20 @@ app.get('/healthz', async (req, res) => {
   res.json(status);
 });
 
-// Simple public gate middleware: require a one-time password for homepage and login page
-// Configure the gate password with env `PUBLIC_GATE_PASSWORD`. If not set, gate is disabled.
+/*
+ * Einfache öffentliche Gate-Middleware:
+ * Erfordert ein einmaliges Passwort für Startseite und Login-Seite.
+ * Konfiguriere das Passwort über `PUBLIC_GATE_PASSWORD`.
+ * Wenn nicht gesetzt → Gate deaktiviert.
+ */
 function gateMiddleware(req, res, next) {
-  // Gate disabled if no password configured
+  // Gate deaktiviert, wenn kein Passwort konfiguriert
   if (!process.env.PUBLIC_GATE_PASSWORD || process.env.PUBLIC_GATE_PASSWORD.length === 0) return next();
 
-  // Allow when session already passed the gate
+  // Bereits bestanden → weiter
   if (req.session && req.session.gatePassed) return next();
 
-  // Only intercept GET requests for root or the auth page
+  // Nur GET-Anfragen für Root oder Auth-Seiten abfangen
   if (req.method === 'GET' && (req.path === '/' || req.path === '/users/auth' || req.path === '/users')) {
     return res.redirect(`/gate?back=${encodeURIComponent(req.originalUrl)}`);
   }
@@ -184,9 +201,9 @@ function gateMiddleware(req, res, next) {
   return next();
 }
 
-// Expose /gate routes before mounting application routes
+// /gate-Routen vor den eigentlichen Anwendungs-Routen exponieren
 app.get('/gate', (req, res) => {
-  // If gate disabled, shortcut
+  // Gate deaktiviert → direkt weiterleiten
   if (!process.env.PUBLIC_GATE_PASSWORD || process.env.PUBLIC_GATE_PASSWORD.length === 0) return res.redirect(req.query.back || '/');
   res.render('gate', { title: 'Zugangscode erforderlich', back: req.query.back || '/' , error: null });
 });
@@ -198,38 +215,34 @@ app.post('/gate', (req, res) => {
   if (pw === process.env.PUBLIC_GATE_PASSWORD) {
     req.session.gatePassed = true;
     console.log('GATE: password ok; calling session.save (exists=', typeof req.session.save === 'function', ')');
-    // Ensure session is saved before redirecting (avoids redirect loops on async stores)
+    // Session explizit speichern vor Redirect (vermeidet Redirect-Loops bei asynchronen Stores)
     if (typeof req.session.save === 'function') {
       return req.session.save((err) => {
         console.log('GATE: session.save callback start');
         if (err) console.error('Session save error after gate pass:', err);
-        // Send a small HTML response that performs a client-side redirect.
-        // This ensures the browser processes Set-Cookie before navigating.
+        // Kleines HTML mit client-seitigem Redirect senden (sichert Set-Cookie-Verarbeitung)
         const safeUrl = String(back).replace(/</g, '%3C').replace(/"/g, '%22');
         res.send(`<!doctype html><html><head><meta charset="utf-8"><title>Weiterleitung</title></head><body><script>try{setTimeout(function(){window.location = decodeURIComponent("${encodeURIComponent(safeUrl)}")},150)}catch(e){window.location = "${safeUrl}"}</script><noscript><meta http-equiv="refresh" content="0;url=${safeUrl}"></noscript></body></html>`);
       });
     } else {
-      // No session.save available — still send client-side redirect to allow cookie processing.
+      // Kein session.save verfügbar → trotzdem client-seitigen Redirect
       const safeUrl = String(back).replace(/</g, '%3C').replace(/"/g, '%22');
       return res.send(`<!doctype html><html><head><meta charset="utf-8"><title>Weiterleitung</title></head><body><script>try{setTimeout(function(){window.location = decodeURIComponent("${encodeURIComponent(safeUrl)}")},150)}catch(e){window.location = "${safeUrl}"}</script><noscript><meta http-equiv="refresh" content="0;url=${safeUrl}"></noscript></body></html>`);
     }
   }
-  // wrong password: re-render with error
+  // Falsches Passwort → mit Fehlermeldung neu rendern
   res.status(401).render('gate', { title: 'Zugangscode erforderlich', back: back, error: 'Falsches Passwort' });
 });
 
-// Apply gate middleware to relevant incoming requests
+// Gate-Middleware auf relevante Anfragen anwenden
 app.use(gateMiddleware);
 
 
-
-// Timing middleware is applied selectively to heavy routes below.
-// `timing` is required and mounted earlier to avoid duplicate declarations.
+// Timing-Middleware wird selektiv auf performancerelevante Routen angewendet.
+// `timing` wurde bereits früher required, um doppelte Deklarationen zu vermeiden.
 const usersRoute = require('./routes/users');
 
-
-
-// Routes — static pages cached 1 hour
+// Routen — statische Seiten mit Cache (1 Stunde)
 app.get("/", pageCache(30, { skip: r => r.session?.user?.id }), (req, res) => res.render("index", { title: "Ideenboard" }));
 app.get("/impressum", pageCache(3600), (req, res) => res.render("legal/impressum"));
 app.get("/datenschutz", pageCache(3600), (req, res) => res.render("legal/datenschutz"));
@@ -238,7 +251,7 @@ app.get("/kontakt", pageCache(3600), (req, res) => res.render("legal/kontakt"));
 app.get("/dokumentation", pageCache(3600), (req, res) => res.render("dokumentation"));
 app.get("/doku", pageCache(3600), (req, res) => res.render("doku"));
 
-// Message
+// Systemmeldung
 app.get('/message', (req, res) => {
   const message = req.query.msg || 'Unbekannter Fehler';
   const backUrl = req.query.back || '/';
@@ -252,16 +265,18 @@ app.get('/message', (req, res) => {
   });
 });
 
-// MOUNT SELECTED ROUTES WITH TIMING MIDDLEWARE
+// Ausgewählte Routen mit Timing-Middleware mounten
 app.use('/ideas', timing('ideas'), require('./routes/ideas'));
 
-// Debug-only public search endpoint (no auth) to help diagnose search internals
+/*
+ * Debug-only öffentlicher Such-Endpoint (keine Auth) zur Diagnose der Such-Interna
+ */
 app.get('/search-debug', async (req, res) => {
   try {
     const ideasService = require('./lib/services/ideasService');
     const userId = 0;
     const result = await ideasService.fetchIdeas(userId, req.query || {});
-    // Log debugInfo if present
+    // DebugInfo loggen falls vorhanden
     try { console.log('[search-debug] /search-debug called', { q: req.query.q, debug_search: req.query.debug_search }); } catch (e) {}
     if (result && result.search && result.search.debugInfo) {
       try { console.log('[search-debug] debugInfo:', JSON.stringify(result.search.debugInfo)); } catch (e) {}
@@ -273,7 +288,7 @@ app.get('/search-debug', async (req, res) => {
   }
 });
 
-// Public load-test routes for benchmarking without auth (no timing)
+// Öffentliche Load-Test-Routen für Benchmarking ohne Auth (kein Timing)
 app.use('/load-test', require('./routes/load_test'));
 
 app.use('/projects', pageCache(15), timing('projects'), require('./routes/projects'));
@@ -285,10 +300,9 @@ app.use('/surveys', pageCache(15), timing('surveys'), require('./routes/surveys.
 app.use('/groups', timing('groups'), require('./routes/groups.js'));
 
 
-// 404
+// 404-Seite
 app.use((req, res) => res.status(404).render('404')); 
 
-// UNIFIED SERVER - Express everywhere!
 async function startServer() {
   if (process.env.WARMUP_ON_START === '1' || process.env.WARMUP_ON_START === 'true') {
     try {
@@ -300,8 +314,10 @@ async function startServer() {
     }
   }
 
-  // Ensure default admin exists before accepting connections. This prints a
-  // generated one-time password when `DEFAULT_ADMIN_PASSWORD` is empty.
+  /*
+   * Standard-Admin sicherstellen vor dem Akzeptieren von Verbindungen.
+   * Gibt ein generiertes Einmal-Passwort aus, wenn `DEFAULT_ADMIN_PASSWORD` leer ist.
+   */
   try {
     if (usersRoute && typeof usersRoute.ensureDefaultAdmin === 'function') {
       await usersRoute.ensureDefaultAdmin();
@@ -310,7 +326,7 @@ async function startServer() {
     console.warn('Konnte Standard-Admin beim Start nicht sicherstellen:', e && e.message ? e.message : e);
   }
 
-  // Ensure DB is reachable before listening (helps PM2 cluster workers start only when store available)
+  // DB-Erreichbarkeit vor dem Start prüfen
   try {
     await db.execute('SELECT 1');
     console.log('DB: ping ok');
@@ -318,21 +334,21 @@ async function startServer() {
     console.warn('DB ping failed — continuing start but sessions may be unstable:', e && e.message ? e.message : e);
   }
 
-  // Start the server and keep a reference for graceful shutdown
+  // Server starten und Referenz für graceful shutdown behalten
   const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 ${isBun ? 'BUN' : 'Node'} + mariadb läuft auf http://0.0.0.0:${PORT}`);
-    // If running under a process manager that waits for a ready signal, notify it
+    // Signal an Process-Manager (z.B. PM2) senden
     if (typeof process.send === 'function') {
       try { process.send('ready'); } catch (e) { /* ignore */ }
     }
   });
 
-  // Für Bun: reusePort ermöglicht mehreren Prozessen denselben Port zu teilen
+  // Für Bun: reusePort ermöglicht mehreren Prozessen denselben Port
   if (isBun) {
-  console.log('🔧 Bun: Alle Prozesse teilen sich Port', PORT);
+    console.log('🔧 Bun: Alle Prozesse teilen sich Port', PORT);
   }
 
-  // Graceful shutdown helper
+  // Graceful Shutdown Helfer
   async function shutdown(signal) {
     console.log('Shutdown signal received:', signal);
     try {
@@ -357,7 +373,9 @@ async function startServer() {
   process.on('SIGINT', () => shutdown('SIGINT'));
 }
 
-// Prompt for upload master key (wrapped on disk) before starting server
+/*
+ * Upload-Master-Key (verschlüsselt auf Platte) vor Server-Start initialisieren
+ */
 (async () => {
   try {
     await keyManager.init();

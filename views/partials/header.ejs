@@ -28,7 +28,9 @@
 
            
             
-             <button class="theme-toggle" onclick="toggleTheme()">🌙/☀️</button>
+             <label class="theme-toggle" id="btn-theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                <span class="theme-toggle-track"><span class="theme-toggle-thumb"></span></span>
+              </label>
             <label for="site-blur-toggle" id="blur-toggle" class="blur-toggle" role="button" tabindex="0" aria-label="Toggle backdrop blur">🔍</label>
 
             <button class="hamburger" onclick="toggleMenu()" aria-controls="main-nav" aria-expanded="false" aria-label="Menu">
@@ -42,7 +44,9 @@
                 <div class="mobile-nav-header">
                     <img src="/assets/logo2.png" alt="logo" class="mobile-nav-logo" onclick="window.location.href='/'">
                     <div class="mobile-nav-actions">
-                        <button class="theme-toggle" onclick="toggleTheme()">🌙/☀️</button>
+                        <label class="theme-toggle theme-toggle-sm" onclick="toggleTheme()" title="Theme umschalten">
+                          <span class="theme-toggle-track"><span class="theme-toggle-thumb"></span></span>
+                        </label>
                         <label for="site-blur-toggle" id="blur-toggle-mobile" class="blur-toggle" role="button" tabindex="0" aria-label="Toggle backdrop blur">🔍</label>
                         <% if (user) { %>
                             <a href="/users/account" class="mobile-account-link">👤 <%= user.username %></a>

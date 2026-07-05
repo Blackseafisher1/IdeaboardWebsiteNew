@@ -193,7 +193,7 @@ body[class*="dm-"] > main,
     color: light-dark(black, var(--text)) !important;
   }
 
-  .theme-toggle {
+  .header-right .theme-toggle {
     display: none;
   }
 
@@ -271,11 +271,7 @@ body[class*="dm-"] > main,
   }
 
   .mobile-nav-actions .theme-toggle {
-    display: block !important;
-    box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 20%, transparent);
-    padding: 0.7rem 1rem;
-    border-radius: 10px;
-    zoom: 100%;
+    display: flex !important;
   }
 
   .mobile-nav-logo {
@@ -399,7 +395,7 @@ h1.Maintitel {
     font-size: 1.8rem;
   }
 
-  header > h1, #Account-Link, #Login-Link, .theme-toggle {
+  header > h1, #Account-Link, #Login-Link {
     zoom: 70%;
   }
 

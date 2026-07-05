@@ -1,5 +1,9 @@
 const { MAX } = require("uuid");
 
+// pm2 start ecosystem.config.js --only ideenboard-bun-fork
+// pm2 start ecosystem.config.js --only  ideenboard-node-cluster
+
+
 module.exports = {
   apps: [
     // Bun - Fork mode (single instance, recommended for Bun)
