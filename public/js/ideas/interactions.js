@@ -74,7 +74,7 @@ function bindCreateAndDeleteHandlers() {
             if (existing) {
               console.log('Lokales Erstellen: Karte bereits via SSE vorhanden, Überspringen.');
             } else {
-              document.querySelectorAll('.ideas-empty-state').forEach(n => n.remove());
+              document.querySelectorAll('.empty-state').forEach(n => n.remove());
 
               try { incoming.style.visibility = 'hidden'; } catch (e) {}
 

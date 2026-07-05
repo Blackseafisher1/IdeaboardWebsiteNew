@@ -81,7 +81,11 @@
   box-sizing: border-box;
   border-radius: 12px;
   border: 1px solid var(--card-border);
-  padding: 0.75rem;
+  background: var(--bg);
+  padding-bottom: 0;
+  padding-top: 0.5rem;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
   height: fit-content;
 }
 
@@ -114,6 +118,32 @@
   accent-color: var(--accent);
 }
 
+.checkbox-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.checkbox-filter:hover {
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+}
+
+.checkbox-filter input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+}
+
 .global-toggle span {
   color: var(--text);
   font-size: 0.95rem;
@@ -129,11 +159,24 @@
 
 .search-field .input {
   width: 100%;
-  padding-right: 2.6rem;
+  padding-right: 3rem;
   border: none;
   box-shadow: none;
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   font-weight: 600;
+  outline: none;
+}
+
+.search-row {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.search-field .input:focus {
+  border: none;
+  box-shadow: none;
+  outline: none;
+  transform: none;
 }
 
 .search-field .input::placeholder {
@@ -143,7 +186,7 @@
 
 .clear-search {
   position: absolute;
-  right: 30px;
+  right: 42px;
   top: 50%;
   transform: translateY(-50%) scale(0.95);
   border: none;
@@ -160,7 +203,7 @@
 }
 
 /* Loeschen-Button anzeigen, wenn das Eingabefeld nicht leer ist (per Platzhalter-angezeigt-Trick) */
-.search-field .input:not(:placeholder-shown) + .clear-search {
+.search-field .input:not(:placeholder-shown) ~ .clear-search {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(-50%) scale(1);
@@ -173,6 +216,107 @@
 
 .clear-search:hover {
   color: var(--text);
+}
+
+/* === SVG Icon System === */
+
+.search-glass {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+  color: var(--text);
+  transition: color 180ms ease;
+}
+
+.search-field:focus-within .search-glass {
+  color: var(--accent);
+}
+
+.select-wrap {
+  position: relative;
+  flex: 1 1 160px;
+  min-width: 120px;
+  color: var(--text);
+}
+
+.select-wrap select {
+  width: 100%;
+  padding-left: 2rem;
+}
+
+.select-wrap svg {
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+  transition: color 180ms ease;
+}
+
+.select-wrap select:focus {
+  transform: none;
+}
+
+.select-wrap:has(#category_id option:checked:not([value=""])) svg {
+  color: var(--accent);
+}
+
+.select-wrap:has(#sort option:checked:not([value="latest"])) svg {
+  color: var(--accent);
+}
+
+.select-wrap:focus-within svg {
+  color: var(--accent);
+}
+
+.toggle-filter .toggle-icons {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.toggle-filter .icon-person {
+  display: none;
+}
+
+.toggle-filter input:checked ~ .toggle-icons .icon-person {
+  display: inline-flex;
+}
+
+.toggle-filter input:checked ~ .toggle-icons .icon-group {
+  display: none;
+}
+
+.toggle-filter .toggle-icons svg {
+  display: block;
+}
+
+.toggle-filter input[type="checkbox"],
+.scope-filter input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.scope-filter svg {
+  transition: color 180ms ease;
+}
+
+.scope-filter:has(input:checked) svg {
+  color: var(--accent);
 }
 
 .ideas-filters input::placeholder {
@@ -201,7 +345,7 @@
   .ideas-filters {
     flex-direction: column;
     align-items: stretch;
-    padding: 0.75rem;
+    padding: 0;
     gap: 0;
   }
 

@@ -83,7 +83,7 @@ router.get('/', asyncHandler(async (req, res) => {
       return res.json({ debug: true, q: search.q, engine: search?.engine || null, search });
     }
 
-    const { page, hasNextPage } = pagination;
+    const { page, hasNextPage, totalCount } = pagination;
     const nextPage = hasNextPage ? (page + 1) : null;
 
     const templateData = {
@@ -101,6 +101,8 @@ router.get('/', asyncHandler(async (req, res) => {
       currentPage: page,
       nextPage,
       hasNextPage,
+      totalCount,
+      pageSize: 50,
       // numerische Live-Update-Version für Partials verfügbar halten
       liveVersion: liveUpdates.getCurrentVersion(),
       isGlobal: firstQueryValue(req.query.global, '') === 'on'

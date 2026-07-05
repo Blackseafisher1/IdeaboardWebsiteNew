@@ -33,10 +33,11 @@
   hx-trigger="submit">
 
 <!-- Suche & Filter Bar -->
-<section class="projects-filters hero-overlap-next">
+<section class="projects-filters">
+  <div class="filter-container hero-overlap-next">
   <div class="filter-controls" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
     <div class="search-wrapper" style="flex-grow: 1;">
-      <div style="display: flex; gap: 8px;">
+      <div class="search-field">
           <input type="text" 
             id="projectSearchInput"
             name="search"  
@@ -44,10 +45,13 @@
             placeholder="Suche Projekte..."
            value="<%= currentSearch || '' %>"
            oninput="document.getElementById('currentPage').value='1'; htmx.trigger('#projectFilterForm', 'submit')">
-        
-        <button type="button" onclick="clearSearch()" class="btn" style="white-space: nowrap; max-width: 30px;">
-          ✕
-        </button>
+          <span class="search-glass">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <path d="M28.7,27.29l-9.76-9.56A9,9,0,1,0,12,21a8.92,8.92,0,0,0,5.49-1.89l9.81,9.6a1,1,0,0,0,1.41,0A1,1,0,0,0,28.7,27.29ZM5,12a7,7,0,1,1,7,7A7,7,0,0,1,5,12Z" fill="currentColor"/>
+            </svg>
+          </span>
+          <button type="button" class="clear-search" aria-label="Suche löschen" title="Suche löschen"
+            hx-on:click="const q = document.getElementById('projectSearchInput'); q.value=''; document.getElementById('currentPage').value='1'; htmx.trigger('#projectFilterForm', 'submit'); q.focus();">×</button>
       </div>
       <input type="hidden" id="currentStatus" name="status" value="<%= currentStatus || 'all' %>">
       <input type="hidden" id="isUserOnlyInput" name="userOnly" value="<%= isUserOnly ? 'true' : 'false' %>">
@@ -76,6 +80,7 @@
         Abgeschlossen
       </button>
     </div>
+  </div>
   </div>
 </section>
 

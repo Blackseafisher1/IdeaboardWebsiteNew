@@ -11,6 +11,7 @@
     </p>
   </div>
 <% } else { %>
+  <div class="match-count"><%= totalResults > 10 ? '10+' : totalResults %> Treffer</div>
   <div class="surveys-grid">
     <% surveys.forEach(survey => { %>
       <div class="survey-card" id="survey-<%= survey.survey_id %>" tabindex="0">
@@ -46,8 +47,7 @@
             <div class="meta-item">
               <span class="meta-label">Zugangscode:</span>
               <span class="meta-value access-code"
-                    onclick="copyToClipboard('<%= survey.access_code %>')"
-                    style="cursor: pointer; color: #2196F3; text-decoration: underline;">
+                    onclick="copyToClipboard('<%= survey.access_code %>')">
                 <%= survey.access_code %>
                 <small>(Klicken zum Kopieren)</small>
               </span>

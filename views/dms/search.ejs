@@ -14,18 +14,26 @@
     <main class="container chat-page-container">
         <div class="chat-container dm-index-container">
             <div class="back-link">
-                <a href="/dms" class="dm-search-back-link">← Zurück</a>
+                <button class="back-button" onclick="window.location.href='/dms'">←</button>
             </div>
             <h1 class="dm-search-title">Benutzer suchen</h1>
             <div class="dms-search">
                 <form action="/dms/search" method="get" class="dms-search-form"
                       hx-get="/dms/search" hx-target=".user-list" hx-swap="outerHTML"
                       hx-push-url="true">
-                    <input type="search" name="q" class="search-box" placeholder="Benutzername..." 
-                           value="<%= searchQuery %>" autocomplete="off"
-                           hx-get="/dms/search" hx-target=".user-list" hx-swap="outerHTML"
-                          hx-trigger="keyup changed delay:1000ms, search">
-                    <button type="button" class="message-btn clear-btn" aria-label="Clear search" onclick="(function(){const f=document.querySelector('.dms-search-form'); const i=f.querySelector('input[name=\'q\']'); i.value=''; if (window.htmx && typeof htmx.trigger === 'function') { htmx.trigger(i,'keyup'); } else { i.dispatchEvent(new Event('input')); }})();">X</button>
+                    <div class="search-field">
+                      <input type="search" name="q" class="input" placeholder="Benutzername..." 
+                             value="<%= searchQuery %>" autocomplete="off"
+                             hx-get="/dms/search" hx-target=".user-list" hx-swap="outerHTML"
+                            hx-trigger="keyup changed delay:1000ms, search">
+                      <span class="search-glass">
+                        <svg width="20" height="20" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                          <path d="M28.7,27.29l-9.76-9.56A9,9,0,1,0,12,21a8.92,8.92,0,0,0,5.49-1.89l9.81,9.6a1,1,0,0,0,1.41,0A1,1,0,0,0,28.7,27.29ZM5,12a7,7,0,1,1,7,7A7,7,0,0,1,5,12Z" fill="currentColor"/>
+                        </svg>
+                      </span>
+                      <button type="button" class="clear-search" aria-label="Suche löschen" title="Suche löschen"
+                        hx-on:click="const q = document.querySelector('.dms-search-form input[name=\'q\']'); q.value=''; htmx.trigger(q, 'search'); q.focus();">×</button>
+                    </div>
                 </form>
 
             </div>

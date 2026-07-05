@@ -1,6 +1,7 @@
 <input type="hidden" id="currentStatus" name="status" value="<%= currentStatus || 'all' %>" hx-swap-oob="true">
 <input type="hidden" id="isUserOnlyInput" name="userOnly" value="<%= isUserOnly ? 'true' : 'false' %>" hx-swap-oob="true">
 
+<div class="match-count"><%= totalResults > 8 ? '8+' : totalResults %> Treffer</div>
 <% (projects || []).forEach(project => { %>
   <%- include('_project-card', { project: project, user: user }) %>
 <% }) %>
