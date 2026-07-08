@@ -55,3 +55,56 @@ declare module 'express-session' {
     csrfToken?: string;
   }
 }
+
+/* ── Query- & Params-Typen vereinfachen ── */
+
+declare module 'qs' {
+  interface ParsedQs {
+    [key: string]: undefined | string | string[];
+  }
+}
+
+declare module 'express-serve-static-core' {
+  interface ParamsDictionary {
+    [key: string]: string;
+  }
+}
+
+/* ── Projekt-Modul-Deklarationen für server.js ── */
+
+declare module 'express-serve-static-core' {
+  interface IRouterMatcher<T> {
+    (path: PathParams, ...handlers: Array<RequestHandler | RequestHandler[]>): T;
+  }
+}
+
+declare module '../lib/timing' {
+  import { RequestHandler } from 'express';
+  const timing: (label?: string) => RequestHandler;
+  export = timing;
+}
+
+declare module './lib/timing' {
+  import { RequestHandler } from 'express';
+  const timing: (label?: string) => RequestHandler;
+  export = timing;
+}
+
+declare module '../scripts/warmup_indexes' {
+  const warmup: { main?: () => Promise<void> };
+  export = warmup;
+}
+
+declare module './scripts/warmup_indexes' {
+  const warmup: { main?: () => Promise<void> };
+  export = warmup;
+}
+
+declare module './routes/users' {
+  import { Router } from 'express';
+  interface UsersRouter extends Router {
+    ensureDefaultAdmin?: () => Promise<void>;
+  }
+  const router: UsersRouter;
+  export = router;
+}

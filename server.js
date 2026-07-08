@@ -40,8 +40,8 @@ try {
     return origWrite(chunk, encoding, cb);
   }
 
-  process.stdout.write = (chunk, encoding, cb) => writeAndFile(origStdoutWrite, chunk, encoding, cb);
-  process.stderr.write = (chunk, encoding, cb) => writeAndFile(origStderrWrite, chunk, encoding, cb);
+  process.stdout.write = /** @type {typeof process.stdout.write} */((chunk, encoding, cb) => writeAndFile(origStdoutWrite, chunk, encoding, cb));
+  process.stderr.write = /** @type {typeof process.stderr.write} */((chunk, encoding, cb) => writeAndFile(origStderrWrite, chunk, encoding, cb));
 
   // Sicherstellen, dass der Stream beim Beenden geschlossen wird
   const closeLogStream = () => { try { logStream.end(); } catch (e) {} };
@@ -204,8 +204,9 @@ function gateMiddleware(req, res, next) {
 // /gate-Routen vor den eigentlichen Anwendungs-Routen exponieren
 app.get('/gate', (req, res) => {
   // Gate deaktiviert → direkt weiterleiten
-  if (!process.env.PUBLIC_GATE_PASSWORD || process.env.PUBLIC_GATE_PASSWORD.length === 0) return res.redirect(req.query.back || '/');
-  res.render('gate', { title: 'Zugangscode erforderlich', back: req.query.back || '/' , error: null });
+  const backStr = /** @type {string} */(req.query.back) || '/';
+  if (!process.env.PUBLIC_GATE_PASSWORD || process.env.PUBLIC_GATE_PASSWORD.length === 0) return res.redirect(backStr);
+  res.render('gate', { title: 'Zugangscode erforderlich', back: backStr, error: null });
 });
 
 app.post('/gate', (req, res) => {
@@ -253,9 +254,9 @@ app.get("/doku", pageCache(3600), (req, res) => res.render("doku"));
 
 // Systemmeldung
 app.get('/message', (req, res) => {
-  const message = req.query.msg || 'Unbekannter Fehler';
-  const backUrl = req.query.back || '/';
-  const status = req.query.status ? parseInt(req.query.status) : 200;
+  const message = /** @type {string} */(req.query.msg) || 'Unbekannter Fehler';
+  const backUrl = /** @type {string} */(req.query.back) || '/';
+  const status = req.query.status ? parseInt(/** @type {string} */(req.query.status)) : 200;
   
   if (status >= 400) res.status(status);
   res.render('message', { 
@@ -266,7 +267,7 @@ app.get('/message', (req, res) => {
 });
 
 // Ausgewählte Routen mit Timing-Middleware mounten
-app.use('/ideas', timing('ideas'), require('./routes/ideas'));
+app.use('/ideas', /** @type {import('express').RequestHandler} */(timing('ideas')), require('./routes/ideas'));
 
 /*
  * Debug-only öffentlicher Such-Endpoint (keine Auth) zur Diagnose der Such-Interna
@@ -291,13 +292,13 @@ app.get('/search-debug', async (req, res) => {
 // Öffentliche Load-Test-Routen für Benchmarking ohne Auth (kein Timing)
 app.use('/load-test', require('./routes/load_test'));
 
-app.use('/projects', pageCache(15), timing('projects'), require('./routes/projects'));
-app.use('/users', timing('users'), usersRoute);
-app.use('/dashboard', pageCache(15), timing('dashboard'), require('./routes/dashboard.js'));
-app.use('/adminPage', timing('adminPage'), require('./routes/adminPage.js'));
-app.use('/dms', timing('dms'), require('./routes/dms.js'));
-app.use('/surveys', pageCache(15), timing('surveys'), require('./routes/surveys.js'));
-app.use('/groups', timing('groups'), require('./routes/groups.js'));
+app.use('/projects', pageCache(15), /** @type {import('express').RequestHandler} */(timing('projects')), require('./routes/projects'));
+app.use('/users', /** @type {import('express').RequestHandler} */(timing('users')), usersRoute);
+app.use('/dashboard', pageCache(15), /** @type {import('express').RequestHandler} */(timing('dashboard')), require('./routes/dashboard.js'));
+app.use('/adminPage', /** @type {import('express').RequestHandler} */(timing('adminPage')), require('./routes/adminPage.js'));
+app.use('/dms', /** @type {import('express').RequestHandler} */(timing('dms')), require('./routes/dms.js'));
+app.use('/surveys', pageCache(15), /** @type {import('express').RequestHandler} */(timing('surveys')), require('./routes/surveys.js'));
+app.use('/groups', /** @type {import('express').RequestHandler} */(timing('groups')), require('./routes/groups.js'));
 
 
 // 404-Seite
@@ -307,7 +308,7 @@ async function startServer() {
   if (process.env.WARMUP_ON_START === '1' || process.env.WARMUP_ON_START === 'true') {
     try {
       console.log('🔁 WARMUP_ON_START aktiviert — Index-Warmup wird ausgeführt');
-      const warmup = require('./scripts/warmup_indexes');
+      const warmup = /** @type {{ main?: () => Promise<void> }} */(require('./scripts/warmup_indexes'));
       if (warmup && warmup.main) await warmup.main();
     } catch (e) {
       console.warn('Warmup fehlgeschlagen, Starte trotzdem weiter:', e && e.message ? e.message : e);
@@ -319,8 +320,9 @@ async function startServer() {
    * Gibt ein generiertes Einmal-Passwort aus, wenn `DEFAULT_ADMIN_PASSWORD` leer ist.
    */
   try {
-    if (usersRoute && typeof usersRoute.ensureDefaultAdmin === 'function') {
-      await usersRoute.ensureDefaultAdmin();
+    const usersWithAdmin = /** @type {import('express').Router & { ensureDefaultAdmin?: () => Promise<void> }} */(usersRoute);
+    if (usersWithAdmin && typeof usersWithAdmin.ensureDefaultAdmin === 'function') {
+      await usersWithAdmin.ensureDefaultAdmin();
     }
   } catch (e) {
     console.warn('Konnte Standard-Admin beim Start nicht sicherstellen:', e && e.message ? e.message : e);
@@ -335,7 +337,7 @@ async function startServer() {
   }
 
   // Server starten und Referenz für graceful shutdown behalten
-  const server = app.listen(PORT, '0.0.0.0', () => {
+  const server = app.listen(Number(PORT), '0.0.0.0', () => {
     console.log(`🚀 ${isBun ? 'BUN' : 'Node'} + mariadb läuft auf http://0.0.0.0:${PORT}`);
     // Signal an Process-Manager (z.B. PM2) senden
     if (typeof process.send === 'function') {
