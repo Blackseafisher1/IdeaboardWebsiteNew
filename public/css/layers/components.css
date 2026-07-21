@@ -132,7 +132,7 @@
   line-height: 1;
 }
 .theme-toggle-thumb::before {
-  content: '☀';
+  content: '☽';
 }
 [data-theme="dark"] .theme-toggle-track {
   background: var(--accent-dark);
@@ -143,7 +143,7 @@
   left: 15px;
 }
 [data-theme="dark"] .theme-toggle-thumb::before {
-  content: '☽';
+  content: '☀';   
 }
 
 
